@@ -1,0 +1,226 @@
+{% extends "erp/base.html" %}
+{% block title %}Davomat — EduERP Pro{% endblock %}
+{% block page_title %}Davomat{% endblock %}
+
+{% block extra_head %}
+<style>
+.att-layout{display:grid;grid-template-columns:1fr 340px;gap:16px}
+@media(max-width:1000px){.att-layout{grid-template-columns:1fr}}
+.att-status-btn{
+  padding:7px 16px;border:1.5px solid var(--border);border-radius:8px;
+  font-size:.78rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;
+  background:#fff;color:var(--text);
+}
+.att-status-btn.present{border-color:var(--success);background:#ecfdf5;color:var(--success)}
+.att-status-btn.absent{border-color:var(--danger);background:#fef2f2;color:var(--danger)}
+.att-status-btn.late{border-color:var(--warning);background:#fffbeb;color:var(--warning)}
+.att-status-btn.excused{border-color:var(--info);background:#eff6ff;color:var(--info)}
+.att-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.att-row:last-child{border-bottom:none}
+.bulk-bar{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  padding:10px 16px;background:linear-gradient(135deg,rgba(255,107,53,.06),rgba(247,147,30,.04));
+  border-bottom:1px solid var(--border);
+}
+.bulk-btn{
+  padding:6px 14px;border-radius:7px;font-size:.76rem;font-weight:700;
+  cursor:pointer;border:none;font-family:inherit;transition:all .2s;
+}
+.bb-all{background:var(--grad);color:#fff;box-shadow:0 2px 8px rgba(255,107,53,.25)}
+.bb-abs{background:#fef2f2;color:var(--danger);border:1px solid #fecaca}
+.bb-late{background:#fffbeb;color:var(--warning);border:1px solid #fde68a}
+
+.hist-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
+.hist-row:last-child{border-bottom:none}
+
+.summary-card{border-radius:10px;padding:14px;text-align:center;margin-bottom:10px}
+.sum-val{font-size:1.5rem;font-weight:900;line-height:1;letter-spacing:-.5px}
+.sum-lbl{font-size:.7rem;margin-top:4px}
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;animation:fadeUp .35s ease both">
+  <div>
+    <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">Davomat</h2>
+    <p style="font-size:.75rem;color:var(--muted);margin-top:3px">Davomatni belgilash va tarixni ko'rish</p>
+  </div>
+</div>
+
+<!-- Filter row -->
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;animation:fadeUp .35s ease .05s both">
+  <select id="fGroup" onchange="loadStudents()" style="border:1.5px solid var(--border);border-radius:9px;padding:9px 32px 9px 12px;font-size:.8rem;background:#fff;outline:none;cursor:pointer;min-width:200px">
+    <option value="">— Guruh tanlang —</option>
+  </select>
+  <input type="date" id="fDate" value="" onchange="loadStudents()" style="border:1.5px solid var(--border);border-radius:9px;padding:9px 12px;font-size:.8rem;background:#fff;outline:none">
+  <button class="btn btn-primary" onclick="submitAttendance()" id="submitBtn" style="display:none"><i class="fas fa-save"></i>Saqlash</button>
+</div>
+
+<div class="att-layout">
+  <!-- Left: marking -->
+  <div class="card" style="overflow:hidden;animation:fadeUp .4s ease .1s both">
+    <div class="bulk-bar" id="bulkBar" style="display:none">
+      <span style="font-size:.78rem;font-weight:600;color:var(--muted)">Barchaga:</span>
+      <button class="bulk-btn bb-all" onclick="setAll('present')"><i class="fas fa-check-double"></i> Keldi</button>
+      <button class="bulk-btn bb-abs" onclick="setAll('absent')"><i class="fas fa-times"></i> Kelmadi</button>
+      <button class="bulk-btn bb-late" onclick="setAll('late')"><i class="fas fa-clock"></i> Kech keldi</button>
+      <span style="margin-left:auto;font-size:.74rem;color:var(--muted)" id="markCount"></span>
+    </div>
+    <div id="attBody"><div class="empty"><i class="fas fa-calendar-check"></i><p>Guruh va sanani tanlang</p></div></div>
+  </div>
+
+  <!-- Right: summary + history -->
+  <div style="display:flex;flex-direction:column;gap:16px">
+    <!-- Summary -->
+    <div class="card" style="animation:fadeUp .4s ease .15s both">
+      <div class="card-header"><div class="card-title">Bugungi statistika</div></div>
+      <div class="card-body" id="summaryBody">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div class="summary-card" style="background:#ecfdf5"><div class="sum-val" style="color:var(--success)" id="sumP">0</div><div class="sum-lbl" style="color:var(--success)">Keldi</div></div>
+          <div class="summary-card" style="background:#fef2f2"><div class="sum-val" style="color:var(--danger)" id="sumA">0</div><div class="sum-lbl" style="color:var(--danger)">Kelmadi</div></div>
+          <div class="summary-card" style="background:#fffbeb"><div class="sum-val" style="color:var(--warning)" id="sumL">0</div><div class="sum-lbl" style="color:var(--warning)">Kech keldi</div></div>
+          <div class="summary-card" style="background:#eff6ff"><div class="sum-val" style="color:var(--info)" id="sumE">0</div><div class="sum-lbl" style="color:var(--info)">Sababli</div></div>
+        </div>
+        <div style="margin-top:12px">
+          <div style="display:flex;justify-content:space-between;font-size:.73rem;margin-bottom:5px"><span style="color:var(--muted)">Davomat foizi</span><span id="sumPct" style="font-weight:700;color:var(--text)">—</span></div>
+          <div class="prog-wrap"><div class="prog-fill" id="sumProg" style="width:0%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- History -->
+    <div class="card" style="animation:fadeUp .4s ease .2s both">
+      <div class="card-header"><div class="card-title">Oxirgi yozuvlar</div></div>
+      <div class="card-body" id="histBody" style="max-height:280px;overflow-y:auto">
+        <div class="empty"><i class="fas fa-history"></i><p>Guruh tanlang</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+initAuth();
+let students=[], attMap={};
+
+async function initGroups(){
+  const today=new Date().toISOString().split('T')[0];
+  document.getElementById('fDate').value=today;
+  const d=await get('/groups/?page_size=100&status=active');
+  const grps=d?.results||d||[];
+  const s=document.getElementById('fGroup');
+  grps.forEach(g=>s.innerHTML+=`<option value="${g.id}">${g.name}</option>`);
+}
+
+async function loadStudents(){
+  const gid=document.getElementById('fGroup').value;
+  const date=document.getElementById('fDate').value;
+  if(!gid){document.getElementById('attBody').innerHTML='<div class="empty"><i class="fas fa-calendar-check"></i><p>Guruh tanlang</p></div>';return;}
+
+  document.getElementById('attBody').innerHTML='<div class="loading"><div class="spinner"></div></div>';
+  document.getElementById('bulkBar').style.display='none';
+  document.getElementById('submitBtn').style.display='none';
+
+  const [sRes, attRes]=await Promise.all([
+    get(`/students/?group=${gid}&status=active&page_size=100`),
+    get(`/attendance/?group=${gid}&date=${date}&page_size=100`)
+  ]);
+
+  students=sRes?.results||sRes||[];
+  const existing=attRes?.results||attRes||[];
+  attMap={};
+  existing.forEach(a=>{attMap[a.student]=a.status});
+
+  if(!students.length){
+    document.getElementById('attBody').innerHTML='<div class="empty"><i class="fas fa-users"></i><p>Bu guruhda o\'quvchi yo\'q</p></div>';
+    return;
+  }
+
+  document.getElementById('bulkBar').style.display='flex';
+  document.getElementById('submitBtn').style.display='flex';
+  document.getElementById('markCount').textContent=`${students.length} ta o'quvchi`;
+
+  renderAttendance();
+  loadHistory(gid);
+}
+
+function renderAttendance(){
+  const statuses=['present','absent','late','excused'];
+  const labels={present:'Keldi',absent:'Kelmadi',late:'Kech',excused:'Sababli'};
+  document.getElementById('attBody').innerHTML=`<div style="padding:0 4px">
+    ${students.map(s=>{
+      const cur=attMap[s.id]||'present';
+      return`<div class="att-row">
+        <div class="av av-sm">${initials(s.full_name||'?')}</div>
+        <div style="flex:1"><div style="font-size:.82rem;font-weight:600;color:var(--text)">${s.full_name||'—'}</div><div style="font-size:.7rem;color:var(--muted)">${s.phone||''}</div></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">
+          ${statuses.map(st=>`<button class="att-status-btn ${cur===st?st:''}" data-sid="${s.id}" data-st="${st}" onclick="setStatus('${s.id}','${st}',this)">${labels[st]}</button>`).join('')}
+        </div>
+      </div>`;
+    }).join('')}
+  </div>`;
+  updateSummary();
+}
+
+function setStatus(sid, st, btn){
+  attMap[sid]=st;
+  const row=btn.closest('.att-row');
+  row.querySelectorAll('.att-status-btn').forEach(b=>{
+    b.className=`att-status-btn${b.dataset.st===st?' '+st:''}`;
+  });
+  updateSummary();
+}
+
+function setAll(st){
+  students.forEach(s=>attMap[s.id]=st);
+  renderAttendance();
+}
+
+function updateSummary(){
+  const vals=Object.values(attMap);
+  const p=vals.filter(v=>v==='present').length;
+  const a=vals.filter(v=>v==='absent').length;
+  const l=vals.filter(v=>v==='late').length;
+  const e=vals.filter(v=>v==='excused').length;
+  const total=vals.length||1;
+  const pct=Math.round(p/total*100);
+  document.getElementById('sumP').textContent=p;
+  document.getElementById('sumA').textContent=a;
+  document.getElementById('sumL').textContent=l;
+  document.getElementById('sumE').textContent=e;
+  document.getElementById('sumPct').textContent=pct+'%';
+  document.getElementById('sumProg').style.width=pct+'%';
+}
+
+async function submitAttendance(){
+  const gid=document.getElementById('fGroup').value;
+  const date=document.getElementById('fDate').value;
+  const records=students.map(s=>({student:s.id,group:gid,date,status:attMap[s.id]||'present'}));
+  const btn=document.getElementById('submitBtn');
+  btn.disabled=true;
+  const r=await post('/attendance/bulk-create/',{records});
+  if(r?.ok||r?.status===201){toast("Davomat saqlandi!",'ok');loadHistory(gid);}
+  else{const e=await r?.json();toast(e?.detail||"Xatolik",'err');}
+  btn.disabled=false;
+}
+
+async function loadHistory(gid){
+  const d=await get(`/attendance/?group=${gid}&page_size=10`);
+  const items=d?.results||d||[];
+  const hb=document.getElementById('histBody');
+  if(!items.length){hb.innerHTML='<div class="empty"><i class="fas fa-history"></i><p>Tarix yo\'q</p></div>';return;}
+  hb.innerHTML=items.slice(0,8).map(a=>`
+    <div class="hist-row">
+      <div>
+        <div style="font-size:.8rem;font-weight:600;color:var(--text)">${a.student_name||'—'}</div>
+        <div style="font-size:.7rem;color:var(--muted)">${fdate(a.date)}</div>
+      </div>
+      ${bdg(a.status)}
+    </div>
+  `).join('');
+}
+
+initGroups();
+</script>
+{% endblock %}

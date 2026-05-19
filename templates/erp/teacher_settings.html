@@ -1,0 +1,250 @@
+{% extends "erp/base.html" %}
+{% block title %}Profil — EduERP Pro{% endblock %}
+{% block page_title %}Mening profilim{% endblock %}
+
+{% block extra_head %}
+<style>
+/* ── HERO ─────────────────────────────────────────────────── */
+.ts-hero{background:#0D1B2A;border-radius:18px;padding:26px;position:relative;overflow:hidden;margin-bottom:20px;animation:fadeUp .35s ease both}
+.ts-hero-bg{position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,107,53,.12),rgba(247,147,30,.04) 55%,transparent)}
+.ts-hero-dots{position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.04) 1px,transparent 1px);background-size:22px 22px}
+.ts-hero-glow{position:absolute;top:-60px;right:-40px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(255,107,53,.2),transparent 70%)}
+.ts-hero-glow2{position:absolute;bottom:-80px;left:-50px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(247,147,30,.1),transparent 70%)}
+.ts-hero-inner{position:relative;z-index:1;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.ts-av-wrap{position:relative;flex-shrink:0}
+.ts-av{width:76px;height:76px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:1.65rem;box-shadow:0 5px 24px rgba(255,107,53,.45);border:3px solid rgba(255,107,53,.4);animation:pulseGlow 3s ease infinite;cursor:pointer;transition:opacity .2s}
+.ts-av:hover{opacity:.9}
+.ts-av-edit{position:absolute;bottom:0;right:0;width:22px;height:22px;background:var(--grad);border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid #0D1B2A;cursor:pointer}
+.ts-av-edit i{color:#fff;font-size:.5rem}
+.ts-name{font-size:1.15rem;font-weight:900;color:#fff;letter-spacing:-.4px;line-height:1.2}
+.ts-role{font-size:.73rem;color:rgba(255,255,255,.48);margin-top:3px;display:flex;align-items:center;gap:5px}
+.ts-pills{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap}
+.ts-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 13px;border-radius:20px;font-size:.72rem;font-weight:700}
+.ts-pill-o{background:rgba(255,107,53,.2);color:#ff8c5a;border:1px solid rgba(255,107,53,.25)}
+.ts-pill-b{background:rgba(59,130,246,.18);color:#60a5fa;border:1px solid rgba(59,130,246,.22)}
+.ts-pill-g{background:rgba(16,185,129,.16);color:#34d399;border:1px solid rgba(16,185,129,.2)}
+
+/* ── LAYOUT ───────────────────────────────────────────────── */
+.ts-layout{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:900px){.ts-layout{grid-template-columns:1fr}}
+
+/* ── SECTION CARD ─────────────────────────────────────────── */
+.ts-card{background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;animation:fadeUp .4s ease both}
+.ts-card-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.ts-card-ic{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:.82rem;flex-shrink:0}
+.ts-card-title{font-size:.88rem;font-weight:800;color:var(--text)}
+
+/* ── INFO ROWS ────────────────────────────────────────────── */
+.ts-info-list{padding:4px 0}
+.ts-info-row{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--border);transition:background .15s}
+.ts-info-row:last-child{border-bottom:none}
+.ts-info-row:hover{background:#f8f9fc}
+.ts-info-key{font-size:.75rem;color:var(--muted);font-weight:600;display:flex;align-items:center;gap:7px}
+.ts-info-key i{width:14px;text-align:center;color:var(--accent)}
+.ts-info-val{font-size:.82rem;font-weight:700;color:var(--text);text-align:right;max-width:55%}
+
+/* ── FORM CARD ────────────────────────────────────────────── */
+.ts-form-body{padding:20px}
+
+/* ── DANGER CARD ──────────────────────────────────────────── */
+.ts-danger-card{background:linear-gradient(135deg,#fef2f2,#fff5f5);border:1px solid #fecaca;border-radius:14px;padding:20px;animation:fadeUp .48s ease .14s both}
+.ts-danger-title{font-size:.88rem;font-weight:800;color:#b91c1c;margin-bottom:4px}
+.ts-danger-sub{font-size:.76rem;color:#ef4444;margin-bottom:16px}
+
+/* ── STAT ROW ─────────────────────────────────────────────── */
+.ts-stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+@media(max-width:700px){.ts-stat-row{grid-template-columns:1fr 1fr}}
+.ts-stat-mini{background:#f8f9fc;border:1px solid var(--border);border-radius:11px;padding:14px;text-align:center;transition:all .2s;cursor:default}
+.ts-stat-mini:hover{background:#f0f1f5;transform:translateY(-2px)}
+.ts-stat-mini-v{font-size:1.2rem;font-weight:900;color:var(--text);line-height:1.1;letter-spacing:-.3px}
+.ts-stat-mini-l{font-size:.63rem;color:var(--muted);margin-top:3px;font-weight:600}
+
+/* ── PASS STRENGTH ────────────────────────────────────────── */
+.pass-strength{height:4px;border-radius:100px;margin-top:6px;transition:all .3s;background:#e2e8f0}
+.pass-strength.s1{width:25%;background:#ef4444}
+.pass-strength.s2{width:50%;background:#f59e0b}
+.pass-strength.s3{width:75%;background:#3b82f6}
+.pass-strength.s4{width:100%;background:#10b981}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero -->
+<div class="ts-hero">
+  <div class="ts-hero-bg"></div><div class="ts-hero-dots"></div>
+  <div class="ts-hero-glow"></div><div class="ts-hero-glow2"></div>
+  <div class="ts-hero-inner">
+    <div class="ts-av-wrap">
+      <div class="ts-av" id="tsAv">?</div>
+      <div class="ts-av-edit" title="Rasm o'zgartirish"><i class="fas fa-camera"></i></div>
+    </div>
+    <div style="flex:1;min-width:0">
+      <div class="ts-name" id="tsName">Yuklanmoqda...</div>
+      <div class="ts-role"><i class="fas fa-chalkboard-teacher" style="font-size:.6rem"></i><span id="tsSubject">O'qituvchi</span></div>
+      <div class="ts-pills">
+        <span class="ts-pill ts-pill-o"><i class="fas fa-users" style="font-size:.6rem"></i><span id="tsGrpCnt">0</span> guruh</span>
+        <span class="ts-pill ts-pill-b"><i class="fas fa-user-graduate" style="font-size:.6rem"></i><span id="tsStuCnt">0</span> o'quvchi</span>
+        <span class="ts-pill ts-pill-g" id="tsStatusPill"><i class="fas fa-circle" style="font-size:.45rem"></i> Faol</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Mini stats -->
+<div class="ts-stat-row">
+  <div class="ts-stat-mini" style="animation:fadeUp .38s ease .04s both">
+    <div class="ts-stat-mini-v" id="stGrp">—</div>
+    <div class="ts-stat-mini-l">Guruhlar</div>
+  </div>
+  <div class="ts-stat-mini" style="animation:fadeUp .38s ease .09s both">
+    <div class="ts-stat-mini-v" id="stStu">—</div>
+    <div class="ts-stat-mini-l">O'quvchilar</div>
+  </div>
+  <div class="ts-stat-mini" style="animation:fadeUp .38s ease .14s both">
+    <div class="ts-stat-mini-v" id="stHw">—</div>
+    <div class="ts-stat-mini-l">Faol vazifalar</div>
+  </div>
+</div>
+
+<!-- Main layout -->
+<div class="ts-layout">
+
+  <!-- Left: Personal Info -->
+  <div>
+    <div class="ts-card" style="animation-delay:.1s">
+      <div class="ts-card-head">
+        <div class="ts-card-ic ic-blue"><i class="fas fa-user"></i></div>
+        <span class="ts-card-title">Shaxsiy ma'lumotlar</span>
+      </div>
+      <div class="ts-info-list" id="infoList">
+        <div class="loading" style="padding:32px"><div class="spinner"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: Password + Logout -->
+  <div style="display:flex;flex-direction:column;gap:16px">
+    <div class="ts-card" style="animation-delay:.16s">
+      <div class="ts-card-head">
+        <div class="ts-card-ic ic-amber"><i class="fas fa-lock"></i></div>
+        <span class="ts-card-title">Parolni o'zgartirish</span>
+      </div>
+      <div class="ts-form-body">
+        <div class="fg">
+          <label>Joriy parol</label>
+          <input class="fc" type="password" id="pwOld" placeholder="••••••••" />
+        </div>
+        <div class="fg">
+          <label>Yangi parol</label>
+          <input class="fc" type="password" id="pwNew" placeholder="Kamida 8 ta belgi" oninput="checkStrength(this.value)" />
+          <div class="pass-strength" id="passBar"></div>
+        </div>
+        <div class="fg">
+          <label>Yangi parolni tasdiqlang</label>
+          <input class="fc" type="password" id="pwConf" placeholder="••••••••" />
+        </div>
+        <button class="btn btn-primary w-100" onclick="changePass()">
+          <i class="fas fa-key"></i> Parolni yangilash
+        </button>
+      </div>
+    </div>
+
+    <div class="ts-danger-card">
+      <div class="ts-danger-title"><i class="fas fa-sign-out-alt" style="margin-right:6px"></i>Tizimdan chiqish</div>
+      <div class="ts-danger-sub">Barcha qurilmalardan chiqmoqchimisiz?</div>
+      <button class="btn btn-danger w-100" onclick="doLogout()">
+        <i class="fas fa-right-from-bracket"></i> Chiqish
+      </button>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+async function load(){
+  if(!initAuth()) return;
+  const u=getUser();
+  if(u.role!=='teacher'&&u.role!=='developer'&&u.role!=='admin'){window.location.href='/';return;}
+
+  document.getElementById('tsAv').textContent=initials(u.full_name||'?');
+  document.getElementById('tsName').textContent=u.full_name||'—';
+
+  const [teacherData, groups, students, hw] = await Promise.all([
+    get('/teachers/?search='+encodeURIComponent(u.full_name||'')),
+    get('/groups/?page_size=50'),
+    get('/students/?page_size=200&status=active'),
+    get('/homework/assignments/?page_size=100&status=active'),
+  ]);
+
+  const teacher = (teacherData?.results||teacherData||[]).find(t=>t.full_name===u.full_name) || {};
+  const grps    = groups?.results||groups||[];
+  const stus    = students?.results||students||[];
+  const hws     = hw?.results||hw||[];
+
+  // Subject line
+  if(teacher.subject) document.getElementById('tsSubject').textContent = teacher.subject;
+
+  // Hero pills
+  countUp(document.getElementById('tsGrpCnt'), grps.length, 600);
+  countUp(document.getElementById('tsStuCnt'), stus.length, 700);
+
+  // Mini stats
+  countUp(document.getElementById('stGrp'), grps.length, 800);
+  countUp(document.getElementById('stStu'), stus.length, 900);
+  countUp(document.getElementById('stHw'),  hws.length, 1000);
+
+  // Info rows
+  const rows=[
+    ['fa-user','Ism Familiya', u.full_name||'—'],
+    ['fa-phone','Telefon', teacher.phone||u.phone||'—'],
+    ['fa-envelope','Email', teacher.email||u.email||u.username||'—'],
+    ['fa-book','Fan / Yo\'nalish', teacher.subject||'—'],
+    ['fa-building','Filial', teacher.branch_name||teacher.branch||'—'],
+    ['fa-users','Guruhlar soni', grps.length+' ta'],
+    ['fa-user-graduate','O\'quvchilar', stus.length+' ta'],
+    ['fa-calendar','Qo\'shilgan sana', teacher.created_at?fdate(teacher.created_at):'—'],
+    ['fa-circle','Holat', teacher.is_active===false?'<span class="bdg bdg-inactive">Nofaol</span>':'<span class="bdg bdg-active"><i class="fas fa-circle" style="font-size:.35rem"></i> Faol</span>'],
+  ];
+
+  document.getElementById('infoList').innerHTML=rows.map(([ic,key,val])=>`
+    <div class="ts-info-row">
+      <span class="ts-info-key"><i class="fas ${ic}"></i>${key}</span>
+      <span class="ts-info-val">${val}</span>
+    </div>`).join('');
+}
+
+function checkStrength(v){
+  const bar=document.getElementById('passBar');
+  let s=0;
+  if(v.length>=8) s++;
+  if(/[A-Z]/.test(v)) s++;
+  if(/[0-9]/.test(v)) s++;
+  if(/[^A-Za-z0-9]/.test(v)) s++;
+  bar.className='pass-strength'+(s?' s'+s:'');
+}
+
+async function changePass(){
+  const old=document.getElementById('pwOld').value;
+  const nw =document.getElementById('pwNew').value;
+  const cf =document.getElementById('pwConf').value;
+  if(!old||!nw){toast('Barcha maydonlarni to\'ldiring','wrn');return;}
+  if(nw!==cf){toast('Yangi parollar mos kelmadi','wrn');return;}
+  if(nw.length<8){toast('Parol kamida 8 ta belgi bo\'lishi kerak','wrn');return;}
+  const r=await post('/auth/change-password/',{old_password:old,new_password:nw});
+  if(r?.ok){
+    toast('Parol muvaffaqiyatli yangilandi');
+    document.getElementById('pwOld').value='';
+    document.getElementById('pwNew').value='';
+    document.getElementById('pwConf').value='';
+    document.getElementById('passBar').className='pass-strength';
+  } else {
+    const d=await r?.json().catch(()=>({}));
+    toast(d?.detail||d?.old_password?.[0]||'Xatolik yuz berdi','err');
+  }
+}
+
+load();
+</script>
+{% endblock %}

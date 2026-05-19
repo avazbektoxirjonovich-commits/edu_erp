@@ -1,0 +1,25 @@
+{
+	"folders": [
+		{
+			"name": "classroom_monitor",
+			"path": "../../../../../../classroom_monitor"
+		},
+		{
+			"name": "erp_system",
+			"path": "../../../../../../erp_system"
+		},
+		{
+			"name": "avazbke",
+			"path": "../../../.."
+		},
+		{
+			"name": "erp_system_1",
+			"path": "../../../../../../erp_system_1"
+		},
+		{
+			"name": "erp_system",
+			"path": "../../../../../../erp_system_1/erp_system"
+		}
+	],
+	"settings": {}
+}

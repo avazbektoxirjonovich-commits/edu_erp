@@ -1,0 +1,140 @@
+{% extends "erp/base.html" %}
+{% block title %}Sozlamalar — EduERP Pro{% endblock %}
+{% block page_title %}Sozlamalar{% endblock %}
+
+{% block extra_head %}
+<style>
+.sett-hero{background:#0D1B2A;border-radius:18px;padding:24px;position:relative;overflow:hidden;margin-bottom:16px;animation:fadeUp .35s ease both;display:flex;align-items:center;gap:20px}
+.sett-hero-bg{position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,107,53,.1),transparent 60%)}
+.sett-hero-glow{position:absolute;bottom:-40px;left:-40px;width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,rgba(255,107,53,.15),transparent 70%)}
+.sett-av{width:72px;height:72px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:1.5rem;flex-shrink:0;box-shadow:0 4px 18px rgba(255,107,53,.4);border:3px solid rgba(255,107,53,.4);position:relative;z-index:1}
+.sett-name{font-size:1.1rem;font-weight:900;color:#fff;letter-spacing:-.3px;position:relative;z-index:1}
+.sett-phone{font-size:.75rem;color:rgba(255,255,255,.5);margin-top:3px;position:relative;z-index:1}
+.sett-id{display:inline-flex;align-items:center;gap:4px;background:rgba(255,107,53,.18);border:1px solid rgba(255,107,53,.25);border-radius:20px;padding:3px 10px;font-size:.7rem;font-weight:700;color:#ff8c5a;margin-top:7px;position:relative;z-index:1}
+
+.info-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:.82rem}
+.info-row:last-child{border-bottom:none}
+.info-lbl{color:var(--muted);font-weight:500}
+.info-val{font-weight:600;color:var(--text)}
+
+.fc{display:block;width:100%;border:1.5px solid var(--border);border-radius:9px;padding:10px 13px;font-size:.82rem;outline:none;transition:all .2s;font-family:inherit;background:#fff;color:var(--text)}
+.fc:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(255,107,53,.12)}
+.fg{margin-bottom:12px}
+.fg label{display:block;font-size:.76rem;font-weight:600;color:var(--muted);margin-bottom:5px}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Profile Hero -->
+<div class="sett-hero">
+  <div class="sett-hero-bg"></div><div class="sett-hero-glow"></div>
+  <div class="sett-av" id="settAv">?</div>
+  <div>
+    <div class="sett-name" id="settName">Yuklanmoqda...</div>
+    <div class="sett-phone" id="settPhone">—</div>
+    <div>
+      <span class="sett-id"><i class="fas fa-id-card" style="font-size:.62rem"></i> ID: <span id="settId">—</span></span>
+    </div>
+  </div>
+</div>
+
+<!-- Personal Info Card -->
+<div class="card" style="margin-bottom:14px;animation:fadeUp .4s ease .08s both">
+  <div style="padding:18px 20px">
+    <div style="font-weight:800;font-size:.88rem;margin-bottom:14px;color:var(--text)">Shaxsiy ma'lumotlar</div>
+    <div id="infoRows"><div class="loading"><div class="spinner"></div></div></div>
+  </div>
+</div>
+
+<!-- Password Change Card -->
+<div class="card" style="animation:fadeUp .42s ease .14s both">
+  <div style="padding:18px 20px">
+    <div style="font-weight:800;font-size:.88rem;margin-bottom:16px;color:var(--text)">
+      <i class="fas fa-lock" style="color:var(--accent);margin-right:6px;font-size:.82rem"></i>Parolni o'zgartirish
+    </div>
+    <div class="fg">
+      <label>Joriy parol</label>
+      <input class="fc" type="password" id="oldPwd" placeholder="Joriy parolingiz">
+    </div>
+    <div class="fg">
+      <label>Yangi parol</label>
+      <input class="fc" type="password" id="newPwd" placeholder="Yangi parol (minimal 8 ta belgi)">
+    </div>
+    <div class="fg">
+      <label>Yangi parolni tasdiqlang</label>
+      <input class="fc" type="password" id="cfmPwd" placeholder="Parolni qaytaring">
+    </div>
+    <button class="btn btn-primary" onclick="changePwd()" style="width:100%;margin-top:4px">
+      <i class="fas fa-shield-halved"></i>Parolni yangilash
+    </button>
+  </div>
+</div>
+
+<!-- Logout Card -->
+<div class="card" style="margin-top:14px;animation:fadeUp .45s ease .2s both">
+  <div style="padding:14px 20px;display:flex;align-items:center;justify-content:space-between">
+    <div>
+      <div style="font-size:.84rem;font-weight:700;color:var(--text)">Hisobdan chiqish</div>
+      <div style="font-size:.72rem;color:var(--muted);margin-top:2px">Barcha qurilmalardan chiqish</div>
+    </div>
+    <button class="btn btn-ghost" onclick="doLogout()" style="color:var(--danger);border-color:var(--danger)">
+      <i class="fas fa-right-from-bracket"></i>Chiqish
+    </button>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+async function load(){
+  if(!initAuth())return;
+  const u=getUser();
+  if(u.role&&u.role!=='student'){window.location.href='/';return;}
+
+  const p=await get('/students/me/');
+  if(!p)return;
+
+  document.getElementById('settAv').textContent=initials(p.full_name||'?');
+  document.getElementById('settName').textContent=p.full_name||'—';
+  document.getElementById('settPhone').textContent=p.phone||'—';
+  document.getElementById('settId').textContent=(p.id||'').toString().slice(0,8).toUpperCase();
+
+  const rows=[
+    {lbl:'Ism Familiya',val:p.full_name||'—'},
+    {lbl:'Telefon',val:p.phone||'—'},
+    {lbl:'Guruh',val:p.group_name||p.group_data?.name||'—'},
+    {lbl:'Qo\'shilgan sana',val:p.joined_date?fdate(p.joined_date):'—'},
+    {lbl:'Ota-ona ismi',val:p.parent_name||'—'},
+    {lbl:'Ota-ona telefoni',val:p.parent_phone||'—'},
+    {lbl:'Holat',val:p.status==='active'?'<span class="bdg bdg-active"><i class="fas fa-circle" style="font-size:.35rem"></i> Faol</span>':'<span class="bdg bdg-inactive">Nofaol</span>'},
+    {lbl:'Daraja',val:`<span class="bdg bdg-paid"><i class="fas fa-star" style="font-size:.62rem"></i> Bosqich ${p.level||1}</span>`},
+    {lbl:'XP',val:`<span style="font-weight:700;color:var(--accent)">${(p.xp_points||0).toLocaleString('uz-UZ')} XP</span>`},
+    {lbl:'Kumushlar',val:`<span style="font-weight:700;color:#8b5cf6"><i class="fas fa-gem" style="font-size:.68rem;margin-right:3px"></i>${(p.coins||0).toLocaleString('uz-UZ')}</span>`},
+  ];
+
+  document.getElementById('infoRows').innerHTML=rows.map(r=>`
+    <div class="info-row">
+      <span class="info-lbl">${r.lbl}</span>
+      <span class="info-val">${r.val}</span>
+    </div>`).join('');
+}
+
+async function changePwd(){
+  const oldP=document.getElementById('oldPwd').value;
+  const newP=document.getElementById('newPwd').value;
+  const cfm=document.getElementById('cfmPwd').value;
+  if(!oldP||!newP){toast("Barcha maydonlarni to'ldiring",'wrn');return;}
+  if(newP!==cfm){toast("Yangi parollar mos kelmadi",'wrn');return;}
+  if(newP.length<8){toast("Parol kamida 8 ta belgi bo'lishi kerak",'wrn');return;}
+  const r=await post('/auth/change-password/',{old_password:oldP,new_password:newP});
+  if(r?.ok){
+    toast("Parol muvaffaqiyatli yangilandi",'ok');
+    ['oldPwd','newPwd','cfmPwd'].forEach(id=>document.getElementById(id).value='');
+  } else {
+    const e=await r?.json();toast(e?.detail||e?.old_password?.[0]||"Xatolik",'err');
+  }
+}
+
+load();
+</script>
+{% endblock %}

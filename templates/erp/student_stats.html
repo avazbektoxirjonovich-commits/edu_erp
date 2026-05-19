@@ -1,0 +1,128 @@
+{% extends "erp/base.html" %}
+{% block title %}Ko'rsatgichlarim — EduERP Pro{% endblock %}
+{% block page_title %}Ko'rsatgichlarim{% endblock %}
+
+{% block extra_head %}
+<style>
+.stat-hero{background:#0D1B2A;border-radius:16px;padding:20px 22px;position:relative;overflow:hidden;margin-bottom:14px;animation:fadeUp .35s ease both}
+.stat-hero-bg{position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,107,53,.11),transparent 60%)}
+.stat-hero-glow{position:absolute;top:-40px;right:-40px;width:150px;height:150px;border-radius:50%;background:radial-gradient(circle,rgba(255,107,53,.18),transparent 70%)}
+.xp-prog-track{background:rgba(255,255,255,.1);border-radius:100px;height:8px;overflow:hidden}
+.xp-prog-fill{height:100%;border-radius:100px;background:var(--grad);width:0%;transition:width 1.3s ease;box-shadow:0 0 10px rgba(255,107,53,.5)}
+
+.cat-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--border);animation:fadeUp .35s ease both}
+.cat-row:last-child{border-bottom:none}
+.cat-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:.82rem;flex-shrink:0}
+.cat-badge{display:flex;align-items:center;gap:6px;padding:4px 0;border:none;background:none;cursor:pointer;color:var(--muted);font-size:.85rem;transition:color .15s}
+.cat-badge:hover{color:var(--accent)}
+
+.total-row{display:flex;align-items:center;gap:7px;font-size:.84rem;font-weight:700;margin-bottom:5px}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;animation:fadeUp .33s ease both">
+  <div>
+    <h2 style="font-size:1.05rem;font-weight:800;color:var(--text)">Mening natijalarim</h2>
+    <p style="font-size:.73rem;color:var(--muted);margin-top:3px">XP va Kumush hisobi</p>
+  </div>
+  <div style="display:flex;align-items:center;gap:6px;font-size:.9rem;font-weight:700;color:var(--text)">
+    <i class="fas fa-gem" style="color:#8b5cf6;font-size:.82rem"></i> Kumushlar: <span id="coinsTop">—</span>
+  </div>
+</div>
+
+<!-- XP Hero Card -->
+<div class="stat-hero">
+  <div class="stat-hero-bg"></div><div class="stat-hero-glow"></div>
+  <div style="position:relative;z-index:1">
+    <div style="display:flex;align-items:center;gap:7px;margin-bottom:10px">
+      <i class="fas fa-arrow-trend-up" style="color:#4ade80"></i>
+      <span style="font-weight:700;font-size:.88rem;color:#fff">Bosqich: <span id="shLevel">—</span></span>
+    </div>
+    <span id="xpBadge" style="background:#16a34a;color:#fff;padding:3px 14px;border-radius:20px;font-size:.79rem;font-weight:700;display:inline-block;margin-bottom:10px">— / —</span>
+    <div class="xp-prog-track" style="margin-bottom:10px">
+      <div class="xp-prog-fill" id="xpFill"></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;font-size:.84rem;font-weight:600;color:rgba(255,255,255,.8)">
+      <i class="fas fa-globe" style="color:#4ade80;font-size:.78rem"></i> XP: <span id="shXP">—</span>
+    </div>
+  </div>
+</div>
+
+<!-- Category breakdown -->
+<div class="card" style="animation:fadeUp .4s ease .1s both">
+  <div style="padding:18px 20px">
+    <div style="font-weight:800;font-size:.88rem;margin-bottom:14px;color:var(--text)">Yig'ilgan natijalar monitoringi</div>
+    <div id="catList"><div class="loading"><div class="spinner"></div></div></div>
+    <div style="border-top:2px solid var(--border);margin-top:14px;padding-top:12px">
+      <div class="total-row">
+        <i class="fas fa-globe" style="color:#16a34a;font-size:.78rem"></i>
+        Jami yig'ilgan XP: <span id="totalXP" style="color:#16a34a">—</span>
+      </div>
+      <div class="total-row">
+        <i class="fas fa-gem" style="color:#8b5cf6;font-size:.78rem"></i>
+        Jami yig'ilgan Kumushlar: <span id="totalCoins" style="color:#8b5cf6">—</span>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+async function load(){
+  if(!initAuth())return;
+  const u=getUser();
+  if(u.role&&u.role!=='student'){window.location.href='/';return;}
+
+  const [profile,att,hw]=await Promise.all([
+    get('/students/me/'),
+    get('/attendance/my/?page_size=200'),
+    get('/homework/my/?page_size=200'),
+  ]);
+
+  if(!profile)return;
+
+  // Coins & XP
+  const totalCoins=profile.coins||0, xp=profile.xp_points||0, toNext=profile.xp_to_next_level||500;
+  document.getElementById('coinsTop').textContent=totalCoins.toLocaleString('uz-UZ');
+  document.getElementById('totalCoins').textContent=totalCoins.toLocaleString('uz-UZ');
+  document.getElementById('totalXP').textContent=xp.toLocaleString('uz-UZ');
+  document.getElementById('shLevel').textContent=profile.level||1;
+  document.getElementById('shXP').textContent=xp.toLocaleString('uz-UZ');
+  document.getElementById('xpBadge').textContent=`${xp} / ${xp+toNext}`;
+  const pct=xp+toNext>0?Math.round(xp/(xp+toNext)*100):0;
+  setTimeout(()=>{document.getElementById('xpFill').style.width=pct+'%';},200);
+
+  // Category data
+  const attItems=att?.results||att||[];
+  const hwItems=hw?.results||hw||[];
+  const attPresent=attItems.filter(a=>a.status==='present').length;
+  const attLate=attItems.filter(a=>a.status==='late').length;
+  const attXP=(attPresent*10)+(attLate*5);
+  const attCoins=(attPresent*50)+(attLate*25);
+  const hwDone=hwItems.filter(h=>h.my_submission&&h.my_submission.score>0);
+  const hwXP=hwDone.reduce((s,h)=>s+(h.my_submission?.score||0),0);
+  const hwCoins=hwXP*4;
+
+  const cats=[
+    {ic:'fa-calendar-check',bg:'ic-blue',label:"Darsga ishtirok bo'yicha",xp:attXP,coins:attCoins},
+    {ic:'fa-book-open',bg:'ic-orange',label:"Uyga vazifa bo'yicha",xp:hwXP,coins:hwCoins},
+    {ic:'fa-file-alt',bg:'ic-amber',label:"Imtihondan o'tish bo'yicha",xp:0,coins:0},
+    {ic:'fa-shield-alt',bg:'ic-green',label:"Administratsiya tomonidan berilgan",xp:0,coins:totalCoins-attCoins-hwCoins>0?totalCoins-attCoins-hwCoins:0},
+  ];
+
+  document.getElementById('catList').innerHTML=cats.map((c,i)=>`
+    <div class="cat-row" style="animation-delay:${i*0.05}s">
+      <div style="display:flex;align-items:center;gap:10px;flex:1">
+        <div class="cat-icon ${c.bg}"><i class="fas ${c.ic}"></i></div>
+        <span style="font-size:.81rem;color:var(--text)">${c.label} jami XP ${c.xp.toLocaleString('uz-UZ')}, Jami Kumush ${c.coins.toLocaleString('uz-UZ')}</span>
+      </div>
+      <i class="fas fa-arrow-right-to-bracket" style="color:var(--muted);font-size:.85rem;margin-left:8px"></i>
+    </div>`).join('');
+}
+
+load();
+</script>
+{% endblock %}

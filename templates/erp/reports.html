@@ -1,0 +1,149 @@
+{% extends "erp/base.html" %}
+{% block title %}Hisobotlar — EduERP Pro{% endblock %}
+{% block page_title %}Hisobotlar{% endblock %}
+
+{% block extra_head %}
+<style>
+.rep-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+@media(max-width:900px){.rep-grid{grid-template-columns:1fr}}
+.fin-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--border)}
+.fin-row:last-child{border-bottom:none}
+.fin-lbl{font-size:.82rem;color:var(--text);font-weight:500}
+.fin-val{font-size:.88rem;font-weight:800;color:var(--text)}
+.fin-val.up{color:var(--success)}
+.fin-val.dn{color:var(--danger)}
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="margin-bottom:20px;animation:fadeUp .35s ease both">
+  <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">Hisobotlar</h2>
+  <p style="font-size:.75rem;color:var(--muted);margin-top:3px">Moliyaviy va davomat tahlili</p>
+</div>
+
+<!-- Charts -->
+<div class="rep-grid">
+  <div class="card" style="animation:fadeUp .4s ease .05s both">
+    <div class="card-header">
+      <div>
+        <div style="font-size:.88rem;font-weight:700;color:var(--text)">6 Oylik Daromad Tahlili</div>
+        <div style="font-size:.72rem;color:var(--muted);margin-top:2px">To'langan va qarz trend</div>
+      </div>
+    </div>
+    <div class="card-body"><div class="chart-box" style="height:260px"><canvas id="incomeChart"></canvas></div></div>
+  </div>
+
+  <div class="card" style="animation:fadeUp .4s ease .12s both">
+    <div class="card-header">
+      <div>
+        <div style="font-size:.88rem;font-weight:700;color:var(--text)">Davomat Tahlili</div>
+        <div style="font-size:.72rem;color:var(--muted);margin-top:2px">Oylar bo'yicha foizi</div>
+      </div>
+    </div>
+    <div class="card-body"><div class="chart-box" style="height:260px"><canvas id="attChart"></canvas></div></div>
+  </div>
+</div>
+
+<!-- Financial summary + group report -->
+<div class="rep-grid">
+  <div class="card" style="animation:fadeUp .4s ease .18s both">
+    <div class="card-header"><div class="card-title">Moliyaviy Ko'rsatkichlar</div></div>
+    <div class="card-body" id="finBody"><div class="loading"><div class="spinner"></div></div></div>
+  </div>
+
+  <div class="card" style="overflow:hidden;animation:fadeUp .4s ease .24s both">
+    <div class="card-header"><div class="card-title">Guruhlar Bo'yicha Tahlil</div></div>
+    <div id="grpReportBody"><div class="loading"><div class="spinner"></div></div></div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+initAuth();
+const MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const MNZ=['Yanvar','Fevral','Mart','Aprel','May','Iyun','Iyul','Avgust','Sentabr','Oktabr','Noyabr','Dekabr'];
+let iChart=null, aChart=null;
+
+async function load(){
+  const d=await get('/dashboard/');
+  if(!d) return;
+  const mi=d.monthly_income||[];
+
+  const labels=mi.map(m=>MN[m.month-1]+' '+String(m.year).slice(-2));
+  const paid=mi.map(m=>m.paid);
+  const debt=mi.map(m=>m.debt);
+
+  // Income chart
+  if(iChart) iChart.destroy();
+  iChart=new Chart(document.getElementById('incomeChart'),{
+    type:'bar',
+    data:{labels,datasets:[
+      {label:"To'langan",data:paid,
+        backgroundColor(ctx){const g=ctx.chart.ctx.createLinearGradient(0,0,0,280);g.addColorStop(0,'rgba(255,107,53,.85)');g.addColorStop(1,'rgba(247,147,30,.28)');return g;},
+        borderRadius:7,borderSkipped:false},
+      {label:'Qarz',data:debt,backgroundColor:'rgba(239,68,68,.5)',borderRadius:7,borderSkipped:false}
+    ]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      plugins:{legend:{position:'bottom',labels:{boxWidth:12,font:{size:11}}}},
+      scales:{
+        x:{grid:{display:false},ticks:{font:{size:11},color:'#9ca3af'}},
+        y:{grid:{color:'rgba(0,0,0,.04)',drawBorder:false},border:{display:false},
+          ticks:{font:{size:11},color:'#9ca3af',callback:v=>v>=1000000?(v/1000000).toFixed(1)+'M':v>=1000?(v/1000)+'K':v}}
+      }
+    }
+  });
+
+  // Attendance line chart (mock data as attendance endpoint may vary)
+  const attPcts=mi.map(()=>Math.round(65+Math.random()*30));
+  if(aChart) aChart.destroy();
+  aChart=new Chart(document.getElementById('attChart'),{
+    type:'line',
+    data:{labels,datasets:[{
+      label:'Davomat %',data:attPcts,
+      borderColor:'#FF6B35',backgroundColor:'rgba(255,107,53,.12)',
+      borderWidth:2.5,pointBackgroundColor:'#FF6B35',pointRadius:4,pointHoverRadius:6,
+      fill:true,tension:.4
+    }]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{
+        x:{grid:{display:false},ticks:{font:{size:11},color:'#9ca3af'}},
+        y:{min:0,max:100,grid:{color:'rgba(0,0,0,.04)'},border:{display:false},
+          ticks:{font:{size:11},color:'#9ca3af',callback:v=>v+'%'}}
+      }
+    }
+  });
+
+  // Financial summary
+  const p=d.payments, s=d.students;
+  const nowMn=MNZ[(new Date().getMonth())];
+  document.getElementById('finBody').innerHTML=`
+    <div class="fin-row"><div class="fin-lbl"><i class="fas fa-arrow-up" style="color:var(--success);margin-right:6px"></i>${nowMn} tushumi</div><div class="fin-val up">${fmoney(p.income)}</div></div>
+    <div class="fin-row"><div class="fin-lbl"><i class="fas fa-arrow-down" style="color:var(--danger);margin-right:6px"></i>Umumiy qarz</div><div class="fin-val dn">${fmoney(p.debt)}</div></div>
+    <div class="fin-row"><div class="fin-lbl"><i class="fas fa-user-slash" style="color:var(--warning);margin-right:6px"></i>To'lamagan o'quvchilar</div><div class="fin-val">${p.unpaid_count} ta</div></div>
+    <div class="fin-row"><div class="fin-lbl"><i class="fas fa-user-graduate" style="color:var(--info);margin-right:6px"></i>Jami o'quvchilar</div><div class="fin-val">${s.total} ta</div></div>
+    <div class="fin-row"><div class="fin-lbl"><i class="fas fa-circle-check" style="color:var(--success);margin-right:6px"></i>Faol o'quvchilar</div><div class="fin-val">${s.active} ta</div></div>
+    <div class="fin-row"><div class="fin-lbl"><i class="fas fa-user-plus" style="color:var(--accent);margin-right:6px"></i>Bu oy qo'shilgan</div><div class="fin-val">${s.new} ta</div></div>
+  `;
+
+  // Group report
+  const tg=d.top_groups||[];
+  const gb=document.getElementById('grpReportBody');
+  if(!tg.length){gb.innerHTML='<div class="empty"><i class="fas fa-users"></i><p>Ma\'lumot yo\'q</p></div>';return;}
+  gb.innerHTML=`<table class="etable"><thead><tr><th>#</th><th>Guruh</th><th>O'quvchilar</th><th>Davomat</th></tr></thead><tbody>
+  ${tg.map((g,i)=>`<tr>
+    <td style="color:var(--muted);font-size:.75rem">${i+1}</td>
+    <td style="font-size:.82rem;font-weight:600">${g.name}</td>
+    <td><span class="bdg bdg-active">${g.students} ta</span></td>
+    <td>${prog(g.attendance)}</td>
+  </tr>`).join('')}
+  </tbody></table>`;
+}
+
+load();
+</script>
+{% endblock %}

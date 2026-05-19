@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kirish — EduERP Pro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideRight{from{opacity:0;transform:translateX(-28px)}to{opacity:1;transform:translateX(0)}}
+@keyframes slideUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+@keyframes floatSlow{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-10px) rotate(3deg)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:.5;transform:scale(1)}50%{opacity:1;transform:scale(1.08)}}
+
+/* LAYOUT */
+.wrap{display:grid;grid-template-columns:1fr 1fr;min-height:100vh}
+@media(max-width:900px){.wrap{grid-template-columns:1fr}.left-panel{display:none}}
+
+/* LEFT */
+.left-panel{
+  background:linear-gradient(145deg,#09131e 0%,#0f2340 55%,#15214a 100%);
+  display:flex;flex-direction:column;justify-content:center;align-items:flex-start;
+  padding:60px 52px;position:relative;overflow:hidden;
+}
+.grid-bg{position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.04) 1px,transparent 1px);background-size:30px 30px}
+.bg-circle{position:absolute;border-radius:50%}
+.c1{width:340px;height:340px;top:-80px;right:-80px;background:radial-gradient(circle,rgba(255,107,53,.14),transparent 70%);animation:float 8s ease-in-out infinite}
+.c2{width:220px;height:220px;bottom:-40px;right:80px;background:radial-gradient(circle,rgba(247,147,30,.1),transparent 70%);animation:float 10s ease-in-out infinite;animation-delay:-4s}
+.c3{width:130px;height:130px;top:180px;left:-40px;background:radial-gradient(circle,rgba(255,107,53,.08),transparent 70%);animation:floatSlow 6s ease-in-out infinite;animation-delay:-2s}
+.glow-line{position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent 0%,#FF6B35 40%,#F7931E 60%,transparent 100%);opacity:.5}
+
+.lp-inner{position:relative;z-index:1;width:100%}
+.lp-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.11);
+  color:rgba(255,255,255,.68);padding:7px 16px;border-radius:100px;
+  font-size:.74rem;font-weight:500;margin-bottom:34px;backdrop-filter:blur(8px);
+  animation:slideRight .55s ease .1s both;
+}
+.lp-dot{width:7px;height:7px;border-radius:50%;background:#10b981;animation:pulse 2s infinite}
+.lp-headline{
+  font-size:2.5rem;font-weight:900;line-height:1.2;letter-spacing:-.7px;
+  color:#fff;margin-bottom:18px;animation:slideRight .55s ease .25s both;
+}
+.lp-headline .accent{
+  background:linear-gradient(135deg,#FF6B35,#F7931E);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.lp-sub{
+  font-size:.92rem;color:rgba(255,255,255,.5);line-height:1.7;
+  max-width:380px;margin-bottom:44px;animation:slideRight .55s ease .4s both;
+}
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;max-width:420px;animation:slideRight .55s ease .55s both}
+.feat{
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);
+  border-radius:14px;padding:17px 15px;transition:all .25s;cursor:default;
+}
+.feat:hover{background:rgba(255,255,255,.1);transform:translateY(-2px);border-color:rgba(255,107,53,.3)}
+.feat-icon{
+  width:36px;height:36px;border-radius:9px;margin-bottom:11px;
+  background:linear-gradient(135deg,rgba(255,107,53,.2),rgba(247,147,30,.1));
+  display:flex;align-items:center;justify-content:center;
+}
+.feat-icon i{color:#FF6B35;font-size:.85rem}
+.feat-name{font-size:.8rem;font-weight:700;color:#fff;margin-bottom:3px}
+.feat-desc{font-size:.7rem;color:rgba(255,255,255,.42);line-height:1.55}
+
+/* RIGHT */
+.right-panel{
+  background:#f5f6fa;display:flex;align-items:center;justify-content:center;padding:40px 24px;
+}
+.login-box{width:100%;max-width:400px;animation:fadeUp .55s ease .1s both}
+
+.l-logo{display:flex;flex-direction:column;align-items:center;margin-bottom:34px}
+.l-logo-icon{
+  width:66px;height:66px;border-radius:18px;
+  background:linear-gradient(135deg,#FF6B35,#F7931E);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 10px 28px rgba(255,107,53,.4);margin-bottom:14px;
+  animation:fadeIn .5s ease .3s both;
+}
+.l-logo-icon i{color:#fff;font-size:1.7rem}
+.l-brand{font-size:1.32rem;font-weight:900;color:#0D1B2A;letter-spacing:-.4px}
+.l-brand span{background:linear-gradient(135deg,#FF6B35,#F7931E);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.l-tag{font-size:.76rem;color:#9ca3af;margin-top:4px}
+
+.l-card{
+  background:#fff;border-radius:20px;padding:30px;
+  box-shadow:0 4px 28px rgba(13,27,42,.08),0 0 1px rgba(13,27,42,.05);
+  border:1px solid #edf0f7;
+}
+.l-card h3{font-size:1.1rem;font-weight:800;color:#0D1B2A;margin-bottom:5px}
+.l-card .hint{font-size:.76rem;color:#9ca3af;margin-bottom:26px}
+
+.fg{margin-bottom:17px}
+.fg label{display:block;font-size:.74rem;font-weight:600;color:#374151;margin-bottom:6px}
+.iw{position:relative}
+.iw .pre{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:#b0b7c3;font-size:.82rem;pointer-events:none;transition:color .2s}
+.fi{
+  width:100%;padding:11px 13px 11px 40px;
+  border:1.5px solid #e5e9f0;border-radius:11px;
+  font-size:.84rem;color:#1a202c;font-family:'Inter',sans-serif;
+  transition:all .2s;outline:none;background:#fff;
+}
+.fi:focus{border-color:#FF6B35;box-shadow:0 0 0 3px rgba(255,107,53,.12)}
+.iw:focus-within .pre{color:#FF6B35}
+.eye-btn{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#b0b7c3;font-size:.82rem;padding:4px;transition:color .2s}
+.eye-btn:hover{color:#FF6B35}
+
+.err-box{
+  background:#fef2f2;border:1.5px solid #fecaca;color:#b91c1c;
+  border-radius:10px;padding:10px 14px;font-size:.77rem;
+  display:flex;align-items:center;gap:8px;margin-bottom:16px;
+  animation:fadeUp .3s ease;
+}
+
+.btn-login{
+  width:100%;padding:13px;background:linear-gradient(135deg,#FF6B35,#F7931E);
+  color:#fff;border:none;border-radius:11px;font-size:.87rem;font-weight:700;
+  cursor:pointer;transition:all .25s;font-family:'Inter',sans-serif;
+  box-shadow:0 4px 18px rgba(255,107,53,.36);letter-spacing:.02em;
+  display:flex;align-items:center;justify-content:center;gap:8px;margin-top:4px;
+}
+.btn-login:hover{box-shadow:0 8px 26px rgba(255,107,53,.48);transform:translateY(-1px)}
+.btn-login:active{transform:translateY(0)}
+.btn-login:disabled{opacity:.65;cursor:not-allowed;transform:none;box-shadow:0 4px 18px rgba(255,107,53,.2)}
+
+.l-footer{text-align:center;margin-top:20px;font-size:.72rem;color:#b0b7c3;line-height:1.65}
+.l-footer strong{color:#FF6B35}
+
+.spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- LEFT HERO PANEL -->
+  <div class="left-panel">
+    <div class="grid-bg"></div>
+    <div class="bg-circle c1"></div>
+    <div class="bg-circle c2"></div>
+    <div class="bg-circle c3"></div>
+    <div class="glow-line"></div>
+
+    <div class="lp-inner">
+      <div class="lp-badge">
+        <span class="lp-dot"></span>
+        Tizim barqaror ishlamoqda
+      </div>
+
+      <div class="lp-headline">
+        Ta'lim markazini<br>
+        <span class="accent">qulay boshqaring</span>
+      </div>
+
+      <p class="lp-sub">
+        O'quvchilar, jadvallar va to'lovlarni bitta tizimda ishonch bilan nazorat qiling.
+        Barchasi sizning qulayligingiz uchun.
+      </p>
+
+      <div class="feat-grid">
+        <div class="feat">
+          <div class="feat-icon"><i class="fas fa-shield-halved"></i></div>
+          <div class="feat-name">Xavfsiz Tizim</div>
+          <div class="feat-desc">Ma'lumotlaringiz xalqaro standartlar asosida himoyalangan</div>
+        </div>
+        <div class="feat">
+          <div class="feat-icon"><i class="fas fa-gear"></i></div>
+          <div class="feat-name">Avtomatlashtirilgan</div>
+          <div class="feat-desc">Hisobotlar va to'lovlar avtomatik shakllanadi</div>
+        </div>
+        <div class="feat">
+          <div class="feat-icon"><i class="fas fa-chart-line"></i></div>
+          <div class="feat-name">Real-vaqt Tahlil</div>
+          <div class="feat-desc">Dashboard orqali har bir ko'rsatkichni kuzating</div>
+        </div>
+        <div class="feat">
+          <div class="feat-icon"><i class="fas fa-trophy"></i></div>
+          <div class="feat-name">Gamifikatsiya</div>
+          <div class="feat-desc">XP va coins bilan o'quvchilarni rag'batlantiring</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT FORM -->
+  <div class="right-panel">
+    <div class="login-box">
+      <div class="l-logo">
+        <div class="l-logo-icon"><i class="fas fa-graduation-cap"></i></div>
+        <div class="l-brand">Edu<span>ERP</span></div>
+        <div class="l-tag">Ta'lim markazi boshqaruv tizimi</div>
+      </div>
+
+      <div class="l-card">
+        <h3>Kirish</h3>
+        <p class="hint">Hisobingizga kiring davom etish uchun</p>
+
+        <div id="errBox" class="err-box" style="display:none">
+          <i class="fas fa-exclamation-circle"></i>
+          <span id="errMsg"></span>
+        </div>
+
+        <form id="loginForm" onsubmit="doLogin(event)">
+          <div class="fg">
+            <label>Telefon raqam</label>
+            <div class="iw">
+              <i class="fas fa-phone pre"></i>
+              <input type="text" id="phone" class="fi" placeholder="+998901234567" autocomplete="username" required>
+            </div>
+          </div>
+
+          <div class="fg">
+            <label>Parol</label>
+            <div class="iw">
+              <i class="fas fa-lock pre"></i>
+              <input type="password" id="password" class="fi" placeholder="Parolingizni kiriting" autocomplete="current-password" required>
+              <button type="button" class="eye-btn" onclick="togglePwd()" id="eyeBtn">
+                <i class="fas fa-eye" id="eyeIcon"></i>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-login" id="loginBtn">
+            <span id="btnText">Kirish</span>
+          </button>
+        </form>
+
+        <div class="l-footer">
+          Login yoki parolingizni unutgan bo'lsangiz,<br>
+          <strong>adminga murojaat qiling</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<script>
+const API='/api/v1';
+
+// Already logged in → redirect
+(function(){
+  const t=localStorage.getItem('erp_access');
+  if(!t) return;
+  const u=JSON.parse(localStorage.getItem('erp_user')||'{}');
+  window.location.href=(u.role==='student')?'/student/':'/';
+})();
+
+function togglePwd(){
+  const i=document.getElementById('password');
+  const ico=document.getElementById('eyeIcon');
+  if(i.type==='password'){i.type='text';ico.className='fas fa-eye-slash';}
+  else{i.type='password';ico.className='fas fa-eye';}
+}
+
+function showErr(msg){
+  const b=document.getElementById('errBox');
+  document.getElementById('errMsg').textContent=msg;
+  b.style.display='flex';
+}
+function hideErr(){document.getElementById('errBox').style.display='none'}
+
+async function doLogin(e){
+  e.preventDefault();
+  hideErr();
+  const btn=document.getElementById('loginBtn');
+  const txt=document.getElementById('btnText');
+  const phone=document.getElementById('phone').value.trim();
+  const password=document.getElementById('password').value;
+
+  btn.disabled=true;
+  txt.innerHTML='<div class="spinner"></div>';
+
+  try{
+    const res=await fetch(`${API}/auth/login/`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({phone,password})
+    });
+    const data=await res.json();
+    if(res.ok){
+      localStorage.setItem('erp_access',data.access||'');
+      localStorage.setItem('erp_refresh',data.refresh||'');
+      localStorage.setItem('erp_user',JSON.stringify(data.user||{}));
+      const role=data.user?.role;
+      if(role==='student') window.location.href='/student/';
+      else if(role==='teacher') window.location.href='/teacher/';
+      else window.location.href='/';
+    } else {
+      showErr(data.detail||data.message||"Telefon yoki parol noto'g'ri");
+      btn.disabled=false;
+      txt.textContent='Kirish';
+    }
+  } catch{
+    showErr("Server bilan bog'lanishda xatolik. Qayta urinib ko'ring.");
+    btn.disabled=false;
+    txt.textContent='Kirish';
+  }
+}
+
+// Stagger feature card animations
+document.querySelectorAll('.feat').forEach((el,i)=>{
+  el.style.cssText=`animation:slideUp .5s ease ${.55+i*.1}s both;opacity:0`;
+});
+</script>
+</body>
+</html>

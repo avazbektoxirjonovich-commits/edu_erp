@@ -1,0 +1,90 @@
+{% extends "erp/base.html" %}
+{% block title %}To'lovlarim — EduERP Pro{% endblock %}
+{% block page_title %}To'lovlarim{% endblock %}
+
+{% block extra_head %}
+<style>
+.pay-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+@media(max-width:700px){.pay-summary{grid-template-columns:1fr}}
+.ps-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);animation:fadeUp .38s ease both;transition:all .2s}
+.ps-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.ps-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:.9rem;margin-bottom:10px}
+.ps-val{font-size:1.25rem;font-weight:900;color:var(--text);letter-spacing:-.4px;line-height:1}
+.ps-lbl{font-size:.68rem;color:var(--muted);margin-top:3px}
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="margin-bottom:20px;animation:fadeUp .35s ease both">
+  <h2 style="font-size:1.05rem;font-weight:800;color:var(--text)">To'lovlarim</h2>
+  <p style="font-size:.73rem;color:var(--muted);margin-top:3px">Oylik to'lovlar tarixi</p>
+</div>
+
+<!-- Summary cards -->
+<div class="pay-summary">
+  <div class="ps-card" style="animation-delay:.04s">
+    <div class="ps-icon ic-green"><i class="fas fa-check-circle"></i></div>
+    <div class="ps-val" id="psTotalPaid">—</div>
+    <div class="ps-lbl">Jami to'langan</div>
+  </div>
+  <div class="ps-card" style="animation-delay:.09s">
+    <div class="ps-icon ic-red"><i class="fas fa-exclamation-circle"></i></div>
+    <div class="ps-val" id="psTotalDebt">—</div>
+    <div class="ps-lbl">Umumiy qarz</div>
+  </div>
+  <div class="ps-card" style="animation-delay:.14s">
+    <div class="ps-icon ic-blue"><i class="fas fa-receipt"></i></div>
+    <div class="ps-val" id="psMonths">—</div>
+    <div class="ps-lbl">Jami oylar</div>
+  </div>
+</div>
+
+<!-- Payment list -->
+<div class="card" style="animation:fadeUp .4s ease .18s both;overflow:hidden">
+  <div id="tbl"><div class="loading"><div class="spinner"></div></div></div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const MNS=['Yanvar','Fevral','Mart','Aprel','May','Iyun','Iyul','Avgust','Sentabr','Oktabr','Noyabr','Dekabr'];
+
+async function load(){
+  if(!initAuth())return;
+  const u=getUser();
+  if(u.role&&u.role!=='student'){window.location.href='/';return;}
+
+  const d=await get('/payments/my/?page_size=36');
+  const items=d?.results||d||[];
+
+  // Summary
+  const totalPaid=items.reduce((s,p)=>s+(p.paid_amount||0),0);
+  const totalDebt=items.reduce((s,p)=>s+(p.debt_amount||0),0);
+  document.getElementById('psTotalPaid').textContent=fmoney(totalPaid);
+  document.getElementById('psTotalDebt').textContent=totalDebt>0?fmoney(totalDebt):'0';
+  document.getElementById('psMonths').textContent=items.length+' ta';
+
+  if(!items.length){
+    document.getElementById('tbl').innerHTML='<div class="empty"><i class="fas fa-receipt"></i><p>To\'lov yozuvi topilmadi</p></div>';
+    return;
+  }
+
+  document.getElementById('tbl').innerHTML=`<table class="etable"><thead><tr>
+    <th>#</th><th>Oy / Yil</th><th>Jami summa</th><th>To'langan</th><th>Qarz</th><th>Holat</th>
+  </tr></thead><tbody>
+  ${items.map((p,i)=>`<tr>
+    <td style="color:var(--muted);font-size:.75rem">${i+1}</td>
+    <td style="font-size:.82rem;font-weight:600">${MNS[(p.month||1)-1]} ${p.year}</td>
+    <td style="font-size:.82rem">${fmoney(p.amount||p.total_amount||0)}</td>
+    <td style="font-size:.82rem;color:var(--success);font-weight:600">${fmoney(p.paid_amount||0)}</td>
+    <td style="font-size:.82rem;font-weight:600;color:${(p.debt_amount||0)>0?'var(--danger)':'var(--muted)'}">
+      ${(p.debt_amount||0)>0?fmoney(p.debt_amount):'—'}
+    </td>
+    <td>${bdg(p.status)}</td>
+  </tr>`).join('')}
+  </tbody></table>`;
+}
+
+load();
+</script>
+{% endblock %}

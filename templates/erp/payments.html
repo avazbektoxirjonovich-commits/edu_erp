@@ -1,0 +1,198 @@
+{% extends "erp/base.html" %}
+{% block title %}To'lovlar — EduERP Pro{% endblock %}
+{% block page_title %}To'lovlar{% endblock %}
+
+{% block extra_head %}
+<style>
+.pay-kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
+@media(max-width:800px){.pay-kpi{grid-template-columns:1fr}}
+.kpi{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;transition:all .2s}
+.kpi:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.kpi-icon{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.kpi-val{font-size:1.3rem;font-weight:900;color:var(--text);letter-spacing:-.5px;line-height:1}
+.kpi-lbl{font-size:.7rem;color:var(--muted);margin-top:2px}
+
+.pay-status-ok{color:var(--success)}
+.pay-status-partial{color:var(--warning)}
+.pay-status-bad{color:var(--danger)}
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;animation:fadeUp .35s ease both">
+  <div>
+    <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">To'lovlar</h2>
+    <p style="font-size:.75rem;color:var(--muted);margin-top:3px">Oylik to'lovlarni boshqarish</p>
+  </div>
+  <button class="btn btn-primary admin-only" onclick="openM('payModal')"><i class="fas fa-plus"></i>To'lov qabul</button>
+</div>
+
+<!-- KPI -->
+<div class="pay-kpi">
+  <div class="kpi" style="animation:fadeUp .4s ease .04s both">
+    <div class="kpi-icon ic-green"><i class="fas fa-check-circle"></i></div>
+    <div><div class="kpi-val" id="kIncome">—</div><div class="kpi-lbl">Bu oy tushum</div></div>
+  </div>
+  <div class="kpi" style="animation:fadeUp .4s ease .1s both">
+    <div class="kpi-icon ic-red"><i class="fas fa-exclamation-circle"></i></div>
+    <div><div class="kpi-val" id="kDebt">—</div><div class="kpi-lbl">Umumiy qarz</div></div>
+  </div>
+  <div class="kpi" style="animation:fadeUp .4s ease .16s both">
+    <div class="kpi-icon ic-amber"><i class="fas fa-users"></i></div>
+    <div><div class="kpi-val" id="kUnpaid">—</div><div class="kpi-lbl">To'lamagan o'quvchilar</div></div>
+  </div>
+</div>
+
+<!-- Filters -->
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;animation:fadeUp .4s ease .2s both">
+  <div class="search-wrap">
+    <i class="fas fa-search"></i>
+    <input type="text" id="srch" placeholder="O'quvchi ismi..." oninput="load()">
+  </div>
+  <select id="fMonth" onchange="load()" style="border:1.5px solid var(--border);border-radius:9px;padding:8px 32px 8px 12px;font-size:.78rem;background:#fff;outline:none;cursor:pointer">
+  </select>
+  <select id="fYear" onchange="load()" style="border:1.5px solid var(--border);border-radius:9px;padding:8px 32px 8px 12px;font-size:.78rem;background:#fff;outline:none;cursor:pointer">
+  </select>
+  <select id="fStatus" onchange="load()" style="border:1.5px solid var(--border);border-radius:9px;padding:8px 32px 8px 12px;font-size:.78rem;background:#fff;outline:none;cursor:pointer">
+    <option value="">Barcha holat</option>
+    <option value="paid">To'langan</option>
+    <option value="partial">Qisman</option>
+    <option value="unpaid">To'lanmagan</option>
+  </select>
+  <span style="margin-left:auto;font-size:.75rem;color:var(--muted)" id="cntLbl"></span>
+</div>
+
+<div class="card" style="overflow:hidden;animation:fadeUp .4s ease .25s both">
+  <div id="tbl"><div class="loading"><div class="spinner"></div></div></div>
+</div>
+
+<!-- Pay modal -->
+<div class="overlay" id="payModal">
+  <div class="modal">
+    <div class="m-head">
+      <h5><i class="fas fa-money-bill-wave" style="color:var(--accent);margin-right:6px"></i>To'lov qabul qilish</h5>
+      <button class="m-close" onclick="closeM('payModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="m-body">
+      <div class="fg"><label>O'quvchi *</label>
+        <select class="fc fc-sel" id="pStudent"><option value="">— O'quvchi tanlang —</option></select>
+      </div>
+      <div class="row2">
+        <div class="fg"><label>Oy *</label>
+          <select class="fc fc-sel" id="pMonth"></select>
+        </div>
+        <div class="fg"><label>Yil *</label>
+          <select class="fc fc-sel" id="pYear"></select>
+        </div>
+      </div>
+      <div class="fg"><label>To'langan summa *</label>
+        <input class="fc" type="number" id="pAmount" placeholder="500000" min="0">
+      </div>
+      <div class="fg"><label>Izoh</label>
+        <input class="fc" id="pNote" placeholder="Qo'shimcha izoh...">
+      </div>
+    </div>
+    <div class="m-foot">
+      <button class="btn btn-ghost" onclick="closeM('payModal')">Bekor</button>
+      <button class="btn btn-primary" onclick="doPay()"><i class="fas fa-check"></i>Qabul qilish</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+initAuth();
+const _ME=getUser();
+const _isAdmin=_ME.role==='admin'||_ME.role==='developer';
+if(!_isAdmin) document.querySelectorAll('.admin-only').forEach(el=>el.style.display='none');
+const MNS=['Yanvar','Fevral','Mart','Aprel','May','Iyun','Iyul','Avgust','Sentabr','Oktabr','Noyabr','Dekabr'];
+const NOW=new Date();
+let curMonth=NOW.getMonth()+1, curYear=NOW.getFullYear();
+
+function populateMonthYear(){
+  const ms=[document.getElementById('fMonth'),document.getElementById('pMonth')];
+  ms.forEach(s=>{s.innerHTML=MNS.map((m,i)=>`<option value="${i+1}" ${i+1===curMonth?'selected':''}>${m}</option>`).join('')});
+  const ys=[document.getElementById('fYear'),document.getElementById('pYear')];
+  for(let y=curYear;y>=curYear-3;y--) ys.forEach(s=>s.innerHTML+=`<option value="${y}" ${y===curYear?'selected':''}>${y}</option>`);
+}
+
+async function loadKpi(){
+  const d=await get('/dashboard/');
+  if(!d) return;
+  const p=d.payments;
+  document.getElementById('kIncome').textContent=fmoney(p.income);
+  document.getElementById('kDebt').textContent=fmoney(p.debt);
+  document.getElementById('kUnpaid').textContent=p.unpaid_count+' ta';
+}
+
+async function load(){
+  const month=document.getElementById('fMonth').value;
+  const year=document.getElementById('fYear').value;
+  const st=document.getElementById('fStatus').value;
+  const q=document.getElementById('srch').value.trim();
+  let url=`/payments/?month=${month}&year=${year}&page_size=50`;
+  if(st) url+=`&status=${st}`;
+  if(q) url+=`&search=${encodeURIComponent(q)}`;
+  document.getElementById('tbl').innerHTML='<div class="loading"><div class="spinner"></div></div>';
+  const d=await get(url);
+  const items=d?.results||d||[];
+  document.getElementById('cntLbl').textContent=`${items.length} ta yozuv`;
+  if(!items.length){document.getElementById('tbl').innerHTML='<div class="empty"><i class="fas fa-receipt"></i><p>To\'lov yozuvi topilmadi</p></div>';return;}
+  document.getElementById('tbl').innerHTML=`<table class="etable"><thead><tr>
+    <th>#</th><th>O'quvchi</th><th>Guruh</th><th>Oy/Yil</th><th>Jami summa</th><th>To'langan</th><th>Qarz</th><th>Holat</th><th></th>
+  </tr></thead><tbody>
+  ${items.map((p,i)=>`<tr>
+    <td style="color:var(--muted);font-size:.75rem">${i+1}</td>
+    <td><div style="display:flex;align-items:center;gap:8px">
+      <div class="av av-sm">${initials(p.student_name||'?')}</div>
+      <span style="font-size:.82rem;font-weight:600">${p.student_name||'—'}</span>
+    </div></td>
+    <td style="font-size:.8rem;color:var(--muted)">${p.group_name||p.group||'—'}</td>
+    <td style="font-size:.8rem">${MNS[(p.month||1)-1]} ${p.year}</td>
+    <td style="font-size:.82rem;font-weight:600">${fmoney(p.amount||p.total_amount||0)}</td>
+    <td style="font-size:.82rem;color:var(--success);font-weight:600">${fmoney(p.paid_amount||0)}</td>
+    <td style="font-size:.82rem;color:${(p.debt_amount||0)>0?'var(--danger)':'var(--muted)'};font-weight:600">
+      ${(p.debt_amount||0)>0?fmoney(p.debt_amount):'—'}
+    </td>
+    <td>${bdg(p.status)}</td>
+    <td>
+      <button class="btn btn-primary btn-sm" onclick="openQuickPay('${p.student}','${p.student_name||''}',${p.debt_amount||0})">
+        <i class="fas fa-plus"></i>To'lov
+      </button>
+    </td>
+  </tr>`).join('')}
+  </tbody></table>`;
+}
+
+async function initStudents(){
+  const d=await get('/students/?page_size=200&status=active');
+  const items=d?.results||d||[];
+  const s=document.getElementById('pStudent');
+  items.forEach(st=>s.innerHTML+=`<option value="${st.id}">${st.full_name||st.user?.full_name||'?'}</option>`);
+}
+
+function openQuickPay(sid,name,debt){
+  document.getElementById('pStudent').value=sid;
+  document.getElementById('pAmount').value=debt||'';
+  openM('payModal');
+}
+
+async function doPay(){
+  const sid=document.getElementById('pStudent').value;
+  const month=document.getElementById('pMonth').value;
+  const year=document.getElementById('pYear').value;
+  const amount=parseFloat(document.getElementById('pAmount').value)||0;
+  if(!sid){toast("O'quvchini tanlang",'wrn');return;}
+  if(!amount){toast("Summani kiriting",'wrn');return;}
+  const r=await post('/payments/',{student:sid,month:parseInt(month),year:parseInt(year),paid_amount:amount,note:document.getElementById('pNote').value});
+  if(r?.ok||r?.status===201){closeM('payModal');toast("To'lov qabul qilindi",'ok');load();loadKpi();}
+  else{const e=await r?.json();toast(e?.detail||"Xatolik",'err');}
+}
+
+populateMonthYear();
+loadKpi();
+load();
+initStudents();
+</script>
+{% endblock %}

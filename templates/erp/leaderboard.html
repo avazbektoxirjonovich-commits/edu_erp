@@ -1,0 +1,305 @@
+{% extends "erp/base.html" %}
+{% block title %}Reyting — EduERP Pro{% endblock %}
+{% block page_title %}Reyting{% endblock %}
+
+{% block extra_head %}
+<style>
+.lb-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;animation:fadeUp .35s ease both}
+.lb-layout{display:grid;grid-template-columns:1fr 300px;gap:16px}
+@media(max-width:900px){.lb-layout{grid-template-columns:1fr}}
+
+/* Podium */
+.podium{
+  display:flex;align-items:flex-end;justify-content:center;gap:12px;
+  padding:20px 20px 0;margin-bottom:0;
+}
+.podium-item{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;max-width:140px}
+.pod-avatar{
+  width:56px;height:56px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-weight:900;font-size:1.1rem;
+  box-shadow:0 4px 14px rgba(0,0,0,.15);position:relative;
+}
+.pod-avatar.p1{background:linear-gradient(135deg,#FF6B35,#F7931E);width:68px;height:68px;font-size:1.3rem;box-shadow:0 6px 20px rgba(255,107,53,.4)}
+.pod-avatar.p2{background:linear-gradient(135deg,#6366f1,#8b5cf6)}
+.pod-avatar.p3{background:linear-gradient(135deg,#0d9488,#0891b2)}
+.pod-crown{position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-size:1rem;animation:float 2s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-5px)}}
+.pod-name{font-size:.78rem;font-weight:700;color:var(--text);text-align:center;max-width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pod-xp{font-size:.72rem;color:var(--accent);font-weight:700;display:flex;align-items:center;gap:3px}
+.pod-block{
+  border-radius:10px 10px 0 0;width:100%;display:flex;align-items:center;justify-content:center;
+  font-size:1.2rem;font-weight:900;color:rgba(255,255,255,.8);
+}
+.pb1{height:80px;background:linear-gradient(135deg,rgba(255,107,53,.15),rgba(247,147,30,.08));border:1px solid rgba(255,107,53,.2);border-bottom:none;color:#FF6B35}
+.pb2{height:60px;background:linear-gradient(135deg,rgba(99,102,241,.12),rgba(139,92,246,.06));border:1px solid rgba(99,102,241,.15);border-bottom:none;color:#6366f1}
+.pb3{height:44px;background:linear-gradient(135deg,rgba(13,148,136,.12),rgba(8,145,178,.06));border:1px solid rgba(13,148,136,.15);border-bottom:none;color:#0d9488}
+
+/* List */
+.lb-row{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 16px;border-bottom:1px solid var(--border);
+  transition:background .15s;
+}
+.lb-row:hover{background:#fafbff}
+.lb-row:last-child{border-bottom:none}
+.lb-row.me{background:rgba(255,107,53,.05);border-left:3px solid var(--accent)}
+.lb-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:800;flex-shrink:0}
+.n1{background:linear-gradient(135deg,#FFD700,#FFA500);color:#fff;box-shadow:0 2px 8px rgba(255,165,0,.35)}
+.n2{background:linear-gradient(135deg,#C0C0C0,#909090);color:#fff}
+.n3{background:linear-gradient(135deg,#CD7F32,#A0522D);color:#fff}
+.nN{background:#f0f1f5;color:var(--muted)}
+.lb-info{flex:1;min-width:0}
+.lb-name{font-size:.84rem;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lb-group{font-size:.7rem;color:var(--muted)}
+.lb-xp-col{text-align:right}
+.lb-xp-val{font-size:.9rem;font-weight:900;color:var(--text);letter-spacing:-.3px}
+.lb-xp-lbl{font-size:.65rem;color:var(--muted)}
+.lb-bar{height:4px;border-radius:4px;background:var(--grad);margin-top:3px;transition:width .6s cubic-bezier(.4,0,.2,1)}
+
+/* Filter tabs */
+.ftabs{display:flex;gap:6px;padding:4px;background:#f0f1f5;border-radius:10px}
+.ftab{padding:7px 16px;border:none;border-radius:8px;font-size:.78rem;font-weight:600;cursor:pointer;font-family:inherit;background:none;color:var(--muted);transition:all .2s}
+.ftab.on{background:#fff;color:var(--text);box-shadow:0 1px 6px rgba(13,27,42,.08)}
+
+/* Period tabs */
+.ptabs{display:flex;gap:6px}
+.ptab{padding:6px 13px;border:1.5px solid var(--border);border-radius:8px;font-size:.75rem;font-weight:600;cursor:pointer;font-family:inherit;background:#fff;color:var(--muted);transition:all .2s}
+.ptab.on{border-color:var(--accent);background:var(--accent-light);color:var(--accent)}
+
+/* Group select */
+.grp-filter{display:flex;align-items:center;gap:8px;margin-top:12px;flex-wrap:wrap}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="lb-header">
+  <div>
+    <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">O'quvchilar Reytingi</h2>
+    <p style="font-size:.75rem;color:var(--muted);margin-top:3px">XP ballari bo'yicha eng yaxshi o'quvchilar</p>
+  </div>
+</div>
+
+<!-- Filters -->
+<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px;animation:fadeUp .35s ease .05s both">
+  <div class="ftabs">
+    <button class="ftab on" data-type="all" onclick="setType('all',this)">Barchasi</button>
+    <button class="ftab" data-type="group" onclick="setType('group',this)">Guruh bo'yicha</button>
+  </div>
+  <div class="ptabs">
+    <button class="ptab on" data-p="all" onclick="setPeriod('all',this)">Barcha vaqt</button>
+    <button class="ptab" data-p="month" onclick="setPeriod('month',this)">Bu oy</button>
+    <button class="ptab" data-p="week" onclick="setPeriod('week',this)">Bu hafta</button>
+  </div>
+</div>
+
+<div class="grp-filter" id="grpFilter" style="display:none;margin-bottom:16px">
+  <i class="fas fa-users" style="color:var(--muted);font-size:.85rem"></i>
+  <select id="fGrp" onchange="load()" style="border:1.5px solid var(--border);border-radius:9px;padding:8px 32px 8px 12px;font-size:.78rem;background:#fff;outline:none;cursor:pointer">
+    <option value="">— Guruh tanlang —</option>
+  </select>
+</div>
+
+<div class="lb-layout">
+  <!-- Main leaderboard -->
+  <div style="display:flex;flex-direction:column;gap:16px">
+    <!-- Podium -->
+    <div class="card" style="overflow:hidden;animation:fadeUp .4s ease .1s both">
+      <div class="podium" id="podium">
+        <div style="text-align:center;padding:30px;color:var(--muted);font-size:.8rem;width:100%">Yuklanmoqda...</div>
+      </div>
+      <div style="height:1px;background:var(--border);margin:0 20px"></div>
+    </div>
+
+    <!-- Full list -->
+    <div class="card" style="overflow:hidden;animation:fadeUp .4s ease .18s both">
+      <div class="card-header">
+        <div class="card-title">To'liq ro'yxat</div>
+        <span style="font-size:.74rem;color:var(--muted)" id="cntLbl"></span>
+      </div>
+      <div id="lbList"><div class="loading"><div class="spinner"></div></div></div>
+    </div>
+  </div>
+
+  <!-- Right sidebar -->
+  <div style="display:flex;flex-direction:column;gap:16px">
+    <!-- My position -->
+    <div class="card" style="animation:fadeUp .4s ease .12s both">
+      <div class="card-header"><div class="card-title">Mening o'rnim</div></div>
+      <div class="card-body" id="myPos">
+        <div style="text-align:center;padding:8px;color:var(--muted);font-size:.8rem">Yuklanmoqda...</div>
+      </div>
+    </div>
+
+    <!-- Top movers -->
+    <div class="card" style="animation:fadeUp .4s ease .2s both">
+      <div class="card-header"><div class="card-title">XP Statistikasi</div></div>
+      <div class="card-body" id="statsBox">
+        <div style="text-align:center;padding:8px;color:var(--muted);font-size:.8rem">Yuklanmoqda...</div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+initAuth();
+let lbType='all', lbPeriod='all';
+const me=getUser();
+
+async function initGroups(){
+  const d=await get('/groups/?page_size=100&status=active');
+  const grps=d?.results||d||[];
+  const s=document.getElementById('fGrp');
+  grps.forEach(g=>s.innerHTML+=`<option value="${g.id}">${g.name}</option>`);
+}
+
+function setType(t,btn){
+  lbType=t;
+  document.querySelectorAll('.ftab').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  const gf=document.getElementById('grpFilter');
+  gf.style.display=(t==='group')?'flex':'none';
+  load();
+}
+
+function setPeriod(p,btn){
+  lbPeriod=p;
+  document.querySelectorAll('.ptab').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  load();
+}
+
+async function load(){
+  const gid=document.getElementById('fGrp').value;
+  let url=`/leaderboard/?period=${lbPeriod}&page_size=50`;
+  if(lbType==='group'&&gid) url+=`&group=${gid}`;
+
+  document.getElementById('lbList').innerHTML='<div class="loading"><div class="spinner"></div></div>';
+  const d=await get(url);
+  const items=d?.results||d||[];
+  document.getElementById('cntLbl').textContent=`${items.length} ta o'quvchi`;
+
+  renderPodium(items);
+  renderList(items);
+  renderMyPos(items);
+  renderStats(items);
+}
+
+function renderPodium(items){
+  const top3=items.slice(0,3);
+  if(!top3.length){document.getElementById('podium').innerHTML='<div style="padding:30px;text-align:center;color:var(--muted);font-size:.8rem;width:100%">Ma\'lumot yo\'q</div>';return;}
+
+  const order=[1,0,2]; // silver, gold, bronze display order
+  document.getElementById('podium').innerHTML=`<div style="display:flex;align-items:flex-end;justify-content:center;gap:8px;padding:24px 20px 0;width:100%">
+    ${order.map(i=>{
+      const s=top3[i]; if(!s) return'';
+      const cls=i===0?'p1':i===1?'p2':'p3';
+      const bcls=i===0?'pb1':i===1?'pb2':'pb3';
+      return`<div style="display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;max-width:140px">
+        <div class="pod-avatar ${cls}" style="position:relative">
+          ${i===0?'<span class="pod-crown">👑</span>':''}
+          ${initials(s.full_name||'?')}
+        </div>
+        <div class="pod-name">${s.full_name||'—'}</div>
+        <div class="pod-xp"><i class="fas fa-bolt" style="font-size:.6rem"></i>${s.xp_points||0} XP</div>
+        <div class="pod-block ${bcls}">${i+1}</div>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+function renderList(items){
+  if(!items.length){document.getElementById('lbList').innerHTML='<div style="padding:32px;text-align:center;color:var(--muted);font-size:.8rem"><i class="fas fa-trophy" style="font-size:2rem;opacity:.2;display:block;margin-bottom:10px"></i>Reyting ma\'lumoti yo\'q</div>';return;}
+  const maxXp=items[0]?.xp_points||1;
+  document.getElementById('lbList').innerHTML=items.map((s,i)=>{
+    const nCls=i===0?'n1':i===1?'n2':i===2?'n3':'nN';
+    const isMe=s.user===me.id||s.full_name===me.full_name;
+    const pct=Math.round((s.xp_points||0)/maxXp*100);
+    return`<div class="lb-row ${isMe?'me':''}">
+      <div class="lb-num ${nCls}">${i+1}</div>
+      <div class="av" style="width:30px;height:30px;font-size:.65rem;flex-shrink:0">${initials(s.full_name||'?')}</div>
+      <div class="lb-info">
+        <div class="lb-name">${s.full_name||'—'}${isMe?' <span style="background:var(--accent-light);color:var(--accent);padding:1px 6px;border-radius:10px;font-size:.6rem">Men</span>':''}</div>
+        <div class="lb-group">${s.group_name||'—'} · Daraja ${s.level||1}</div>
+        <div class="lb-bar" style="width:${pct}%"></div>
+      </div>
+      <div class="lb-xp-col">
+        <div class="lb-xp-val">${(s.xp_points||0).toLocaleString('uz-UZ')}</div>
+        <div class="lb-xp-lbl">XP</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderMyPos(items){
+  const myIdx=items.findIndex(s=>s.full_name===me.full_name);
+  const myData=myIdx>=0?items[myIdx]:null;
+  if(!myData){
+    document.getElementById('myPos').innerHTML='<div style="text-align:center;padding:8px;color:var(--muted);font-size:.8rem">Reyting topilmadi</div>';
+    return;
+  }
+  const rank=myIdx+1;
+  document.getElementById('myPos').innerHTML=`
+    <div style="text-align:center;margin-bottom:16px">
+      <div style="font-size:2.5rem;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-.5px">#${rank}</div>
+      <div style="font-size:.75rem;color:var(--muted)">O'rningiz</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;justify-content:space-between;font-size:.8rem">
+        <span style="color:var(--muted)">XP ball</span>
+        <span style="font-weight:700;color:var(--accent)">${(myData.xp_points||0).toLocaleString('uz-UZ')}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:.8rem">
+        <span style="color:var(--muted)">Daraja</span>
+        <span style="font-weight:700">${myData.level||1}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:.8rem">
+        <span style="color:var(--muted)">Coins</span>
+        <span style="font-weight:700;color:#f59e0b">${myData.coins||0}</span>
+      </div>
+      ${rank>1?`<div style="font-size:.72rem;color:var(--muted);text-align:center;margin-top:6px;padding:6px;background:#f8f9fc;border-radius:8px">
+        Oldingizdan ${(items[myIdx-1].xp_points||0)-(myData.xp_points||0)} XP farq
+      </div>`:''}
+    </div>`;
+}
+
+function renderStats(items){
+  if(!items.length){document.getElementById('statsBox').innerHTML='<div style="text-align:center;padding:8px;color:var(--muted);font-size:.8rem">Ma\'lumot yo\'q</div>';return;}
+  const totalXp=items.reduce((s,i)=>s+(i.xp_points||0),0);
+  const avgXp=Math.round(totalXp/items.length);
+  const maxLvl=Math.max(...items.map(i=>i.level||1));
+  document.getElementById('statsBox').innerHTML=`
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:.78rem;color:var(--muted)">Jami ishtirokchilar</span>
+        <span style="font-size:.88rem;font-weight:800;color:var(--text)">${items.length} ta</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:.78rem;color:var(--muted)">O'rtacha XP</span>
+        <span style="font-size:.88rem;font-weight:800;color:var(--accent)">${avgXp.toLocaleString('uz-UZ')}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:.78rem;color:var(--muted)">Jami XP</span>
+        <span style="font-size:.88rem;font-weight:800;color:var(--text)">${totalXp.toLocaleString('uz-UZ')}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:.78rem;color:var(--muted)">Eng yuqori daraja</span>
+        <span style="font-size:.88rem;font-weight:800;color:#8b5cf6">Daraja ${maxLvl}</span>
+      </div>
+      <div style="height:1px;background:var(--border);margin:4px 0"></div>
+      <div style="font-size:.72rem;color:var(--muted);text-align:center">Top 3 o'quvchi</div>
+      ${items.slice(0,3).map((s,i)=>`
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="width:20px;height:20px;border-radius:50%;background:${i===0?'linear-gradient(135deg,#FFD700,#FFA500)':i===1?'linear-gradient(135deg,#C0C0C0,#909090)':'linear-gradient(135deg,#CD7F32,#A0522D)'};color:#fff;font-size:.6rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0">${i+1}</div>
+          <span style="font-size:.78rem;font-weight:600;color:var(--text);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.full_name||'—'}</span>
+          <span style="font-size:.72rem;font-weight:700;color:var(--accent)">${s.xp_points||0} XP</span>
+        </div>`).join('')}
+    </div>`;
+}
+
+initGroups();
+load();
+</script>
+{% endblock %}

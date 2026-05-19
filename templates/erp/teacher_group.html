@@ -1,0 +1,471 @@
+{% extends "erp/base.html" %}
+{% block title %}Guruh — EduERP Pro{% endblock %}
+{% block page_title %}<span id="pgTitle">Guruh</span>{% endblock %}
+
+{% block extra_head %}
+<style>
+/* ── BACK BUTTON ──────────────────────────────────────────── */
+.tg-back{display:inline-flex;align-items:center;gap:8px;color:var(--muted);text-decoration:none;font-size:.8rem;font-weight:600;padding:7px 14px;border-radius:9px;border:1.5px solid var(--border);background:#fff;transition:all .2s;margin-bottom:16px;animation:fadeUp .3s ease both}
+.tg-back:hover{background:var(--bg);color:var(--text);border-color:#cbd5e1;transform:translateX(-2px)}
+
+/* ── HERO ─────────────────────────────────────────────────── */
+.tg-hero{background:#0D1B2A;border-radius:18px;padding:22px 26px;position:relative;overflow:hidden;margin-bottom:20px;animation:fadeUp .35s ease both}
+.tg-hero-bg{position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,107,53,.1),rgba(247,147,30,.04) 60%,transparent)}
+.tg-hero-dots{position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.04) 1px,transparent 1px);background-size:22px 22px}
+.tg-hero-glow{position:absolute;top:-60px;right:-40px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(255,107,53,.18),transparent 70%)}
+.tg-hero-inner{position:relative;z-index:1;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.tg-icon{width:58px;height:58px;border-radius:15px;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.4rem;flex-shrink:0;box-shadow:0 4px 20px rgba(255,107,53,.4);animation:pulseGlow 3s ease infinite}
+.tg-name{font-size:1.12rem;font-weight:900;color:#fff;letter-spacing:-.4px}
+.tg-meta{font-size:.73rem;color:rgba(255,255,255,.48);margin-top:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tg-meta-dot{width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,.25)}
+.tg-pills{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap}
+.tg-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:20px;font-size:.72rem;font-weight:700}
+.tg-pill-o{background:rgba(255,107,53,.2);color:#ff8c5a;border:1px solid rgba(255,107,53,.25)}
+.tg-pill-b{background:rgba(59,130,246,.18);color:#60a5fa;border:1px solid rgba(59,130,246,.22)}
+.tg-pill-g{background:rgba(16,185,129,.16);color:#34d399;border:1px solid rgba(16,185,129,.2)}
+
+/* ── TABS ─────────────────────────────────────────────────── */
+.tg-tabs{display:flex;gap:4px;background:#fff;border:1px solid var(--border);border-radius:13px;padding:5px;margin-bottom:20px;animation:fadeUp .4s ease .06s both;box-shadow:var(--shadow)}
+.tg-tab{flex:1;padding:10px;border-radius:9px;border:none;background:none;font-family:inherit;font-size:.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all .22s cubic-bezier(.4,0,.2,1);display:flex;align-items:center;justify-content:center;gap:7px;position:relative;overflow:hidden}
+.tg-tab::after{content:'';position:absolute;inset:0;background:var(--grad);opacity:0;transition:opacity .22s;border-radius:9px}
+.tg-tab:hover{color:var(--text);background:var(--bg)}
+.tg-tab.active{background:var(--grad);color:#fff;box-shadow:0 3px 14px rgba(255,107,53,.32)}
+.tg-tab.active::after{opacity:0}
+.tg-tab i{font-size:.78rem}
+
+/* ── TAB PANELS ───────────────────────────────────────────── */
+.tg-panel{display:none}
+.tg-panel.active{display:block;animation:panelIn .3s ease both}
+@keyframes panelIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── INFO CARD ────────────────────────────────────────────── */
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:700px){.info-grid{grid-template-columns:1fr}}
+.info-row{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;border-radius:11px;background:#f8f9fc;border:1px solid var(--border);transition:background .18s}
+.info-row:hover{background:#f0f1f5}
+.info-ic{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:.82rem;flex-shrink:0}
+.info-label{font-size:.68rem;color:var(--muted);font-weight:600;margin-bottom:3px;text-transform:uppercase;letter-spacing:.04em}
+.info-val{font-size:.86rem;font-weight:700;color:var(--text)}
+
+/* ── SCHEDULE DAYS ────────────────────────────────────────── */
+.day-chips{display:flex;gap:5px;flex-wrap:wrap}
+.day-chip{padding:3px 10px;border-radius:6px;font-size:.7rem;font-weight:700;background:rgba(255,107,53,.1);color:var(--accent);border:1px solid rgba(255,107,53,.2)}
+
+/* ── HOMEWORK TABLE ───────────────────────────────────────── */
+.hw-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px}
+.hw-count-chip{display:inline-flex;align-items:center;gap:6px;background:#f8f9fc;border:1px solid var(--border);padding:5px 12px;border-radius:8px;font-size:.75rem;font-weight:700;color:var(--muted)}
+
+/* homework status mini badges */
+.hw-num{display:inline-flex;align-items:center;gap:4px;font-size:.75rem;font-weight:700}
+.hw-num-stu{color:var(--info)}
+.hw-num-pnd{color:var(--warning)}
+.hw-num-done{color:var(--success)}
+
+/* overdue row highlight */
+.row-overdue{background:rgba(239,68,68,.04)!important}
+.row-overdue:hover{background:rgba(239,68,68,.08)!important}
+.overdue-chip{display:inline-flex;align-items:center;gap:4px;background:#fef2f2;color:#b91c1c;border:1px solid #fecaca;padding:2px 8px;border-radius:5px;font-size:.65rem;font-weight:700}
+
+/* ── HW ADD BUTTON ────────────────────────────────────────── */
+.btn-hw-add{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:9px;background:var(--grad);color:#fff;font-size:.8rem;font-weight:700;border:none;cursor:pointer;font-family:inherit;box-shadow:0 3px 14px rgba(255,107,53,.3);transition:all .2s}
+.btn-hw-add:hover{box-shadow:0 6px 22px rgba(255,107,53,.42);transform:translateY(-1px)}
+
+/* ── ATTENDANCE PANEL ─────────────────────────────────────── */
+.att-date-group{margin-bottom:18px;animation:fadeUp .35s ease both}
+.att-date-header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--grad);border-radius:11px 11px 0 0;color:#fff}
+.att-date-label{font-size:.82rem;font-weight:800}
+.att-date-stats{display:flex;gap:12px;font-size:.72rem;font-weight:700}
+.att-date-stat{display:flex;align-items:center;gap:4px}
+.att-student-list{background:#fff;border:1px solid var(--border);border-top:none;border-radius:0 0 11px 11px;overflow:hidden}
+.att-row{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border);transition:background .15s}
+.att-row:last-child{border-bottom:none}
+.att-row:hover{background:#f8f9fc}
+.att-student-av{width:30px;height:30px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#fff;font-size:.62rem;font-weight:700;flex-shrink:0;box-shadow:0 2px 8px rgba(255,107,53,.2)}
+
+/* ── STAT MINI CARDS ──────────────────────────────────────── */
+.mini-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+@media(max-width:700px){.mini-stats{grid-template-columns:1fr 1fr}}
+.mini-stat{background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center;box-shadow:var(--shadow);animation:fadeUp .38s ease both}
+.mini-stat-v{font-size:1.35rem;font-weight:900;color:var(--text);letter-spacing:-.4px;line-height:1.1}
+.mini-stat-l{font-size:.65rem;color:var(--muted);margin-top:4px;font-weight:600}
+
+/* ── ADD HOMEWORK MODAL ───────────────────────────────────── */
+@keyframes rowIn{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:translateX(0)}}
+.etable tbody tr{animation:rowIn .32s ease both}
+</style>
+{% endblock %}
+
+{% block content %}
+<a href="/teacher/" class="tg-back"><i class="fas fa-arrow-left"></i> Guruhlarim</a>
+
+<!-- Hero -->
+<div class="tg-hero" id="groupHero" style="display:none">
+  <div class="tg-hero-bg"></div><div class="tg-hero-dots"></div><div class="tg-hero-glow"></div>
+  <div class="tg-hero-inner">
+    <div class="tg-icon"><i class="fas fa-users"></i></div>
+    <div style="flex:1;min-width:0">
+      <div class="tg-name" id="grpName">—</div>
+      <div class="tg-meta">
+        <span id="grpCourse">—</span>
+        <span class="tg-meta-dot"></span>
+        <span id="grpTime">—</span>
+        <span class="tg-meta-dot"></span>
+        <span id="grpStatus">—</span>
+      </div>
+      <div class="tg-pills">
+        <span class="tg-pill tg-pill-o"><i class="fas fa-user-graduate" style="font-size:.6rem"></i><span id="grpStuCnt">0</span> o'quvchi</span>
+        <span class="tg-pill tg-pill-b"><i class="fas fa-book-open" style="font-size:.6rem"></i><span id="grpHwCnt">0</span> vazifa</span>
+        <span class="tg-pill tg-pill-g"><i class="fas fa-calendar" style="font-size:.6rem"></i><span id="grpDays">—</span></span>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="heroLoader" class="loading" style="padding:24px"><div class="spinner"></div></div>
+
+<!-- Tabs -->
+<div class="tg-tabs">
+  <button class="tg-tab active" onclick="switchTab(0)" id="tab0"><i class="fas fa-info-circle"></i> Ma'lumotlar</button>
+  <button class="tg-tab" onclick="switchTab(1)" id="tab1"><i class="fas fa-book-open"></i> Uyga vazifalar</button>
+  <button class="tg-tab" onclick="switchTab(2)" id="tab2"><i class="fas fa-calendar-check"></i> Davomat</button>
+</div>
+
+<!-- Panel 0: Ma'lumotlar -->
+<div class="tg-panel active" id="panel0">
+  <div id="infoContent"><div class="loading"><div class="spinner"></div></div></div>
+</div>
+
+<!-- Panel 1: Uyga vazifalar -->
+<div class="tg-panel" id="panel1">
+  <div class="hw-toolbar">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="font-weight:800;font-size:.9rem;color:var(--text)">Uyga vazifalar</span>
+      <span class="hw-count-chip"><i class="fas fa-book-open" style="font-size:.65rem"></i><span id="hwTotalLbl">0</span> ta</span>
+    </div>
+    <button class="btn-hw-add" onclick="openM('hwModal')">
+      <i class="fas fa-plus"></i> Vazifa qo'shish
+    </button>
+  </div>
+  <div class="card" style="overflow:hidden">
+    <div id="hwContent"><div class="loading"><div class="spinner"></div></div></div>
+  </div>
+</div>
+
+<!-- Panel 2: Davomat -->
+<div class="tg-panel" id="panel2">
+  <div class="mini-stats" id="attStats">
+    <div class="mini-stat" style="animation-delay:.04s">
+      <div class="mini-stat-v" id="msTotalDays">—</div>
+      <div class="mini-stat-l">Jami dars kunlari</div>
+    </div>
+    <div class="mini-stat" style="animation-delay:.09s">
+      <div class="mini-stat-v" id="msAvgAtt">—</div>
+      <div class="mini-stat-l">O'rtacha davomat</div>
+    </div>
+    <div class="mini-stat" style="animation-delay:.14s">
+      <div class="mini-stat-v" id="msTotalStu">—</div>
+      <div class="mini-stat-l">O'quvchilar soni</div>
+    </div>
+  </div>
+  <div id="attContent"><div class="loading"><div class="spinner"></div></div></div>
+</div>
+
+<!-- Add Homework Modal -->
+<div class="overlay" id="hwModal">
+  <div class="modal modal-lg">
+    <div class="m-head">
+      <h5><i class="fas fa-plus-circle" style="color:var(--accent);margin-right:6px"></i> Yangi uyga vazifa</h5>
+      <button class="m-close" onclick="closeM('hwModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="m-body">
+      <div class="fg">
+        <label>Mavzu (sarlavha)</label>
+        <input class="fc" id="hwTitle" placeholder="Masalan: 2-bob mashqlar" />
+      </div>
+      <div class="row2">
+        <div class="fg">
+          <label>Berilgan sana</label>
+          <input class="fc" type="date" id="hwAssigned" />
+        </div>
+        <div class="fg">
+          <label>Tugash sanasi</label>
+          <input class="fc" type="date" id="hwDue" />
+        </div>
+      </div>
+      <div class="fg">
+        <label>Dars sanasi</label>
+        <input class="fc" type="date" id="hwLesson" />
+      </div>
+      <div class="fg">
+        <label>Tavsif (ixtiyoriy)</label>
+        <textarea class="fc" id="hwDesc" rows="3" placeholder="Qo'shimcha izohlar..."></textarea>
+      </div>
+    </div>
+    <div class="m-foot">
+      <button class="btn btn-outline" onclick="closeM('hwModal')">Bekor qilish</button>
+      <button class="btn btn-primary" onclick="saveHw()"><i class="fas fa-save"></i> Saqlash</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const DL={1:'Du',2:'Se',3:'Ch',4:'Pa',5:'Ju',6:'Sh',7:'Ya'};
+const GID = new URLSearchParams(location.search).get('id');
+let _group=null, _students=[], _hw=[], _att=[];
+let _tabLoaded=[false,false,false];
+
+if(!GID) window.location.href='/teacher/';
+
+function switchTab(i){
+  document.querySelectorAll('.tg-tab').forEach((t,j)=>t.classList.toggle('active',i===j));
+  document.querySelectorAll('.tg-panel').forEach((p,j)=>p.classList.toggle('active',i===j));
+  if(!_tabLoaded[i]){
+    _tabLoaded[i]=true;
+    if(i===1) renderHw();
+    if(i===2) loadAtt();
+  }
+}
+
+async function load(){
+  if(!initAuth()) return;
+  const u=getUser();
+  if(u.role!=='teacher'&&u.role!=='developer'&&u.role!=='admin'){window.location.href='/';return;}
+
+  const [grp, stus, hw] = await Promise.all([
+    get('/groups/'+GID+'/'),
+    get('/students/?group='+GID+'&page_size=200&status=active'),
+    get('/homework/assignments/?group='+GID+'&page_size=100'),
+  ]);
+  if(!grp){toast('Guruh topilmadi','err');return;}
+
+  _group   = grp;
+  _students= stus?.results||stus||[];
+  _hw      = hw?.results||hw||[];
+
+  document.getElementById('heroLoader').style.display='none';
+  document.getElementById('groupHero').style.display='';
+  document.title = grp.name+' — EduERP Pro';
+  document.getElementById('pgTitle').textContent = grp.name||'Guruh';
+  document.getElementById('grpName').textContent  = grp.name||'—';
+  document.getElementById('grpCourse').textContent= grp.course_name||grp.subject||'—';
+  document.getElementById('grpStatus').innerHTML  = grp.status==='active'?'<span class="bdg bdg-active"><i class="fas fa-circle" style="font-size:.35rem"></i> Faol</span>':'<span class="bdg bdg-inactive">Nofaol</span>';
+
+  const time = grp.start_time&&grp.end_time ? grp.start_time+' – '+grp.end_time : '—';
+  document.getElementById('grpTime').textContent = time;
+
+  const days = (grp.days_of_week||[]).map(d=>DL[d]||d).join(', ');
+  document.getElementById('grpDays').textContent = days||'—';
+  countUp(document.getElementById('grpStuCnt'), _students.length, 600);
+  countUp(document.getElementById('grpHwCnt'),  _hw.length, 600);
+
+  _tabLoaded[0]=true;
+  renderInfo();
+
+  // pre-fill dates
+  const today=new Date().toISOString().split('T')[0];
+  document.getElementById('hwAssigned').value=today;
+  document.getElementById('hwLesson').value=today;
+  const due=new Date(); due.setDate(due.getDate()+7);
+  document.getElementById('hwDue').value=due.toISOString().split('T')[0];
+}
+
+function renderInfo(){
+  const g=_group;
+  const days=(g.days_of_week||[]).map(d=>`<span class="day-chip">${DL[d]||d}</span>`).join('');
+  const rows=[
+    ['fa-users','ic-blue','Guruh nomi', g.name||'—'],
+    ['fa-book','ic-orange','Kurs / Yo\'nalish', g.course_name||g.subject||'—'],
+    ['fa-user-tie','ic-purple','O\'qituvchi', g.teacher_name||'—'],
+    ['fa-users','ic-green','O\'quvchilar soni', _students.length+' ta'],
+    ['fa-clock','ic-amber','Dars vaqti', g.start_time&&g.end_time?g.start_time+' – '+g.end_time:'—'],
+    ['fa-calendar','ic-teal','Boshlangan sana', g.start_date?fdate(g.start_date):'—'],
+    ['fa-calendar-xmark','ic-red','Tugash sanasi', g.end_date?fdate(g.end_date):'Belgilanmagan'],
+    ['fa-building','ic-blue','Filial', g.branch_name||g.branch||'—'],
+    ['fa-layer-group','ic-orange','Hafta kunlari',
+      `<div class="day-chips">${days||'<span style="color:var(--muted);font-size:.78rem">—</span>'}</div>`],
+    ['fa-info-circle','ic-green','Holati', g.status==='active'?'<span class="bdg bdg-active"><i class="fas fa-circle" style="font-size:.35rem"></i> Faol</span>':'<span class="bdg bdg-inactive">Nofaol</span>'],
+  ];
+  document.getElementById('infoContent').innerHTML=`
+    <div class="card-body">
+      <div class="info-grid">
+        ${rows.map(([ic,cls,lbl,val],i)=>`
+          <div class="info-row" style="animation:fadeUp .32s ease ${i*0.04}s both">
+            <div class="info-ic ${cls}"><i class="fas ${ic}"></i></div>
+            <div>
+              <div class="info-label">${lbl}</div>
+              <div class="info-val">${val}</div>
+            </div>
+          </div>`).join('')}
+      </div>
+      <div style="margin-top:20px">
+        <div style="font-weight:800;font-size:.85rem;color:var(--text);margin-bottom:12px">O'quvchilar ro'yxati</div>
+        ${_students.length?`
+        <div class="card" style="overflow:hidden">
+          <table class="etable"><thead><tr>
+            <th>#</th><th>Ism</th><th>Telefon</th><th>Holat</th>
+          </tr></thead><tbody>
+          ${_students.map((s,i)=>`
+            <tr style="animation-delay:${i*0.03}s">
+              <td style="color:var(--muted);font-size:.75rem">${i+1}</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:9px">
+                  <div class="av av-sm">${initials(s.full_name||s.name||'?')}</div>
+                  <span style="font-weight:600;font-size:.83rem">${s.full_name||s.name||'—'}</span>
+                </div>
+              </td>
+              <td style="font-size:.78rem;color:var(--muted)">${s.phone||'—'}</td>
+              <td>${bdg(s.status||'active')}</td>
+            </tr>`).join('')}
+          </tbody></table>
+        </div>`:'<div class="empty"><i class="fas fa-user-graduate"></i><p>O\'quvchi topilmadi</p></div>'}
+      </div>
+    </div>`;
+}
+
+function renderHw(){
+  document.getElementById('hwTotalLbl').textContent=_hw.length;
+  if(!_hw.length){
+    document.getElementById('hwContent').innerHTML='<div class="empty"><i class="fas fa-book-open"></i><p>Hozircha vazifa yo\'q</p></div>';
+    return;
+  }
+  const today=new Date().toISOString().split('T')[0];
+  document.getElementById('hwContent').innerHTML=`
+    <table class="etable"><thead><tr>
+      <th>#</th><th>Mavzu</th>
+      <th><span class="hw-num hw-num-stu"><i class="fas fa-user-graduate"></i></span></th>
+      <th><span class="hw-num hw-num-pnd"><i class="fas fa-hourglass-half"></i></span></th>
+      <th><span class="hw-num hw-num-done"><i class="fas fa-check-circle"></i></span></th>
+      <th>Berilgan</th><th>Tugash</th><th>Dars sanasi</th><th></th>
+    </tr></thead><tbody>
+    ${_hw.map((h,i)=>{
+      const overdue=h.due_date&&h.due_date<today&&h.status!=='completed';
+      return`<tr class="${overdue?'row-overdue':''}" style="animation-delay:${i*0.04}s">
+        <td style="color:var(--muted);font-size:.73rem">${i+1}</td>
+        <td>
+          <div style="font-weight:700;font-size:.84rem;color:var(--text)">${h.title||h.description||'—'}</div>
+          ${overdue?'<span class="overdue-chip"><i class="fas fa-exclamation"></i> Muddati o\'tgan</span>':''}
+        </td>
+        <td><span class="hw-num hw-num-stu">${h.students_count||_students.length}</span></td>
+        <td><span class="hw-num hw-num-pnd">${h.pending_count||'—'}</span></td>
+        <td><span class="hw-num hw-num-done">${h.submitted_count||'—'}</span></td>
+        <td style="font-size:.78rem;color:var(--muted)">${h.assigned_date?fdate(h.assigned_date):'—'}</td>
+        <td style="font-size:.78rem;color:${overdue?'var(--danger)':'var(--muted)'}">${h.due_date?fdate(h.due_date):'—'}</td>
+        <td style="font-size:.78rem;color:var(--muted)">${h.lesson_date?fdate(h.lesson_date):'—'}</td>
+        <td>
+          <div style="display:flex;gap:4px;justify-content:flex-end">
+            <button class="btn-icon del" onclick="deleteHw('${h.id}',${i})" title="O'chirish"><i class="fas fa-trash"></i></button>
+          </div>
+        </td>
+      </tr>`;
+    }).join('')}
+    </tbody></table>`;
+}
+
+async function saveHw(){
+  const title=document.getElementById('hwTitle').value.trim();
+  if(!title){toast("Mavzuni kiriting",'wrn');return;}
+  const body={
+    group: GID,
+    title,
+    description: document.getElementById('hwDesc').value.trim()||title,
+    assigned_date: document.getElementById('hwAssigned').value||null,
+    due_date: document.getElementById('hwDue').value||null,
+    lesson_date: document.getElementById('hwLesson').value||null,
+    status: 'active',
+  };
+  const r=await post('/homework/assignments/',body);
+  if(r?.ok){
+    const d=await r.json();
+    _hw.unshift(d);
+    renderHw();
+    countUp(document.getElementById('grpHwCnt'), _hw.length, 400);
+    closeM('hwModal');
+    document.getElementById('hwTitle').value='';
+    document.getElementById('hwDesc').value='';
+    toast('Vazifa qo\'shildi');
+  } else {
+    toast('Xatolik yuz berdi','err');
+  }
+}
+
+async function deleteHw(id,idx){
+  if(!confirm('Ushbu vazifani o\'chirasizmi?')) return;
+  const r=await del('/homework/assignments/'+id+'/');
+  if(r?.ok||r?.status===204){
+    _hw.splice(idx,1);
+    renderHw();
+    countUp(document.getElementById('grpHwCnt'), _hw.length, 400);
+    toast('Vazifa o\'chirildi');
+  } else {
+    toast('Xatolik yuz berdi','err');
+  }
+}
+
+async function loadAtt(){
+  document.getElementById('attContent').innerHTML='<div class="loading"><div class="spinner"></div></div>';
+  const attData = await get('/attendance/?group='+GID+'&page_size=500');
+  _att = attData?.results||attData||[];
+  renderAtt();
+}
+
+function renderAtt(){
+  if(!_att.length){
+    document.getElementById('attContent').innerHTML='<div class="empty"><i class="fas fa-calendar-check"></i><p>Davomat ma\'lumoti topilmadi</p></div>';
+    return;
+  }
+
+  // Group by date
+  const byDate={};
+  _att.forEach(a=>{
+    const d=a.date||'';
+    if(!byDate[d]) byDate[d]=[];
+    byDate[d].push(a);
+  });
+  const dates=Object.keys(byDate).sort((a,b)=>b.localeCompare(a));
+
+  // Update mini stats
+  document.getElementById('msTotalDays').textContent=dates.length;
+  document.getElementById('msTotalStu').textContent=_students.length;
+  const totalPresent=_att.filter(a=>a.status==='present').length;
+  const total=_att.length;
+  document.getElementById('msAvgAtt').textContent=total?Math.round(totalPresent/total*100)+'%':'—';
+
+  const attStatusColor={present:'var(--success)',absent:'var(--danger)',late:'var(--warning)',excused:'var(--info)'};
+  const attStatusIcon={present:'check',absent:'times',late:'clock',excused:'info'};
+
+  document.getElementById('attContent').innerHTML=dates.map((date,di)=>{
+    const recs=byDate[date];
+    const present=recs.filter(r=>r.status==='present').length;
+    const absent=recs.filter(r=>r.status==='absent').length;
+    const late=recs.filter(r=>r.status==='late').length;
+    return`<div class="att-date-group" style="animation-delay:${di*0.05}s">
+      <div class="att-date-header">
+        <span class="att-date-label"><i class="fas fa-calendar-day" style="margin-right:7px"></i>${fdate(date)}</span>
+        <div class="att-date-stats">
+          <span class="att-date-stat" style="color:#34d399"><i class="fas fa-check"></i> ${present}</span>
+          <span class="att-date-stat" style="color:#f87171"><i class="fas fa-times"></i> ${absent}</span>
+          ${late?`<span class="att-date-stat" style="color:#fbbf24"><i class="fas fa-clock"></i> ${late}</span>`:''}
+        </div>
+      </div>
+      <div class="att-student-list">
+        ${recs.map(r=>{
+          const sName=r.student_name||(_students.find(s=>s.id===r.student)||{}).full_name||'O\'quvchi';
+          const ic=attStatusIcon[r.status]||'question';
+          const col=attStatusColor[r.status]||'var(--muted)';
+          return`<div class="att-row">
+            <div style="display:flex;align-items:center;gap:10px">
+              <div class="att-student-av">${initials(sName)}</div>
+              <span style="font-size:.82rem;font-weight:600;color:var(--text)">${sName}</span>
+            </div>
+            ${bdg(r.status||'absent')}
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+load();
+</script>
+{% endblock %}

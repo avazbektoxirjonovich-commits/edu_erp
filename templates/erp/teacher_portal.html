@@ -1,0 +1,187 @@
+{% extends "erp/base.html" %}
+{% block title %}Guruhlarim — EduERP Pro{% endblock %}
+{% block page_title %}Guruhlarim{% endblock %}
+
+{% block extra_head %}
+<style>
+/* ── HERO ─────────────────────────────────────────────── */
+.th-hero{background:#0D1B2A;border-radius:18px;padding:24px 26px;position:relative;overflow:hidden;margin-bottom:18px;animation:fadeUp .35s ease both}
+.th-hero-bg{position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,107,53,.12),rgba(247,147,30,.04) 60%,transparent)}
+.th-hero-dots{position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.04) 1px,transparent 1px);background-size:22px 22px}
+.th-hero-glow{position:absolute;top:-60px;right:-40px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(255,107,53,.2),transparent 70%)}
+.th-hero-glow2{position:absolute;bottom:-80px;left:-50px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(247,147,30,.1),transparent 70%)}
+.th-hero-inner{position:relative;z-index:1;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.th-av{width:66px;height:66px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:1.4rem;flex-shrink:0;box-shadow:0 4px 20px rgba(255,107,53,.45);border:3px solid rgba(255,107,53,.4);animation:pulseGlow 3s ease infinite}
+.th-name{font-size:1.15rem;font-weight:900;color:#fff;letter-spacing:-.4px;line-height:1.2}
+.th-sub{font-size:.73rem;color:rgba(255,255,255,.46);margin-top:4px;display:flex;align-items:center;gap:4px}
+.th-badges{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap}
+.th-bdg{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:20px;font-size:.72rem;font-weight:700;animation:fadeUp .5s ease both}
+.th-bdg-g{background:rgba(255,107,53,.2);color:#ff8c5a;border:1px solid rgba(255,107,53,.25);animation-delay:.1s}
+.th-bdg-s{background:rgba(59,130,246,.18);color:#60a5fa;border:1px solid rgba(59,130,246,.22);animation-delay:.18s}
+.th-bdg-h{background:rgba(16,185,129,.16);color:#34d399;border:1px solid rgba(16,185,129,.2);animation-delay:.26s}
+
+/* ── STAT CARDS ───────────────────────────────────────── */
+.th-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+@media(max-width:900px){.th-stats{grid-template-columns:repeat(2,1fr)}}
+.th-stat{background:#fff;border:1px solid var(--border);border-radius:13px;padding:16px 14px;text-align:center;box-shadow:var(--shadow);animation:fadeUp .4s ease both;transition:all .25s cubic-bezier(.4,0,.2,1);cursor:default;position:relative;overflow:hidden}
+.th-stat::before{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;border-radius:0 0 13px 13px;background:var(--grad);transform:scaleX(0);transition:transform .3s ease}
+.th-stat:hover{transform:translateY(-3px);box-shadow:var(--shadow-md)}
+.th-stat:hover::before{transform:scaleX(1)}
+.th-stat-ic{width:42px;height:42px;border-radius:11px;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:.9rem}
+.th-stat-v{font-size:1.4rem;font-weight:900;letter-spacing:-.5px;line-height:1;color:var(--text)}
+.th-stat-l{font-size:.65rem;color:var(--muted);margin-top:4px;font-weight:500}
+
+/* ── GROUP TABLE ──────────────────────────────────────── */
+.g-link{color:var(--accent);font-weight:700;text-decoration:none;transition:opacity .18s}
+.g-link:hover{opacity:.72;text-decoration:underline}
+.g-sched{display:flex;gap:3px;flex-wrap:wrap}
+.g-day{background:#f0f1f5;color:var(--muted);border-radius:4px;padding:1px 5px;font-size:.62rem;font-weight:700}
+
+/* Row stagger animation */
+@keyframes rowIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:translateX(0)}}
+.etable tbody tr{animation:rowIn .38s ease both}
+
+/* Column actions */
+.col-actions{display:flex;gap:5px;justify-content:flex-end}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero -->
+<div class="th-hero">
+  <div class="th-hero-bg"></div><div class="th-hero-dots"></div>
+  <div class="th-hero-glow"></div><div class="th-hero-glow2"></div>
+  <div class="th-hero-inner">
+    <div class="th-av" id="thAv">?</div>
+    <div style="flex:1;min-width:0">
+      <div class="th-name" id="thName">Yuklanmoqda...</div>
+      <div class="th-sub"><i class="fas fa-chalkboard-teacher" style="font-size:.62rem"></i><span id="thSub">O'qituvchi</span></div>
+      <div class="th-badges">
+        <span class="th-bdg th-bdg-g"><i class="fas fa-users" style="font-size:.6rem"></i><span id="thGrpCnt">0</span> guruh</span>
+        <span class="th-bdg th-bdg-s"><i class="fas fa-user-graduate" style="font-size:.6rem"></i><span id="thStCnt">0</span> o'quvchi</span>
+        <span class="th-bdg th-bdg-h"><i class="fas fa-book-open" style="font-size:.6rem"></i><span id="thHwCnt">0</span> vazifa</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Stat Cards -->
+<div class="th-stats">
+  <div class="th-stat" style="animation-delay:.04s">
+    <div class="th-stat-ic ic-blue"><i class="fas fa-users"></i></div>
+    <div class="th-stat-v" id="stGrp">—</div>
+    <div class="th-stat-l">Mening guruhlarim</div>
+  </div>
+  <div class="th-stat" style="animation-delay:.09s">
+    <div class="th-stat-ic ic-green"><i class="fas fa-user-graduate"></i></div>
+    <div class="th-stat-v" id="stStu">—</div>
+    <div class="th-stat-l">Jami o'quvchilar</div>
+  </div>
+  <div class="th-stat" style="animation-delay:.14s">
+    <div class="th-stat-ic ic-orange"><i class="fas fa-book-open"></i></div>
+    <div class="th-stat-v" id="stHw">—</div>
+    <div class="th-stat-l">Faol vazifalar</div>
+  </div>
+  <div class="th-stat" style="animation-delay:.19s">
+    <div class="th-stat-ic ic-red"><i class="fas fa-calendar-check"></i></div>
+    <div class="th-stat-v" id="stAtt">—</div>
+    <div class="th-stat-l">Bugungi davomat</div>
+  </div>
+</div>
+
+<!-- Groups Table -->
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;animation:fadeUp .42s ease .22s both">
+  <div>
+    <span style="font-weight:800;font-size:.92rem;color:var(--text)">Guruhlar</span>
+    <span style="font-size:.75rem;color:var(--muted);margin-left:8px" id="grpCountLbl"></span>
+  </div>
+</div>
+
+<div class="card" style="overflow:hidden;animation:fadeUp .45s ease .26s both">
+  <div id="groupTable"><div class="loading"><div class="spinner"></div></div></div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const DL={1:'Du',2:'Se',3:'Ch',4:'Pa',5:'Ju',6:'Sh',7:'Ya'};
+const TODAY=new Date().toISOString().split('T')[0];
+
+async function load(){
+  if(!initAuth())return;
+  const u=getUser();
+  if(u.role!=='teacher'&&u.role!=='developer'&&u.role!=='admin'){window.location.href='/';return;}
+
+  document.getElementById('thAv').textContent=initials(u.full_name||'?');
+  document.getElementById('thName').textContent=u.full_name||'—';
+
+  const [groups, students, homework, att] = await Promise.all([
+    get('/groups/?page_size=50'),
+    get('/students/?page_size=200&status=active'),
+    get('/homework/assignments/?page_size=100&status=active'),
+    get('/attendance/?date='+TODAY+'&page_size=200'),
+  ]);
+
+  const grps = groups?.results||groups||[];
+  const stus = students?.results||students||[];
+  const hws  = homework?.results||homework||[];
+  const atts = att?.results||att||[];
+
+  // Hero badges
+  countUp(document.getElementById('thGrpCnt'), grps.length, 500);
+  countUp(document.getElementById('thStCnt'),  stus.length, 500);
+  countUp(document.getElementById('thHwCnt'),  hws.length, 500);
+
+  // Stat cards
+  countUp(document.getElementById('stGrp'), grps.length, 800);
+  countUp(document.getElementById('stStu'), stus.length, 900);
+  countUp(document.getElementById('stHw'),  hws.filter(h=>h.status==='active').length, 1000);
+  const present = atts.filter(a=>a.status==='present').length;
+  const attTotal= atts.length;
+  document.getElementById('stAtt').textContent = attTotal ? Math.round(present/attTotal*100)+'%' : '—';
+
+  // Groups table
+  renderGroups(grps, stus, hws);
+}
+
+function renderGroups(grps, stus, hws){
+  document.getElementById('grpCountLbl').textContent = grps.length+' ta guruh';
+  if(!grps.length){
+    document.getElementById('groupTable').innerHTML='<div class="empty"><i class="fas fa-users"></i><p>Guruh topilmadi</p></div>';
+    return;
+  }
+  document.getElementById('groupTable').innerHTML=`
+  <table class="etable"><thead><tr>
+    <th>Guruh nomi</th><th>Yo'nalish</th><th>O'quvchilar</th><th>Dars vaqti</th><th>Boshlagan sana</th><th>Jadval</th><th>Holat</th><th></th>
+  </tr></thead><tbody>
+  ${grps.map((g,i)=>{
+    const days=(g.days_of_week||[]).map(d=>`<span class="g-day">${DL[d]||d}</span>`).join('');
+    const stuCount=stus.filter(s=>s.group===g.id).length||g.students_count||0;
+    return`<tr style="animation-delay:${i*0.04}s">
+      <td>
+        <a class="g-link" href="/teacher/group/?id=${g.id}">${g.name||'—'}</a>
+      </td>
+      <td style="font-size:.78rem;color:var(--muted)">${g.course_name||g.subject||'—'}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:5px">
+          <span style="font-weight:700;font-size:.85rem">${stuCount}</span>
+          <span style="font-size:.68rem;color:var(--muted)">ta</span>
+        </div>
+      </td>
+      <td style="font-size:.8rem">${g.start_time&&g.end_time?g.start_time+' – '+g.end_time:'—'}</td>
+      <td style="font-size:.78rem;color:var(--muted)">${g.start_date?fdate(g.start_date):'—'}</td>
+      <td><div class="g-sched">${days||'<span style="color:var(--muted);font-size:.75rem">—</span>'}</div></td>
+      <td>${g.status==='active'?'<span class="bdg bdg-active"><i class="fas fa-circle" style="font-size:.35rem"></i> Faol</span>':'<span class="bdg bdg-inactive">Nofaol</span>'}</td>
+      <td>
+        <div class="col-actions">
+          <a href="/teacher/group/?id=${g.id}" class="btn-icon" title="Batafsil"><i class="fas fa-arrow-right"></i></a>
+        </div>
+      </td>
+    </tr>`;
+  }).join('')}
+  </tbody></table>`;
+}
+
+load();
+</script>
+{% endblock %}

@@ -1,0 +1,334 @@
+{% extends "erp/base.html" %}
+{% block title %}O'quvchilar — EduERP Pro{% endblock %}
+{% block page_title %}O'quvchilar{% endblock %}
+
+{% block extra_head %}
+<style>
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;animation:fadeUp .35s ease both}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+@media(max-width:900px){.kpi-row{grid-template-columns:repeat(2,1fr)}}
+.kpi{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;animation:fadeUp .35s ease both;transition:all .2s}
+.kpi:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.kpi-icon{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.05rem;flex-shrink:0}
+.kpi-val{font-size:1.45rem;font-weight:900;color:var(--text);line-height:1;letter-spacing:-.5px}
+.kpi-lbl{font-size:.7rem;color:var(--muted);font-weight:500;margin-top:2px}
+
+.stbl-wrap{background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;animation:fadeUp .4s ease .1s both}
+.student-row{cursor:pointer}
+.student-row:hover{background:#fafbff!important}
+
+.xp-bar-wrap{display:flex;align-items:center;gap:6px;min-width:100px}
+.xp-bar{flex:1;height:5px;background:#e2e8f0;border-radius:5px;overflow:hidden}
+.xp-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,#FF6B35,#F7931E);transition:width .6s cubic-bezier(.4,0,.2,1)}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">O'quvchilar ro'yxati</h2>
+    <p style="font-size:.75rem;color:var(--muted);margin-top:3px">Barcha o'quvchilar va ularning ma'lumotlari</p>
+  </div>
+  <button class="btn btn-primary admin-only" onclick="openAddModal()"><i class="fas fa-user-plus"></i>Yangi o'quvchi</button>
+</div>
+
+<!-- KPI row -->
+<div class="kpi-row">
+  <div class="kpi"><div class="kpi-icon ic-blue"><i class="fas fa-user-graduate"></i></div><div><div class="kpi-val" id="kTotal">—</div><div class="kpi-lbl">Jami</div></div></div>
+  <div class="kpi"><div class="kpi-icon ic-green"><i class="fas fa-circle-check"></i></div><div><div class="kpi-val" id="kActive">—</div><div class="kpi-lbl">Faol</div></div></div>
+  <div class="kpi"><div class="kpi-icon ic-amber"><i class="fas fa-snowflake"></i></div><div><div class="kpi-val" id="kFrozen">—</div><div class="kpi-lbl">Toxtatilgan</div></div></div>
+  <div class="kpi"><div class="kpi-icon ic-red"><i class="fas fa-user-slash"></i></div><div><div class="kpi-val" id="kInactive">—</div><div class="kpi-lbl">Nofaol</div></div></div>
+</div>
+
+<!-- Table card -->
+<div class="stbl-wrap">
+  <div class="fbar">
+    <div class="search-wrap">
+      <i class="fas fa-search"></i>
+      <input type="text" id="srch" placeholder="Ism yoki telefon qidiring..." oninput="loadStudents()">
+    </div>
+    <select id="fStatus" class="fc-sel" onchange="loadStudents()" style="border:1.5px solid var(--border);border-radius:8px;padding:7px 32px 7px 12px;font-size:.78rem;background:#fff;outline:none;cursor:pointer">
+      <option value="">Barcha status</option>
+      <option value="active">Faol</option>
+      <option value="inactive">Nofaol</option>
+      <option value="frozen">Toxtatilgan</option>
+    </select>
+    <select id="fGroup" class="fc-sel" onchange="loadStudents()" style="border:1.5px solid var(--border);border-radius:8px;padding:7px 32px 7px 12px;font-size:.78rem;background:#fff;outline:none;cursor:pointer">
+      <option value="">Barcha guruhlar</option>
+    </select>
+    <span style="margin-left:auto;font-size:.75rem;color:var(--muted)" id="countLbl"></span>
+  </div>
+
+  <div id="tblWrap">
+    <div class="loading"><div class="spinner"></div><p>Yuklanmoqda...</p></div>
+  </div>
+
+  <!-- Pagination -->
+  <div id="pagination" style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-top:1px solid var(--border);background:#fafafa"></div>
+</div>
+
+<!-- ADD MODAL -->
+<div class="overlay" id="addModal">
+  <div class="modal modal-lg">
+    <div class="m-head">
+      <h5><i class="fas fa-user-plus" style="color:var(--accent);margin-right:6px"></i>Yangi O'quvchi</h5>
+      <button class="m-close" onclick="closeM('addModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="m-body">
+      <div class="row2">
+        <div class="fg"><label>Ism Familiya *</label><input class="fc" id="aName" placeholder="Abdullayev Ali"></div>
+        <div class="fg"><label>Telefon *</label><input class="fc" id="aPhone" placeholder="+998901234567"></div>
+      </div>
+      <div class="row2">
+        <div class="fg"><label>Parol *</label><input class="fc" type="password" id="aPwd" placeholder="Minimal 8 ta belgi"></div>
+        <div class="fg"><label>Guruh</label>
+          <select class="fc fc-sel" id="aGroup"><option value="">— Guruhsiz —</option></select>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="fg"><label>Ota-ona ismi</label><input class="fc" id="aParentName" placeholder="Abdullayev Vohid"></div>
+        <div class="fg"><label>Ota-ona telefoni</label><input class="fc" id="aParentPhone" placeholder="+998901234567"></div>
+      </div>
+      <div class="row2">
+        <div class="fg"><label>Manzil</label><input class="fc" id="aAddress" placeholder="Toshkent, Yunusobod"></div>
+        <div class="fg"><label>Tug'ilgan sana</label><input class="fc" type="date" id="aBirth"></div>
+      </div>
+      <div class="fg"><label>Izoh</label><textarea class="fc" id="aNotes" rows="2" placeholder="Qo'shimcha ma'lumot..."></textarea></div>
+    </div>
+    <div class="m-foot">
+      <button class="btn btn-ghost" onclick="closeM('addModal')">Bekor qilish</button>
+      <button class="btn btn-primary" onclick="doAddStudent()"><i class="fas fa-check"></i>Saqlash</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="overlay" id="editModal">
+  <div class="modal modal-lg">
+    <div class="m-head">
+      <h5><i class="fas fa-user-edit" style="color:var(--accent);margin-right:6px"></i>O'quvchini tahrirlash</h5>
+      <button class="m-close" onclick="closeM('editModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="m-body">
+      <input type="hidden" id="eId">
+      <div class="row2">
+        <div class="fg"><label>Ism Familiya *</label><input class="fc" id="eName" placeholder="Ism Familiya"></div>
+        <div class="fg"><label>Telefon *</label><input class="fc" id="ePhone" placeholder="+998901234567"></div>
+      </div>
+      <div class="row2">
+        <div class="fg"><label>Guruh</label>
+          <select class="fc fc-sel" id="eGroup"><option value="">— Guruhsiz —</option></select>
+        </div>
+        <div class="fg"><label>Status</label>
+          <select class="fc fc-sel" id="eStatus">
+            <option value="active">Faol</option>
+            <option value="inactive">Nofaol</option>
+            <option value="frozen">Toxtatilgan</option>
+          </select>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="fg"><label>Ota-ona ismi</label><input class="fc" id="eParentName" placeholder="Ota-ona ismi"></div>
+        <div class="fg"><label>Ota-ona telefoni</label><input class="fc" id="eParentPhone" placeholder="+998901234567"></div>
+      </div>
+      <div class="row2">
+        <div class="fg"><label>Manzil</label><input class="fc" id="eAddress" placeholder="Manzil"></div>
+        <div class="fg"><label>Tug'ilgan sana</label><input class="fc" type="date" id="eBirth"></div>
+      </div>
+      <div class="fg"><label>Izoh</label><textarea class="fc" id="eNotes" rows="2"></textarea></div>
+    </div>
+    <div class="m-foot">
+      <button class="btn btn-ghost" onclick="closeM('editModal')">Bekor qilish</button>
+      <button class="btn btn-primary" onclick="doEditStudent()"><i class="fas fa-check"></i>Saqlash</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+initAuth();
+const _ME=getUser();
+const _isAdmin=_ME.role==='admin'||_ME.role==='developer';
+const _isTeacher=_ME.role==='teacher';
+// Admin bo'lmasa boshqaruv tugmalarini yashir
+if(!_isAdmin){
+  document.querySelectorAll('.admin-only').forEach(el=>el.style.display='none');
+}
+let currentPage=1, groups=[], allStudents=[];
+
+async function init(){
+  const g=await get('/groups/?page_size=200');
+  groups=(g?.results||g||[]);
+  const sel=['aGroup','eGroup'];
+  sel.forEach(id=>{
+    const s=document.getElementById(id);
+    groups.forEach(gr=>{s.innerHTML+=`<option value="${gr.id}">${gr.name}</option>`});
+  });
+  document.getElementById('fGroup').innerHTML='<option value="">Barcha guruhlar</option>';
+  groups.forEach(gr=>{document.getElementById('fGroup').innerHTML+=`<option value="${gr.id}">${gr.name}</option>`});
+  loadStudents();
+}
+
+async function loadStudents(pg=1){
+  currentPage=pg;
+  const q=document.getElementById('srch').value.trim();
+  const st=document.getElementById('fStatus').value;
+  const gr=document.getElementById('fGroup').value;
+  let url=`/students/?page=${pg}&page_size=20`;
+  if(q) url+=`&search=${encodeURIComponent(q)}`;
+  if(st) url+=`&status=${st}`;
+  if(gr) url+=`&group=${gr}`;
+
+  document.getElementById('tblWrap').innerHTML='<div class="loading"><div class="spinner"></div></div>';
+  const d=await get(url);
+  if(!d){document.getElementById('tblWrap').innerHTML='<div class="empty"><i class="fas fa-exclamation-triangle"></i><p>Xatolik yuz berdi</p></div>';return;}
+
+  const items=d.results||d;
+  const count=d.count||items.length;
+  document.getElementById('countLbl').textContent=`${count} ta o'quvchi`;
+
+  if(!items.length){
+    document.getElementById('tblWrap').innerHTML='<div class="empty"><i class="fas fa-user-graduate"></i><p>O\'quvchi topilmadi</p></div>';
+    document.getElementById('pagination').innerHTML='';
+    updateKpi(items);
+    return;
+  }
+
+  document.getElementById('tblWrap').innerHTML=`
+  <table class="etable">
+    <thead><tr>
+      <th>#</th><th>O'quvchi</th><th>Telefon</th><th>Guruh</th><th>Davomat</th><th>XP</th><th>Status</th><th>Qarz</th><th></th>
+    </tr></thead>
+    <tbody>${items.map((s,i)=>`
+      <tr class="student-row" onclick="openEdit('${s.id}')">
+        <td style="color:var(--muted);font-size:.75rem">${(pg-1)*20+i+1}</td>
+        <td>
+          <div style="display:flex;align-items:center;gap:10px">
+            <div class="av av-sm">${initials(s.full_name||s.user?.full_name||'?')}</div>
+            <div>
+              <div style="font-weight:600;font-size:.82rem">${s.full_name||s.user?.full_name||'—'}</div>
+              <div style="font-size:.7rem;color:var(--muted)">${fdate(s.joined_date)}</div>
+            </div>
+          </div>
+        </td>
+        <td style="color:var(--muted);font-size:.8rem">${s.phone||'—'}</td>
+        <td style="font-size:.8rem">${s.group_name||s.group?.name||'Guruhsiz'}</td>
+        <td>
+          <div class="xp-bar-wrap">
+            <div class="xp-bar"><div class="xp-fill" style="width:${s.attendance_percentage||0}%"></div></div>
+            <span style="font-size:.7rem;color:var(--muted);width:34px;text-align:right">${s.attendance_percentage||0}%</span>
+          </div>
+        </td>
+        <td>
+          <div class="xp-badge"><i class="fas fa-star" style="font-size:.6rem"></i>${s.xp_points||0}</div>
+        </td>
+        <td>${bdg(s.status)}</td>
+        <td style="font-size:.8rem;font-weight:600;color:${(s.total_debt||0)>0?'var(--danger)':'var(--success)'}">
+          ${(s.total_debt||0)>0?fmoney(s.total_debt):'<i class="fas fa-check" style="font-size:.7rem"></i>'}
+        </td>
+        <td onclick="event.stopPropagation()">
+          <div style="display:flex;gap:4px">
+            ${_isAdmin?`<button class="btn-icon edit" onclick="openEdit('${s.id}')" title="Tahrirlash"><i class="fas fa-pen"></i></button>
+            <button class="btn-icon del" onclick="doDeactivate('${s.id}','${s.full_name||s.user?.full_name||''}')" title="O'chirish"><i class="fas fa-trash"></i></button>`:'<span style="font-size:.7rem;color:var(--muted)">Ko\'rish</span>'}
+          </div>
+        </td>
+      </tr>`).join('')}
+    </tbody>
+  </table>`;
+
+  updateKpi(items, count);
+  renderPagination(d.count||items.length, pg, 20);
+}
+
+function updateKpi(items, total){
+  const kData=items.reduce((a,s)=>{a[s.status]=(a[s.status]||0)+1;return a},{});
+  document.getElementById('kTotal').textContent=total||items.length;
+  document.getElementById('kActive').textContent=kData.active||0;
+  document.getElementById('kFrozen').textContent=kData.frozen||0;
+  document.getElementById('kInactive').textContent=kData.inactive||0;
+}
+
+function renderPagination(total, pg, size){
+  const pages=Math.ceil(total/size);
+  if(pages<=1){document.getElementById('pagination').innerHTML='';return;}
+  let html=`<span style="font-size:.75rem;color:var(--muted)">${total} ta natija</span><div style="display:flex;gap:6px">`;
+  if(pg>1) html+=`<button class="btn btn-ghost btn-sm" onclick="loadStudents(${pg-1})">‹ Oldingi</button>`;
+  const start=Math.max(1,pg-2), end=Math.min(pages,pg+2);
+  for(let i=start;i<=end;i++){
+    html+=`<button class="btn btn-sm ${i===pg?'btn-primary':'btn-ghost'}" onclick="loadStudents(${i})">${i}</button>`;
+  }
+  if(pg<pages) html+=`<button class="btn btn-ghost btn-sm" onclick="loadStudents(${pg+1})">Keyingi ›</button>`;
+  html+='</div>';
+  document.getElementById('pagination').innerHTML=html;
+}
+
+function openAddModal(){
+  ['aName','aPhone','aPwd','aParentName','aParentPhone','aAddress','aNotes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('aBirth').value='';
+  document.getElementById('aGroup').value='';
+  openM('addModal');
+}
+
+async function doAddStudent(){
+  const name=document.getElementById('aName').value.trim();
+  const phone=document.getElementById('aPhone').value.trim();
+  const pwd=document.getElementById('aPwd').value;
+  if(!name||!phone||!pwd){toast('Ism, telefon va parol majburiy!','wrn');return;}
+  const body={full_name:name,phone,password:pwd,
+    group:document.getElementById('aGroup').value||null,
+    parent_name:document.getElementById('aParentName').value,
+    parent_phone:document.getElementById('aParentPhone').value,
+    address:document.getElementById('aAddress').value,
+    birth_date:document.getElementById('aBirth').value||null,
+    notes:document.getElementById('aNotes').value};
+  const r=await post('/students/',body);
+  if(r?.ok){closeM('addModal');toast("O'quvchi qo'shildi",'ok');loadStudents(currentPage);}
+  else{const e=await r?.json();toast(e?.detail||"Xatolik yuz berdi",'err');}
+}
+
+let editId=null;
+async function openEdit(id){
+  editId=id;
+  const d=await get(`/students/${id}/`);
+  if(!d){toast('Yuklab bo\'lmadi','err');return;}
+  document.getElementById('eId').value=id;
+  document.getElementById('eName').value=d.full_name||d.user?.full_name||'';
+  document.getElementById('ePhone').value=d.phone||'';
+  document.getElementById('eStatus').value=d.status||'active';
+  document.getElementById('eGroup').value=d.group||'';
+  document.getElementById('eParentName').value=d.parent_name||'';
+  document.getElementById('eParentPhone').value=d.parent_phone||'';
+  document.getElementById('eAddress').value=d.address||'';
+  document.getElementById('eBirth').value=d.birth_date||'';
+  document.getElementById('eNotes').value=d.notes||'';
+  openM('editModal');
+}
+
+async function doEditStudent(){
+  const body={
+    full_name:document.getElementById('eName').value.trim(),
+    phone:document.getElementById('ePhone').value.trim(),
+    status:document.getElementById('eStatus').value,
+    group:document.getElementById('eGroup').value||null,
+    parent_name:document.getElementById('eParentName').value,
+    parent_phone:document.getElementById('eParentPhone').value,
+    address:document.getElementById('eAddress').value,
+    birth_date:document.getElementById('eBirth').value||null,
+    notes:document.getElementById('eNotes').value,
+  };
+  const r=await patch(`/students/${editId}/`,body);
+  if(r?.ok){closeM('editModal');toast("O'zgartirishlar saqlandi",'ok');loadStudents(currentPage);}
+  else{const e=await r?.json();toast(e?.detail||"Xatolik",'err');}
+}
+
+async function doDeactivate(id,name){
+  if(!confirm(`"${name}" ni nofaol qilasizmi?`)) return;
+  const r=await patch(`/students/${id}/`,{status:'inactive'});
+  if(r?.ok){toast("O'quvchi nofaol qilindi",'ok');loadStudents(currentPage);}
+  else toast("Xatolik yuz berdi",'err');
+}
+
+init();
+</script>
+{% endblock %}

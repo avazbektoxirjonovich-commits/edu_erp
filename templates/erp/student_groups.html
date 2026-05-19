@@ -1,0 +1,110 @@
+{% extends "erp/base.html" %}
+{% block title %}Guruhlarim — EduERP Pro{% endblock %}
+{% block page_title %}Guruhlarim{% endblock %}
+
+{% block extra_head %}
+<style>
+.tab-bar{display:flex;border-bottom:2px solid var(--border);margin-bottom:18px;animation:fadeUp .35s ease both}
+.tab-btn{padding:10px 22px;border:none;background:none;font-size:.83rem;font-weight:600;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .2s}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+.g-info-row{display:flex;align-items:center;gap:6px;font-size:.8rem;padding:7px 0;border-bottom:1px solid var(--border)}
+.g-info-row:last-child{border-bottom:none}
+.g-info-lbl{color:var(--muted);min-width:120px}
+.g-info-val{font-weight:600;color:var(--text)}
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="margin-bottom:20px;animation:fadeUp .35s ease both">
+  <h2 style="font-size:1.05rem;font-weight:800;color:var(--text)">Guruhlarim</h2>
+  <p style="font-size:.73rem;color:var(--muted);margin-top:3px">Mening dars guruhlarim</p>
+</div>
+
+<!-- Tabs -->
+<div class="tab-bar">
+  <button class="tab-btn active" id="tabFaol" onclick="switchTab('faol')">Faol</button>
+  <button class="tab-btn" id="tabTugagan" onclick="switchTab('tugagan')">Tugagan</button>
+</div>
+
+<!-- Content -->
+<div id="tabContent">
+  <div class="loading"><div class="spinner"></div></div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let curTab='faol', profileData=null;
+
+function switchTab(tab){
+  curTab=tab;
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab'+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.add('active');
+  renderTab();
+}
+
+function renderTab(){
+  if(!profileData){return;}
+  const g=profileData.group_data;
+  const el=document.getElementById('tabContent');
+
+  if(curTab==='faol'){
+    if(!g){
+      el.innerHTML='<div class="empty"><i class="fas fa-users"></i><p>Guruhga biriktirilmagan</p></div>';
+      return;
+    }
+    const DL={1:'Dushanba',2:'Seshanba',3:'Chorshanba',4:'Payshanba',5:'Juma',6:'Shanba',7:'Yakshanba'};
+    const days=(g.days_of_week||[]).map(d=>DL[d]||d).join(', ');
+    el.innerHTML=`
+    <div class="card" style="animation:fadeUp .35s ease both;overflow:hidden">
+      <table class="etable"><thead><tr>
+        <th>#</th><th>Guruh nomi</th><th>Yo'nalishi</th><th>O'qituvchi</th><th>Boshlash sanasi</th>
+      </tr></thead><tbody><tr>
+        <td style="color:var(--muted);font-size:.75rem">1</td>
+        <td><div style="display:flex;align-items:center;gap:8px">
+          <div style="width:34px;height:34px;border-radius:9px;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:.75rem;flex-shrink:0">
+            ${initials(g.name||'?')}
+          </div>
+          <div>
+            <div style="font-size:.82rem;font-weight:700">${g.name||'—'}</div>
+            <div style="font-size:.68rem;color:var(--muted)">${g.start_time||'—'} – ${g.end_time||''}</div>
+          </div>
+        </div></td>
+        <td style="font-size:.8rem;color:var(--muted)">${g.course_name||g.subject||'—'}</td>
+        <td>
+          <div style="display:flex;align-items:center;gap:7px">
+            <div class="av av-sm">${initials(g.teacher_name||'?')}</div>
+            <span style="font-size:.8rem;font-weight:600">${g.teacher_name||'—'}</span>
+          </div>
+        </td>
+        <td style="font-size:.8rem">${g.start_date?fdate(g.start_date):'—'}</td>
+      </tr></tbody></table>
+    </div>
+    <div class="card" style="margin-top:14px;animation:fadeUp .38s ease .08s both">
+      <div style="padding:18px 20px">
+        <div style="font-weight:700;font-size:.88rem;margin-bottom:12px;color:var(--text)">Guruh ma'lumotlari</div>
+        <div class="g-info-row"><span class="g-info-lbl">Guruh nomi</span><span class="g-info-val">${g.name||'—'}</span></div>
+        <div class="g-info-row"><span class="g-info-lbl">Dars kunlari</span><span class="g-info-val">${days||'—'}</span></div>
+        <div class="g-info-row"><span class="g-info-lbl">Dars vaqti</span><span class="g-info-val">${g.start_time||'—'} – ${g.end_time||''}</span></div>
+        <div class="g-info-row"><span class="g-info-lbl">O'qituvchi</span><span class="g-info-val">${g.teacher_name||'—'}</span></div>
+        <div class="g-info-row"><span class="g-info-lbl">O'quvchilar soni</span><span class="g-info-val">${g.students_count||'—'} ta</span></div>
+        ${g.room?`<div class="g-info-row"><span class="g-info-lbl">Xona</span><span class="g-info-val">${g.room}</span></div>`:''}
+        <div class="g-info-row"><span class="g-info-lbl">Holat</span>${bdg('active')}</div>
+      </div>
+    </div>`;
+  } else {
+    el.innerHTML='<div class="empty"><i class="fas fa-check-circle"></i><p>Tugagan guruhlar yo\'q</p></div>';
+  }
+}
+
+async function load(){
+  if(!initAuth())return;
+  const u=getUser();
+  if(u.role&&u.role!=='student'){window.location.href='/';return;}
+  profileData=await get('/students/me/');
+  renderTab();
+}
+
+load();
+</script>
+{% endblock %}
