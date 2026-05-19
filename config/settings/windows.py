@@ -1,9 +1,10 @@
 from pathlib import Path
 from datetime import timedelta
+from decouple import config as env
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-SECRET_KEY = 'django-super-secret-key-12345-erp-system-uzbekistan'
+SECRET_KEY = env('SECRET_KEY', default='dev-only-secret-key-change-in-production')
 DEBUG = True
 ALLOWED_HOSTS = ['*']
 
@@ -64,11 +65,11 @@ TEMPLATES = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'erp_db',
-        'USER': 'erp_user',
-        'PASSWORD': 'erp_pass123',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'NAME': env('DB_NAME', default='erp_db'),
+        'USER': env('DB_USER', default='erp_user'),
+        'PASSWORD': env('DB_PASSWORD', default=''),
+        'HOST': env('DB_HOST', default='localhost'),
+        'PORT': env('DB_PORT', default='5432'),
     }
 }
 

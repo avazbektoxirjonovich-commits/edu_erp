@@ -45,3 +45,15 @@ env/
 *.tmp
 *.bak
 setup_initial_data.py
+
+# Virtual environment
+venv/
+env/
+.venv/
+
+# Logs
+logs/
+*.log
+
+# Windows scripts (contain local config)
+START.bat
