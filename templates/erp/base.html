@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{% block title %}EduERP Pro{% endblock %}</title>
+<!-- PWA -->
+{% load static %}
+<link rel="manifest" href="{% static 'manifest.json' %}">
+<meta name="theme-color" content="#FF6B35">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="EduERP">
+<link rel="apple-touch-icon" href="{% static 'icons/icon-192.png' %}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
@@ -582,6 +590,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
           </div>
         </div>
       </div>
+      <button class="tb-btn" id="pwaInstallBtn" onclick="installPwa()" title="Telefoningizga o'rnating" style="display:none;gap:5px;font-size:.72rem;padding:6px 12px;width:auto">
+        <i class="fas fa-mobile-screen"></i><span style="display:none" class="pwa-lbl">O'rnatish</span>
+      </button>
       <button class="tb-btn" onclick="doLogout()" title="Chiqish"><i class="fas fa-right-from-bracket"></i></button>
     </div>
   </div>
@@ -886,6 +897,30 @@ const observer=new IntersectionObserver(entries=>{
 document.querySelectorAll('.stat-card').forEach(el=>{el.style.opacity='0';observer.observe(el);});
 </script>
 {% block extra_js %}{% endblock %}
+<script>
+// ── PWA Service Worker ────────────────────────────────────────
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('/sw.js')
+      .catch(()=>{});
+  });
+}
+
+// ── PWA Install prompt ────────────────────────────────────────
+let _deferredPrompt=null;
+window.addEventListener('beforeinstallprompt', e=>{
+  e.preventDefault();
+  _deferredPrompt=e;
+  const btn=document.getElementById('pwaInstallBtn');
+  if(btn) btn.style.display='flex';
+});
+function installPwa(){
+  if(!_deferredPrompt)return;
+  _deferredPrompt.prompt();
+  _deferredPrompt.userChoice.then(()=>{ _deferredPrompt=null; const b=document.getElementById('pwaInstallBtn'); if(b) b.style.display='none'; });
+}
+window.addEventListener('appinstalled',()=>{ const b=document.getElementById('pwaInstallBtn'); if(b) b.style.display='none'; toast("EduERP telefoningizga o'rnatildi!",'ok'); });
+</script>
 <script>
 // ── Yordam bo'limi (ikki tomonlama chat) ─────────────────────
 let _helpReplyTarget = null; // javob beriladigan xabar ID

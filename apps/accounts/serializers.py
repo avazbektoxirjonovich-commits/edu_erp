@@ -69,6 +69,13 @@ class LoginSerializer(serializers.Serializer):
         }
 
 
+class ProfileUpdateSerializer(serializers.ModelSerializer):
+    """Profil tahrirlash — faqat ism va telefon"""
+    class Meta:
+        model  = User
+        fields = ['full_name', 'phone']
+
+
 class ChangePasswordSerializer(serializers.Serializer):
     """Parol almashtirish"""
     old_password = serializers.CharField(write_only=True)

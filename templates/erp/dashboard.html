@@ -135,6 +135,17 @@
   </div>
 </div>
 
+<!-- Student trend chart -->
+<div class="card" style="animation:fadeUp .4s ease .4s both;margin-bottom:20px">
+  <div class="card-header">
+    <div>
+      <div style="font-size:.88rem;font-weight:700;color:var(--text)">O'quvchilar o'sishi</div>
+      <div style="font-size:.72rem;color:var(--muted);margin-top:2px">Oylar bo'yicha yangi o'quvchilar</div>
+    </div>
+  </div>
+  <div class="card-body"><div class="chart-box" style="height:180px"><canvas id="stuTrendChart"></canvas></div></div>
+</div>
+
 <!-- Bottom row -->
 <div class="bottom-grid">
   <div class="card" style="animation:fadeUp .4s ease .42s both">
@@ -164,13 +175,13 @@ const now=new Date();
 document.getElementById('todayLbl').textContent=now.toLocaleDateString('uz-UZ',{weekday:'long',day:'2-digit',month:'long'});
 document.getElementById('todayAttLbl').textContent=now.toLocaleDateString('uz-UZ',{day:'2-digit',month:'long',year:'numeric'});
 
-let incChart=null, attChart=null;
+let incChart=null, attChart=null, stuChart=null;
 
 async function loadDash(){
   const d=await get('/dashboard/');
   if(!d) return;
 
-  const {students:s,groups:g,payments:p,attendance:a,monthly_income:mi,top_groups:tg,unpaid_students:ud}=d;
+  const {students:s,groups:g,payments:p,attendance:a,monthly_income:mi,student_trend:st,top_groups:tg,unpaid_students:ud}=d;
 
   // Stat counters
   countUp(document.getElementById('stTotal'), s.total);
@@ -254,6 +265,36 @@ async function loadDash(){
           ticks:{font:{size:11},color:'#9ca3af',
             callback:v=>v>=1000000?(v/1000000).toFixed(1)+'M':v>=1000?(v/1000)+'K':v
           }
+        }
+      }
+    }
+  });
+
+  // Student trend chart
+  const stLabels=(st||[]).map(m=>MN[m.month-1]+' '+String(m.year).slice(-2));
+  const stCounts=(st||[]).map(m=>m.count);
+  if(stuChart) stuChart.destroy();
+  stuChart=new Chart(document.getElementById('stuTrendChart'),{
+    type:'line',
+    data:{
+      labels:stLabels,
+      datasets:[{
+        label:"Yangi o'quvchilar", data:stCounts,
+        borderColor:'#FF6B35', backgroundColor:'rgba(255,107,53,.08)',
+        borderWidth:2.5, fill:true, tension:.4,
+        pointBackgroundColor:'#FF6B35', pointRadius:5, pointHoverRadius:7,
+      }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{
+        x:{grid:{display:false}, ticks:{font:{size:11},color:'#9ca3af'}},
+        y:{
+          grid:{color:'rgba(0,0,0,.04)', drawBorder:false},
+          border:{display:false},
+          ticks:{font:{size:11},color:'#9ca3af', stepSize:1, precision:0},
+          beginAtZero:true,
         }
       }
     }

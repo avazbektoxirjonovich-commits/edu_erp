@@ -3,11 +3,20 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import TemplateView
+from django.http import FileResponse, Http404
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
     TokenVerifyView,
 )
+import os
+
+
+def serve_sw(request):
+    sw_path = os.path.join(settings.BASE_DIR, 'static', 'sw.js')
+    if not os.path.exists(sw_path):
+        raise Http404
+    return FileResponse(open(sw_path, 'rb'), content_type='application/javascript')
 
 # ── API v1 routes ──
 api_v1_urlpatterns = [
@@ -53,6 +62,7 @@ frontend_urlpatterns = [
 urlpatterns = [
     path('admin/',   admin.site.urls),
     path('api/v1/',  include(api_v1_urlpatterns)),
+    path('sw.js',    serve_sw, name='service-worker'),
 ] + frontend_urlpatterns
 
 if settings.DEBUG:

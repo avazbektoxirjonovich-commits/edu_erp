@@ -109,15 +109,38 @@
 <!-- Main layout -->
 <div class="ts-layout">
 
-  <!-- Left: Personal Info -->
-  <div>
+  <!-- Left: Personal Info + Edit -->
+  <div style="display:flex;flex-direction:column;gap:16px">
     <div class="ts-card" style="animation-delay:.1s">
-      <div class="ts-card-head">
-        <div class="ts-card-ic ic-blue"><i class="fas fa-user"></i></div>
-        <span class="ts-card-title">Shaxsiy ma'lumotlar</span>
+      <div class="ts-card-head" style="justify-content:space-between">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="ts-card-ic ic-blue"><i class="fas fa-user"></i></div>
+          <span class="ts-card-title">Shaxsiy ma'lumotlar</span>
+        </div>
+        <button class="btn btn-ghost" style="padding:4px 12px;font-size:.74rem" onclick="toggleEditForm()">
+          <i class="fas fa-pen" style="font-size:.7rem"></i> Tahrirlash
+        </button>
       </div>
       <div class="ts-info-list" id="infoList">
         <div class="loading" style="padding:32px"><div class="spinner"></div></div>
+      </div>
+      <!-- Edit form (hidden by default) -->
+      <div id="editFormWrap" style="display:none;padding:12px 0 0">
+        <div style="height:1px;background:var(--border);margin-bottom:14px"></div>
+        <div class="ts-form-body">
+          <div class="fg">
+            <label>Ism Familiya</label>
+            <input class="fc" type="text" id="editName" placeholder="Ismingizni kiriting">
+          </div>
+          <div class="fg">
+            <label>Telefon raqam</label>
+            <input class="fc" type="tel" id="editPhone" placeholder="+998901234567">
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-primary" style="flex:1" onclick="saveProfile()"><i class="fas fa-check"></i> Saqlash</button>
+            <button class="btn btn-ghost" onclick="toggleEditForm()"><i class="fas fa-times"></i></button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -163,6 +186,32 @@
 
 {% block extra_js %}
 <script>
+function toggleEditForm(){
+  const wrap=document.getElementById('editFormWrap');
+  wrap.style.display=wrap.style.display==='none'?'block':'none';
+}
+
+async function saveProfile(){
+  const full_name=document.getElementById('editName').value.trim();
+  const phone=document.getElementById('editPhone').value.trim();
+  if(!full_name||!phone){toast("Ism va telefon bo'sh bo'lmasligi kerak",'wrn');return;}
+  const r=await req('/auth/me/',{method:'PATCH',body:JSON.stringify({full_name,phone})});
+  if(r?.ok){
+    const u=getUser();
+    u.full_name=full_name; u.phone=phone;
+    localStorage.setItem('erp_user',JSON.stringify(u));
+    document.getElementById('tsName').textContent=full_name;
+    document.getElementById('tsAv').textContent=initials(full_name);
+    document.getElementById('sbName').textContent=full_name;
+    toast("Profil muvaffaqiyatli yangilandi",'ok');
+    toggleEditForm();
+    load();
+  } else {
+    const e=await r?.json();
+    toast(e?.full_name?.[0]||e?.phone?.[0]||e?.detail||"Xatolik",'err');
+  }
+}
+
 async function load(){
   if(!initAuth()) return;
   const u=getUser();
@@ -182,6 +231,10 @@ async function load(){
   const grps    = groups?.results||groups||[];
   const stus    = students?.results||students||[];
   const hws     = hw?.results||hw||[];
+
+  // Pre-fill edit form
+  document.getElementById('editName').value=u.full_name||'';
+  document.getElementById('editPhone').value=teacher.phone||u.phone||'';
 
   // Subject line
   if(teacher.subject) document.getElementById('tsSubject').textContent = teacher.subject;

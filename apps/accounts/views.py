@@ -11,7 +11,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .models import User
 from .serializers import (
     UserSerializer, UserCreateSerializer,
-    LoginSerializer, ChangePasswordSerializer
+    LoginSerializer, ChangePasswordSerializer, ProfileUpdateSerializer
 )
 from .permissions import IsAdmin
 
@@ -72,14 +72,22 @@ class LogoutView(APIView):
 
 class MeView(generics.RetrieveUpdateAPIView):
     """
-    GET  /api/v1/auth/me/   — O'z profilini ko'rish
-    PUT  /api/v1/auth/me/   — O'z profilini yangilash
+    GET        /api/v1/auth/me/  — O'z profilini ko'rish
+    PATCH/PUT  /api/v1/auth/me/  — Ism va telefonni yangilash
     """
-    serializer_class   = UserSerializer
     permission_classes = [IsAuthenticated]
+
+    def get_serializer_class(self):
+        if self.request.method in ('PUT', 'PATCH'):
+            return ProfileUpdateSerializer
+        return UserSerializer
 
     def get_object(self):
         return self.request.user
+
+    def perform_update(self, serializer):
+        user = serializer.save()
+        _log(self.request.user, 'update', 'User', user.pk, f'Profil yangilandi: {user}', self.request)
 
 
 class ChangePasswordView(APIView):

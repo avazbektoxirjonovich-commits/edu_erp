@@ -118,6 +118,33 @@ class DashboardView(APIView):
             for g in groups_qs
         ]
 
+        # ── Student trend (6 months) — 1 query ──
+        student_trend_rows = (
+            Student.objects
+            .filter(
+                created_at__year__gte=six_months_ago.year,
+                created_at__year__lte=year,
+            )
+            .values('created_at__year', 'created_at__month')
+            .annotate(count=Count('id'))
+            .order_by('created_at__year', 'created_at__month')
+        )
+        trend_map = {
+            (r['created_at__year'], r['created_at__month']): r['count']
+            for r in student_trend_rows
+        }
+        student_trend = []
+        for i in range(5, -1, -1):
+            m = month - i
+            y = year
+            if m <= 0:
+                m += 12
+                y -= 1
+            student_trend.append({
+                'month': m, 'year': y,
+                'count': trend_map.get((y, m), 0),
+            })
+
         # ── Branches summary — 1 query ──
         from apps.branches.models import Branch
         branches = (
@@ -182,6 +209,7 @@ class DashboardView(APIView):
                 'percentage':    att_pct,
             },
             'monthly_income':  monthly_income,
+            'student_trend':   student_trend,
             'top_groups':      top_groups,
             'branches':        branches_list,
             'unpaid_students': unpaid_list,
