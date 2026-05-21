@@ -10,6 +10,8 @@ from django.db.models.functions import Coalesce
 from django_filters.rest_framework import DjangoFilterBackend
 
 from apps.accounts.permissions import IsAdminOrTeacher, IsAdmin, IsStudent
+from apps.notifications.views import log_activity
+from apps.notifications.models import ActivityLog
 from .models import Student
 from .serializers import (
     StudentListSerializer, StudentDetailSerializer,
@@ -76,13 +78,30 @@ class StudentViewSet(ModelViewSet):
     def perform_create(self, serializer):
         student = serializer.save()
         logger.info(f"Yangi o'quvchi: {student.full_name} | Guruh: {student.group}")
+        log_activity(
+            self.request.user, ActivityLog.Action.CREATE, 'Student',
+            student.pk, str(student), request=self.request,
+        )
+
+    def perform_update(self, serializer):
+        student = serializer.save()
+        log_activity(
+            self.request.user, ActivityLog.Action.UPDATE, 'Student',
+            student.pk, str(student), request=self.request,
+        )
 
     def perform_destroy(self, instance):
+        repr_str = str(instance)
+        pk       = instance.pk
         instance.status = Student.Status.INACTIVE
         instance.save()
         instance.user.is_active = False
         instance.user.save()
         logger.info(f"O'quvchi nofaol: {instance.full_name}")
+        log_activity(
+            self.request.user, ActivityLog.Action.DELETE, 'Student',
+            pk, repr_str, request=self.request,
+        )
 
     @action(detail=True, methods=['get'], url_path='payments')
     def payments(self, request, pk=None):

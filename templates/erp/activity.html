@@ -1,0 +1,183 @@
+{% extends "erp/base.html" %}
+{% block title %}Faoliyat jurnali — EduERP Pro{% endblock %}
+{% block page_title %}Faoliyat jurnali{% endblock %}
+
+{% block extra_head %}
+<style>
+.act-filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+.act-filters select,.act-filters input{
+  padding:7px 12px;border:1.5px solid var(--border);border-radius:8px;
+  font-size:.8rem;background:#fff;color:var(--text);outline:none;
+  font-family:inherit;transition:border .2s;
+}
+.act-filters select:focus,.act-filters input:focus{border-color:var(--accent)}
+.act-table-wrap{overflow-x:auto}
+.act-table{width:100%;border-collapse:collapse;font-size:.8rem}
+.act-table th{padding:10px 14px;font-size:.72rem;font-weight:700;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.05em;text-align:left;
+  border-bottom:2px solid var(--border);white-space:nowrap}
+.act-table td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
+.act-table tr:hover td{background:rgba(255,107,53,.03)}
+.act-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:20px;font-size:.68rem;font-weight:700}
+.act-create{background:#d4f5e2;color:#1a7a46}
+.act-update{background:#fff3cd;color:#856404}
+.act-delete{background:#ffe3e3;color:#c0392b}
+.act-login{background:#d0e9ff;color:#1565c0}
+.act-logout{background:#e8e8e8;color:#555}
+.act-empty{text-align:center;padding:60px 20px;color:var(--muted)}
+.act-empty i{font-size:2.5rem;display:block;margin-bottom:12px;opacity:.3}
+.act-model{font-size:.72rem;color:var(--muted);font-style:italic}
+.act-repr{font-weight:600;color:var(--text)}
+.act-ip{font-size:.7rem;color:var(--muted);font-family:monospace}
+.act-changes-btn{padding:2px 7px;border:1px solid var(--border);border-radius:5px;background:none;cursor:pointer;font-size:.68rem;color:var(--muted)}
+.act-changes-btn:hover{color:var(--accent);border-color:var(--accent)}
+.act-change-row{display:flex;gap:8px;font-size:.72rem;padding:3px 0;border-bottom:1px dashed var(--border)}
+.act-change-row:last-child{border-bottom:none}
+.act-old{color:var(--danger);text-decoration:line-through;opacity:.8}
+.act-new{color:var(--success);font-weight:600}
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="margin-bottom:20px;animation:fadeUp .35s ease both;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px">
+  <div>
+    <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">Faoliyat jurnali</h2>
+    <p style="font-size:.75rem;color:var(--muted);margin-top:3px">Kim nimani o'zgartirdi — barcha amallar tarixi</p>
+  </div>
+  <button class="btn" onclick="loadActivity()"><i class="fas fa-rotate-right"></i> Yangilash</button>
+</div>
+
+<div class="card" style="animation:fadeUp .4s ease .05s both">
+  <!-- Filters -->
+  <div class="act-filters">
+    <select id="filterAction" onchange="loadActivity()">
+      <option value="">Barcha amallar</option>
+      <option value="create">Yaratildi</option>
+      <option value="update">Yangilandi</option>
+      <option value="delete">O'chirildi</option>
+      <option value="login">Kirdi</option>
+      <option value="logout">Chiqdi</option>
+    </select>
+    <select id="filterModel" onchange="loadActivity()">
+      <option value="">Barcha modellar</option>
+      <option value="Student">O'quvchi</option>
+      <option value="Teacher">O'qituvchi</option>
+      <option value="Group">Guruh</option>
+      <option value="Payment">To'lov</option>
+      <option value="Attendance">Davomat</option>
+      <option value="User">Foydalanuvchi</option>
+    </select>
+  </div>
+
+  <div class="act-table-wrap">
+    <table class="act-table">
+      <thead>
+        <tr>
+          <th>Amal</th>
+          <th>Foydalanuvchi</th>
+          <th>Obyekt</th>
+          <th>O'zgarishlar</th>
+          <th>IP</th>
+          <th>Vaqt</th>
+        </tr>
+      </thead>
+      <tbody id="actBody">
+        <tr><td colspan="6" class="act-empty"><i class="fas fa-spinner fa-spin"></i> Yuklanmoqda...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Changes modal -->
+<div class="overlay" id="changesOverlay">
+  <div class="modal" style="max-width:420px">
+    <div class="m-head">
+      <h5><i class="fas fa-code-compare" style="margin-right:8px"></i>O'zgarishlar</h5>
+      <button class="m-close" onclick="closeM('changesOverlay')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="m-body" id="changesBody" style="max-height:360px;overflow-y:auto"></div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const ACTION_BADGES = {
+  create: 'act-create', update: 'act-update', delete: 'act-delete',
+  login: 'act-login', logout: 'act-logout',
+};
+const ACTION_LABELS = {
+  create:'Yaratildi', update:'Yangilandi', delete:"O'chirildi",
+  login:'Kirdi', logout:'Chiqdi',
+};
+
+async function loadActivity(){
+  const action = document.getElementById('filterAction').value;
+  const model  = document.getElementById('filterModel').value;
+  const body   = document.getElementById('actBody');
+  body.innerHTML = '<tr><td colspan="6" class="act-empty"><i class="fas fa-spinner fa-spin"></i> Yuklanmoqda...</td></tr>';
+
+  let url = '/notifications/activity/';
+  const params=[];
+  if(action) params.push('action='+action);
+  if(model)  params.push('model='+model);
+  if(params.length) url+='?'+params.join('&');
+
+  const data = await get(url);
+  if(!data){ body.innerHTML='<tr><td colspan="6" class="act-empty"><i class="fas fa-exclamation-circle"></i> Yuklashda xatolik</td></tr>'; return; }
+  const list = Array.isArray(data) ? data : (data.results||[]);
+  if(!list.length){
+    body.innerHTML='<tr><td colspan="6" class="act-empty"><i class="fas fa-list-check"></i><br>Faoliyatlar topilmadi</td></tr>';
+    return;
+  }
+  body.innerHTML = list.map(a=>{
+    const bdgCls = ACTION_BADGES[a.action]||'act-create';
+    const label  = ACTION_LABELS[a.action]||a.action_display||a.action;
+    const hasChg = a.changes && Object.keys(a.changes).length;
+    const changeBtn = hasChg
+      ? `<button class="act-changes-btn" onclick="showChanges(${JSON.stringify(JSON.stringify(a.changes))})"><i class="fas fa-diff"></i> Ko'rish</button>`
+      : '<span style="color:var(--muted);font-size:.7rem">—</span>';
+    return `<tr>
+      <td><span class="act-badge ${bdgCls}">${label}</span></td>
+      <td>
+        <div style="font-weight:600;font-size:.8rem">${escHtml(a.user_name||'Nomalum')}</div>
+        <div style="font-size:.68rem;color:var(--muted)">${a.user_role||''}</div>
+      </td>
+      <td>
+        <div class="act-repr">${escHtml(a.object_repr||'—')}</div>
+        <div class="act-model">${escHtml(a.model_name||'')}</div>
+      </td>
+      <td>${changeBtn}</td>
+      <td class="act-ip">${a.ip_address||'—'}</td>
+      <td style="font-size:.72rem;color:var(--muted);white-space:nowrap">${fmtDate(a.created_at)}</td>
+    </tr>`;
+  }).join('');
+}
+
+function showChanges(jsonStr){
+  let ch;
+  try{ ch = JSON.parse(jsonStr); } catch{ ch={}; }
+  const body = document.getElementById('changesBody');
+  const keys = Object.keys(ch);
+  if(!keys.length){ body.innerHTML='<p style="color:var(--muted);font-size:.8rem">O\'zgarishlar yo\'q</p>'; }
+  else{
+    body.innerHTML = keys.map(k=>{
+      const val = ch[k];
+      const old = Array.isArray(val) ? val[0] : val?.old;
+      const nw  = Array.isArray(val) ? val[1] : val?.new;
+      return `<div class="act-change-row">
+        <div style="width:110px;font-weight:600;font-size:.73rem;color:var(--text)">${escHtml(k)}</div>
+        <div style="flex:1">
+          ${old!==undefined?`<div class="act-old">${escHtml(String(old))}</div>`:''}
+          ${nw!==undefined?`<div class="act-new">${escHtml(String(nw))}</div>`:''}
+          ${old===undefined&&nw===undefined?`<span style="color:var(--muted)">${escHtml(String(val))}</span>`:''}
+        </div>
+      </div>`;
+    }).join('');
+  }
+  openM('changesOverlay');
+}
+
+document.addEventListener('DOMContentLoaded', ()=>{ if(initAuth()) loadActivity(); });
+</script>
+{% endblock %}

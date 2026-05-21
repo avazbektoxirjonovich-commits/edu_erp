@@ -30,6 +30,14 @@ class UserCreateSerializer(serializers.ModelSerializer):
     def validate(self, data):
         if data['password'] != data.pop('password2'):
             raise serializers.ValidationError("Parollar mos kelmadi")
+
+        request_user = self.context.get('request') and self.context['request'].user
+        target_role  = data.get('role', User.Role.STUDENT)
+        if request_user and target_role == User.Role.DEVELOPER:
+            if request_user.role != User.Role.DEVELOPER:
+                raise serializers.ValidationError(
+                    "Dasturchi akkaunt faqat dasturchi tomonidan yaratilishi mumkin."
+                )
         return data
 
     def create(self, validated_data):

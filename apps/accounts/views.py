@@ -18,6 +18,14 @@ from .permissions import IsAdmin
 logger = logging.getLogger('apps.accounts')
 
 
+def _log(user, action, model='User', object_id='', object_repr='', request=None):
+    try:
+        from apps.notifications.views import log_activity
+        log_activity(user, action, model, object_id, object_repr, request=request)
+    except Exception:
+        pass
+
+
 class LoginView(APIView):
     """
     POST /api/v1/auth/login/
@@ -32,6 +40,7 @@ class LoginView(APIView):
             user   = serializer.validated_data['user']
             tokens = serializer.get_tokens(user)
             logger.info(f"Kirdi: {user.phone}")
+            _log(user, 'login', 'User', user.pk, str(user), request)
             return Response({
                 **tokens,
                 'user': UserSerializer(user).data
@@ -52,6 +61,7 @@ class LogoutView(APIView):
             token = RefreshToken(request.data.get('refresh'))
             token.blacklist()
             logger.info(f"Chiqdi: {request.user.phone}")
+            _log(request.user, 'logout', 'User', request.user.pk, str(request.user), request)
             return Response({'detail': 'Muvaffaqiyatli chiqildi'})
         except Exception:
             return Response(
@@ -83,6 +93,7 @@ class ChangePasswordView(APIView):
         )
         if serializer.is_valid():
             serializer.save()
+            _log(request.user, 'update', 'User', request.user.pk, 'Parol o\'zgartirildi', request)
             return Response({'detail': 'Parol muvaffaqiyatli o\'zgartirildi'})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -107,6 +118,10 @@ class UserListCreateView(generics.ListCreateAPIView):
             qs = qs.filter(role=role)
         return qs
 
+    def perform_create(self, serializer):
+        user = serializer.save()
+        _log(self.request.user, 'create', 'User', user.pk, str(user), self.request)
+
 
 class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
     """
@@ -117,3 +132,11 @@ class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset           = User.objects.all()
     serializer_class   = UserSerializer
     permission_classes = [IsAdmin]
+
+    def perform_update(self, serializer):
+        user = serializer.save()
+        _log(self.request.user, 'update', 'User', user.pk, str(user), self.request)
+
+    def perform_destroy(self, instance):
+        _log(self.request.user, 'delete', 'User', instance.pk, str(instance), self.request)
+        instance.delete()

@@ -39,6 +39,7 @@ frontend_urlpatterns = [
     path('reports/',     TemplateView.as_view(template_name='erp/reports.html'),         name='reports'),
     path('leaderboard/', TemplateView.as_view(template_name='erp/leaderboard.html'),     name='leaderboard'),
     path('homework/',    TemplateView.as_view(template_name='erp/homework.html'),         name='homework'),
+    path('activity/',   TemplateView.as_view(template_name='erp/activity.html'),         name='activity-log-page'),
     path('student/',          TemplateView.as_view(template_name='erp/student_portal.html'),   name='student_portal'),
     path('student/payments/', TemplateView.as_view(template_name='erp/student_payments.html'), name='student_payments'),
     path('student/groups/',   TemplateView.as_view(template_name='erp/student_groups.html'),   name='student_groups'),

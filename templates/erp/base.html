@@ -505,6 +505,13 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 .chat-msg.sent{background:var(--grad);color:#fff;margin-left:auto;border-radius:10px 10px 2px 10px}
 .chat-msg.recv{background:#fff;border:1px solid var(--border);color:var(--text);border-radius:10px 10px 10px 2px}
 .chat-msg .msg-time{font-size:.62rem;opacity:.7;margin-top:3px;text-align:right}
+.chat-msg .msg-who{font-size:.62rem;font-weight:600;opacity:.8;margin-bottom:2px}
+.chat-msg.sent .msg-who{text-align:right}
+.chat-msg.reply-msg{border-left:3px solid var(--accent);opacity:.95}
+.reply-label{font-size:.6rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:3px}
+.chat-reply-btn{display:block;margin-top:5px;padding:2px 8px;border:1px solid var(--border);border-radius:5px;background:none;cursor:pointer;font-size:.68rem;color:var(--muted)}
+.chat-reply-btn:hover{color:var(--accent);border-color:var(--accent)}
+.unread-dot{display:inline-block;width:6px;height:6px;background:var(--accent);border-radius:50%;margin-left:3px;vertical-align:middle}
 
 .chat-input-row{display:flex;gap:8px}
 .chat-input-row textarea{
@@ -618,6 +625,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
       <!-- Chat -->
       <div class="chat-area" id="helpChatArea"></div>
 
+      <!-- Reply bar -->
+      <div id="replyBar" style="display:none;align-items:center;gap:6px;padding:4px 8px;background:var(--surface2,#f0f0f0);border-radius:6px;font-size:.72rem;color:var(--muted);margin-bottom:4px"></div>
+
       <div class="chat-input-row">
         <textarea id="helpMsgInput" placeholder="Muammo yoki savolingizni yozing..." onkeydown="helpEnter(event)"></textarea>
         <button class="chat-send-btn" id="helpSendBtn" onclick="sendHelpMsg()">
@@ -626,7 +636,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
       </div>
       <p style="font-size:.68rem;color:var(--muted);margin-top:6px;text-align:center">
         <i class="fas fa-shield-halved" style="color:var(--accent)"></i>
-        Xabar dasturchi (Avazbek)ga bevosita yuboriladi
+        <span id="helpHint">Xabar yuboriladi</span>
       </p>
 
     </div>
@@ -689,8 +699,9 @@ function buildSidebar(role){
     html+=sec('Tahlil');
     html+=item('/reports/','chart-bar','Hisobotlar','reports');
     html+=item('/leaderboard/','ranking-star','Reyting','leaderboard');
+    html+=sec('Tizim');
+    html+=item('/activity/','clock-rotate-left','Faoliyat jurnali','activity');
     if(role==='developer'){
-      html+=sec('Tizim');
       html+=`<a class="sb-item" href="/admin/" target="_blank"><span class="sb-icon"><i class="fas fa-shield-halved"></i></span>Django Admin</a>`;
       html+=`<a class="sb-item" href="/api/v1/" target="_blank"><span class="sb-icon"><i class="fas fa-code"></i></span>API Explorer</a>`;
     }
@@ -876,36 +887,76 @@ document.querySelectorAll('.stat-card').forEach(el=>{el.style.opacity='0';observ
 </script>
 {% block extra_js %}{% endblock %}
 <script>
-// ── Yordam bo'limi ────────────────────────────────────────────
-const HELP_MSGS_KEY = 'erp_help_msgs';
+// ── Yordam bo'limi (ikki tomonlama chat) ─────────────────────
+let _helpReplyTarget = null; // javob beriladigan xabar ID
 
-function openHelpModal(){
+async function openHelpModal(){
   openM('helpOverlay');
-  renderHelpChat();
+  updateHelpHint();
+  await loadHelpChat();
   setTimeout(()=>document.getElementById('helpMsgInput').focus(), 300);
 }
 
-function renderHelpChat(){
+function updateHelpHint(){
+  const role = (getUser().role||'').toLowerCase();
+  const hint = document.getElementById('helpHint');
+  if(!hint) return;
+  if(role==='student'||role==='teacher'){
+    hint.textContent = 'Xabar administratorga yuboriladi';
+  } else if(role==='admin'){
+    hint.textContent = 'Xabar dasturchiga yuboriladi';
+  } else {
+    hint.style.display='none';
+  }
+}
+
+async function loadHelpChat(){
   const area = document.getElementById('helpChatArea');
-  const msgs = JSON.parse(localStorage.getItem(HELP_MSGS_KEY)||'[]');
-  if(!msgs.length){ area.innerHTML=''; return; }
-  area.innerHTML = msgs.map(m=>`
-    <div class="chat-msg ${m.type}">
-      ${escHtml(m.text)}
-      <div class="msg-time">${m.time}</div>
-    </div>`).join('');
+  area.innerHTML = '<div style="text-align:center;padding:16px;color:var(--muted)"><i class="fas fa-spinner fa-spin"></i></div>';
+  const data = await get('/notifications/support/');
+  if(!data){ area.innerHTML='<div style="text-align:center;padding:16px;color:var(--muted)">Yuklab bo\'lmadi</div>'; return; }
+  const msgs = Array.isArray(data) ? data : (data.results||[]);
+  renderHelpMessages(msgs);
+}
+
+function renderHelpMessages(msgs){
+  const area = document.getElementById('helpChatArea');
+  const myId = getUser().id;
+  if(!msgs.length){
+    area.innerHTML='<div style="text-align:center;padding:24px;color:var(--muted)"><i class="fas fa-comments" style="font-size:2rem;display:block;margin-bottom:8px;opacity:.4"></i>Hali xabarlar yo\'q</div>';
+    return;
+  }
+  area.innerHTML = msgs.map(m=>{
+    const isSent = m.sender_id && String(m.sender_id)===String(myId);
+    const cls    = isSent ? 'sent' : 'recv';
+    const who    = isSent ? 'Men' : (m.sender_name||'Admin');
+    const isReply= m.notif_type==='support_reply';
+    const replyBtn= !isSent && m.notif_type==='support_message'
+      ? `<button class="chat-reply-btn" onclick="setReplyTarget('${m.id}','${escHtml(m.message.slice(0,40))}')">
+           <i class="fas fa-reply"></i> Javob
+         </button>` : '';
+    return `<div class="chat-msg ${cls}${isReply?' reply-msg':''}">
+      ${isReply?'<span class="reply-label"><i class="fas fa-reply" style="font-size:.6rem"></i> Javob</span>':''}
+      <div class="msg-who">${who}</div>
+      ${escHtml(m.message)}
+      <div class="msg-time">${fmtDate(m.created_at)} ${!m.is_read&&!isSent?'<span class="unread-dot"></span>':''}</div>
+      ${replyBtn}
+    </div>`;
+  }).join('');
   area.scrollTop = area.scrollHeight;
 }
 
-function saveHelpMsg(text, type){
-  const msgs = JSON.parse(localStorage.getItem(HELP_MSGS_KEY)||'[]');
-  const now  = new Date();
-  msgs.push({
-    text, type,
-    time: now.toLocaleTimeString('uz-UZ',{hour:'2-digit',minute:'2-digit'})
-  });
-  if(msgs.length > 50) msgs.splice(0, msgs.length-50);
-  localStorage.setItem(HELP_MSGS_KEY, JSON.stringify(msgs));
+function setReplyTarget(id, preview){
+  _helpReplyTarget = id;
+  const bar = document.getElementById('replyBar');
+  if(bar){ bar.innerHTML=`<i class="fas fa-reply"></i> Javob: "${escHtml(preview)}" <button onclick="clearReply()" style="border:none;background:none;cursor:pointer;color:var(--muted)"><i class="fas fa-times"></i></button>`; bar.style.display='flex'; }
+  document.getElementById('helpMsgInput').focus();
+}
+
+function clearReply(){
+  _helpReplyTarget=null;
+  const bar=document.getElementById('replyBar');
+  if(bar){bar.style.display='none'; bar.innerHTML='';}
 }
 
 function helpEnter(e){
@@ -913,41 +964,42 @@ function helpEnter(e){
 }
 
 async function sendHelpMsg(){
-  const inp = document.getElementById('helpMsgInput');
-  const btn = document.getElementById('helpSendBtn');
+  const inp  = document.getElementById('helpMsgInput');
+  const btn  = document.getElementById('helpSendBtn');
   const text = inp.value.trim();
   if(!text) return;
 
-  inp.value=''; inp.disabled=true; btn.disabled=true;
+  inp.disabled=true; btn.disabled=true;
   btn.innerHTML='<i class="fas fa-spinner fa-spin"></i>';
 
-  saveHelpMsg(text,'sent');
-  renderHelpChat();
-
   try{
-    const res = await post('/notifications/support/', {message: text});
-    const data = res ? await res.json() : null;
-    if(res && res.ok){
-      saveHelpMsg("✅ Xabaringiz qabul qilindi! Avazbek tez orada javob beradi.", 'recv');
-      toast("Xabar yuborildi!", 'ok');
+    let res, data;
+    if(_helpReplyTarget){
+      res  = await post(`/notifications/support/${_helpReplyTarget}/reply/`, {message: text});
+      data = res ? await res.json() : null;
     } else {
-      const err = data?.detail || 'Xatolik yuz berdi';
-      saveHelpMsg("❌ "+err, 'recv');
-      toast(err, 'err');
+      res  = await post('/notifications/support/', {message: text});
+      data = res ? await res.json() : null;
+    }
+    if(res && res.ok){
+      inp.value='';
+      clearReply();
+      toast("Xabar yuborildi!", 'ok');
+      await loadHelpChat();
+    } else {
+      toast(data?.detail||'Xatolik yuz berdi', 'err');
     }
   } catch(e){
-    saveHelpMsg("❌ Internet ulanishini tekshiring.", 'recv');
     toast("Xabar yuborishda xatolik", 'err');
   }
 
   inp.disabled=false; btn.disabled=false;
   btn.innerHTML='<i class="fas fa-paper-plane"></i>';
-  renderHelpChat();
   inp.focus();
 }
 
 function escHtml(t){
-  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+  return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
 }
 </script>
 </body>
