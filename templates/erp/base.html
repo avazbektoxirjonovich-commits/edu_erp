@@ -1005,13 +1005,20 @@ async function openHelpModal(){
 function updateHelpHint(){
   const role = (getUser().role||'').toLowerCase();
   const hint = document.getElementById('helpHint');
+  const inputRow = document.querySelector('#helpOverlay .chat-input-row');
   if(!hint) return;
   if(role==='student'||role==='teacher'){
     hint.textContent = 'Xabar administratorga yuboriladi';
+    hint.style.display='';
+    if(inputRow) inputRow.style.display='';
   } else if(role==='admin'){
     hint.textContent = 'Xabar dasturchiga yuboriladi';
+    hint.style.display='';
+    if(inputRow) inputRow.style.display='';
   } else {
-    hint.style.display='none';
+    hint.textContent = "Siz faqat xabarlarni o'qiy olasiz";
+    hint.style.display='';
+    if(inputRow) inputRow.style.display='none';
   }
 }
 
@@ -1104,7 +1111,7 @@ async function sendHelpMsg(){
 }
 
 function escHtml(t){
-  return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+  return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/'/g,'&#39;').replace(/"/g,'&quot;').replace(/\n/g,'<br>');
 }
 </script>
 </body>
