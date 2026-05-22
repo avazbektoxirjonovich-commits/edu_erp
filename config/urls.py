@@ -3,7 +3,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import TemplateView
-from django.http import FileResponse, Http404
+from django.http import FileResponse, Http404, HttpResponse
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -18,6 +18,30 @@ def serve_sw(request):
     if not os.path.exists(sw_path):
         raise Http404
     return FileResponse(open(sw_path, 'rb'), content_type='application/javascript')
+
+
+def robots_txt(request):
+    base = request.build_absolute_uri('/').rstrip('/')
+    lines = [
+        'User-agent: *',
+        'Disallow: /api/',
+        'Disallow: /admin/',
+        'Allow: /login/',
+        f'Sitemap: {base}/sitemap.xml',
+    ]
+    return HttpResponse('\n'.join(lines), content_type='text/plain')
+
+
+def sitemap_xml(request):
+    base = request.build_absolute_uri('/').rstrip('/')
+    xml = (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+        f'  <url><loc>{base}/login/</loc>'
+        '<changefreq>monthly</changefreq><priority>1.0</priority></url>\n'
+        '</urlset>'
+    )
+    return HttpResponse(xml, content_type='application/xml')
 
 # ── API v1 routes ──
 api_v1_urlpatterns = [
@@ -64,9 +88,11 @@ frontend_urlpatterns = [
 ]
 
 urlpatterns = [
-    path('admin/',   admin.site.urls),
-    path('api/v1/',  include(api_v1_urlpatterns)),
-    path('sw.js',    serve_sw, name='service-worker'),
+    path('admin/',       admin.site.urls),
+    path('api/v1/',      include(api_v1_urlpatterns)),
+    path('sw.js',        serve_sw,    name='service-worker'),
+    path('robots.txt',   robots_txt,  name='robots'),
+    path('sitemap.xml',  sitemap_xml, name='sitemap'),
 ] + frontend_urlpatterns
 
 if settings.DEBUG:
