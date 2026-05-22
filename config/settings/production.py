@@ -4,13 +4,21 @@ from .base import *
 
 DEBUG = False
 
-SECRET_KEY = config('SECRET_KEY')
+SECRET_KEY = config('SECRET_KEY', default='django-insecure-render-fallback-change-me-in-env')
 
 ALLOWED_HOSTS = config(
     'ALLOWED_HOSTS',
     default='',
     cast=lambda v: [s.strip() for s in v.split(',') if s.strip()]
 )
+
+# Render.com hostname avtomatik qo'shiladi
+_render_host = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if _render_host and _render_host not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(_render_host)
+
+if not ALLOWED_HOSTS:
+    ALLOWED_HOSTS = ['*']
 
 # Railway va boshqa hosting DATABASE_URL beradi
 DATABASE_URL = os.environ.get('DATABASE_URL')
@@ -51,7 +59,11 @@ CORS_ALLOWED_ORIGINS = config(
     default='',
     cast=lambda v: [s.strip() for s in v.split(',') if s.strip()]
 )
-CORS_ALLOW_ALL_ORIGINS = False
+if _render_host:
+    _render_url = f'https://{_render_host}'
+    if _render_url not in CORS_ALLOWED_ORIGINS:
+        CORS_ALLOWED_ORIGINS.append(_render_url)
+CORS_ALLOW_ALL_ORIGINS = not bool(CORS_ALLOWED_ORIGINS)
 
 # CSRF
 CSRF_TRUSTED_ORIGINS = config(
@@ -59,6 +71,10 @@ CSRF_TRUSTED_ORIGINS = config(
     default='',
     cast=lambda v: [s.strip() for s in v.split(',') if s.strip()]
 )
+if _render_host:
+    _render_url = f'https://{_render_host}'
+    if _render_url not in CSRF_TRUSTED_ORIGINS:
+        CSRF_TRUSTED_ORIGINS.append(_render_url)
 
 # Logging
 LOGGING = {

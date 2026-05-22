@@ -268,7 +268,8 @@ async function load(){
           ${g.branch_name?`<div style="font-size:.68rem;color:var(--muted);margin-top:2px"><i class="fas fa-building" style="font-size:.6rem;margin-right:3px"></i>${g.branch_name}</div>`:''}
         </div>
         <div style="display:flex;gap:4px" onclick="event.stopPropagation()">
-          ${_isAdmin?`<button class="btn-icon edit" onclick="openEditDirect('${g.id}')"><i class="fas fa-pen"></i></button>`:''}
+          ${_isAdmin?`<button class="btn-icon edit" onclick="openEditDirect('${g.id}')" title="Tahrirlash"><i class="fas fa-pen"></i></button>
+          <button class="btn-icon" onclick="cloneGroup('${g.id}')" title="Nusxa yaratish" style="background:#f0fdf4;border:1.5px solid #86efac"><i class="fas fa-copy" style="color:#16a34a"></i></button>`:''}
         </div>
       </div>
       <div class="g-schedule">${days}</div>
@@ -456,6 +457,26 @@ async function doEdit(){
   });
   if(r?.ok){closeM('editModal');toast("Saqlandi",'ok');load();}
   else toast("Xatolik",'err');
+}
+
+async function cloneGroup(id){
+  const d=await get(`/groups/${id}/`);
+  if(!d){toast("Yuklab bo'lmadi",'err');return;}
+  document.getElementById('aName').value='Nusxa: '+d.name;
+  document.getElementById('aSubject').value=d.subject||'';
+  document.getElementById('aBranch').value=d.branch||'';
+  document.getElementById('aTeacher').value=d.teacher||'';
+  document.getElementById('aCapacity').value=d.max_students||20;
+  document.getElementById('aFee').value=d.monthly_fee||0;
+  document.getElementById('aStartTime').value=d.start_time||'09:00';
+  document.getElementById('aEndTime').value=d.end_time||'11:00';
+  document.querySelectorAll('#aDays .day-cb').forEach(c=>c.checked=false);
+  (d.days_of_week||[]).forEach(day=>{
+    const cb=document.querySelector(`#aDays .day-cb[data-day="${day}"]`);
+    if(cb) cb.checked=true;
+  });
+  openM('addModal');
+  toast(`"${d.name}" nusxasi — nomni o'zgartiring va saqlang`,'ok');
 }
 
 async function doDelete(){

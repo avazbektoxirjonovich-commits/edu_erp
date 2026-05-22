@@ -143,11 +143,34 @@
     <div class="m-foot">
       <button class="btn btn-ghost" onclick="closeM('editModal')">Bekor qilish</button>
       <button class="btn btn-ghost admin-only" onclick="printStudentCard(editId)"><i class="fas fa-print"></i>Kartochka</button>
+      <button class="btn btn-ghost admin-only" onclick="openChangeGroup()" title="Guruhni o'zgartirish"><i class="fas fa-exchange-alt" style="color:var(--accent)"></i>Guruh</button>
       <button class="btn btn-ghost admin-only" onclick="openM('parentModal')" title="Ota-ona akkaunt yaratish"><i class="fas fa-user-shield" style="color:var(--accent)"></i>Ota-ona</button>
       <button class="btn btn-primary" onclick="doEditStudent()"><i class="fas fa-check"></i>Saqlash</button>
     </div>
   </div>
 </div>
+<!-- CHANGE GROUP MODAL -->
+<div class="overlay" id="changeGroupModal">
+  <div class="modal">
+    <div class="m-head">
+      <h5><i class="fas fa-exchange-alt" style="color:var(--accent);margin-right:6px"></i>Guruhni o'zgartirish</h5>
+      <button class="m-close" onclick="closeM('changeGroupModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="m-body">
+      <p style="font-size:.8rem;font-weight:700;color:var(--text);margin-bottom:14px" id="cgStudentName"></p>
+      <div class="fg"><label>Yangi guruh</label>
+        <select class="fc fc-sel" id="cgGroup">
+          <option value="">— Guruhsiz (guruhdan chiqarish) —</option>
+        </select>
+      </div>
+    </div>
+    <div class="m-foot">
+      <button class="btn btn-ghost" onclick="closeM('changeGroupModal')">Bekor</button>
+      <button class="btn btn-primary" onclick="doChangeGroup()"><i class="fas fa-exchange-alt"></i>O'zgartirish</button>
+    </div>
+  </div>
+</div>
+
 <!-- Parent account modal -->
 <div class="overlay" id="parentModal">
   <div class="modal">
@@ -379,6 +402,28 @@ async function doDeactivate(id,name){
   const r=await patch(`/students/${id}/`,{status:'inactive'});
   if(r?.ok){toast("O'quvchi nofaol qilindi",'ok');loadStudents(currentPage);}
   else toast("Xatolik yuz berdi",'err');
+}
+
+function openChangeGroup(){
+  if(!editId) return;
+  const name=document.getElementById('eName').value||'—';
+  document.getElementById('cgStudentName').textContent='O\'quvchi: '+name;
+  const sel=document.getElementById('cgGroup');
+  sel.innerHTML='<option value="">— Guruhsiz (guruhdan chiqarish) —</option>';
+  groups.forEach(gr=>sel.innerHTML+=`<option value="${gr.id}">${gr.name}</option>`);
+  sel.value=document.getElementById('eGroup').value||'';
+  openM('changeGroupModal');
+}
+
+async function doChangeGroup(){
+  const gid=document.getElementById('cgGroup').value;
+  const r=await patch(`/students/${editId}/`,{group:gid||null});
+  if(r?.ok){
+    closeM('changeGroupModal');
+    toast('Guruh o\'zgartirildi','ok');
+    document.getElementById('eGroup').value=gid;
+    loadStudents(currentPage);
+  } else toast('Xatolik yuz berdi','err');
 }
 
 async function doCreateParent(){
