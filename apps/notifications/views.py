@@ -242,6 +242,7 @@ class ActivityLogListView(generics.ListAPIView):
     """GET /api/v1/notifications/activity/ — so'nggi amallar (faqat admin/developer)"""
     serializer_class   = ActivityLogSerializer
     permission_classes = [IsStaffLevel]
+    pagination_class   = None
 
     def get_queryset(self):
         qs = ActivityLog.objects.select_related('user').order_by('-created_at')
