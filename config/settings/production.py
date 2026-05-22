@@ -39,7 +39,8 @@ else:
 
 # WhiteNoise — static fayllar uchun
 MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# CompressedStaticFilesStorage — manifest xatolaridan xoli, Render uchun to'g'ri
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # HTTPS xavfsizlik
 SECURE_BROWSER_XSS_FILTER = True
