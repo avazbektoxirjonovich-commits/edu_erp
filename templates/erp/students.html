@@ -29,7 +29,10 @@
     <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">O'quvchilar ro'yxati</h2>
     <p style="font-size:.75rem;color:var(--muted);margin-top:3px">Barcha o'quvchilar va ularning ma'lumotlari</p>
   </div>
-  <button class="btn btn-primary admin-only" onclick="openAddModal()"><i class="fas fa-user-plus"></i>Yangi o'quvchi</button>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <button class="btn btn-ghost admin-only" onclick="exportStudents()" title="Excel yuklash"><i class="fas fa-file-excel" style="color:#10b981"></i>Excel</button>
+    <button class="btn btn-primary admin-only" onclick="openAddModal()"><i class="fas fa-user-plus"></i>Yangi o'quvchi</button>
+  </div>
 </div>
 
 <!-- KPI row -->
@@ -139,7 +142,34 @@
     </div>
     <div class="m-foot">
       <button class="btn btn-ghost" onclick="closeM('editModal')">Bekor qilish</button>
+      <button class="btn btn-ghost admin-only" onclick="printStudentCard(editId)"><i class="fas fa-print"></i>Kartochka</button>
+      <button class="btn btn-ghost admin-only" onclick="openM('parentModal')" title="Ota-ona akkaunt yaratish"><i class="fas fa-user-shield" style="color:var(--accent)"></i>Ota-ona</button>
       <button class="btn btn-primary" onclick="doEditStudent()"><i class="fas fa-check"></i>Saqlash</button>
+    </div>
+  </div>
+</div>
+<!-- Parent account modal -->
+<div class="overlay" id="parentModal">
+  <div class="modal">
+    <div class="m-head">
+      <h5><i class="fas fa-user-shield" style="color:var(--accent);margin-right:6px"></i>Ota-ona akkaunt</h5>
+      <button class="m-close" onclick="closeM('parentModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="m-body">
+      <p style="font-size:.8rem;color:var(--muted);margin-bottom:14px">Ota-ona uchun yangi akkaunt yarating. U <b>/parent/</b> sahifasida farzandini kuzata oladi.</p>
+      <div class="fg"><label>Ota-ona telefon *</label>
+        <input class="fc" id="pParentPhone" placeholder="+998901234567">
+      </div>
+      <div class="fg"><label>Ota-ona ismi</label>
+        <input class="fc" id="pParentName" placeholder="Ism Familiya">
+      </div>
+      <div class="fg"><label>Parol</label>
+        <input class="fc" id="pParentPwd" placeholder="erp12345 (standart)" value="erp12345">
+      </div>
+    </div>
+    <div class="m-foot">
+      <button class="btn btn-ghost" onclick="closeM('parentModal')">Bekor</button>
+      <button class="btn btn-primary" onclick="doCreateParent()"><i class="fas fa-check"></i>Yaratish</button>
     </div>
   </div>
 </div>
@@ -150,6 +180,28 @@
 initAuth();
 const _ME=getUser();
 const _isAdmin=_ME.role==='admin'||_ME.role==='developer';
+
+function exportStudents(){
+  const t=getAccess();
+  const url=API+'/students/export/';
+  const a=document.createElement('a');
+  a.href=url;
+  // Use fetch with auth header and blob download
+  fetch(url,{headers:{'Authorization':'Bearer '+t}})
+    .then(r=>{
+      if(!r.ok){toast("Eksport xatoligi",'err');return;}
+      return r.blob();
+    })
+    .then(b=>{
+      if(!b)return;
+      const u=URL.createObjectURL(b);
+      const a=document.createElement('a');
+      a.href=u; a.download='o_quvchilar.xlsx'; a.click();
+      URL.revokeObjectURL(u);
+      toast("Excel yuklandi",'ok');
+    })
+    .catch(()=>toast("Yuklab bo'lmadi",'err'));
+}
 const _isTeacher=_ME.role==='teacher';
 // Admin bo'lmasa boshqaruv tugmalarini yashir
 if(!_isAdmin){
@@ -327,6 +379,70 @@ async function doDeactivate(id,name){
   const r=await patch(`/students/${id}/`,{status:'inactive'});
   if(r?.ok){toast("O'quvchi nofaol qilindi",'ok');loadStudents(currentPage);}
   else toast("Xatolik yuz berdi",'err');
+}
+
+async function doCreateParent(){
+  const phone=document.getElementById('pParentPhone').value.trim();
+  const name=document.getElementById('pParentName').value.trim();
+  const pwd=document.getElementById('pParentPwd').value.trim();
+  if(!phone){toast('Telefon raqam kiriting','wrn');return;}
+  const r=await post(`/students/${editId}/create-parent/`,{phone,full_name:name,password:pwd||'erp12345'});
+  if(r?.ok){
+    const d=await r.json();
+    closeM('parentModal');
+    toast(`Ota-ona akkaunt yaratildi: ${d.parent_phone}`,'ok');
+  } else {
+    const e=await r?.json();
+    toast(e?.detail||'Xatolik','err');
+  }
+}
+
+async function printStudentCard(id){
+  const d = await get(`/students/${id}/`);
+  if(!d){toast("Ma'lumot olinmadi",'err');return;}
+  const name = d.full_name||d.user?.full_name||'—';
+  const org = document.querySelector('.logo-text')?.textContent||'EduERP';
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8">
+<title>O'quvchi kartochkasi</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#fff;padding:20px}
+.card{border:2px solid #FF6B35;border-radius:12px;padding:24px;max-width:400px;margin:0 auto}
+.logo{font-size:1.3rem;font-weight:900;color:#FF6B35;margin-bottom:16px;text-align:center}
+.avatar{width:64px;height:64px;border-radius:50%;background:#FF6B35;color:#fff;font-size:1.4rem;font-weight:900;display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
+.name{font-size:1.1rem;font-weight:800;text-align:center;margin-bottom:4px}
+.role{font-size:.8rem;color:#666;text-align:center;margin-bottom:20px}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+td{padding:7px 8px;border-bottom:1px solid #eee}
+td:first-child{color:#666;width:40%}
+td:last-child{font-weight:600}
+.footer{text-align:center;margin-top:20px;font-size:.7rem;color:#aaa;border-top:1px dashed #ddd;padding-top:12px}
+@media print{body{padding:0}button{display:none}}
+</style></head><body>
+<div class="card">
+  <div class="logo">${org}</div>
+  <div class="avatar">${name.split(' ').map(w=>w[0]||'').join('').toUpperCase().slice(0,2)}</div>
+  <div class="name">${name}</div>
+  <div class="role">O'quvchi</div>
+  <table>
+    <tr><td>Telefon</td><td>${d.phone||'—'}</td></tr>
+    <tr><td>Guruh</td><td>${d.group_name||d.group?.name||'Guruhsiz'}</td></tr>
+    <tr><td>Status</td><td>${d.status==='active'?'Faol':d.status==='frozen'?'Toxtatilgan':'Nofaol'}</td></tr>
+    <tr><td>Qo'shilgan</td><td>${d.joined_date||'—'}</td></tr>
+    ${d.parent_name?`<tr><td>Ota-ona</td><td>${d.parent_name}</td></tr>`:''}
+    ${d.parent_phone?`<tr><td>Ota-ona tel</td><td>${d.parent_phone}</td></tr>`:''}
+    ${d.address?`<tr><td>Manzil</td><td>${d.address}</td></tr>`:''}
+    <tr><td>Davomat</td><td>${d.attendance_percentage||0}%</td></tr>
+    <tr><td>XP ball</td><td>${d.xp_points||0} ⭐</td></tr>
+    ${(d.total_debt||0)>0?`<tr><td style="color:#e53e3e">Qarz</td><td style="color:#e53e3e;font-weight:700">${Number(d.total_debt).toLocaleString()} so'm</td></tr>`:''}
+  </table>
+  <div class="footer">Chop etilgan: ${new Date().toLocaleDateString('uz-UZ')} | ${org}</div>
+</div>
+<script>window.onload=()=>window.print();<\/script>
+</body></html>`;
+  const w=window.open('','_blank','width=500,height=650');
+  w.document.write(html);
+  w.document.close();
 }
 
 init();

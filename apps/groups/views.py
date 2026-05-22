@@ -1,10 +1,12 @@
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import filters
+from rest_framework.decorators import action
+from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Count, Q
 from apps.accounts.permissions import IsAdminOrTeacher, IsAdmin
-from .models import Group
-from .serializers import GroupListSerializer, GroupCreateSerializer
+from .models import Group, LessonSchedule
+from .serializers import GroupListSerializer, GroupCreateSerializer, LessonScheduleSerializer
 
 
 class GroupViewSet(ModelViewSet):
@@ -48,3 +50,17 @@ class GroupViewSet(ModelViewSet):
         if self.action in ['create', 'update', 'partial_update']:
             return GroupCreateSerializer
         return GroupListSerializer
+
+    @action(detail=True, methods=['post'], url_path='set-schedule', permission_classes=[IsAdmin])
+    def set_schedule(self, request, pk=None):
+        group = self.get_object()
+        schedules_data = request.data.get('schedules', [])
+        group.schedules.all().delete()
+        created = []
+        for s in schedules_data:
+            day = s.get('day_of_week')
+            room = s.get('room', '')
+            if day is not None:
+                obj = LessonSchedule.objects.create(group=group, day_of_week=int(day), room=room)
+                created.append({'id': str(obj.id), 'day_of_week': obj.day_of_week, 'room': obj.room})
+        return Response({'schedules': created, 'count': len(created)})

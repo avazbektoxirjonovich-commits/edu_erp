@@ -1,0 +1,122 @@
+{% extends "erp/base.html" %}
+{% block title %}Ota-ona portali — EduERP Pro{% endblock %}
+{% block page_title %}Ota-ona portali{% endblock %}
+
+{% block extra_head %}
+<style>
+.child-card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:20px;box-shadow:var(--shadow);margin-bottom:20px;animation:fadeUp .4s ease both}
+.child-header{display:flex;align-items:center;gap:14px;margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.child-name{font-size:1rem;font-weight:800;color:var(--text)}
+.child-meta{font-size:.75rem;color:var(--muted);margin-top:3px}
+.child-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+@media(max-width:800px){.child-grid{grid-template-columns:repeat(2,1fr)}}
+.c-kpi{background:var(--bg);border-radius:10px;padding:12px;text-align:center}
+.c-kpi-val{font-size:1.2rem;font-weight:900;color:var(--text)}
+.c-kpi-lbl{font-size:.68rem;color:var(--muted);margin-top:2px}
+.att-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px}
+.att-present{background:var(--success)}
+.att-absent{background:var(--danger)}
+.att-late{background:var(--warning)}
+.att-excused{background:var(--info)}
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="margin-bottom:20px;animation:fadeUp .35s ease both">
+  <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">Farzandlarim</h2>
+  <p style="font-size:.75rem;color:var(--muted);margin-top:3px">Farzandlaringizning o'qish holati</p>
+</div>
+
+<div id="childrenList">
+  <div class="loading"><div class="spinner"></div></div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+initAuth();
+const MNS=['Yanvar','Fevral','Mart','Aprel','May','Iyun','Iyul','Avgust','Sentabr','Oktabr','Noyabr','Dekabr'];
+const ATT_STATUS={present:'Keldi',absent:'Kelmadi',late:'Kech keldi',excused:'Sababli'};
+const ATT_CLASS={present:'att-present',absent:'att-absent',late:'att-late',excused:'att-excused'};
+
+async function load(){
+  const data = await get('/students/parent/');
+  const cont = document.getElementById('childrenList');
+  if(!data || !data.length){
+    cont.innerHTML=`<div class="card"><div class="empty">
+      <i class="fas fa-child"></i>
+      <p>Sizning akkauntingizga hech qanday o'quvchi biriktirilmagan.</p>
+      <p style="font-size:.75rem;color:var(--muted);margin-top:6px">Administrator bilan bog'laning.</p>
+    </div></div>`;
+    return;
+  }
+  cont.innerHTML = data.map((c, idx) => {
+    const statusBdg = c.status==='active'
+      ? '<span class="bdg bdg-active">Faol</span>'
+      : '<span class="bdg bdg-inactive">Nofaol</span>';
+    const attRecent = (c.recent_attendance||[]).map(a=>`
+      <span title="${fdate(a.date)} — ${ATT_STATUS[a.status]||a.status}">
+        <span class="att-dot ${ATT_CLASS[a.status]||''}"></span>
+      </span>`).join('');
+    const payRows = (c.recent_payments||[]).map(p=>`
+      <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:.8rem">
+        <span style="color:var(--muted)">${MNS[(p.month||1)-1]} ${p.year}</span>
+        <span style="font-weight:600;color:var(--success)">${fmoney(p.paid_amount||0)}</span>
+        <span style="color:${(p.debt_amount||0)>0?'var(--danger)':'var(--muted)'}">${(p.debt_amount||0)>0?fmoney(p.debt_amount):'✓'}</span>
+      </div>`).join('');
+    return`<div class="child-card" style="animation-delay:${idx*.1}s">
+      <div class="child-header">
+        <div class="av av-lg">${initials(c.full_name||'?')}</div>
+        <div style="flex:1">
+          <div class="child-name">${c.full_name||'—'}</div>
+          <div class="child-meta">
+            ${c.group_name?`<i class="fas fa-users" style="margin-right:4px"></i>${c.group_name}`:''}
+            ${c.teacher_name?`<i class="fas fa-chalkboard-teacher" style="margin:0 4px 0 10px"></i>${c.teacher_name}`:''}
+          </div>
+        </div>
+        ${statusBdg}
+      </div>
+      <div class="child-grid">
+        <div class="c-kpi">
+          <div class="c-kpi-val" style="color:var(--accent)">${c.attendance_percentage||0}%</div>
+          <div class="c-kpi-lbl">Davomat</div>
+        </div>
+        <div class="c-kpi">
+          <div class="c-kpi-val" style="color:var(--success)">⭐ ${c.xp_points||0}</div>
+          <div class="c-kpi-lbl">XP Ball</div>
+        </div>
+        <div class="c-kpi">
+          <div class="c-kpi-val">${c.level||1}</div>
+          <div class="c-kpi-lbl">Daraja</div>
+        </div>
+        <div class="c-kpi">
+          <div class="c-kpi-val" style="color:${(c.total_debt||0)>0?'var(--danger)':'var(--success)'}">
+            ${(c.total_debt||0)>0?fmoney(c.total_debt):'0'}
+          </div>
+          <div class="c-kpi-lbl">Qarz</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div>
+          <div style="font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Oxirgi darslar</div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px;align-items:center">
+            ${attRecent||'<span style="font-size:.78rem;color:var(--muted)">Ma\'lumot yo\'q</span>'}
+          </div>
+          <div style="font-size:.7rem;color:var(--muted);margin-top:6px">
+            <span style="margin-right:8px"><span class="att-dot att-present"></span>Keldi</span>
+            <span style="margin-right:8px"><span class="att-dot att-absent"></span>Kelmadi</span>
+            <span><span class="att-dot att-late"></span>Kech</span>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">So'nggi to'lovlar</div>
+          ${payRows||'<div style="font-size:.78rem;color:var(--muted)">Ma\'lumot yo\'q</div>'}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+load();
+</script>
+{% endblock %}

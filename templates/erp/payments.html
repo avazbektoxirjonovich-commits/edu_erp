@@ -24,7 +24,12 @@
     <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">To'lovlar</h2>
     <p style="font-size:.75rem;color:var(--muted);margin-top:3px">Oylik to'lovlarni boshqarish</p>
   </div>
-  <button class="btn btn-primary admin-only" onclick="openM('payModal')"><i class="fas fa-plus"></i>To'lov qabul</button>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <button class="btn btn-ghost admin-only" onclick="sendReminders()" title="Eslatma yuborish"><i class="fas fa-bell" style="color:var(--warning)"></i>Eslatma</button>
+    <button class="btn btn-ghost admin-only" onclick="exportPayments()" title="Excel yuklash"><i class="fas fa-file-excel" style="color:#10b981"></i>Excel</button>
+    <button class="btn btn-ghost admin-only" onclick="openM('bulkModal')" title="Guruhga ommaviy to'lov"><i class="fas fa-layer-group" style="color:var(--accent)"></i>Ommaviy</button>
+    <button class="btn btn-primary admin-only" onclick="openM('payModal')"><i class="fas fa-plus"></i>To'lov qabul</button>
+  </div>
 </div>
 
 <!-- KPI -->
@@ -98,6 +103,47 @@
     </div>
   </div>
 </div>
+<!-- Bulk payment modal -->
+<div class="overlay" id="bulkModal">
+  <div class="modal modal-lg">
+    <div class="m-head">
+      <h5><i class="fas fa-layer-group" style="color:var(--accent);margin-right:6px"></i>Ommaviy to'lov qabul</h5>
+      <button class="m-close" onclick="closeM('bulkModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="m-body">
+      <div class="row2">
+        <div class="fg"><label>Guruh *</label>
+          <select class="fc fc-sel" id="bGroup" onchange="loadBulkStudents()"><option value="">— Guruh tanlang —</option></select>
+        </div>
+        <div class="row2" style="gap:8px">
+          <div class="fg"><label>Oy *</label>
+            <select class="fc fc-sel" id="bMonth"></select>
+          </div>
+          <div class="fg"><label>Yil *</label>
+            <select class="fc fc-sel" id="bYear"></select>
+          </div>
+        </div>
+      </div>
+      <div class="fg"><label>To'lov summasi (so'm)</label>
+        <input class="fc" type="number" id="bAmount" placeholder="Guruh oylik to'lovi" oninput="updateBulkAmounts()">
+      </div>
+      <div id="bulkStudentList" style="max-height:300px;overflow-y:auto;margin-top:8px">
+        <div style="font-size:.8rem;color:var(--muted);text-align:center;padding:20px">Guruh tanlang</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
+        <label style="display:flex;align-items:center;gap:6px;font-size:.8rem;cursor:pointer">
+          <input type="checkbox" id="bSelectAll" onchange="toggleSelectAll(this.checked)">
+          Barchasini tanlash
+        </label>
+        <span style="margin-left:auto;font-size:.78rem;color:var(--muted)" id="bSelCount">0 ta tanlangan</span>
+      </div>
+    </div>
+    <div class="m-foot">
+      <button class="btn btn-ghost" onclick="closeM('bulkModal')">Bekor</button>
+      <button class="btn btn-primary" onclick="doBulkPay()"><i class="fas fa-check-double"></i>Tanlanganlarga saqlash</button>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
@@ -106,6 +152,33 @@ initAuth();
 const _ME=getUser();
 const _isAdmin=_ME.role==='admin'||_ME.role==='developer';
 if(!_isAdmin) document.querySelectorAll('.admin-only').forEach(el=>el.style.display='none');
+
+async function sendReminders(){
+  const m=document.getElementById('fMonth')?.value||new Date().getMonth()+1;
+  const y=document.getElementById('fYear')?.value||new Date().getFullYear();
+  if(!confirm(`${y}-yil ${m}-oy uchun qarzdorlarga eslatma yuborilsinmi?`))return;
+  const r=await post('/notifications/send-reminders/',{month:parseInt(m),year:parseInt(y)});
+  const d=await r?.json();
+  if(r?.ok) toast(d?.detail||`${d?.sent} ta eslatma yuborildi`,'ok');
+  else toast(d?.detail||'Xatolik','err');
+}
+
+function exportPayments(){
+  const m=document.getElementById('fMonth')?.value||new Date().getMonth()+1;
+  const y=document.getElementById('fYear')?.value||new Date().getFullYear();
+  const t=getAccess();
+  fetch(`${API}/payments/export/?month=${m}&year=${y}`,{headers:{'Authorization':'Bearer '+t}})
+    .then(r=>r.ok?r.blob():null)
+    .then(b=>{
+      if(!b){toast('Eksport xatoligi','err');return;}
+      const u=URL.createObjectURL(b);
+      const a=document.createElement('a');
+      a.href=u; a.download=`to_lovlar_${y}_${String(m).padStart(2,'0')}.xlsx`; a.click();
+      URL.revokeObjectURL(u);
+      toast('Excel yuklandi','ok');
+    })
+    .catch(()=>toast('Yuklab bo\'lmadi','err'));
+}
 const MNS=['Yanvar','Fevral','Mart','Aprel','May','Iyun','Iyul','Avgust','Sentabr','Oktabr','Noyabr','Dekabr'];
 const NOW=new Date();
 let curMonth=NOW.getMonth()+1, curYear=NOW.getFullYear();
@@ -157,9 +230,14 @@ async function load(){
     </td>
     <td>${bdg(p.status)}</td>
     <td>
-      <button class="btn btn-primary btn-sm" onclick="openQuickPay('${p.student}','${p.student_name||''}',${p.debt_amount||0})">
-        <i class="fas fa-plus"></i>To'lov
-      </button>
+      <div style="display:flex;gap:4px">
+        <button class="btn btn-primary btn-sm" onclick="openQuickPay('${p.student}','${p.student_name||''}',${p.debt_amount||0})">
+          <i class="fas fa-plus"></i>To'lov
+        </button>
+        <button class="btn btn-ghost btn-sm" onclick='printReceipt(${JSON.stringify(p)})' title="Chek chop etish">
+          <i class="fas fa-print"></i>
+        </button>
+      </div>
     </td>
   </tr>`).join('')}
   </tbody></table>`;
@@ -190,9 +268,135 @@ async function doPay(){
   else{const e=await r?.json();toast(e?.detail||"Xatolik",'err');}
 }
 
+function printReceipt(p){
+  const MNS2=['Yanvar','Fevral','Mart','Aprel','May','Iyun','Iyul','Avgust','Sentabr','Oktabr','Noyabr','Dekabr'];
+  const org=document.querySelector('.logo-text')?.textContent||'EduERP';
+  const status=p.status==='paid'?"To'liq to'langan":p.status==='partial'?"Qisman to'langan":"To'lanmagan";
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8">
+<title>To'lov cheki</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#fff;padding:20px}
+.receipt{border:2px solid #FF6B35;border-radius:12px;padding:24px;max-width:360px;margin:0 auto}
+.head{text-align:center;border-bottom:2px dashed #FF6B35;padding-bottom:16px;margin-bottom:16px}
+.logo{font-size:1.2rem;font-weight:900;color:#FF6B35}
+.title{font-size:.9rem;color:#666;margin-top:4px}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+td{padding:7px 0;border-bottom:1px dashed #eee}
+td:first-child{color:#666}
+td:last-child{font-weight:700;text-align:right}
+.total{font-size:1rem;font-weight:900;color:#FF6B35}
+.status{display:inline-block;padding:4px 12px;border-radius:20px;font-size:.78rem;font-weight:700;background:${p.status==='paid'?'#dcfce7':p.status==='partial'?'#fef9c3':'#fee2e2'};color:${p.status==='paid'?'#166534':p.status==='partial'?'#854d0e':'#991b1b'}}
+.footer{text-align:center;margin-top:16px;font-size:.7rem;color:#aaa;border-top:1px dashed #ddd;padding-top:12px}
+@media print{button{display:none}}
+</style></head><body>
+<div class="receipt">
+  <div class="head">
+    <div class="logo">${org}</div>
+    <div class="title">To'lov cheki / Payment Receipt</div>
+    <div style="font-size:.7rem;color:#aaa;margin-top:4px">${new Date().toLocaleString('uz-UZ')}</div>
+  </div>
+  <table>
+    <tr><td>O'quvchi</td><td>${p.student_name||'—'}</td></tr>
+    <tr><td>Guruh</td><td>${p.group_name||p.group||'—'}</td></tr>
+    <tr><td>Davr</td><td>${MNS2[(p.month||1)-1]} ${p.year}</td></tr>
+    <tr><td>Jami summa</td><td>${Number(p.amount||p.total_amount||0).toLocaleString()} so'm</td></tr>
+    <tr><td>To'langan</td><td style="color:#16a34a">${Number(p.paid_amount||0).toLocaleString()} so'm</td></tr>
+    ${(p.debt_amount||0)>0?`<tr><td>Qarz</td><td style="color:#dc2626">${Number(p.debt_amount).toLocaleString()} so'm</td></tr>`:''}
+    <tr><td>Holat</td><td><span class="status">${status}</span></td></tr>
+  </table>
+  <div class="footer">Ushbu chek rasmiy hisob xisobot hisoblanadi.<br>${org} &copy; ${new Date().getFullYear()}</div>
+</div>
+<script>window.onload=()=>window.print();<\/script>
+</body></html>`;
+  const w=window.open('','_blank','width=440,height=620');
+  w.document.write(html);
+  w.document.close();
+}
+
+/* ─── Bulk payment ─── */
+let bulkStudents=[];
+
+async function initBulkGroups(){
+  const d=await get('/groups/?page_size=100&status=active');
+  const grps=d?.results||d||[];
+  const s=document.getElementById('bGroup');
+  grps.forEach(g=>s.innerHTML+=`<option value="${g.id}" data-fee="${g.monthly_fee||0}">${g.name}</option>`);
+  // Populate month/year for bulk modal
+  const ms=document.getElementById('bMonth');
+  const ys=document.getElementById('bYear');
+  MNS.forEach((m,i)=>ms.innerHTML+=`<option value="${i+1}" ${i+1===curMonth?'selected':''}>${m}</option>`);
+  for(let y=curYear;y>=curYear-3;y--) ys.innerHTML+=`<option value="${y}" ${y===curYear?'selected':''}>${y}</option>`;
+}
+
+async function loadBulkStudents(){
+  const gid=document.getElementById('bGroup').value;
+  if(!gid){document.getElementById('bulkStudentList').innerHTML='<div style="font-size:.8rem;color:var(--muted);text-align:center;padding:20px">Guruh tanlang</div>';return;}
+  // Auto-fill amount from group fee
+  const opt=document.getElementById('bGroup').selectedOptions[0];
+  if(opt?.dataset.fee) document.getElementById('bAmount').value=opt.dataset.fee;
+  const d=await get(`/students/?group=${gid}&status=active&page_size=100`);
+  bulkStudents=d?.results||d||[];
+  renderBulkList();
+}
+
+function renderBulkList(){
+  const amount=parseInt(document.getElementById('bAmount').value)||0;
+  if(!bulkStudents.length){
+    document.getElementById('bulkStudentList').innerHTML='<div style="font-size:.8rem;color:var(--muted);text-align:center;padding:20px">O\'quvchi topilmadi</div>';
+    return;
+  }
+  document.getElementById('bulkStudentList').innerHTML=bulkStudents.map(s=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:8px;border-radius:8px;border-bottom:1px solid var(--border)">
+      <input type="checkbox" class="bulk-st-cb" data-id="${s.id}" checked onchange="updateBulkSelCount()">
+      <div class="av av-sm">${initials(s.full_name||'?')}</div>
+      <span style="flex:1;font-size:.82rem;font-weight:600">${s.full_name||'—'}</span>
+      <input type="number" class="bulk-amt" data-id="${s.id}" value="${amount}"
+        style="width:100px;border:1.5px solid var(--border);border-radius:7px;padding:5px 8px;font-size:.78rem;outline:none">
+    </div>`).join('');
+  document.getElementById('bSelectAll').checked=true;
+  updateBulkSelCount();
+}
+
+function updateBulkAmounts(){
+  const amount=document.getElementById('bAmount').value;
+  document.querySelectorAll('.bulk-amt').forEach(inp=>inp.value=amount);
+}
+
+function toggleSelectAll(checked){
+  document.querySelectorAll('.bulk-st-cb').forEach(cb=>cb.checked=checked);
+  updateBulkSelCount();
+}
+
+function updateBulkSelCount(){
+  const n=document.querySelectorAll('.bulk-st-cb:checked').length;
+  document.getElementById('bSelCount').textContent=`${n} ta tanlangan`;
+}
+
+async function doBulkPay(){
+  const month=parseInt(document.getElementById('bMonth').value);
+  const year=parseInt(document.getElementById('bYear').value);
+  const selected=[...document.querySelectorAll('.bulk-st-cb:checked')];
+  if(!selected.length){toast("O'quvchi tanlanmagan",'wrn');return;}
+
+  let ok=0, err=0;
+  for(const cb of selected){
+    const sid=cb.dataset.id;
+    const amt=parseInt(document.querySelector(`.bulk-amt[data-id="${sid}"]`)?.value)||0;
+    if(!amt)continue;
+    const r=await post('/payments/',{student:sid,month,year,paid_amount:amt,note:'Ommaviy to\'lov'});
+    if(r?.ok||r?.status===201) ok++; else err++;
+  }
+  closeM('bulkModal');
+  if(ok) toast(`${ok} ta to'lov saqlandi`+(err?`, ${err} ta xatolik`:''),'ok');
+  else toast('Xatolik yuz berdi','err');
+  load(); loadKpi();
+}
+
 populateMonthYear();
 loadKpi();
 load();
 initStudents();
+initBulkGroups();
 </script>
 {% endblock %}

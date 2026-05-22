@@ -16,9 +16,18 @@
 {% endblock %}
 
 {% block content %}
-<div style="margin-bottom:20px;animation:fadeUp .35s ease both">
-  <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">Hisobotlar</h2>
-  <p style="font-size:.75rem;color:var(--muted);margin-top:3px">Moliyaviy va davomat tahlili</p>
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;animation:fadeUp .35s ease both">
+  <div>
+    <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">Hisobotlar</h2>
+    <p style="font-size:.75rem;color:var(--muted);margin-top:3px">Moliyaviy va davomat tahlili</p>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center">
+    <select id="rMonth" onchange="loadAll()" style="border:1.5px solid var(--border);border-radius:8px;padding:7px 28px 7px 10px;font-size:.78rem;background:#fff;outline:none"></select>
+    <select id="rYear"  onchange="loadAll()" style="border:1.5px solid var(--border);border-radius:8px;padding:7px 28px 7px 10px;font-size:.78rem;background:#fff;outline:none"></select>
+    <button class="btn btn-ghost admin-only" onclick="downloadPdf()" title="PDF yuklash">
+      <i class="fas fa-file-pdf" style="color:#e53e3e"></i>PDF Hisobot
+    </button>
+  </div>
 </div>
 
 <!-- Charts -->
@@ -142,6 +151,37 @@ async function load(){
     <td>${prog(g.attendance)}</td>
   </tr>`).join('')}
   </tbody></table>`;
+}
+
+// PDF filter selects
+const MNS2=['Yanvar','Fevral','Mart','Aprel','May','Iyun','Iyul','Avgust','Sentabr','Oktabr','Noyabr','Dekabr'];
+const NOW2=new Date();
+(function initFilters(){
+  const rM=document.getElementById('rMonth');
+  const rY=document.getElementById('rYear');
+  if(!rM||!rY) return;
+  MNS2.forEach((m,i)=>rM.innerHTML+=`<option value="${i+1}" ${i+1===NOW2.getMonth()+1?'selected':''}>${m}</option>`);
+  for(let y=NOW2.getFullYear();y>=NOW2.getFullYear()-3;y--)
+    rY.innerHTML+=`<option value="${y}" ${y===NOW2.getFullYear()?'selected':''}>${y}</option>`;
+})();
+
+function loadAll(){ load(); }
+
+function downloadPdf(){
+  const m=document.getElementById('rMonth')?.value||NOW2.getMonth()+1;
+  const y=document.getElementById('rYear')?.value||NOW2.getFullYear();
+  const t=getAccess();
+  fetch(`${API}/reports/monthly-pdf/?month=${m}&year=${y}`,{headers:{'Authorization':'Bearer '+t}})
+    .then(r=>{if(!r.ok){toast('PDF xatoligi','err');return null;} return r.blob();})
+    .then(b=>{
+      if(!b) return;
+      const u=URL.createObjectURL(b);
+      const a=document.createElement('a');
+      a.href=u; a.download=`hisobot_${y}_${String(m).padStart(2,'0')}.pdf`; a.click();
+      URL.revokeObjectURL(u);
+      toast('PDF yuklandi','ok');
+    })
+    .catch(()=>toast("Yuklab bo'lmadi",'err'));
 }
 
 load();

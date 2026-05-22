@@ -1,0 +1,282 @@
+{% extends "erp/base.html" %}
+{% block title %}Ish haqi — EduERP Pro{% endblock %}
+{% block page_title %}Ish haqi{% endblock %}
+
+{% block extra_head %}
+<style>
+.sal-kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
+@media(max-width:800px){.sal-kpi{grid-template-columns:1fr}}
+.kpi{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;transition:all .2s}
+.kpi:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.kpi-icon{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.kpi-val{font-size:1.3rem;font-weight:900;color:var(--text);letter-spacing:-.5px;line-height:1}
+.kpi-lbl{font-size:.7rem;color:var(--muted);margin-top:2px}
+.teacher-sal-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow);transition:all .2s}
+.teacher-sal-card:hover{box-shadow:var(--shadow-md)}
+.paid-badge{padding:4px 10px;border-radius:20px;font-size:.72rem;font-weight:700;background:#dcfce7;color:#166534}
+.unpaid-badge{padding:4px 10px;border-radius:20px;font-size:.72rem;font-weight:700;background:#fef9c3;color:#854d0e}
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;animation:fadeUp .35s ease both">
+  <div>
+    <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">O'qituvchilar ish haqi</h2>
+    <p style="font-size:.75rem;color:var(--muted);margin-top:3px">Oylik ish haqi to'lovlarini boshqarish</p>
+  </div>
+  <button class="btn btn-primary" onclick="openM('salModal')"><i class="fas fa-plus"></i>Ish haqi to'lash</button>
+</div>
+
+<!-- KPI -->
+<div class="sal-kpi">
+  <div class="kpi" style="animation:fadeUp .4s ease .04s both">
+    <div class="kpi-icon ic-green"><i class="fas fa-money-bill-wave"></i></div>
+    <div><div class="kpi-val" id="kTotal">—</div><div class="kpi-lbl">Bu oy jami to'langan</div></div>
+  </div>
+  <div class="kpi" style="animation:fadeUp .4s ease .1s both">
+    <div class="kpi-icon ic-blue"><i class="fas fa-chalkboard-teacher"></i></div>
+    <div><div class="kpi-val" id="kPaid">—</div><div class="kpi-lbl">To'lov olgan o'qituvchilar</div></div>
+  </div>
+  <div class="kpi" style="animation:fadeUp .4s ease .16s both">
+    <div class="kpi-icon ic-amber"><i class="fas fa-clock"></i></div>
+    <div><div class="kpi-val" id="kUnpaid">—</div><div class="kpi-lbl">Hali to'lanmagan</div></div>
+  </div>
+</div>
+
+<!-- Filters -->
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;animation:fadeUp .4s ease .2s both">
+  <select id="fMonth" onchange="load()" style="border:1.5px solid var(--border);border-radius:9px;padding:8px 32px 8px 12px;font-size:.78rem;background:#fff;outline:none;cursor:pointer"></select>
+  <select id="fYear"  onchange="load()" style="border:1.5px solid var(--border);border-radius:9px;padding:8px 32px 8px 12px;font-size:.78rem;background:#fff;outline:none;cursor:pointer"></select>
+  <select id="fTeacher" onchange="load()" style="border:1.5px solid var(--border);border-radius:9px;padding:8px 32px 8px 12px;font-size:.78rem;background:#fff;outline:none;cursor:pointer">
+    <option value="">Barcha o'qituvchilar</option>
+  </select>
+  <span style="margin-left:auto;font-size:.75rem;color:var(--muted)" id="cntLbl"></span>
+</div>
+
+<!-- Teachers salary overview -->
+<div id="teacherCards" style="animation:fadeUp .4s ease .25s both">
+  <div class="loading"><div class="spinner"></div></div>
+</div>
+
+<!-- Pay history table -->
+<div class="card" style="overflow:hidden;margin-top:16px;animation:fadeUp .4s ease .3s both">
+  <div class="card-header"><div class="card-title"><i class="fas fa-history" style="margin-right:6px;color:var(--accent)"></i>To'lov tarixi</div></div>
+  <div id="histTbl"><div class="loading"><div class="spinner"></div></div></div>
+</div>
+
+<!-- Pay modal -->
+<div class="overlay" id="salModal">
+  <div class="modal">
+    <div class="m-head">
+      <h5><i class="fas fa-money-bill-wave" style="color:var(--accent);margin-right:6px"></i>Ish haqi to'lash</h5>
+      <button class="m-close" onclick="closeM('salModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="m-body">
+      <div class="fg"><label>O'qituvchi *</label>
+        <select class="fc fc-sel" id="sTeacher" onchange="fillSalary()"><option value="">— Tanlang —</option></select>
+      </div>
+      <div class="row2">
+        <div class="fg"><label>Oy *</label>
+          <select class="fc fc-sel" id="sMonth"></select>
+        </div>
+        <div class="fg"><label>Yil *</label>
+          <select class="fc fc-sel" id="sYear"></select>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="fg"><label>Asosiy maosh *</label>
+          <input class="fc" type="number" id="sAmount" placeholder="0">
+        </div>
+        <div class="fg"><label>Bonus (ixtiyoriy)</label>
+          <input class="fc" type="number" id="sBonus" placeholder="0" value="0">
+        </div>
+      </div>
+      <div class="fg" id="sTotalRow" style="background:var(--bg);border-radius:8px;padding:10px 12px;font-size:.85rem;font-weight:700;color:var(--accent);display:none">
+        Jami: <span id="sTotalVal">—</span>
+      </div>
+      <div class="fg"><label>Izoh</label>
+        <input class="fc" id="sNote" placeholder="Qo'shimcha izoh...">
+      </div>
+    </div>
+    <div class="m-foot">
+      <button class="btn btn-ghost" onclick="closeM('salModal')">Bekor</button>
+      <button class="btn btn-primary" onclick="doPaySalary()"><i class="fas fa-check"></i>To'lash</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+initAuth();
+const MNS=['Yanvar','Fevral','Mart','Aprel','May','Iyun','Iyul','Avgust','Sentabr','Oktabr','Noyabr','Dekabr'];
+const NOW=new Date();
+let curMonth=NOW.getMonth()+1, curYear=NOW.getFullYear();
+let allTeachers=[], paymentMap={};
+
+function populateFilters(){
+  const mEls=[document.getElementById('fMonth'),document.getElementById('sMonth')];
+  const yEls=[document.getElementById('fYear'),document.getElementById('sYear')];
+  mEls.forEach(s=>{s.innerHTML=MNS.map((m,i)=>`<option value="${i+1}" ${i+1===curMonth?'selected':''}>${m}</option>`).join('')});
+  for(let y=curYear;y>=curYear-3;y--){
+    yEls.forEach(s=>s.innerHTML+=`<option value="${y}" ${y===curYear?'selected':''}>${y}</option>`);
+  }
+}
+
+async function initTeachers(){
+  const d=await get('/teachers/?page_size=100&is_active=true');
+  allTeachers=d?.results||d||[];
+  const fSel=document.getElementById('fTeacher');
+  const sSel=document.getElementById('sTeacher');
+  allTeachers.forEach(t=>{
+    fSel.innerHTML+=`<option value="${t.id}">${t.full_name||'?'}</option>`;
+    sSel.innerHTML+=`<option value="${t.id}" data-salary="${t.salary||0}">${t.full_name||'?'}</option>`;
+  });
+  load();
+}
+
+function fillSalary(){
+  const opt=document.getElementById('sTeacher').selectedOptions[0];
+  if(opt?.dataset.salary) document.getElementById('sAmount').value=opt.dataset.salary;
+  updateTotal();
+}
+
+function updateTotal(){
+  const a=parseFloat(document.getElementById('sAmount')?.value)||0;
+  const b=parseFloat(document.getElementById('sBonus')?.value)||0;
+  const row=document.getElementById('sTotalRow');
+  if(a||b){
+    row.style.display='block';
+    document.getElementById('sTotalVal').textContent=fmoney(a+b);
+  } else { row.style.display='none'; }
+}
+
+document.addEventListener('input', e=>{
+  if(e.target.id==='sAmount'||e.target.id==='sBonus') updateTotal();
+});
+
+async function load(){
+  const month=parseInt(document.getElementById('fMonth').value);
+  const year=parseInt(document.getElementById('fYear').value);
+  const tid=document.getElementById('fTeacher').value;
+
+  let url=`/teachers/salaries/?month=${month}&year=${year}&page_size=200`;
+  if(tid) url+=`&teacher=${tid}`;
+
+  const d=await get(url);
+  const payments=d?.results||d||[];
+  paymentMap={};
+  payments.forEach(p=>paymentMap[p.teacher]=p);
+
+  renderKpi(month, year, payments);
+  renderTeacherCards(month, year);
+  renderHistory(payments);
+}
+
+function renderKpi(month, year, payments){
+  const total=payments.reduce((s,p)=>s+parseFloat(p.total||0),0);
+  document.getElementById('kTotal').textContent=fmoney(total);
+  document.getElementById('kPaid').textContent=payments.length+' ta';
+  const unpaid=allTeachers.filter(t=>!paymentMap[t.id]).length;
+  document.getElementById('kUnpaid').textContent=unpaid+' ta';
+  document.getElementById('cntLbl').textContent=`${payments.length} ta yozuv`;
+}
+
+function renderTeacherCards(month, year){
+  if(!allTeachers.length){document.getElementById('teacherCards').innerHTML='';return;}
+  const filtered=document.getElementById('fTeacher').value
+    ? allTeachers.filter(t=>t.id===document.getElementById('fTeacher').value)
+    : allTeachers;
+
+  document.getElementById('teacherCards').innerHTML=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;margin-bottom:4px">
+    ${filtered.map(t=>{
+      const p=paymentMap[t.id];
+      const badge=p
+        ?`<span class="paid-badge"><i class="fas fa-check" style="margin-right:3px"></i>To'langan</span>`
+        :`<span class="unpaid-badge"><i class="fas fa-clock" style="margin-right:3px"></i>Kutilmoqda</span>`;
+      return`<div class="teacher-sal-card">
+        <div class="av">${initials(t.full_name||'?')}</div>
+        <div style="flex:1">
+          <div style="font-size:.85rem;font-weight:700;color:var(--text)">${t.full_name||'—'}</div>
+          <div style="font-size:.72rem;color:var(--muted);margin-top:2px">${t.subject||'Fan ko\'rsatilmagan'}</div>
+          <div style="font-size:.78rem;font-weight:600;color:var(--accent);margin-top:4px">
+            Maosh: ${fmoney(t.salary||0)}
+            ${p&&p.bonus>0?`<span style="color:var(--success);margin-left:6px">+${fmoney(p.bonus)} bonus</span>`:''}
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+          ${badge}
+          ${!p?`<button class="btn btn-primary btn-sm" onclick="quickPay('${t.id}','${(t.full_name||'').replace(/'/g,"\\'")}',${t.salary||0})">
+            <i class="fas fa-money-bill"></i>To'lash
+          </button>`:`<button class="btn btn-ghost btn-sm" onclick="deleteSalary('${p.id}')">
+            <i class="fas fa-trash" style="color:var(--danger)"></i>
+          </button>`}
+        </div>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+function renderHistory(payments){
+  if(!payments.length){
+    document.getElementById('histTbl').innerHTML='<div class="empty"><i class="fas fa-money-bill"></i><p>Bu oy to\'lov tarixi yo\'q</p></div>';
+    return;
+  }
+  document.getElementById('histTbl').innerHTML=`<table class="etable"><thead><tr>
+    <th>#</th><th>O'qituvchi</th><th>Oy/Yil</th><th>Asosiy</th><th>Bonus</th><th>Jami</th><th>Kim to'ladi</th><th>Sana</th>
+  </tr></thead><tbody>
+  ${payments.map((p,i)=>`<tr>
+    <td style="color:var(--muted);font-size:.75rem">${i+1}</td>
+    <td><div style="font-size:.82rem;font-weight:600">${p.teacher_name||'—'}</div></td>
+    <td style="font-size:.8rem">${MNS[(p.month||1)-1]} ${p.year}</td>
+    <td style="font-size:.82rem;font-weight:600">${fmoney(p.amount||0)}</td>
+    <td style="font-size:.82rem;color:var(--success)">${parseFloat(p.bonus||0)>0?'+'+fmoney(p.bonus):'—'}</td>
+    <td style="font-size:.88rem;font-weight:800;color:var(--accent)">${fmoney(p.total||0)}</td>
+    <td style="font-size:.75rem;color:var(--muted)">${p.paid_by_name||'—'}</td>
+    <td style="font-size:.75rem;color:var(--muted)">${p.paid_at?p.paid_at.slice(0,10):'—'}</td>
+  </tr>`).join('')}
+  </tbody></table>`;
+}
+
+function quickPay(tid, name, salary){
+  document.getElementById('sTeacher').value=tid;
+  document.getElementById('sAmount').value=salary||0;
+  document.getElementById('sBonus').value=0;
+  updateTotal();
+  openM('salModal');
+}
+
+async function doPaySalary(){
+  const tid=document.getElementById('sTeacher').value;
+  const month=parseInt(document.getElementById('sMonth').value);
+  const year=parseInt(document.getElementById('sYear').value);
+  const amount=parseFloat(document.getElementById('sAmount').value)||0;
+  const bonus=parseFloat(document.getElementById('sBonus').value)||0;
+  if(!tid){toast("O'qituvchini tanlang",'wrn');return;}
+  if(!amount){toast("Summani kiriting",'wrn');return;}
+  const r=await post('/teachers/salaries/',{
+    teacher:tid, month, year, amount, bonus,
+    note:document.getElementById('sNote').value
+  });
+  if(r?.ok||r?.status===201){
+    closeM('salModal');
+    toast("Ish haqi to'landi",'ok');
+    document.getElementById('sNote').value='';
+    load();
+  } else {
+    const e=await r?.json();
+    toast(e?.detail||e?.non_field_errors?.[0]||"Xatolik",'err');
+  }
+}
+
+async function deleteSalary(id){
+  if(!confirm("Bu to'lov yozuvini o'chirishni tasdiqlaysizmi?")) return;
+  const r=await del(`/teachers/salaries/${id}/`);
+  if(r?.ok||r?.status===204){toast("O'chirildi",'ok');load();}
+  else toast("Xatolik",'err');
+}
+
+populateFilters();
+initTeachers();
+</script>
+{% endblock %}

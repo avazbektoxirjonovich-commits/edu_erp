@@ -4,11 +4,16 @@ from .models import Group, LessonSchedule
 
 
 class LessonScheduleSerializer(serializers.ModelSerializer):
-    day_display = serializers.CharField(source='get_day_of_week_display', read_only=True)
+    day_display  = serializers.CharField(source='get_day_of_week_display', read_only=True)
+    group_name   = serializers.CharField(source='group.name', read_only=True)
+    start_time   = serializers.TimeField(source='group.start_time', read_only=True)
+    end_time     = serializers.TimeField(source='group.end_time', read_only=True)
+    teacher_name = serializers.CharField(source='group.teacher.user.full_name', read_only=True, default=None)
 
     class Meta:
         model  = LessonSchedule
-        fields = ['id', 'day_of_week', 'day_display']
+        fields = ['id', 'day_of_week', 'day_display', 'room',
+                  'group_name', 'start_time', 'end_time', 'teacher_name']
 
 
 class GroupListSerializer(serializers.ModelSerializer):

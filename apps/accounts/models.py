@@ -40,6 +40,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         TEACHER   = 'teacher',   "O'qituvchi"
         STUDENT   = 'student',   "O'quvchi"
         DEVELOPER = 'developer', 'Dasturchi'
+        PARENT    = 'parent',    'Ota-ona'
 
     id         = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     phone      = models.CharField(max_length=15, unique=True, validators=[phone_validator],
@@ -72,6 +73,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     def is_student(self):   return self.role == self.Role.STUDENT
     @property
     def is_developer(self): return self.role == self.Role.DEVELOPER
+    @property
+    def is_parent(self):    return self.role == self.Role.PARENT
     @property
     def is_staff_level(self):
         """Admin yoki Developer — boshqaruv huquqi"""

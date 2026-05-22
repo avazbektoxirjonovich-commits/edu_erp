@@ -42,9 +42,50 @@
   --shadow-md:0 4px 20px rgba(13,27,42,.09);
   --shadow-lg:0 12px 48px rgba(13,27,42,.14);
 }
+/* ══ DARK MODE ═══════════════════════════════════════════════ */
+body.dark{
+  --sb-bg:#111827;
+  --sb-border:#1f2937;
+  --bg:#0f172a;
+  --card:#1e293b;
+  --text:#e2e8f0;
+  --muted:#94a3b8;
+  --border:#334155;
+  --shadow:0 1px 8px rgba(0,0,0,.3),0 0 1px rgba(0,0,0,.2);
+  --shadow-md:0 4px 20px rgba(0,0,0,.4);
+  --accent-light:rgba(255,107,53,.15);
+  --accent-hover:rgba(255,107,53,.10);
+}
+body.dark .card{background:var(--card)}
+body.dark .topbar{background:var(--card);border-bottom-color:var(--border)}
+body.dark .tb-btn{background:rgba(255,255,255,.06);color:var(--text)}
+body.dark .tb-btn:hover{background:rgba(255,255,255,.1)}
+body.dark .modal{background:var(--card)}
+body.dark .m-head{background:var(--card);border-bottom-color:var(--border)}
+body.dark .overlay{background:rgba(0,0,0,.6)}
+body.dark input,body.dark select,body.dark textarea{background:#0f172a;color:var(--text);border-color:var(--border)}
+body.dark input::placeholder,body.dark textarea::placeholder{color:var(--muted)}
+body.dark .fc{background:#0f172a;color:var(--text);border-color:var(--border)}
+body.dark .notif-panel{background:var(--card);border-color:var(--border)}
+body.dark .notif-item{border-bottom-color:var(--border)}
+body.dark .notif-item.unread{background:rgba(255,107,53,.08)}
+body.dark .help-modal{background:var(--card)}
+body.dark .chat-area{background:#0f172a;border-color:var(--border)}
+body.dark .chat-msg.recv{background:#0f172a;border-color:var(--border)}
+body.dark .sb-section{color:#4b5563}
+body.dark .sb-item{color:#94a3b8}
+body.dark .sb-item:hover,body.dark .sb-item.active{color:var(--accent);background:rgba(255,107,53,.1)}
+body.dark .sb-user{border-top-color:var(--border)}
+body.dark .stat-card{background:var(--card)}
+body.dark .tbl th{background:rgba(255,255,255,.03);color:var(--muted)}
+body.dark .tbl td{border-bottom-color:var(--border)}
+body.dark .tbl tr:hover td{background:rgba(255,255,255,.03)}
+body.dark .sett-hero{background:#0a0f1a}
+body.dark .topbar .page-title{color:var(--text)}
+
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;font-size:14px;-webkit-font-smoothing:antialiased}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;font-size:14px;-webkit-font-smoothing:antialiased;transition:background .2s,color .2s}
 
 /* ══ ANIMATIONS ══════════════════════════════════════════════ */
 @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
@@ -590,6 +631,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
           </div>
         </div>
       </div>
+      <button class="tb-btn" id="darkToggle" onclick="toggleDark()" title="Tungi rejim"></button>
       <button class="tb-btn" id="pwaInstallBtn" onclick="installPwa()" title="Telefoningizga o'rnating" style="display:none;gap:5px;font-size:.72rem;padding:6px 12px;width:auto">
         <i class="fas fa-mobile-screen"></i><span style="display:none" class="pwa-lbl">O'rnatish</span>
       </button>
@@ -705,6 +747,7 @@ function buildSidebar(role){
     html+=sec('Kunlik');
     html+=item('/attendance/','calendar-check','Davomat','attendance');
     html+=item('/payments/','credit-card',"To'lovlar",'payments');
+    html+=item('/salary/','money-bill-wave',"Ish haqi",'salary');
     html+=sec("O'quv");
     html+=item('/homework/','book-open','Uyga vazifalar','homework');
     html+=sec('Tahlil');
@@ -726,6 +769,11 @@ function buildSidebar(role){
     html+=item('/leaderboard/','ranking-star','Reyting');
     html+=sec('Profil');
     html+=item('/teacher/profile/','user','Profilim');
+  }
+
+  if(role==='parent'){
+    html+=sec('Farzandlarim');
+    html+=item('/parent/','child','Farzandlarim','parent');
   }
 
   if(role==='student'){
@@ -898,6 +946,28 @@ document.querySelectorAll('.stat-card').forEach(el=>{el.style.opacity='0';observ
 </script>
 {% block extra_js %}{% endblock %}
 <script>
+// ── Dark Mode ─────────────────────────────────────────────────
+(function(){
+  const dark = localStorage.getItem('erp_dark')==='1';
+  if(dark) document.body.classList.add('dark');
+})();
+
+function toggleDark(){
+  const isDark = document.body.classList.toggle('dark');
+  localStorage.setItem('erp_dark', isDark ? '1' : '0');
+  updateDarkBtn();
+}
+function updateDarkBtn(){
+  const btn = document.getElementById('darkToggle');
+  if(!btn) return;
+  const isDark = document.body.classList.contains('dark');
+  btn.innerHTML = isDark
+    ? '<i class="fas fa-sun" style="color:#f59e0b"></i>'
+    : '<i class="fas fa-moon" style="color:#6366f1"></i>';
+  btn.title = isDark ? 'Kunduzgi rejim' : 'Tungi rejim';
+}
+document.addEventListener('DOMContentLoaded', updateDarkBtn);
+
 // ── PWA Service Worker ────────────────────────────────────────
 if('serviceWorker' in navigator){
   window.addEventListener('load', ()=>{

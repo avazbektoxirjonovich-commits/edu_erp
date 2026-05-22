@@ -1,11 +1,11 @@
 from rest_framework.viewsets import ModelViewSet
-from rest_framework import filters
+from rest_framework import filters, generics
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Count, Q
 from apps.accounts.permissions import IsAdmin
-from .models import Teacher
-from .serializers import TeacherSerializer, TeacherCreateSerializer
+from .models import Teacher, TeacherSalaryPayment
+from .serializers import TeacherSerializer, TeacherCreateSerializer, TeacherSalaryPaymentSerializer
 
 
 class TeacherViewSet(ModelViewSet):
@@ -34,3 +34,20 @@ class TeacherViewSet(ModelViewSet):
         if self.action in ['create', 'update', 'partial_update']:
             return TeacherCreateSerializer
         return TeacherSerializer
+
+
+class TeacherSalaryListCreateView(generics.ListCreateAPIView):
+    serializer_class   = TeacherSalaryPaymentSerializer
+    permission_classes = [IsAdmin]
+    filter_backends    = [DjangoFilterBackend, filters.OrderingFilter]
+    filterset_fields   = ['teacher', 'month', 'year']
+    ordering           = ['-year', '-month']
+
+    def get_queryset(self):
+        return TeacherSalaryPayment.objects.select_related('teacher__user', 'paid_by')
+
+
+class TeacherSalaryDetailView(generics.RetrieveDestroyAPIView):
+    serializer_class   = TeacherSalaryPaymentSerializer
+    permission_classes = [IsAdmin]
+    queryset           = TeacherSalaryPayment.objects.select_related('teacher__user', 'paid_by')

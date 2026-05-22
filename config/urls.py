@@ -10,6 +10,7 @@ from rest_framework_simplejwt.views import (
     TokenVerifyView,
 )
 import os
+from apps.students.pdf_views import MonthlyReportPDFView
 
 
 def serve_sw(request):
@@ -31,6 +32,7 @@ api_v1_urlpatterns = [
     path('notifications/', include('apps.notifications.urls')),
     path('leaderboard/',   include('apps.students.leaderboard_urls')),
     path('homework/',      include('apps.homework.urls')),
+    path('reports/monthly-pdf/', MonthlyReportPDFView.as_view(), name='monthly-pdf'),
     path('token/',         TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(),    name='token_refresh'),
     path('token/verify/',  TokenVerifyView.as_view(),     name='token_verify'),
@@ -49,6 +51,8 @@ frontend_urlpatterns = [
     path('leaderboard/', TemplateView.as_view(template_name='erp/leaderboard.html'),     name='leaderboard'),
     path('homework/',    TemplateView.as_view(template_name='erp/homework.html'),         name='homework'),
     path('activity/',   TemplateView.as_view(template_name='erp/activity.html'),         name='activity-log-page'),
+    path('salary/',     TemplateView.as_view(template_name='erp/salary.html'),           name='salary'),
+    path('parent/',     TemplateView.as_view(template_name='erp/parent_portal.html'),   name='parent-portal'),
     path('student/',          TemplateView.as_view(template_name='erp/student_portal.html'),   name='student_portal'),
     path('student/payments/', TemplateView.as_view(template_name='erp/student_payments.html'), name='student_payments'),
     path('student/groups/',   TemplateView.as_view(template_name='erp/student_groups.html'),   name='student_groups'),

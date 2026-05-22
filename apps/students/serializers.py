@@ -90,4 +90,4 @@ class StudentUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model  = Student
         fields = ['phone', 'parent_phone', 'parent_name', 'group',
-                  'status', 'birth_date', 'address', 'notes']
+                  'status', 'birth_date', 'address', 'notes', 'parent_user']

@@ -1,4 +1,5 @@
 from django.db.models import Q
+from django.utils import timezone
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -175,6 +176,64 @@ class SupportInboxView(generics.ListAPIView):
             recipient  = self.request.user,
             notif_type = Notification.Type.SUPPORT_MESSAGE,
         ).select_related('sender').order_by('-created_at')
+
+
+# ── To'lov eslatmalari ───────────────────────────────────────────────────────
+
+class SendPaymentRemindersView(APIView):
+    """POST /api/v1/notifications/send-reminders/ — qarzdorlarga eslatma yuborish"""
+    permission_classes = [IsStaffLevel]
+
+    def post(self, request):
+        from apps.payments.models import Payment
+        now   = timezone.now()
+        month = int(request.data.get('month', now.month))
+        year  = int(request.data.get('year',  now.year))
+
+        unpaid = (
+            Payment.objects
+            .filter(month=month, year=year, status__in=['unpaid', 'partial'])
+            .select_related('student__user')
+        )
+
+        sent_count = 0
+        skip_count = 0
+        for pay in unpaid:
+            user = pay.student.user
+            if not user.is_active:
+                continue
+            already = Notification.objects.filter(
+                recipient  = user,
+                notif_type = Notification.Type.PAYMENT_REMINDER,
+                created_at__month=now.month,
+                created_at__year=now.year,
+            ).exists()
+            if already:
+                skip_count += 1
+                continue
+
+            Notification.objects.create(
+                recipient  = user,
+                channel    = Notification.Channel.SYSTEM,
+                notif_type = Notification.Type.PAYMENT_REMINDER,
+                title      = f"{month}-oy to'lov eslatmasi",
+                message    = (
+                    f"Hurmatli {user.full_name},\n"
+                    f"{year}-yil {month}-oy uchun to'lovingiz amalga oshirilmagan.\n"
+                    f"Qarz: {pay.debt_amount:,.0f} so'm.\n"
+                    f"Iltimos, to'lovni amalga oshiring."
+                ),
+                status = Notification.Status.SENT,
+            )
+            sent_count += 1
+
+        return Response({
+            'sent':    sent_count,
+            'skipped': skip_count,
+            'month':   month,
+            'year':    year,
+            'detail':  f"{sent_count} ta eslatma yuborildi, {skip_count} ta allaqachon yuborilgan.",
+        })
 
 
 # ── Faoliyat jurnali ──────────────────────────────────────────────────────────

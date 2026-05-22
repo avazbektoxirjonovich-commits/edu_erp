@@ -103,6 +103,28 @@ class StudentViewSet(ModelViewSet):
             pk, repr_str, request=self.request,
         )
 
+    @action(detail=True, methods=['post'], url_path='create-parent', permission_classes=[IsAdmin])
+    def create_parent(self, request, pk=None):
+        """POST /students/{id}/create-parent/ — ota-ona akkaunt yaratish va biriktirish."""
+        from apps.accounts.models import User
+        student = self.get_object()
+        phone    = request.data.get('phone', '').strip()
+        password = request.data.get('password', 'erp12345')
+        name     = request.data.get('full_name') or student.parent_name or f"{student.user.full_name} (Ota-ona)"
+        if not phone:
+            return Response({'detail': 'Telefon raqam majburiy.'}, status=400)
+        if User.objects.filter(phone=phone).exists():
+            user = User.objects.get(phone=phone)
+            if user.role != User.Role.PARENT:
+                return Response({'detail': 'Bu telefon boshqa rol uchun ro\'yxatdan o\'tgan.'}, status=400)
+        else:
+            user = User.objects.create_user(phone=phone, password=password,
+                                             full_name=name, role=User.Role.PARENT)
+        student.parent_user = user
+        student.save(update_fields=['parent_user'])
+        return Response({'detail': "Ota-ona akkaunt yaratildi va biriktirildi.",
+                         'parent_phone': user.phone, 'parent_id': str(user.id)})
+
     @action(detail=True, methods=['get'], url_path='payments')
     def payments(self, request, pk=None):
         from apps.payments.models import Payment
@@ -120,6 +142,54 @@ class StudentViewSet(ModelViewSet):
             student=self.get_object()
         ).select_related('group').order_by('-date')
         return Response(AttendanceSerializer(atts, many=True).data)
+
+
+class ParentDashboardView(APIView):
+    """GET /api/v1/students/parent/ — farzandlarining ma'lumotlari."""
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        children = Student.objects.filter(
+            parent_user=request.user
+        ).select_related('user', 'group__teacher__user')
+        result = []
+        for s in children:
+            from apps.payments.models import Payment
+            from apps.attendance.models import Attendance
+            from django.db.models import Sum as DSum, Count as DCount, Q as DQ
+            debt = Payment.objects.filter(student=s).aggregate(
+                d=Coalesce(DSum('debt_amount', output_field=DecimalField(max_digits=12, decimal_places=0)), 0,
+                           output_field=DecimalField(max_digits=12, decimal_places=0))
+            )['d']
+            att = Attendance.objects.filter(student=s).aggregate(
+                total=DCount('id'),
+                present=DCount('id', filter=DQ(status='present'))
+            )
+            att_pct = round(att['present']/att['total']*100, 1) if att['total'] else 0
+            recent_att = list(
+                Attendance.objects.filter(student=s).order_by('-date')
+                .values('date', 'status')[:7]
+            )
+            recent_pay = list(
+                Payment.objects.filter(student=s).order_by('-year', '-month')
+                .values('month', 'year', 'paid_amount', 'debt_amount', 'status')[:3]
+            )
+            g = s.group
+            result.append({
+                'id':         str(s.id),
+                'full_name':  s.user.full_name,
+                'phone':      s.phone,
+                'status':     s.status,
+                'group_name': g.name if g else None,
+                'teacher_name': g.teacher.user.full_name if g and g.teacher else None,
+                'xp_points':  s.xp_points,
+                'level':      s.level,
+                'attendance_percentage': att_pct,
+                'total_debt': float(debt),
+                'recent_attendance': recent_att,
+                'recent_payments':   recent_pay,
+            })
+        return Response(result)
 
 
 class StudentMeView(APIView):

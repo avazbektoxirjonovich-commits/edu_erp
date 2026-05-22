@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Teacher
+from .models import Teacher, TeacherSalaryPayment
 from apps.accounts.serializers import UserSerializer
 
 
@@ -43,3 +43,19 @@ class TeacherCreateSerializer(serializers.ModelSerializer):
             full_name=full_name, role=User.Role.TEACHER
         )
         return Teacher.objects.create(user=user, **validated_data)
+
+
+class TeacherSalaryPaymentSerializer(serializers.ModelSerializer):
+    teacher_name = serializers.CharField(source='teacher.user.full_name', read_only=True)
+    paid_by_name = serializers.CharField(source='paid_by.full_name', read_only=True, default=None)
+    total        = serializers.ReadOnlyField()
+
+    class Meta:
+        model  = TeacherSalaryPayment
+        fields = ['id', 'teacher', 'teacher_name', 'month', 'year',
+                  'amount', 'bonus', 'total', 'note', 'paid_by', 'paid_by_name', 'paid_at', 'created_at']
+        read_only_fields = ['paid_by', 'paid_at', 'created_at']
+
+    def create(self, validated_data):
+        validated_data['paid_by'] = self.context['request'].user
+        return super().create(validated_data)

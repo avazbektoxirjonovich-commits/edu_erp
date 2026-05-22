@@ -42,6 +42,12 @@ class Student(models.Model):
     joined_date  = models.DateField(auto_now_add=True)
     notes        = models.TextField(blank=True)
     photo        = models.ImageField(upload_to='students/photos/', blank=True, null=True)
+    parent_user  = models.ForeignKey(
+                       User, on_delete=models.SET_NULL,
+                       null=True, blank=True,
+                       related_name='children',
+                       verbose_name='Ota-ona akkaunt'
+                   )
 
     # ── Gamification ──────────────────────────────────────────
     xp_points    = models.PositiveIntegerField(default=0, verbose_name='XP Ball')

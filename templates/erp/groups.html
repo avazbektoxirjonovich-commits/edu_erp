@@ -6,23 +6,22 @@
 <style>
 .groups-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 @media(max-width:1100px){.groups-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:700px){.groups-grid{grid-template-columns:1fr}}
+@media(max-width:700px){.groups-grid{grid-column:1fr}}
 .g-card{
   background:#fff;border:1px solid var(--border);border-radius:14px;
   padding:20px;box-shadow:var(--shadow);transition:all .25s;
-  animation:fadeUp .4s ease both;cursor:default;
+  animation:fadeUp .4s ease both;cursor:pointer;
 }
 .g-card:hover{box-shadow:var(--shadow-md);transform:translateY(-3px)}
 .g-card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px}
 .g-name{font-size:.95rem;font-weight:800;color:var(--text)}
 .g-teacher{font-size:.73rem;color:var(--muted);margin-top:3px;display:flex;align-items:center;gap:5px}
-.g-schedule{
-  display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px;
-}
+.g-schedule{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px}
 .day-pill{
   padding:3px 9px;border-radius:20px;font-size:.68rem;font-weight:700;
   background:var(--accent-light);color:var(--accent);
 }
+.day-pill.no-sched{background:#fff3cd;color:#856404}
 .g-cap{margin-bottom:4px}
 .g-cap-lbl{display:flex;justify-content:space-between;font-size:.72rem;margin-bottom:6px}
 .g-cap-lbl span:first-child{color:var(--muted)}
@@ -30,6 +29,23 @@
 .g-fee{display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
 .g-fee-amt{font-size:.88rem;font-weight:800;color:var(--text)}
 .g-fee-lbl{font-size:.7rem;color:var(--muted)}
+.no-sched-banner{
+  background:#fff8e1;border:1.5px dashed #f59e0b;border-radius:10px;
+  padding:12px 16px;display:flex;align-items:center;gap:10px;
+  margin-bottom:14px;font-size:.8rem;color:#92400e;
+}
+.sched-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;padding:8px 12px;background:var(--bg);border-radius:9px}
+.sched-day-name{min-width:80px;font-size:.82rem;font-weight:700;color:var(--text)}
+.day-check-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.day-check-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer}
+.day-check-item input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent);cursor:pointer}
+.day-check-item span{font-size:.7rem;font-weight:700;color:var(--muted)}
+.detail-section{margin-bottom:18px}
+.detail-section-title{font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+.detail-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:.82rem}
+.detail-row:last-child{border-bottom:none}
+.detail-row span:first-child{color:var(--muted)}
+.detail-row span:last-child{font-weight:600;color:var(--text)}
 </style>
 {% endblock %}
 
@@ -39,7 +55,7 @@
     <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">Guruhlar</h2>
     <p style="font-size:.75rem;color:var(--muted);margin-top:3px">Barcha o'quv guruhlari</p>
   </div>
-  <button class="btn btn-primary" onclick="openM('addModal')"><i class="fas fa-plus"></i>Yangi guruh</button>
+  <button class="btn btn-primary admin-only" onclick="openM('addModal')"><i class="fas fa-plus"></i>Yangi guruh</button>
 </div>
 
 <!-- Filter bar -->
@@ -61,6 +77,40 @@
 
 <div class="groups-grid" id="grpGrid">
   <div style="grid-column:1/-1" class="loading"><div class="spinner"></div></div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="overlay" id="detailModal">
+  <div class="modal modal-lg">
+    <div class="m-head">
+      <h5><i class="fas fa-users" style="color:var(--accent);margin-right:6px"></i><span id="dtTitle">Guruh</span></h5>
+      <button class="m-close" onclick="closeM('detailModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="m-body" id="dtBody"></div>
+    <div class="m-foot">
+      <button class="btn btn-ghost" onclick="closeM('detailModal')">Yopish</button>
+      <button class="btn btn-ghost admin-only" id="dtEditBtn" onclick="switchToEdit()"><i class="fas fa-pen"></i>Tahrirlash</button>
+      <button class="btn btn-primary admin-only" id="dtSchedBtn" onclick="openScheduleModal()"><i class="fas fa-calendar-alt"></i>Dars jadvali</button>
+    </div>
+  </div>
+</div>
+
+<!-- SCHEDULE MODAL -->
+<div class="overlay" id="schedModal">
+  <div class="modal">
+    <div class="m-head">
+      <h5><i class="fas fa-calendar-check" style="color:var(--accent);margin-right:6px"></i>Dars jadvali</h5>
+      <button class="m-close" onclick="closeM('schedModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="m-body">
+      <p style="font-size:.8rem;color:var(--muted);margin-bottom:14px">Dars o'tiladigan kunlarni va xonani belgilang:</p>
+      <div id="schedRows"></div>
+    </div>
+    <div class="m-foot">
+      <button class="btn btn-ghost" onclick="closeM('schedModal')">Bekor</button>
+      <button class="btn btn-primary" onclick="saveSchedule()"><i class="fas fa-check"></i>Saqlash</button>
+    </div>
+  </div>
 </div>
 
 <!-- ADD MODAL -->
@@ -88,35 +138,20 @@
         <div class="fg"><label>Oylik to'lov (so'm)</label><input class="fc" type="number" id="aFee" placeholder="500000"></div>
       </div>
       <div class="fg"><label>Dars kunlari</label>
-        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:2px" id="aDays">
-          <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:.8rem;font-weight:500" v-for="d in days">
-            <input type="checkbox" class="day-cb" data-day="1"><span>Du</span>
-          </label>
-          <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:.8rem;font-weight:500">
-            <input type="checkbox" class="day-cb" data-day="2"><span>Se</span>
-          </label>
-          <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:.8rem;font-weight:500">
-            <input type="checkbox" class="day-cb" data-day="3"><span>Ch</span>
-          </label>
-          <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:.8rem;font-weight:500">
-            <input type="checkbox" class="day-cb" data-day="4"><span>Pa</span>
-          </label>
-          <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:.8rem;font-weight:500">
-            <input type="checkbox" class="day-cb" data-day="5"><span>Ju</span>
-          </label>
-          <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:.8rem;font-weight:500">
-            <input type="checkbox" class="day-cb" data-day="6"><span>Sh</span>
-          </label>
-          <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:.8rem;font-weight:500">
-            <input type="checkbox" class="day-cb" data-day="7"><span>Ya</span>
-          </label>
+        <div class="day-check-grid" style="margin-top:6px" id="aDays">
+          <div class="day-check-item"><input type="checkbox" class="day-cb" data-day="1"><span>Du</span></div>
+          <div class="day-check-item"><input type="checkbox" class="day-cb" data-day="2"><span>Se</span></div>
+          <div class="day-check-item"><input type="checkbox" class="day-cb" data-day="3"><span>Ch</span></div>
+          <div class="day-check-item"><input type="checkbox" class="day-cb" data-day="4"><span>Pa</span></div>
+          <div class="day-check-item"><input type="checkbox" class="day-cb" data-day="5"><span>Ju</span></div>
+          <div class="day-check-item"><input type="checkbox" class="day-cb" data-day="6"><span>Sh</span></div>
+          <div class="day-check-item"><input type="checkbox" class="day-cb" data-day="7"><span>Ya</span></div>
         </div>
       </div>
-      <div class="row2">
+      <div class="row2" style="margin-top:10px">
         <div class="fg"><label>Boshlanish vaqti</label><input class="fc" type="time" id="aStartTime" value="09:00"></div>
         <div class="fg"><label>Tugash vaqti</label><input class="fc" type="time" id="aEndTime" value="11:00"></div>
       </div>
-      <div class="fg"><label>Xona / Auditoriya</label><input class="fc" id="aRoom" placeholder="1-xona, 2-qavat"></div>
     </div>
     <div class="m-foot">
       <button class="btn btn-ghost" onclick="closeM('addModal')">Bekor</button>
@@ -163,6 +198,7 @@
     </div>
     <div class="m-foot">
       <button class="btn btn-ghost" onclick="closeM('editModal')">Bekor</button>
+      <button class="btn btn-danger" onclick="doDelete()" style="margin-right:auto"><i class="fas fa-trash"></i>O'chirish</button>
       <button class="btn btn-primary" onclick="doEdit()"><i class="fas fa-check"></i>Saqlash</button>
     </div>
   </div>
@@ -172,8 +208,13 @@
 {% block extra_js %}
 <script>
 initAuth();
-const DAYS={1:'Du',2:'Se',3:'Ch',4:'Pa',5:'Ju',6:'Sh',7:'Ya'};
-let teachers=[], branches=[], editId=null;
+const _ME = getUser();
+const _isAdmin = _ME.role === 'admin' || _ME.role === 'developer';
+if (!_isAdmin) document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'none');
+
+const DAYS = {1:'Dushanba',2:'Seshanba',3:'Chorshanba',4:'Payshanba',5:'Juma',6:'Shanba',7:'Yakshanba'};
+const DAYS_SHORT = {1:'Du',2:'Se',3:'Ch',4:'Pa',5:'Ju',6:'Sh',7:'Ya'};
+let teachers=[], branches=[], editId=null, detailData=null;
 
 async function init(){
   const [t, b] = await Promise.all([
@@ -213,9 +254,12 @@ async function load(){
   document.getElementById('grpGrid').innerHTML=items.map((g,idx)=>{
     const cap=g.max_students||0, stCount=g.student_count||0;
     const pct=cap?Math.min(100,Math.round(stCount/cap*100)):0;
-    const days=(g.days_of_week||[]).map(d=>`<span class="day-pill">${DAYS[d]||d}</span>`).join('');
+    const hasSchedule=(g.days_of_week||[]).length>0;
+    const days=hasSchedule
+      ?(g.days_of_week||[]).map(d=>`<span class="day-pill">${DAYS_SHORT[d]||d}</span>`).join('')
+      :`<span class="day-pill no-sched"><i class="fas fa-exclamation-triangle" style="margin-right:3px"></i>Jadval yo'q</span>`;
     const status=g.status==='active'?'<span class="bdg bdg-active"><i class="fas fa-circle" style="font-size:.35rem"></i> Faol</span>':'<span class="bdg bdg-inactive">Nofaol</span>';
-    return`<div class="g-card" style="animation-delay:${idx*.06}s">
+    return`<div class="g-card" style="animation-delay:${idx*.06}s" onclick="openDetail('${g.id}')">
       <div class="g-card-top">
         <div>
           <div class="g-name">${g.name}</div>
@@ -223,11 +267,11 @@ async function load(){
           <div class="g-teacher"><i class="fas fa-chalkboard-teacher" style="font-size:.7rem"></i>${g.teacher_name||"O'qituvchi belgilanmagan"}</div>
           ${g.branch_name?`<div style="font-size:.68rem;color:var(--muted);margin-top:2px"><i class="fas fa-building" style="font-size:.6rem;margin-right:3px"></i>${g.branch_name}</div>`:''}
         </div>
-        <div style="display:flex;gap:4px">
-          <button class="btn-icon edit" onclick="openEdit('${g.id}')"><i class="fas fa-pen"></i></button>
+        <div style="display:flex;gap:4px" onclick="event.stopPropagation()">
+          ${_isAdmin?`<button class="btn-icon edit" onclick="openEditDirect('${g.id}')"><i class="fas fa-pen"></i></button>`:''}
         </div>
       </div>
-      ${days?`<div class="g-schedule">${days}</div>`:''}
+      <div class="g-schedule">${days}</div>
       ${g.start_time?`<div style="font-size:.75rem;color:var(--muted);margin-bottom:10px"><i class="fas fa-clock" style="margin-right:4px"></i>${g.start_time}–${g.end_time||'?'}</div>`:''}
       <div class="g-cap">
         <div class="g-cap-lbl"><span>Sig'im</span><span>${stCount}/${cap}</span></div>
@@ -241,6 +285,112 @@ async function load(){
   }).join('');
 }
 
+/* ─── Detail modal ─── */
+async function openDetail(id){
+  editId = id;
+  const d = await get(`/groups/${id}/`);
+  if(!d){toast("Yuklab bo'lmadi",'err');return;}
+  detailData = d;
+  document.getElementById('dtTitle').textContent = d.name;
+  const hasSchedule = (d.schedules||[]).length > 0;
+
+  let schedHtml = '';
+  if(hasSchedule){
+    schedHtml = `
+      <div class="detail-section">
+        <div class="detail-section-title"><i class="fas fa-calendar-alt" style="margin-right:5px"></i>Dars jadvali</div>
+        ${(d.schedules||[]).map(s=>`
+          <div class="sched-row">
+            <span class="sched-day-name">${DAYS[s.day_of_week]||s.day_of_week}</span>
+            <span style="font-size:.78rem;color:var(--muted)">${s.room?'<i class="fas fa-door-open" style="margin-right:4px"></i>'+s.room:'Xona belgilanmagan'}</span>
+            <span style="margin-left:auto;font-size:.75rem;color:var(--muted)">${d.start_time||''} – ${d.end_time||''}</span>
+          </div>`).join('')}
+      </div>`;
+  } else {
+    schedHtml = `
+      <div class="no-sched-banner">
+        <i class="fas fa-exclamation-triangle" style="font-size:1.1rem;color:#f59e0b;flex-shrink:0"></i>
+        <div>
+          <div style="font-weight:700;margin-bottom:3px">Dars jadvali mavjud emas</div>
+          <div style="font-size:.75rem">Ushbu guruh uchun hali dars jadvali tuzilmagan.</div>
+        </div>
+        ${_isAdmin?`<button class="btn btn-primary btn-sm" style="margin-left:auto;white-space:nowrap" onclick="openScheduleModal()"><i class="fas fa-plus"></i>Jadval tuzish</button>`:''}
+      </div>`;
+  }
+
+  document.getElementById('dtBody').innerHTML = `
+    ${schedHtml}
+    <div class="detail-section">
+      <div class="detail-section-title"><i class="fas fa-info-circle" style="margin-right:5px"></i>Asosiy ma'lumotlar</div>
+      <div class="detail-row"><span>Fan / Yo'nalish</span><span>${d.subject||'—'}</span></div>
+      <div class="detail-row"><span>O'qituvchi</span><span>${d.teacher_name||'—'}</span></div>
+      <div class="detail-row"><span>Filial</span><span>${d.branch_name||'—'}</span></div>
+      <div class="detail-row"><span>O'quvchilar</span><span>${d.student_count||0} / ${d.max_students||0}</span></div>
+      <div class="detail-row"><span>Oylik to'lov</span><span>${d.monthly_fee?fmoney(d.monthly_fee):'—'}</span></div>
+      <div class="detail-row"><span>Dars vaqti</span><span>${d.start_time||'?'} – ${d.end_time||'?'}</span></div>
+      <div class="detail-row"><span>Boshlanish sanasi</span><span>${d.start_date||'—'}</span></div>
+      <div class="detail-row"><span>Status</span><span>${d.status==='active'?'Faol':'Nofaol'}</span></div>
+    </div>`;
+
+  openM('detailModal');
+
+  // Auto-open schedule modal if no schedule exists (admin only)
+  if(!hasSchedule && _isAdmin){
+    setTimeout(()=>openScheduleModal(), 400);
+  }
+}
+
+function switchToEdit(){
+  closeM('detailModal');
+  setTimeout(()=>openEditDirect(editId), 200);
+}
+
+/* ─── Schedule modal ─── */
+function openScheduleModal(){
+  if(!editId){return;}
+  const d = detailData;
+  const existingMap = {};
+  (d?.schedules||[]).forEach(s=>existingMap[s.day_of_week]={room:s.room||''});
+
+  let html = '';
+  for(let day=1;day<=7;day++){
+    const ex = existingMap[day];
+    const checked = ex ? 'checked' : '';
+    const room = ex?.room||'';
+    html += `<div class="sched-row" id="srow${day}">
+      <input type="checkbox" id="sch_cb_${day}" ${checked} style="width:16px;height:16px;accent-color:var(--accent);flex-shrink:0">
+      <label for="sch_cb_${day}" style="min-width:90px;font-size:.82rem;font-weight:700;cursor:pointer">${DAYS[day]}</label>
+      <input type="text" id="sch_room_${day}" value="${room}" placeholder="Xona (ixtiyoriy)"
+        style="flex:1;border:1.5px solid var(--border);border-radius:8px;padding:6px 10px;font-size:.8rem;outline:none;background:#fff">
+    </div>`;
+  }
+  document.getElementById('schedRows').innerHTML = html;
+  openM('schedModal');
+}
+
+async function saveSchedule(){
+  const schedules=[];
+  for(let day=1;day<=7;day++){
+    const cb=document.getElementById(`sch_cb_${day}`);
+    if(cb?.checked){
+      schedules.push({day_of_week:day, room:document.getElementById(`sch_room_${day}`)?.value||''});
+    }
+  }
+  const r = await post(`/groups/${editId}/set-schedule/`, {schedules});
+  if(r?.ok){
+    toast(`Jadval saqlandi (${schedules.length} kun)`,'ok');
+    closeM('schedModal');
+    closeM('detailModal');
+    load();
+    // Refresh detail if still open
+    detailData = null;
+  } else {
+    const e = await r?.json();
+    toast(e?.detail||'Xatolik','err');
+  }
+}
+
+/* ─── Add / Edit / Delete ─── */
 function getDays(prefix){
   return Array.from(document.querySelectorAll(`#${prefix}Days .day-cb`)).filter(c=>c.checked).map(c=>parseInt(c.dataset.day));
 }
@@ -260,14 +410,25 @@ async function doAdd(){
     end_time:   document.getElementById('aEndTime').value||null,
   };
   const r=await post('/groups/',body);
-  if(r?.ok){closeM('addModal');toast("Guruh qo'shildi",'ok');load();}
-  else{const e=await r?.json();toast(e?.detail||JSON.stringify(e)||"Xatolik",'err');}
+  if(r?.ok||r?.status===201){
+    const newGroup = await r.json();
+    closeM('addModal');
+    toast("Guruh qo'shildi",'ok');
+    load();
+    // If no days selected, auto-open schedule modal for new group
+    if(!body.days.length){
+      editId = newGroup.id;
+      detailData = newGroup;
+      setTimeout(()=>openScheduleModal(), 400);
+    }
+  } else {const e=await r?.json();toast(e?.detail||JSON.stringify(e)||"Xatolik",'err');}
 }
 
-async function openEdit(id){
+async function openEditDirect(id){
   editId=id;
   const d=await get(`/groups/${id}/`);
   if(!d){toast("Yuklab bo'lmadi",'err');return;}
+  detailData=d;
   document.getElementById('eId').value=id;
   document.getElementById('eName').value=d.name||'';
   document.getElementById('eSubject').value=d.subject||'';
@@ -295,6 +456,13 @@ async function doEdit(){
   });
   if(r?.ok){closeM('editModal');toast("Saqlandi",'ok');load();}
   else toast("Xatolik",'err');
+}
+
+async function doDelete(){
+  if(!confirm("Guruhni o'chirishni tasdiqlaysizmi?")){return;}
+  const r=await del(`/groups/${editId}/`);
+  if(r?.ok||r?.status===204){closeM('editModal');toast("Guruh o'chirildi",'ok');load();}
+  else toast("O'chirib bo'lmadi",'err');
 }
 
 init();

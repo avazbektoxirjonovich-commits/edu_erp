@@ -95,6 +95,7 @@ class LessonSchedule(models.Model):
                      verbose_name='Guruh'
                  )
     day_of_week = models.IntegerField(choices=Group.DayOfWeek.choices, verbose_name='Hafta kuni')
+    room        = models.CharField(max_length=50, blank=True, verbose_name='Xona')
     created_at  = models.DateTimeField(auto_now_add=True)
 
     class Meta:
