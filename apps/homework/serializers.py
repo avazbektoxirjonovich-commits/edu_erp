@@ -105,7 +105,7 @@ class SubmissionCreateSerializer(serializers.ModelSerializer):
         student    = request.user.student_profile
         assignment = validated_data['assignment']
 
-        is_late = timezone.now() > assignment.due_date
+        is_late = timezone.now().date() > assignment.due_date
         status  = Submission.Status.LATE if is_late else Submission.Status.SUBMITTED
 
         return Submission.objects.create(

@@ -22,7 +22,12 @@ class BranchViewSet(ModelViewSet):
                     'groups',
                     filter=Q(groups__status='active'),
                     distinct=True,
-                )
+                ),
+                _students_count=Count(
+                    'groups__students',
+                    filter=Q(groups__students__status='active'),
+                    distinct=True,
+                ),
             )
         )
 
