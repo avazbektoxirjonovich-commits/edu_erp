@@ -35,6 +35,9 @@ class TeacherViewSet(ModelViewSet):
             return TeacherCreateSerializer
         return TeacherSerializer
 
+    def perform_destroy(self, instance):
+        instance.user.delete()  # cascades: Teacher → salary payments; groups SET_NULL
+
 
 class TeacherSalaryListCreateView(generics.ListCreateAPIView):
     serializer_class   = TeacherSalaryPaymentSerializer

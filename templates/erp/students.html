@@ -359,7 +359,7 @@ async function doAddStudent(){
     notes:document.getElementById('aNotes').value};
   const r=await post('/students/',body);
   if(r?.ok){closeM('addModal');toast("O'quvchi qo'shildi",'ok');loadStudents(currentPage);}
-  else{const e=await r?.json();toast(e?.detail||"Xatolik yuz berdi",'err');}
+  else{try{const e=await r?.json();const msg=e?.detail||Object.values(e||{}).flat()[0]||'Xatolik';toast(String(msg),'err');}catch{toast('Server xatosi','err');}}
 }
 
 let editId=null;

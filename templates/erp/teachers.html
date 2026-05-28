@@ -194,14 +194,14 @@ async function doEdit(){
     is_active: document.getElementById('eActive').value==='true',
   });
   if(r?.ok){closeM('editModal');toast("Saqlandi",'ok');load();}
-  else toast("Xatolik",'err');
+  else{try{const e=await r?.json();toast(e?.detail||JSON.stringify(e)||'Xatolik','err');}catch{toast('Server xatosi','err');}}
 }
 
 async function doDelete(id,name){
-  if(!confirm(`"${name}" ni o'chirmoqchimisiz?`)) return;
+  if(!confirm(`"${name}" ni o'chirmoqchimisiz?\nBarcha ma'lumotlari ham o'chiriladi.`)) return;
   const r=await del(`/teachers/${id}/`);
-  if(r?.ok||r?.status===204){toast("O'chirildi",'ok');load();}
-  else toast("Xatolik",'err');
+  if(r?.ok||r?.status===204){toast("O'qituvchi o'chirildi",'ok');load();}
+  else{try{const e=await r?.json();toast(e?.detail||JSON.stringify(e)||'Xatolik','err');}catch{toast('Server xatosi','err');}}
 }
 
 load();
