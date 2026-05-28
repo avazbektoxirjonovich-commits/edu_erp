@@ -21,7 +21,7 @@ class TeacherSerializer(serializers.ModelSerializer):
 
 class TeacherCreateSerializer(serializers.ModelSerializer):
     full_name = serializers.CharField()
-    password  = serializers.CharField(write_only=True, min_length=8, default='erp12345')
+    password  = serializers.CharField(write_only=True, min_length=4, default='erp12345')
 
     class Meta:
         model  = Teacher
