@@ -398,9 +398,9 @@ async function doEditStudent(){
 }
 
 async function doDeactivate(id,name){
-  if(!confirm(`"${name}" ni nofaol qilasizmi?`)) return;
-  const r=await patch(`/students/${id}/`,{status:'inactive'});
-  if(r?.ok){toast("O'quvchi nofaol qilindi",'ok');loadStudents(currentPage);}
+  if(!confirm(`"${name}" ni o'chirishni tasdiqlaysizmi?\n\nDIQQAT: O'quvchining barcha ma'lumotlari (to'lovlar, davomat) ham o'chiriladi!`)) return;
+  const r=await del(`/students/${id}/`);
+  if(r?.ok||r?.status===204){toast("O'quvchi o'chirildi",'ok');loadStudents(currentPage);}
   else toast("Xatolik yuz berdi",'err');
 }
 

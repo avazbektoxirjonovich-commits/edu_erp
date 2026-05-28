@@ -758,6 +758,9 @@ function buildSidebar(role){
     html+=sec('Tizim');
     html+=item('/activity/','clock-rotate-left','Faoliyat jurnali','activity');
     if(role==='developer'){
+      html+=sec('Sozlamalar');
+      html+=`<a class="sb-item" href="/admin/accounts/user/add/" target="_blank"><span class="sb-icon"><i class="fas fa-user-shield"></i></span>Admin yaratish</a>`;
+      html+=`<a class="sb-item" href="/admin/accounts/user/" target="_blank"><span class="sb-icon"><i class="fas fa-users-cog"></i></span>Foydalanuvchilar</a>`;
       html+=`<a class="sb-item" href="/admin/" target="_blank"><span class="sb-icon"><i class="fas fa-shield-halved"></i></span>Django Admin</a>`;
       html+=`<a class="sb-item" href="/api/v1/" target="_blank"><span class="sb-icon"><i class="fas fa-code"></i></span>API Explorer</a>`;
     }
