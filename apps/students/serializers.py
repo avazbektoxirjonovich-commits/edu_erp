@@ -91,3 +91,9 @@ class StudentUpdateSerializer(serializers.ModelSerializer):
         model  = Student
         fields = ['phone', 'parent_phone', 'parent_name', 'group',
                   'status', 'birth_date', 'address', 'notes', 'parent_user']
+
+    def validate_parent_user(self, value):
+        from apps.accounts.models import User
+        if value and value.role != User.Role.PARENT:
+            raise serializers.ValidationError("Bu foydalanuvchi ota-ona roliga ega emas")
+        return value

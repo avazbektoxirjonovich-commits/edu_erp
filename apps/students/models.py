@@ -76,11 +76,15 @@ class Student(models.Model):
         return self.user.full_name
 
     def add_xp(self, amount, reason=''):
-        self.xp_points += amount
-        self.coins     += amount
-        # Level: every 500 XP = 1 level
-        self.level = max(1, self.xp_points // 500 + 1)
-        self.save(update_fields=['xp_points', 'coins', 'level'])
+        from django.db.models import F
+        Student.objects.filter(pk=self.pk).update(
+            xp_points=F('xp_points') + amount,
+            coins=F('coins') + amount,
+        )
+        self.refresh_from_db(fields=['xp_points', 'coins'])
+        new_level = max(1, self.xp_points // 500 + 1)
+        Student.objects.filter(pk=self.pk).update(level=new_level)
+        self.level = new_level
         logger.info(f"XP +{amount} → {self.full_name} ({reason})")
 
     @property

@@ -69,16 +69,18 @@ class Payment(models.Model):
     def __str__(self):
         return f"{self.student} | {self.year}/{self.month:02d} | {self.get_status_display()}"
 
+    @staticmethod
+    def compute_status(amount, discount, paid_amount):
+        effective = max(0, amount - discount)
+        debt = max(0, effective - paid_amount)
+        if paid_amount <= 0:
+            return Payment.Status.UNPAID, debt
+        if paid_amount >= effective:
+            return Payment.Status.PAID, 0
+        return Payment.Status.PARTIAL, debt
+
     def save(self, *args, **kwargs):
-        effective_amount = max(0, self.amount - self.discount)
-        self.debt_amount = max(0, effective_amount - self.paid_amount)
-
-        if self.paid_amount <= 0:
-            self.status = self.Status.UNPAID
-        elif self.paid_amount >= effective_amount:
-            self.status = self.Status.PAID
-            self.debt_amount = 0
-        else:
-            self.status = self.Status.PARTIAL
-
+        self.status, self.debt_amount = self.compute_status(
+            self.amount, self.discount, self.paid_amount
+        )
         super().save(*args, **kwargs)
