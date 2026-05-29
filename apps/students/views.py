@@ -166,45 +166,80 @@ class ParentDashboardView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        children = Student.objects.filter(
-            parent_user=request.user
-        ).select_related('user', 'group__teacher__user')
+        from apps.payments.models import Payment
+        from apps.attendance.models import Attendance
+        from django.db.models import Prefetch
+
+        # 3 query (bola soni nechta bo'lsa ham):
+        # 1 — annotate bilan barcha bolalar + debt + attendance stats
+        # 2 — prefetch: so'nggi 7 ta davomat (barcha bolalar uchun)
+        # 3 — prefetch: so'nggi 3 ta to'lov (barcha bolalar uchun)
+        children = (
+            Student.objects
+            .filter(parent_user=request.user)
+            .select_related('user', 'group__teacher__user')
+            .annotate(
+                _total_debt=Coalesce(
+                    Sum('payments__debt_amount',
+                        output_field=DecimalField(max_digits=12, decimal_places=0)),
+                    0,
+                    output_field=DecimalField(max_digits=12, decimal_places=0)
+                ),
+                _att_total=Count('attendances', distinct=True),
+                _att_present=Count(
+                    'attendances',
+                    filter=Q(attendances__status='present'),
+                    distinct=True
+                ),
+            )
+            .prefetch_related(
+                Prefetch(
+                    'attendances',
+                    queryset=Attendance.objects.order_by('-date')
+                                               .only('date', 'status', 'student_id'),
+                    to_attr='_recent_att',
+                ),
+                Prefetch(
+                    'payments',
+                    queryset=Payment.objects.order_by('-year', '-month')
+                                           .only('month', 'year', 'paid_amount',
+                                                 'debt_amount', 'status', 'student_id'),
+                    to_attr='_recent_pay',
+                ),
+            )
+        )
+
         result = []
         for s in children:
-            from apps.payments.models import Payment
-            from apps.attendance.models import Attendance
-            from django.db.models import Sum as DSum, Count as DCount, Q as DQ
-            debt = Payment.objects.filter(student=s).aggregate(
-                d=Coalesce(DSum('debt_amount', output_field=DecimalField(max_digits=12, decimal_places=0)), 0,
-                           output_field=DecimalField(max_digits=12, decimal_places=0))
-            )['d']
-            att = Attendance.objects.filter(student=s).aggregate(
-                total=DCount('id'),
-                present=DCount('id', filter=DQ(status='present'))
-            )
-            att_pct = round(att['present']/att['total']*100, 1) if att['total'] else 0
-            recent_att = list(
-                Attendance.objects.filter(student=s).order_by('-date')
-                .values('date', 'status')[:7]
-            )
-            recent_pay = list(
-                Payment.objects.filter(student=s).order_by('-year', '-month')
-                .values('month', 'year', 'paid_amount', 'debt_amount', 'status')[:3]
+            att_pct = (
+                round(s._att_present / s._att_total * 100, 1)
+                if s._att_total else 0
             )
             g = s.group
             result.append({
-                'id':         str(s.id),
-                'full_name':  s.user.full_name,
-                'phone':      s.phone,
-                'status':     s.status,
-                'group_name': g.name if g else None,
+                'id':           str(s.id),
+                'full_name':    s.user.full_name,
+                'phone':        s.phone,
+                'status':       s.status,
+                'group_name':   g.name if g else None,
                 'teacher_name': g.teacher.user.full_name if g and g.teacher else None,
-                'xp_points':  s.xp_points,
-                'level':      s.level,
+                'xp_points':    s.xp_points,
+                'level':        s.level,
                 'attendance_percentage': att_pct,
-                'total_debt': float(debt),
-                'recent_attendance': recent_att,
-                'recent_payments':   recent_pay,
+                'total_debt':   float(s._total_debt),
+                'recent_attendance': [
+                    {'date': str(a.date), 'status': a.status}
+                    for a in s._recent_att[:7]
+                ],
+                'recent_payments': [
+                    {
+                        'month': p.month, 'year': p.year,
+                        'paid_amount': float(p.paid_amount),
+                        'debt_amount': float(p.debt_amount),
+                        'status':      p.status,
+                    }
+                    for p in s._recent_pay[:3]
+                ],
             })
         return Response(result)
 
