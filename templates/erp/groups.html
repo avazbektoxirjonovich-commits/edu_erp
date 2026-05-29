@@ -69,9 +69,6 @@
     <option value="active">Faol</option>
     <option value="inactive">Nofaol</option>
   </select>
-  <select id="fBranch" onchange="load()" style="border:1.5px solid var(--border);border-radius:8px;padding:8px 32px 8px 12px;font-size:.78rem;background:#fff;outline:none;cursor:pointer">
-    <option value="">Barcha filial</option>
-  </select>
   <span style="margin-left:auto;font-size:.75rem;color:var(--muted)" id="cntLbl"></span>
 </div>
 
@@ -126,9 +123,6 @@
         <div class="fg"><label>Fan / Yo'nalish</label><input class="fc" id="aSubject" placeholder="Ingliz tili, Matematika..."></div>
       </div>
       <div class="row2">
-        <div class="fg"><label>Filial</label>
-          <select class="fc fc-sel" id="aBranch"><option value="">— Barcha —</option></select>
-        </div>
         <div class="fg"><label>O'qituvchi</label>
           <select class="fc fc-sel" id="aTeacher"><option value="">— Tanlanmagan —</option></select>
         </div>
@@ -174,9 +168,6 @@
         <div class="fg"><label>Fan / Yo'nalish</label><input class="fc" id="eSubject" placeholder="Ingliz tili..."></div>
       </div>
       <div class="row2">
-        <div class="fg"><label>Filial</label>
-          <select class="fc fc-sel" id="eBranch"><option value="">— Barcha —</option></select>
-        </div>
         <div class="fg"><label>O'qituvchi</label>
           <select class="fc fc-sel" id="eTeacher"><option value="">— Tanlanmagan —</option></select>
         </div>
@@ -214,23 +205,17 @@ if (!_isAdmin) document.querySelectorAll('.admin-only').forEach(el => el.style.d
 
 const DAYS = {1:'Dushanba',2:'Seshanba',3:'Chorshanba',4:'Payshanba',5:'Juma',6:'Shanba',7:'Yakshanba'};
 const DAYS_SHORT = {1:'Du',2:'Se',3:'Ch',4:'Pa',5:'Ju',6:'Sh',7:'Ya'};
-let teachers=[], branches=[], editId=null, detailData=null;
+let teachers=[], editId=null, detailData=null;
 
 async function init(){
   const [t, b] = await Promise.all([
     get('/teachers/?page_size=100&is_active=true'),
-    get('/branches/?page_size=50'),
   ]);
   teachers = t?.results||t||[];
-  branches = b?.results||b||[];
 
   ['aTeacher','eTeacher'].forEach(id=>{
     const s=document.getElementById(id);
     teachers.forEach(t=>s.innerHTML+=`<option value="${t.id}">${t.full_name||'?'}</option>`);
-  });
-  ['aBranch','eBranch','fBranch'].forEach(id=>{
-    const s=document.getElementById(id);
-    branches.forEach(b=>s.innerHTML+=`<option value="${b.id}">${b.name}</option>`);
   });
   load();
 }
@@ -238,11 +223,11 @@ async function init(){
 async function load(){
   const q=document.getElementById('srch').value.trim();
   const st=document.getElementById('fStatus').value;
-  const br=document.getElementById('fBranch')?.value||'';
+
   let url='/groups/?page_size=100';
   if(q) url+=`&search=${encodeURIComponent(q)}`;
   if(st) url+=`&status=${st}`;
-  if(br) url+=`&branch=${br}`;
+
   document.getElementById('grpGrid').innerHTML='<div style="grid-column:1/-1" class="loading"><div class="spinner"></div></div>';
   const d=await get(url);
   const items=d?.results||d||[];
@@ -265,7 +250,6 @@ async function load(){
           <div class="g-name">${g.name}</div>
           ${g.course_name||g.subject?`<div style="font-size:.7rem;color:var(--accent);font-weight:600;margin-top:2px">${g.course_name||g.subject}</div>`:''}
           <div class="g-teacher"><i class="fas fa-chalkboard-teacher" style="font-size:.7rem"></i>${g.teacher_name||"O'qituvchi belgilanmagan"}</div>
-          ${g.branch_name?`<div style="font-size:.68rem;color:var(--muted);margin-top:2px"><i class="fas fa-building" style="font-size:.6rem;margin-right:3px"></i>${g.branch_name}</div>`:''}
         </div>
         <div style="display:flex;gap:4px" onclick="event.stopPropagation()">
           ${_isAdmin?`<button class="btn-icon edit" onclick="openEditDirect('${g.id}')" title="Tahrirlash"><i class="fas fa-pen"></i></button>
@@ -325,7 +309,6 @@ async function openDetail(id){
       <div class="detail-section-title"><i class="fas fa-info-circle" style="margin-right:5px"></i>Asosiy ma'lumotlar</div>
       <div class="detail-row"><span>Fan / Yo'nalish</span><span>${d.subject||'—'}</span></div>
       <div class="detail-row"><span>O'qituvchi</span><span>${d.teacher_name||'—'}</span></div>
-      <div class="detail-row"><span>Filial</span><span>${d.branch_name||'—'}</span></div>
       <div class="detail-row"><span>O'quvchilar</span><span>${d.student_count||0} / ${d.max_students||0}</span></div>
       <div class="detail-row"><span>Oylik to'lov</span><span>${d.monthly_fee?fmoney(d.monthly_fee):'—'}</span></div>
       <div class="detail-row"><span>Dars vaqti</span><span>${d.start_time||'?'} – ${d.end_time||'?'}</span></div>
@@ -402,7 +385,6 @@ async function doAdd(){
   const body={
     name,
     subject: document.getElementById('aSubject').value.trim(),
-    branch:  document.getElementById('aBranch').value||null,
     teacher: document.getElementById('aTeacher').value||null,
     max_students: parseInt(document.getElementById('aCapacity').value)||20,
     monthly_fee:  parseInt(document.getElementById('aFee').value)||0,
@@ -433,7 +415,6 @@ async function openEditDirect(id){
   document.getElementById('eId').value=id;
   document.getElementById('eName').value=d.name||'';
   document.getElementById('eSubject').value=d.subject||'';
-  document.getElementById('eBranch').value=d.branch||'';
   document.getElementById('eTeacher').value=d.teacher||'';
   document.getElementById('eCapacity').value=d.max_students||20;
   document.getElementById('eFee').value=d.monthly_fee||0;
@@ -447,7 +428,6 @@ async function doEdit(){
   const r=await patch(`/groups/${editId}/`,{
     name:    document.getElementById('eName').value.trim(),
     subject: document.getElementById('eSubject').value.trim(),
-    branch:  document.getElementById('eBranch').value||null,
     teacher: document.getElementById('eTeacher').value||null,
     max_students: parseInt(document.getElementById('eCapacity').value)||20,
     monthly_fee:  parseInt(document.getElementById('eFee').value)||0,

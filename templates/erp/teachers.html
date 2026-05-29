@@ -22,9 +22,6 @@
       <option value="true">Faol</option>
       <option value="false">Nofaol</option>
     </select>
-    <select id="fBranch" onchange="load()" style="border:1.5px solid var(--border);border-radius:8px;padding:7px 32px 7px 12px;font-size:.78rem;background:#fff;outline:none;cursor:pointer">
-      <option value="">Barcha filial</option>
-    </select>
     <span style="margin-left:auto;font-size:.75rem;color:var(--muted)" id="cntLbl"></span>
   </div>
   <div id="tbl"><div class="loading"><div class="spinner"></div></div></div>
@@ -45,9 +42,6 @@
       <div class="fg"><label>Parol *</label><input class="fc" type="password" id="aPwd" placeholder="Minimal 8 belgi"></div>
       <div class="row2">
         <div class="fg"><label>Mutaxassislik</label><input class="fc" id="aSpec" placeholder="Matematika, Ingliz tili..."></div>
-        <div class="fg"><label>Filial</label>
-          <select class="fc fc-sel" id="aBranch"><option value="">— Tanlanmagan —</option></select>
-        </div>
       </div>
       <div class="fg"><label>Ish haqi (so'm)</label><input class="fc" type="number" id="aSalary" placeholder="0"></div>
     </div>
@@ -72,9 +66,6 @@
       </div>
       <div class="row2">
         <div class="fg"><label>Mutaxassislik</label><input class="fc" id="eSpec" placeholder="Mutaxassislik"></div>
-        <div class="fg"><label>Filial</label>
-          <select class="fc fc-sel" id="eBranch"><option value="">— Tanlanmagan —</option></select>
-        </div>
       </div>
       <div class="row2">
         <div class="fg"><label>Ish haqi</label><input class="fc" type="number" id="eSalary" placeholder="0"></div>
@@ -100,25 +91,14 @@ initAuth();
 const _ME=getUser();
 const _isAdmin=_ME.role==='admin'||_ME.role==='developer';
 if(!_isAdmin) document.querySelectorAll('.admin-only').forEach(el=>el.style.display='none');
-let editId=null, _branches=[];
-
-(async()=>{
-  const b=await get('/branches/?page_size=50');
-  _branches=b?.results||b||[];
-  ['aBranch','eBranch','fBranch'].forEach(id=>{
-    const s=document.getElementById(id);
-    _branches.forEach(br=>s.innerHTML+=`<option value="${br.id}">${br.name}</option>`);
-  });
-})();
+let editId=null;
 
 async function load(){
   const q=document.getElementById('srch').value.trim();
   const a=document.getElementById('fActive').value;
-  const br=document.getElementById('fBranch')?.value||'';
   let url='/teachers/?page_size=50';
   if(q) url+=`&search=${encodeURIComponent(q)}`;
   if(a!=='') url+=`&is_active=${a}`;
-  if(br) url+=`&branch=${br}`;
   document.getElementById('tbl').innerHTML='<div class="loading"><div class="spinner"></div></div>';
   const d=await get(url);
   const items=d?.results||d||[];
@@ -164,7 +144,6 @@ async function doAdd(){
   const r=await post('/teachers/',{
     full_name: name, phone, password: pwd,
     subject:   document.getElementById('aSpec').value,
-    branch:    document.getElementById('aBranch').value||null,
     salary:    document.getElementById('aSalary').value||0,
   });
   if(r?.ok){closeM('addModal');toast("O'qituvchi qo'shildi",'ok');load();}
@@ -178,7 +157,6 @@ async function openEdit(id){
   document.getElementById('eName').value=d.full_name||d.user?.full_name||'';
   document.getElementById('ePhone').value=d.phone||'';
   document.getElementById('eSpec').value=d.subject||'';
-  document.getElementById('eBranch').value=d.branch||'';
   document.getElementById('eSalary').value=d.salary||'';
   document.getElementById('eActive').value=String(d.is_active);
   openM('editModal');
@@ -189,7 +167,6 @@ async function doEdit(){
     full_name: document.getElementById('eName').value.trim(),
     phone:     document.getElementById('ePhone').value.trim(),
     subject:   document.getElementById('eSpec').value,
-    branch:    document.getElementById('eBranch').value||null,
     salary:    document.getElementById('eSalary').value||0,
     is_active: document.getElementById('eActive').value==='true',
   });

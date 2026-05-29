@@ -91,7 +91,6 @@ class DashboardView(APIView):
         groups_qs = (
             Group.objects
             .filter(status='active')
-            .select_related('branch')
             .annotate(
                 attend_total=Count('attendances', distinct=True),
                 attend_present=Count('attendances',
@@ -108,7 +107,6 @@ class DashboardView(APIView):
             {
                 'id':         str(g.id),
                 'name':       g.name,
-                'branch':     g.branch.name if g.branch else '',
                 'students':   g.active_students,
                 'attendance': (
                     round(g.attend_present / g.attend_total * 100, 1)
@@ -144,29 +142,6 @@ class DashboardView(APIView):
                 'month': m, 'year': y,
                 'count': trend_map.get((y, m), 0),
             })
-
-        # ── Branches summary — 1 query ──
-        from apps.branches.models import Branch
-        branches = (
-            Branch.objects
-            .filter(is_active=True)
-            .annotate(
-                grp_count=Count('groups', filter=Q(groups__status='active'), distinct=True),
-                stu_count=Count('groups__students',
-                                filter=Q(groups__students__status='active'),
-                                distinct=True),
-            )
-            .values('id', 'name', 'grp_count', 'stu_count')
-        )
-        branches_list = [
-            {
-                'id':       str(b['id']),
-                'name':     b['name'],
-                'groups':   b['grp_count'],
-                'students': b['stu_count'],
-            }
-            for b in branches
-        ]
 
         # ── Debtors list — 1 query ──
         unpaid = (
@@ -211,6 +186,5 @@ class DashboardView(APIView):
             'monthly_income':  monthly_income,
             'student_trend':   student_trend,
             'top_groups':      top_groups,
-            'branches':        branches_list,
             'unpaid_students': unpaid_list,
         })

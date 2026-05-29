@@ -10,7 +10,7 @@ from .serializers import TeacherSerializer, TeacherCreateSerializer, TeacherSala
 
 class TeacherViewSet(ModelViewSet):
     filter_backends  = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['is_active', 'branch']
+    filterset_fields = ['is_active']
     search_fields    = ['user__full_name', 'subject', 'phone']
     ordering         = ['-created_at']
 

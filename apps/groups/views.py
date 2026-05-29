@@ -15,7 +15,7 @@ class GroupViewSet(ModelViewSet):
     POST/PUT/DELETE → Admin only
     """
     filter_backends  = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['status', 'teacher', 'branch']
+    filterset_fields = ['status', 'teacher']
     search_fields    = ['name', 'subject']
     ordering_fields  = ['name', 'created_at', 'start_date']
     ordering         = ['-created_at']

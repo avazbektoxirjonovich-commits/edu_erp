@@ -24,7 +24,6 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     'apps.accounts',
-    'apps.branches',
     'apps.students',
     'apps.teachers',
     'apps.groups',

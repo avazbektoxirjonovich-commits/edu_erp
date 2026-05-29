@@ -5,13 +5,11 @@ from apps.accounts.serializers import UserSerializer
 
 class TeacherSerializer(serializers.ModelSerializer):
     full_name   = serializers.CharField(source='user.full_name', read_only=True)
-    branch_name = serializers.CharField(source='branch.name', read_only=True, allow_null=True)
     group_count = serializers.SerializerMethodField()
 
     class Meta:
         model  = Teacher
         fields = ['id', 'full_name', 'phone', 'subject', 'salary',
-                  'branch', 'branch_name',
                   'is_active', 'group_count', 'notes', 'created_at']
 
     def get_group_count(self, obj):
@@ -25,7 +23,7 @@ class TeacherCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model  = Teacher
-        fields = ['full_name', 'phone', 'subject', 'salary', 'branch', 'notes', 'password']
+        fields = ['full_name', 'phone', 'subject', 'salary', 'notes', 'password']
 
     def validate_phone(self, value):
         from apps.accounts.models import User

@@ -11,11 +11,6 @@ class Teacher(models.Model):
     id         = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user       = models.OneToOneField(User, on_delete=models.CASCADE,
                                       related_name='teacher_profile')
-    branch     = models.ForeignKey(
-                     'branches.Branch', on_delete=models.SET_NULL,
-                     null=True, blank=True, related_name='teachers',
-                     verbose_name='Filial', db_index=True
-                 )
     phone      = models.CharField(max_length=15, validators=[phone_validator], db_index=True)
     subject    = models.CharField(max_length=100, blank=True, verbose_name="Fan / Yo'nalish")
     salary     = models.DecimalField(max_digits=12, decimal_places=0,

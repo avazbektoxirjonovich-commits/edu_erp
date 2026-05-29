@@ -281,7 +281,6 @@ function renderInfo(){
     ['fa-clock','ic-amber','Dars vaqti', g.start_time&&g.end_time?g.start_time+' – '+g.end_time:'—'],
     ['fa-calendar','ic-teal','Boshlangan sana', g.start_date?fdate(g.start_date):'—'],
     ['fa-calendar-xmark','ic-red','Tugash sanasi', g.end_date?fdate(g.end_date):'Belgilanmagan'],
-    ['fa-building','ic-blue','Filial', g.branch_name||g.branch||'—'],
     ['fa-layer-group','ic-orange','Hafta kunlari',
       `<div class="day-chips">${days||'<span style="color:var(--muted);font-size:.78rem">—</span>'}</div>`],
     ['fa-info-circle','ic-green','Holati', g.status==='active'?'<span class="bdg bdg-active"><i class="fas fa-circle" style="font-size:.35rem"></i> Faol</span>':'<span class="bdg bdg-inactive">Nofaol</span>'],

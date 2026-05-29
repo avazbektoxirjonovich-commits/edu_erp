@@ -37,11 +37,6 @@ class Group(models.Model):
     id          = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name        = models.CharField(max_length=100, verbose_name='Guruh nomi')
     subject     = models.CharField(max_length=100, blank=True, verbose_name="Fan / Yo'nalish")
-    branch      = models.ForeignKey(
-                      'branches.Branch', on_delete=models.SET_NULL,
-                      null=True, blank=True, related_name='groups',
-                      verbose_name='Filial', db_index=True
-                  )
     description = models.TextField(blank=True, verbose_name='Tavsif')
     teacher     = models.ForeignKey(
                       'teachers.Teacher', on_delete=models.SET_NULL,

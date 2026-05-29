@@ -18,7 +18,6 @@ class LessonScheduleSerializer(serializers.ModelSerializer):
 
 class GroupListSerializer(serializers.ModelSerializer):
     teacher_name   = serializers.CharField(source='teacher.user.full_name', read_only=True, allow_null=True)
-    branch_name    = serializers.CharField(source='branch.name', read_only=True, allow_null=True)
     status_display = serializers.CharField(source='get_status_display', read_only=True)
     schedules      = LessonScheduleSerializer(many=True, read_only=True)
     student_count  = serializers.SerializerMethodField()
@@ -29,7 +28,6 @@ class GroupListSerializer(serializers.ModelSerializer):
         model  = Group
         fields = [
             'id', 'name', 'subject', 'course_name', 'description',
-            'branch', 'branch_name',
             'teacher', 'teacher_name',
             'status', 'status_display',
             'student_count', 'max_students', 'monthly_fee',
@@ -56,7 +54,7 @@ class GroupCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model  = Group
         fields = [
-            'name', 'subject', 'description', 'branch', 'teacher', 'status',
+            'name', 'subject', 'description', 'teacher', 'status',
             'max_students', 'monthly_fee',
             'start_date', 'end_date', 'start_time', 'end_time', 'days',
         ]

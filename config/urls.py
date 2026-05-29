@@ -46,7 +46,6 @@ def sitemap_xml(request):
 # ── API v1 routes ──
 api_v1_urlpatterns = [
     path('auth/',          include('apps.accounts.urls')),
-    path('branches/',      include('apps.branches.urls')),
     path('students/',      include('apps.students.urls')),
     path('teachers/',      include('apps.teachers.urls')),
     path('groups/',        include('apps.groups.urls')),
