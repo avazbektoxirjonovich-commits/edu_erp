@@ -196,25 +196,28 @@ class SendPaymentRemindersView(APIView):
             Payment.objects
             .filter(month=month, year=year, status__in=['unpaid', 'partial'])
             .select_related('student__user')
+            .filter(student__user__is_active=True)
         )
 
+        # 1 ta query: bu oy allaqachon eslatma yuborilgan user IDlar
+        already_sent_ids = set(
+            Notification.objects.filter(
+                notif_type         = Notification.Type.PAYMENT_REMINDER,
+                created_at__month  = now.month,
+                created_at__year   = now.year,
+            ).values_list('recipient_id', flat=True)
+        )
+
+        to_create  = []
         sent_count = 0
         skip_count = 0
+
         for pay in unpaid:
             user = pay.student.user
-            if not user.is_active:
-                continue
-            already = Notification.objects.filter(
-                recipient  = user,
-                notif_type = Notification.Type.PAYMENT_REMINDER,
-                created_at__month=now.month,
-                created_at__year=now.year,
-            ).exists()
-            if already:
+            if user.pk in already_sent_ids:
                 skip_count += 1
                 continue
-
-            Notification.objects.create(
+            to_create.append(Notification(
                 recipient  = user,
                 channel    = Notification.Channel.SYSTEM,
                 notif_type = Notification.Type.PAYMENT_REMINDER,
@@ -226,8 +229,11 @@ class SendPaymentRemindersView(APIView):
                     f"Iltimos, to'lovni amalga oshiring."
                 ),
                 status = Notification.Status.SENT,
-            )
+            ))
             sent_count += 1
+
+        if to_create:
+            Notification.objects.bulk_create(to_create, batch_size=500)
 
         return Response({
             'sent':    sent_count,
