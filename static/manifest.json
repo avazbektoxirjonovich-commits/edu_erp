@@ -1,11 +1,11 @@
 {
-  "name": "EduERP Pro",
-  "short_name": "EduERP",
+  "name": "VLT.erp",
+  "short_name": "VLT.erp",
   "description": "Ta'lim markazi boshqaruv tizimi",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0D1B2A",
-  "theme_color": "#FF6B35",
+  "theme_color": "#059669",
   "orientation": "portrait-primary",
   "icons": [
     {

@@ -1,5 +1,5 @@
-{% extends "erp/base.html" %}
-{% block title %}Uyga vazifalar — EduERP Pro{% endblock %}
+﻿{% extends "erp/base.html" %}
+{% block title %}Uyga vazifalar — VLT.erp{% endblock %}
 {% block page_title %}Uyga vazifalar{% endblock %}
 
 {% block extra_head %}
@@ -22,7 +22,7 @@
   padding:18px;box-shadow:var(--shadow);transition:all .25s;
   animation:fadeUp .38s ease both;cursor:pointer;position:relative;
 }
-.hw-card:hover{box-shadow:var(--shadow-md);transform:translateY(-3px);border-color:rgba(255,107,53,.25)}
+.hw-card:hover{box-shadow:var(--shadow-md);transform:translateY(-3px);border-color:rgba(5,150,105,.25)}
 .hw-card.overdue{border-color:rgba(239,68,68,.35)}
 .hw-card.closed{opacity:.75}
 
@@ -418,7 +418,7 @@ function updateChart(active, other, submitted, graded) {
       labels: ['Faol', 'Boshqa', 'Topshirilgan', 'Baholangan'],
       datasets: [{
         data: [active, other, submitted, graded],
-        backgroundColor: ['#10b981','#e2e8f0','#f59e0b','#FF6B35'],
+        backgroundColor: ['#10b981','#e2e8f0','#f59e0b','#059669'],
         borderWidth: 0,
         hoverOffset: 6,
       }]

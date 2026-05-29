@@ -1,5 +1,5 @@
-{% extends "erp/base.html" %}
-{% block title %}O'quvchilar — EduERP Pro{% endblock %}
+﻿{% extends "erp/base.html" %}
+{% block title %}O'quvchilar — VLT.erp{% endblock %}
 {% block page_title %}O'quvchilar{% endblock %}
 
 {% block extra_head %}
@@ -19,7 +19,7 @@
 
 .xp-bar-wrap{display:flex;align-items:center;gap:6px;min-width:100px}
 .xp-bar{flex:1;height:5px;background:#e2e8f0;border-radius:5px;overflow:hidden}
-.xp-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,#FF6B35,#F7931E);transition:width .6s cubic-bezier(.4,0,.2,1)}
+.xp-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,#059669,#10b981);transition:width .6s cubic-bezier(.4,0,.2,1)}
 </style>
 {% endblock %}
 
@@ -446,15 +446,15 @@ async function printStudentCard(id){
   const d = await get(`/students/${id}/`);
   if(!d){toast("Ma'lumot olinmadi",'err');return;}
   const name = d.full_name||d.user?.full_name||'—';
-  const org = document.querySelector('.logo-text')?.textContent||'EduERP';
+  const org = document.querySelector('.logo-text')?.textContent||'VLT.erp';
   const html=`<!DOCTYPE html><html><head><meta charset="UTF-8">
 <title>O'quvchi kartochkasi</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Segoe UI',sans-serif;background:#fff;padding:20px}
-.card{border:2px solid #FF6B35;border-radius:12px;padding:24px;max-width:400px;margin:0 auto}
-.logo{font-size:1.3rem;font-weight:900;color:#FF6B35;margin-bottom:16px;text-align:center}
-.avatar{width:64px;height:64px;border-radius:50%;background:#FF6B35;color:#fff;font-size:1.4rem;font-weight:900;display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
+.card{border:2px solid #059669;border-radius:12px;padding:24px;max-width:400px;margin:0 auto}
+.logo{font-size:1.3rem;font-weight:900;color:#059669;margin-bottom:16px;text-align:center}
+.avatar{width:64px;height:64px;border-radius:50%;background:#059669;color:#fff;font-size:1.4rem;font-weight:900;display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
 .name{font-size:1.1rem;font-weight:800;text-align:center;margin-bottom:4px}
 .role{font-size:.8rem;color:#666;text-align:center;margin-bottom:20px}
 table{width:100%;border-collapse:collapse;font-size:.85rem}

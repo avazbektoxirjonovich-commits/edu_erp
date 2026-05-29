@@ -1,22 +1,22 @@
-{% extends "erp/base.html" %}
-{% block title %}Sozlamalar — EduERP Pro{% endblock %}
+﻿{% extends "erp/base.html" %}
+{% block title %}Sozlamalar — VLT.erp{% endblock %}
 {% block page_title %}Sozlamalar{% endblock %}
 
 {% block extra_head %}
 <style>
 .sett-hero{background:#0D1B2A;border-radius:18px;padding:24px;position:relative;overflow:hidden;margin-bottom:16px;animation:fadeUp .35s ease both;display:flex;align-items:center;gap:20px}
-.sett-hero-bg{position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,107,53,.1),transparent 60%)}
-.sett-hero-glow{position:absolute;bottom:-40px;left:-40px;width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,rgba(255,107,53,.15),transparent 70%)}
-.sett-av{width:72px;height:72px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:1.5rem;flex-shrink:0;box-shadow:0 4px 18px rgba(255,107,53,.4);border:3px solid rgba(255,107,53,.4);position:relative;z-index:1}
+.sett-hero-bg{position:absolute;inset:0;background:linear-gradient(135deg,rgba(5,150,105,.1),transparent 60%)}
+.sett-hero-glow{position:absolute;bottom:-40px;left:-40px;width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,rgba(5,150,105,.15),transparent 70%)}
+.sett-av{width:72px;height:72px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:1.5rem;flex-shrink:0;box-shadow:0 4px 18px rgba(5,150,105,.4);border:3px solid rgba(5,150,105,.4);position:relative;z-index:1}
 .sett-name{font-size:1.1rem;font-weight:900;color:#fff;letter-spacing:-.3px;position:relative;z-index:1}
 .sett-phone{font-size:.75rem;color:rgba(255,255,255,.5);margin-top:3px;position:relative;z-index:1}
-.sett-id{display:inline-flex;align-items:center;gap:4px;background:rgba(255,107,53,.18);border:1px solid rgba(255,107,53,.25);border-radius:20px;padding:3px 10px;font-size:.7rem;font-weight:700;color:#ff8c5a;margin-top:7px;position:relative;z-index:1}
+.sett-id{display:inline-flex;align-items:center;gap:4px;background:rgba(5,150,105,.18);border:1px solid rgba(5,150,105,.25);border-radius:20px;padding:3px 10px;font-size:.7rem;font-weight:700;color:#ff8c5a;margin-top:7px;position:relative;z-index:1}
 .info-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:.82rem}
 .info-row:last-child{border-bottom:none}
 .info-lbl{color:var(--muted);font-weight:500}
 .info-val{font-weight:600;color:var(--text)}
 .fc{display:block;width:100%;border:1.5px solid var(--border);border-radius:9px;padding:10px 13px;font-size:.82rem;outline:none;transition:all .2s;font-family:inherit;background:#fff;color:var(--text)}
-.fc:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(255,107,53,.12)}
+.fc:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(5,150,105,.12)}
 .fg{margin-bottom:12px}
 .fg label{display:block;font-size:.76rem;font-weight:600;color:var(--muted);margin-bottom:5px}
 .tab-btns{display:flex;gap:6px;margin-bottom:16px}

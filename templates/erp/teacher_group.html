@@ -1,5 +1,5 @@
-{% extends "erp/base.html" %}
-{% block title %}Guruh — EduERP Pro{% endblock %}
+﻿{% extends "erp/base.html" %}
+{% block title %}Guruh — VLT.erp{% endblock %}
 {% block page_title %}<span id="pgTitle">Guruh</span>{% endblock %}
 
 {% block extra_head %}
@@ -10,17 +10,17 @@
 
 /* ── HERO ─────────────────────────────────────────────────── */
 .tg-hero{background:#0D1B2A;border-radius:18px;padding:22px 26px;position:relative;overflow:hidden;margin-bottom:20px;animation:fadeUp .35s ease both}
-.tg-hero-bg{position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,107,53,.1),rgba(247,147,30,.04) 60%,transparent)}
+.tg-hero-bg{position:absolute;inset:0;background:linear-gradient(135deg,rgba(5,150,105,.1),rgba(16,185,129,.04) 60%,transparent)}
 .tg-hero-dots{position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.04) 1px,transparent 1px);background-size:22px 22px}
-.tg-hero-glow{position:absolute;top:-60px;right:-40px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(255,107,53,.18),transparent 70%)}
+.tg-hero-glow{position:absolute;top:-60px;right:-40px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(5,150,105,.18),transparent 70%)}
 .tg-hero-inner{position:relative;z-index:1;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
-.tg-icon{width:58px;height:58px;border-radius:15px;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.4rem;flex-shrink:0;box-shadow:0 4px 20px rgba(255,107,53,.4);animation:pulseGlow 3s ease infinite}
+.tg-icon{width:58px;height:58px;border-radius:15px;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.4rem;flex-shrink:0;box-shadow:0 4px 20px rgba(5,150,105,.4);animation:pulseGlow 3s ease infinite}
 .tg-name{font-size:1.12rem;font-weight:900;color:#fff;letter-spacing:-.4px}
 .tg-meta{font-size:.73rem;color:rgba(255,255,255,.48);margin-top:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .tg-meta-dot{width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,.25)}
 .tg-pills{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap}
 .tg-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:20px;font-size:.72rem;font-weight:700}
-.tg-pill-o{background:rgba(255,107,53,.2);color:#ff8c5a;border:1px solid rgba(255,107,53,.25)}
+.tg-pill-o{background:rgba(5,150,105,.2);color:#ff8c5a;border:1px solid rgba(5,150,105,.25)}
 .tg-pill-b{background:rgba(59,130,246,.18);color:#60a5fa;border:1px solid rgba(59,130,246,.22)}
 .tg-pill-g{background:rgba(16,185,129,.16);color:#34d399;border:1px solid rgba(16,185,129,.2)}
 
@@ -29,7 +29,7 @@
 .tg-tab{flex:1;padding:10px;border-radius:9px;border:none;background:none;font-family:inherit;font-size:.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all .22s cubic-bezier(.4,0,.2,1);display:flex;align-items:center;justify-content:center;gap:7px;position:relative;overflow:hidden}
 .tg-tab::after{content:'';position:absolute;inset:0;background:var(--grad);opacity:0;transition:opacity .22s;border-radius:9px}
 .tg-tab:hover{color:var(--text);background:var(--bg)}
-.tg-tab.active{background:var(--grad);color:#fff;box-shadow:0 3px 14px rgba(255,107,53,.32)}
+.tg-tab.active{background:var(--grad);color:#fff;box-shadow:0 3px 14px rgba(5,150,105,.32)}
 .tg-tab.active::after{opacity:0}
 .tg-tab i{font-size:.78rem}
 
@@ -49,7 +49,7 @@
 
 /* ── SCHEDULE DAYS ────────────────────────────────────────── */
 .day-chips{display:flex;gap:5px;flex-wrap:wrap}
-.day-chip{padding:3px 10px;border-radius:6px;font-size:.7rem;font-weight:700;background:rgba(255,107,53,.1);color:var(--accent);border:1px solid rgba(255,107,53,.2)}
+.day-chip{padding:3px 10px;border-radius:6px;font-size:.7rem;font-weight:700;background:rgba(5,150,105,.1);color:var(--accent);border:1px solid rgba(5,150,105,.2)}
 
 /* ── HOMEWORK TABLE ───────────────────────────────────────── */
 .hw-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px}
@@ -67,8 +67,8 @@
 .overdue-chip{display:inline-flex;align-items:center;gap:4px;background:#fef2f2;color:#b91c1c;border:1px solid #fecaca;padding:2px 8px;border-radius:5px;font-size:.65rem;font-weight:700}
 
 /* ── HW ADD BUTTON ────────────────────────────────────────── */
-.btn-hw-add{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:9px;background:var(--grad);color:#fff;font-size:.8rem;font-weight:700;border:none;cursor:pointer;font-family:inherit;box-shadow:0 3px 14px rgba(255,107,53,.3);transition:all .2s}
-.btn-hw-add:hover{box-shadow:0 6px 22px rgba(255,107,53,.42);transform:translateY(-1px)}
+.btn-hw-add{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:9px;background:var(--grad);color:#fff;font-size:.8rem;font-weight:700;border:none;cursor:pointer;font-family:inherit;box-shadow:0 3px 14px rgba(5,150,105,.3);transition:all .2s}
+.btn-hw-add:hover{box-shadow:0 6px 22px rgba(5,150,105,.42);transform:translateY(-1px)}
 
 /* ── ATTENDANCE PANEL ─────────────────────────────────────── */
 .att-date-group{margin-bottom:18px;animation:fadeUp .35s ease both}
@@ -80,7 +80,7 @@
 .att-row{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border);transition:background .15s}
 .att-row:last-child{border-bottom:none}
 .att-row:hover{background:#f8f9fc}
-.att-student-av{width:30px;height:30px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#fff;font-size:.62rem;font-weight:700;flex-shrink:0;box-shadow:0 2px 8px rgba(255,107,53,.2)}
+.att-student-av{width:30px;height:30px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#fff;font-size:.62rem;font-weight:700;flex-shrink:0;box-shadow:0 2px 8px rgba(5,150,105,.2)}
 
 /* ── STAT MINI CARDS ──────────────────────────────────────── */
 .mini-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
@@ -245,7 +245,7 @@ async function load(){
 
   document.getElementById('heroLoader').style.display='none';
   document.getElementById('groupHero').style.display='';
-  document.title = grp.name+' — EduERP Pro';
+  document.title = grp.name+' — VLT.erp';
   document.getElementById('pgTitle').textContent = grp.name||'Guruh';
   document.getElementById('grpName').textContent  = grp.name||'—';
   document.getElementById('grpCourse').textContent= grp.course_name||grp.subject||'—';

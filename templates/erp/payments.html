@@ -1,5 +1,5 @@
-{% extends "erp/base.html" %}
-{% block title %}To'lovlar — EduERP Pro{% endblock %}
+﻿{% extends "erp/base.html" %}
+{% block title %}To'lovlar — VLT.erp{% endblock %}
 {% block page_title %}To'lovlar{% endblock %}
 
 {% block extra_head %}
@@ -270,22 +270,22 @@ async function doPay(){
 
 function printReceipt(p){
   const MNS2=['Yanvar','Fevral','Mart','Aprel','May','Iyun','Iyul','Avgust','Sentabr','Oktabr','Noyabr','Dekabr'];
-  const org=document.querySelector('.logo-text')?.textContent||'EduERP';
+  const org=document.querySelector('.logo-text')?.textContent||'VLT.erp';
   const status=p.status==='paid'?"To'liq to'langan":p.status==='partial'?"Qisman to'langan":"To'lanmagan";
   const html=`<!DOCTYPE html><html><head><meta charset="UTF-8">
 <title>To'lov cheki</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Segoe UI',sans-serif;background:#fff;padding:20px}
-.receipt{border:2px solid #FF6B35;border-radius:12px;padding:24px;max-width:360px;margin:0 auto}
-.head{text-align:center;border-bottom:2px dashed #FF6B35;padding-bottom:16px;margin-bottom:16px}
-.logo{font-size:1.2rem;font-weight:900;color:#FF6B35}
+.receipt{border:2px solid #059669;border-radius:12px;padding:24px;max-width:360px;margin:0 auto}
+.head{text-align:center;border-bottom:2px dashed #059669;padding-bottom:16px;margin-bottom:16px}
+.logo{font-size:1.2rem;font-weight:900;color:#059669}
 .title{font-size:.9rem;color:#666;margin-top:4px}
 table{width:100%;border-collapse:collapse;font-size:.85rem}
 td{padding:7px 0;border-bottom:1px dashed #eee}
 td:first-child{color:#666}
 td:last-child{font-weight:700;text-align:right}
-.total{font-size:1rem;font-weight:900;color:#FF6B35}
+.total{font-size:1rem;font-weight:900;color:#059669}
 .status{display:inline-block;padding:4px 12px;border-radius:20px;font-size:.78rem;font-weight:700;background:${p.status==='paid'?'#dcfce7':p.status==='partial'?'#fef9c3':'#fee2e2'};color:${p.status==='paid'?'#166534':p.status==='partial'?'#854d0e':'#991b1b'}}
 .footer{text-align:center;margin-top:16px;font-size:.7rem;color:#aaa;border-top:1px dashed #ddd;padding-top:12px}
 @media print{button{display:none}}

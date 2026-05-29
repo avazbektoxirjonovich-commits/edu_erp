@@ -1,5 +1,5 @@
-{% extends "erp/base.html" %}
-{% block title %}Hisobotlar — EduERP Pro{% endblock %}
+﻿{% extends "erp/base.html" %}
+{% block title %}Hisobotlar — VLT.erp{% endblock %}
 {% block page_title %}Hisobotlar{% endblock %}
 
 {% block extra_head %}
@@ -89,7 +89,7 @@ async function load(){
     type:'bar',
     data:{labels,datasets:[
       {label:"To'langan",data:paid,
-        backgroundColor(ctx){const g=ctx.chart.ctx.createLinearGradient(0,0,0,280);g.addColorStop(0,'rgba(255,107,53,.85)');g.addColorStop(1,'rgba(247,147,30,.28)');return g;},
+        backgroundColor(ctx){const g=ctx.chart.ctx.createLinearGradient(0,0,0,280);g.addColorStop(0,'rgba(5,150,105,.85)');g.addColorStop(1,'rgba(16,185,129,.28)');return g;},
         borderRadius:7,borderSkipped:false},
       {label:'Qarz',data:debt,backgroundColor:'rgba(239,68,68,.5)',borderRadius:7,borderSkipped:false}
     ]},
@@ -112,8 +112,8 @@ async function load(){
     type:'line',
     data:{labels,datasets:[{
       label:'Davomat %',data:attPcts,
-      borderColor:'#FF6B35',backgroundColor:'rgba(255,107,53,.12)',
-      borderWidth:2.5,pointBackgroundColor:'#FF6B35',pointRadius:4,pointHoverRadius:6,
+      borderColor:'#059669',backgroundColor:'rgba(5,150,105,.12)',
+      borderWidth:2.5,pointBackgroundColor:'#059669',pointRadius:4,pointHoverRadius:6,
       fill:true,tension:.4
     }]},
     options:{

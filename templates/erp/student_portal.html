@@ -1,27 +1,27 @@
-{% extends "erp/base.html" %}
-{% block title %}Bosh sahifa — EduERP Pro{% endblock %}
+﻿{% extends "erp/base.html" %}
+{% block title %}Bosh sahifa — VLT.erp{% endblock %}
 {% block page_title %}Bosh sahifa{% endblock %}
 
 {% block extra_head %}
 <style>
 /* ── HERO ───────────────────────────────────── */
 .s-hero{background:#0D1B2A;border-radius:18px;padding:22px 24px;position:relative;overflow:hidden;margin-bottom:16px;animation:fadeUp .35s ease both}
-.s-hero-bg{position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,107,53,.13),rgba(247,147,30,.05) 60%,transparent)}
+.s-hero-bg{position:absolute;inset:0;background:linear-gradient(135deg,rgba(5,150,105,.13),rgba(16,185,129,.05) 60%,transparent)}
 .s-hero-dots{position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.04) 1px,transparent 1px);background-size:22px 22px}
-.s-hero-glow{position:absolute;top:-70px;right:-50px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(255,107,53,.2),transparent 70%)}
+.s-hero-glow{position:absolute;top:-70px;right:-50px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(5,150,105,.2),transparent 70%)}
 .s-hero-inner{position:relative;z-index:1;display:flex;align-items:center;gap:16px}
-.s-hero-av{width:64px;height:64px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:1.4rem;flex-shrink:0;box-shadow:0 4px 18px rgba(255,107,53,.42);border:2.5px solid rgba(255,107,53,.45)}
+.s-hero-av{width:64px;height:64px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:1.4rem;flex-shrink:0;box-shadow:0 4px 18px rgba(5,150,105,.42);border:2.5px solid rgba(5,150,105,.45)}
 .s-hero-name{font-size:1.15rem;font-weight:900;color:#fff;letter-spacing:-.4px;line-height:1.2}
 .s-hero-sub{font-size:.73rem;color:rgba(255,255,255,.48);margin-top:4px;display:flex;align-items:center;gap:4px}
 .s-badges{display:flex;gap:6px;margin-top:9px;flex-wrap:wrap}
 .s-bdg{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:700}
-.s-bdg-lv{background:var(--grad);color:#fff;box-shadow:0 2px 8px rgba(255,107,53,.3)}
-.s-bdg-xp{background:rgba(255,107,53,.18);color:#ff8c5a;border:1px solid rgba(255,107,53,.22)}
+.s-bdg-lv{background:var(--grad);color:#fff;box-shadow:0 2px 8px rgba(5,150,105,.3)}
+.s-bdg-xp{background:rgba(5,150,105,.18);color:#ff8c5a;border:1px solid rgba(5,150,105,.22)}
 .s-bdg-coin{background:rgba(251,191,36,.14);color:#fbbf24;border:1px solid rgba(251,191,36,.22)}
 .s-xp-wrap{margin-top:14px;position:relative;z-index:1}
 .s-xp-info{display:flex;justify-content:space-between;font-size:.69rem;margin-bottom:5px}
 .s-xp-track{background:rgba(255,255,255,.1);border-radius:100px;height:7px;overflow:hidden}
-.s-xp-fill{height:100%;border-radius:100px;background:var(--grad);width:0%;transition:width 1.3s cubic-bezier(.4,0,.2,1);box-shadow:0 0 10px rgba(255,107,53,.5)}
+.s-xp-fill{height:100%;border-radius:100px;background:var(--grad);width:0%;transition:width 1.3s cubic-bezier(.4,0,.2,1);box-shadow:0 0 10px rgba(5,150,105,.5)}
 
 /* ── MINI STATS ─────────────────────────────── */
 .s-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
@@ -148,7 +148,7 @@ function buildCal(){
     const att=attMap[ds];
     const dotC=att==='present'?'#16a34a':att==='absent'?'#ef4444':att==='late'?'#f59e0b':'transparent';
     cells.push(`<div style="text-align:center;padding:2px 0">
-      <div style="width:28px;height:28px;border-radius:50%;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:.73rem;${isT?'background:var(--grad);color:#fff;font-weight:700;box-shadow:0 2px 8px rgba(255,107,53,.35)':''}">${d}</div>
+      <div style="width:28px;height:28px;border-radius:50%;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:.73rem;${isT?'background:var(--grad);color:#fff;font-weight:700;box-shadow:0 2px 8px rgba(5,150,105,.35)':''}">${d}</div>
       <div style="width:6px;height:6px;border-radius:50%;background:${dotC};margin:2px auto 0"></div>
     </div>`);
   }
