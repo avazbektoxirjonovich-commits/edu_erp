@@ -5,7 +5,8 @@ ACCOUNTS URL patterns
 from django.urls import path
 from .views import (
     LoginView, LogoutView, MeView,
-    ChangePasswordView, UserListCreateView, UserDetailView
+    ChangePasswordView, UserListCreateView, UserDetailView,
+    UserToggleActiveView,
 )
 
 urlpatterns = [
@@ -16,6 +17,7 @@ urlpatterns = [
     path('change-password/', ChangePasswordView.as_view(), name='auth-change-password'),
 
     # Foydalanuvchilar (admin)
-    path('users/',           UserListCreateView.as_view(), name='user-list'),
-    path('users/<uuid:pk>/', UserDetailView.as_view(),     name='user-detail'),
+    path('users/',                             UserListCreateView.as_view(),  name='user-list'),
+    path('users/<uuid:pk>/',                   UserDetailView.as_view(),      name='user-detail'),
+    path('users/<uuid:pk>/toggle-active/',     UserToggleActiveView.as_view(),name='user-toggle-active'),
 ]

@@ -757,10 +757,11 @@ function buildSidebar(role){
     html+=item('/leaderboard/','ranking-star','Reyting','leaderboard');
     html+=sec('Tizim');
     html+=item('/activity/','clock-rotate-left','Faoliyat jurnali','activity');
+    if(role==='developer'||role==='admin'){
+      html+=sec('Boshqaruv');
+      html+=item('/users/','users-cog','Foydalanuvchilar','users');
+    }
     if(role==='developer'){
-      html+=sec('Sozlamalar');
-      html+=`<a class="sb-item" href="/admin/accounts/user/add/" target="_blank"><span class="sb-icon"><i class="fas fa-user-shield"></i></span>Admin yaratish</a>`;
-      html+=`<a class="sb-item" href="/admin/accounts/user/" target="_blank"><span class="sb-icon"><i class="fas fa-users-cog"></i></span>Foydalanuvchilar</a>`;
       html+=`<a class="sb-item" href="/admin/" target="_blank"><span class="sb-icon"><i class="fas fa-shield-halved"></i></span>Django Admin</a>`;
       html+=`<a class="sb-item" href="/api/v1/" target="_blank"><span class="sb-icon"><i class="fas fa-code"></i></span>API Explorer</a>`;
     }
@@ -1038,7 +1039,7 @@ async function loadHelpChat(){
 
 function renderHelpMessages(msgs){
   const area = document.getElementById('helpChatArea');
-  const myId = getUser().id;
+  const myId = getUser()?.id || getUser()?.pk || null;
   if(!msgs.length){
     area.innerHTML='<div style="text-align:center;padding:24px;color:var(--muted)"><i class="fas fa-comments" style="font-size:2rem;display:block;margin-bottom:8px;opacity:.4"></i>Hali xabarlar yo\'q</div>';
     return;

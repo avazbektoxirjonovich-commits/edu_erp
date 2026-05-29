@@ -148,3 +148,21 @@ class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
     def perform_destroy(self, instance):
         _log(self.request.user, 'delete', 'User', instance.pk, str(instance), self.request)
         instance.delete()
+
+
+class UserToggleActiveView(APIView):
+    """POST /api/v1/auth/users/{id}/toggle-active/ — Faol/nofaol qilish"""
+    permission_classes = [IsAdmin]
+
+    def post(self, request, pk):
+        try:
+            user = User.objects.get(pk=pk)
+        except User.DoesNotExist:
+            return Response({'detail': 'Foydalanuvchi topilmadi.'}, status=404)
+        if user.role == User.Role.DEVELOPER:
+            return Response({'detail': "Developer hisobini o'zgartirish mumkin emas."}, status=403)
+        user.is_active = not user.is_active
+        user.save(update_fields=['is_active'])
+        state = 'faollashtirildi' if user.is_active else 'nofaol qilindi'
+        _log(request.user, 'update', 'User', user.pk, f'{user} — {state}', request)
+        return Response({'is_active': user.is_active, 'detail': f"Foydalanuvchi {state}"})

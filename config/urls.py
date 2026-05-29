@@ -84,6 +84,7 @@ frontend_urlpatterns = [
     path('teacher/',          TemplateView.as_view(template_name='erp/teacher_portal.html'),   name='teacher_portal'),
     path('teacher/group/',    TemplateView.as_view(template_name='erp/teacher_group.html'),    name='teacher_group'),
     path('teacher/profile/',  TemplateView.as_view(template_name='erp/teacher_settings.html'),name='teacher_settings'),
+    path('users/',            TemplateView.as_view(template_name='erp/users.html'),            name='users'),
 ]
 
 urlpatterns = [

@@ -1,0 +1,175 @@
+{% extends "erp/base.html" %}
+{% block title %}Foydalanuvchilar — VLT.erp{% endblock %}
+{% block page_title %}Foydalanuvchilar{% endblock %}
+
+{% block content %}
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;animation:fadeUp .35s ease both">
+  <div>
+    <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">Foydalanuvchilar</h2>
+    <p style="font-size:.75rem;color:var(--muted);margin-top:3px">Tizim foydalanuvchilari va ularning rollari</p>
+  </div>
+  <button class="btn btn-primary" onclick="openAddModal()"><i class="fas fa-user-plus"></i>Yangi foydalanuvchi</button>
+</div>
+
+<div class="card" style="animation:fadeUp .4s ease .08s both;overflow:hidden">
+  <div class="fbar">
+    <div class="search-wrap">
+      <i class="fas fa-search"></i>
+      <input type="text" id="srch" placeholder="Ism yoki telefon..." oninput="load()">
+    </div>
+    <select id="fRole" onchange="load()" style="border:1.5px solid var(--border);border-radius:8px;padding:7px 32px 7px 12px;font-size:.78rem;background:#fff;outline:none;cursor:pointer">
+      <option value="">Barcha rollar</option>
+      <option value="admin">Admin</option>
+      <option value="teacher">O'qituvchi</option>
+      <option value="student">O'quvchi</option>
+      <option value="parent">Ota-ona</option>
+      <option value="developer">Developer</option>
+    </select>
+    <select id="fActive" onchange="load()" style="border:1.5px solid var(--border);border-radius:8px;padding:7px 32px 7px 12px;font-size:.78rem;background:#fff;outline:none;cursor:pointer">
+      <option value="">Barcha status</option>
+      <option value="true">Faol</option>
+      <option value="false">Nofaol</option>
+    </select>
+    <span style="margin-left:auto;font-size:.75rem;color:var(--muted)" id="cntLbl"></span>
+  </div>
+  <div id="tbl"><div class="loading"><div class="spinner"></div></div></div>
+</div>
+
+<!-- ADD MODAL -->
+<div class="overlay" id="addModal">
+  <div class="modal">
+    <div class="m-head">
+      <h5><i class="fas fa-user-plus" style="color:var(--accent);margin-right:6px"></i>Yangi foydalanuvchi</h5>
+      <button class="m-close" onclick="closeM('addModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="m-body">
+      <div class="row2">
+        <div class="fg"><label>Ism Familiya *</label><input class="fc" id="aName" placeholder="To'liq ism"></div>
+        <div class="fg"><label>Telefon *</label><input class="fc" id="aPhone" placeholder="+998901234567"></div>
+      </div>
+      <div class="row2">
+        <div class="fg"><label>Parol *</label><input class="fc" type="password" id="aPwd" placeholder="Parol"></div>
+        <div class="fg"><label>Rol *</label>
+          <select class="fc fc-sel" id="aRole">
+            <option value="admin">Admin</option>
+            <option value="teacher">O'qituvchi</option>
+            <option value="student">O'quvchi</option>
+            <option value="parent">Ota-ona</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="m-foot">
+      <button class="btn btn-ghost" onclick="closeM('addModal')">Bekor</button>
+      <button class="btn btn-primary" onclick="doAdd()"><i class="fas fa-check"></i>Saqlash</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+initAuth();
+const _ME = getUser();
+if(_ME.role !== 'developer' && _ME.role !== 'admin'){
+  document.querySelector('.content-area').innerHTML = '<div class="empty"><i class="fas fa-lock"></i><p>Ruxsat yo\'q</p></div>';
+}
+
+const ROLE_MAP = {
+  developer: {label:'Developer', cls:'bdg-blue'},
+  admin:     {label:'Admin',     cls:'bdg-purple'},
+  teacher:   {label:"O'qituvchi", cls:'bdg-active'},
+  student:   {label:"O'quvchi",  cls:'bdg-info'},
+  parent:    {label:'Ota-ona',   cls:'bdg-warning'},
+};
+
+async function load(){
+  const q  = document.getElementById('srch').value.trim();
+  const r  = document.getElementById('fRole').value;
+  const a  = document.getElementById('fActive').value;
+  let url = '/auth/users/?page_size=100';
+  if(q) url += `&search=${encodeURIComponent(q)}`;
+  if(r) url += `&role=${r}`;
+  document.getElementById('tbl').innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  const d = await get(url);
+  let items = d?.results || d || [];
+  if(a !== '') items = items.filter(u => String(u.is_active) === a);
+  document.getElementById('cntLbl').textContent = `${items.length} ta foydalanuvchi`;
+  if(!items.length){
+    document.getElementById('tbl').innerHTML = '<div class="empty"><i class="fas fa-users"></i><p>Foydalanuvchi topilmadi</p></div>';
+    return;
+  }
+  const canToggle = _ME.role === 'developer';
+  document.getElementById('tbl').innerHTML = `
+  <table class="etable"><thead><tr>
+    <th>#</th><th>Foydalanuvchi</th><th>Telefon</th><th>Rol</th><th>Status</th><th></th>
+  </tr></thead><tbody>
+  ${items.map((u,i) => {
+    const rm = ROLE_MAP[u.role] || {label: u.role, cls:'bdg-info'};
+    const isDev = u.role === 'developer';
+    return `<tr>
+      <td style="color:var(--muted);font-size:.75rem">${i+1}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="av av-sm">${initials(u.full_name||'?')}</div>
+          <div style="font-weight:600;font-size:.82rem">${u.full_name||'—'}</div>
+        </div>
+      </td>
+      <td style="color:var(--muted);font-size:.8rem">${u.phone||'—'}</td>
+      <td><span class="bdg ${rm.cls}">${rm.label}</span></td>
+      <td>${u.is_active
+        ? '<span class="bdg bdg-active"><i class="fas fa-circle" style="font-size:.35rem"></i> Faol</span>'
+        : '<span class="bdg bdg-inactive">Nofaol</span>'}</td>
+      <td>
+        <div style="display:flex;gap:4px">
+          ${!isDev ? `<button class="btn-icon ${u.is_active?'del':'edit'}" onclick="toggleActive('${u.id}','${escHtml(u.full_name||'')}',${u.is_active})" title="${u.is_active?'Nofaol qilish':'Faollashtirish'}">
+            <i class="fas fa-${u.is_active?'user-slash':'user-check'}"></i>
+          </button>` : ''}
+          ${canToggle && !isDev ? `<button class="btn-icon del" onclick="doDelete('${u.id}','${escHtml(u.full_name||'')}')"><i class="fas fa-trash"></i></button>` : ''}
+        </div>
+      </td>
+    </tr>`;
+  }).join('')}
+  </tbody></table>`;
+}
+
+function openAddModal(){
+  ['aName','aPhone','aPwd'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('aRole').value = 'admin';
+  openM('addModal');
+}
+
+async function doAdd(){
+  const name = document.getElementById('aName').value.trim();
+  const phone = document.getElementById('aPhone').value.trim();
+  const pwd = document.getElementById('aPwd').value;
+  const role = document.getElementById('aRole').value;
+  if(!name||!phone||!pwd){toast('Ism, telefon va parol majburiy!','wrn');return;}
+  const r = await post('/auth/users/', {full_name:name, phone, password:pwd, role});
+  if(r?.ok){closeM('addModal');toast('Foydalanuvchi yaratildi','ok');load();}
+  else{try{const e=await r?.json();toast(e?.detail||Object.values(e||{}).flat()[0]||'Xatolik','err');}catch{toast('Server xatosi','err');}}
+}
+
+async function toggleActive(id, name, isActive){
+  const msg = isActive ? `"${name}" ni nofaol qilasizmi?` : `"${name}" ni faollashtirасizmi?`;
+  if(!confirm(msg)) return;
+  const r = await post(`/auth/users/${id}/toggle-active/`, {});
+  if(r?.ok){
+    const d = await r.json();
+    toast(d.detail || 'Yangilandi', 'ok');
+    load();
+  } else {
+    try{const e=await r?.json();toast(e?.detail||'Xatolik','err');}catch{toast('Server xatosi','err');}
+  }
+}
+
+async function doDelete(id, name){
+  if(!confirm(`"${name}" ni o'chirishni tasdiqlaysizmi?\nFoydalanuvchi va barcha ma'lumotlari o'chiriladi!`)) return;
+  const r = await del(`/auth/users/${id}/`);
+  if(r?.ok||r?.status===204){toast("O'chirildi",'ok');load();}
+  else{try{const e=await r?.json();toast(e?.detail||'Xatolik','err');}catch{toast('Server xatosi','err');}}
+}
+
+load();
+</script>
+{% endblock %}

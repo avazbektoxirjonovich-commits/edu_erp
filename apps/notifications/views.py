@@ -98,15 +98,17 @@ class SupportMessageView(APIView):
         sender  = request.user
         role    = sender.role
 
-        if role in (User.Role.STUDENT, User.Role.TEACHER):
+        if role in (User.Role.STUDENT, User.Role.TEACHER, User.Role.PARENT):
             recipients = User.objects.filter(role=User.Role.ADMIN, is_active=True)
+            if not recipients.exists():
+                recipients = User.objects.filter(role=User.Role.DEVELOPER, is_active=True)
             title = f"Yordam: {sender.full_name} ({sender.get_role_display()})"
         elif role == User.Role.ADMIN:
             recipients = User.objects.filter(role=User.Role.DEVELOPER, is_active=True)
             title = f"Admin murojaat: {sender.full_name}"
         else:
             return Response(
-                {'detail': "Dasturchilar boshqa foydalanuvchilarga yordam xabari yubora olmaydi."},
+                {'detail': "Siz yordam xabari yubora olmaysiz."},
                 status=400
             )
 
@@ -139,7 +141,7 @@ class SupportReplyView(APIView):
         except Notification.DoesNotExist:
             return Response({'detail': 'Xabar topilmadi.'}, status=404)
 
-        if original.recipient != request.user:
+        if original.recipient != request.user and original.sender != request.user:
             return Response({'detail': "Siz bu xabarga javob bera olmaysiz."}, status=403)
 
         serializer = SupportReplySerializer(data=request.data)
