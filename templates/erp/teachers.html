@@ -175,9 +175,9 @@ async function doEdit(){
 }
 
 async function doDelete(id,name){
-  if(!confirm(`"${name}" ni o'chirmoqchimisiz?\nBarcha ma'lumotlari ham o'chiriladi.`)) return;
+  if(!confirm(`"${name}" ni nofaol qilasizmi?\n\nMa'lumotlar (ish haqi tarixi, guruhlar) saqlanib qoladi.\nKerak bo'lsa tahrirlashda qayta faollashtirish mumkin.`)) return;
   const r=await del(`/teachers/${id}/`);
-  if(r?.ok||r?.status===204){toast("O'qituvchi o'chirildi",'ok');load();}
+  if(r?.ok||r?.status===204){toast("O'qituvchi nofaol qilindi",'ok');load();}
   else{try{const e=await r?.json();toast(e?.detail||JSON.stringify(e)||'Xatolik','err');}catch{toast('Server xatosi','err');}}
 }
 

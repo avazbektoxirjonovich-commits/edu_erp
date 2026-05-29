@@ -36,7 +36,16 @@ class TeacherViewSet(ModelViewSet):
         return TeacherSerializer
 
     def perform_destroy(self, instance):
-        instance.user.delete()  # cascades: Teacher → salary payments; groups SET_NULL
+        from apps.notifications.views import log_activity
+        from apps.notifications.models import ActivityLog
+        instance.is_active = False
+        instance.save(update_fields=['is_active'])
+        instance.user.is_active = False
+        instance.user.save(update_fields=['is_active'])
+        log_activity(
+            self.request.user, ActivityLog.Action.DELETE, 'Teacher',
+            instance.pk, str(instance), request=self.request,
+        )
 
 
 class TeacherSalaryListCreateView(generics.ListCreateAPIView):

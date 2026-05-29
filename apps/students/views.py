@@ -93,12 +93,14 @@ class StudentViewSet(ModelViewSet):
     def perform_destroy(self, instance):
         repr_str = str(instance)
         pk       = instance.pk
-        user     = instance.user
+        instance.status = Student.Status.INACTIVE
+        instance.save(update_fields=['status'])
+        instance.user.is_active = False
+        instance.user.save(update_fields=['is_active'])
         log_activity(
             self.request.user, ActivityLog.Action.DELETE, 'Student',
             pk, repr_str, request=self.request,
         )
-        user.delete()  # cascades: Student → payments, attendance, submissions
 
     @action(detail=True, methods=['post'], url_path='create-parent', permission_classes=[IsAdmin])
     def create_parent(self, request, pk=None):

@@ -398,10 +398,10 @@ async function doEditStudent(){
 }
 
 async function doDeactivate(id,name){
-  if(!confirm(`"${name}" ni o'chirishni tasdiqlaysizmi?\n\nDIQQAT: O'quvchining barcha ma'lumotlari (to'lovlar, davomat) ham o'chiriladi!`)) return;
+  if(!confirm(`"${name}" ni nofaol qilasizmi?\n\nMa'lumotlar (to'lovlar, davomat) saqlanib qoladi.\nKerak bo'lsa tahrirlash orqali qayta faollashtirish mumkin.`)) return;
   const r=await del(`/students/${id}/`);
-  if(r?.ok||r?.status===204){toast("O'quvchi o'chirildi",'ok');loadStudents(currentPage);}
-  else toast("Xatolik yuz berdi",'err');
+  if(r?.ok||r?.status===204){toast("O'quvchi nofaol qilindi",'ok');loadStudents(currentPage);}
+  else{try{const e=await r?.json();toast(e?.detail||'Xatolik','err');}catch{toast('Server xatosi','err');}}
 }
 
 function openChangeGroup(){
