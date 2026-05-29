@@ -871,9 +871,46 @@ function buildSidebar(role){
   });
 }
 
+const _ROUTE_ROLES = {
+  '/':             ['admin','developer'],
+  '/students/':    ['admin','developer'],
+  '/teachers/':    ['admin','developer'],
+  '/groups/':      ['admin','developer','teacher'],
+  '/attendance/':  ['admin','developer','teacher'],
+  '/payments/':    ['admin','developer'],
+  '/salary/':      ['admin','developer'],
+  '/reports/':     ['admin','developer'],
+  '/activity/':    ['admin','developer'],
+  '/users/':       ['admin','developer'],
+  '/leaderboard/': ['admin','developer','teacher','student','parent'],
+  '/homework/':    ['admin','developer','teacher','student'],
+  '/teacher/':     ['teacher','admin','developer'],
+  '/teacher/group/':['teacher','admin','developer'],
+  '/teacher/profile/':['teacher','admin','developer'],
+  '/student/':     ['student','admin','developer'],
+  '/student/payments/':['student','admin','developer'],
+  '/student/groups/':  ['student','admin','developer'],
+  '/student/stats/':   ['student','admin','developer'],
+  '/student/settings/':['student','admin','developer'],
+  '/parent/':      ['parent','admin','developer'],
+};
+const _ROLE_HOME = {
+  admin:'/', developer:'/', teacher:'/teacher/', student:'/student/', parent:'/parent/'
+};
+
 function initAuth(){
   if(!getAccess()){toLogin();return false;}
   const u=getUser();
+  const role=u.role||'student';
+  const path=location.pathname;
+
+  // Route guard
+  const allowed=_ROUTE_ROLES[path];
+  if(allowed && !allowed.includes(role)){
+    window.location.href=_ROLE_HOME[role]||'/login/';
+    return false;
+  }
+
   if(u.full_name){
     document.getElementById('sbName').textContent=u.full_name;
     document.getElementById('sbAv').textContent=initials(u.full_name);
@@ -882,7 +919,7 @@ function initAuth(){
     document.getElementById('sbPhone').innerHTML=
       `<i class="fas fa-phone" style="font-size:.58rem;margin-right:3px"></i>${u.phone}`;
   }
-  buildSidebar(u.role||'student');
+  buildSidebar(role);
   loadNotifCount();
   return true;
 }

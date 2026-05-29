@@ -258,7 +258,8 @@ const API='/api/v1';
   const t=localStorage.getItem('erp_access');
   if(!t) return;
   const u=JSON.parse(localStorage.getItem('erp_user')||'{}');
-  window.location.href=(u.role==='student')?'/student/':'/';
+  const homes={student:'/student/',teacher:'/teacher/',parent:'/parent/'};
+  window.location.href=homes[u.role]||'/';
 })();
 
 function togglePwd(){
@@ -298,9 +299,8 @@ async function doLogin(e){
       localStorage.setItem('erp_refresh',data.refresh||'');
       localStorage.setItem('erp_user',JSON.stringify(data.user||{}));
       const role=data.user?.role;
-      if(role==='student') window.location.href='/student/';
-      else if(role==='teacher') window.location.href='/teacher/';
-      else window.location.href='/';
+      const homes={student:'/student/',teacher:'/teacher/',parent:'/parent/'};
+      window.location.href=homes[role]||'/';
     } else {
       showErr(data.detail||data.message||"Telefon yoki parol noto'g'ri");
       btn.disabled=false;
