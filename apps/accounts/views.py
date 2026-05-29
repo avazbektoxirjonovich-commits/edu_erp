@@ -33,6 +33,7 @@ class LoginView(APIView):
     Javob: { "access": "...", "refresh": "...", "user": {...} }
     """
     permission_classes = [AllowAny]
+    throttle_scope = 'login'
 
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
