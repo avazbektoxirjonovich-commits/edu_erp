@@ -18,7 +18,7 @@ if _render_host and _render_host not in ALLOWED_HOSTS:
     ALLOWED_HOSTS.append(_render_host)
 
 if not ALLOWED_HOSTS:
-    ALLOWED_HOSTS = ['*']
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 # Railway va boshqa hosting DATABASE_URL beradi
 DATABASE_URL = os.environ.get('DATABASE_URL')
@@ -64,7 +64,7 @@ if _render_host:
     _render_url = f'https://{_render_host}'
     if _render_url not in CORS_ALLOWED_ORIGINS:
         CORS_ALLOWED_ORIGINS.append(_render_url)
-CORS_ALLOW_ALL_ORIGINS = not bool(CORS_ALLOWED_ORIGINS)
+CORS_ALLOW_ALL_ORIGINS = False  # never allow all origins in production
 
 # CSRF
 CSRF_TRUSTED_ORIGINS = config(
