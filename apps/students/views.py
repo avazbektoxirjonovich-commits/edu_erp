@@ -124,21 +124,39 @@ class StudentViewSet(ModelViewSet):
         return Response({'detail': "Ota-ona akkaunt yaratildi va biriktirildi.",
                          'parent_phone': user.phone, 'parent_id': str(user.id)})
 
-    @action(detail=True, methods=['get'], url_path='payments')
+    @action(detail=True, methods=['get'], url_path='payments',
+            permission_classes=[IsAdminOrTeacher])
     def payments(self, request, pk=None):
         from apps.payments.models import Payment
         from apps.payments.serializers import PaymentSerializer
+        student = self.get_object()
+        if request.user.is_teacher:
+            teacher = getattr(request.user, 'teacher_profile', None)
+            if not teacher or not student.group or student.group.teacher_id != teacher.pk:
+                return Response(
+                    {'detail': "Siz faqat o'z guruhingiz o'quvchilarining to'lovlarini ko'ra olasiz."},
+                    status=403
+                )
         pays = Payment.objects.filter(
-            student=self.get_object()
+            student=student
         ).select_related('group', 'received_by').order_by('-year', '-month')
         return Response(PaymentSerializer(pays, many=True).data)
 
-    @action(detail=True, methods=['get'], url_path='attendances')
+    @action(detail=True, methods=['get'], url_path='attendances',
+            permission_classes=[IsAdminOrTeacher])
     def attendances(self, request, pk=None):
         from apps.attendance.models import Attendance
         from apps.attendance.serializers import AttendanceSerializer
+        student = self.get_object()
+        if request.user.is_teacher:
+            teacher = getattr(request.user, 'teacher_profile', None)
+            if not teacher or not student.group or student.group.teacher_id != teacher.pk:
+                return Response(
+                    {'detail': "Siz faqat o'z guruhingiz o'quvchilarining davomatini ko'ra olasiz."},
+                    status=403
+                )
         atts = Attendance.objects.filter(
-            student=self.get_object()
+            student=student
         ).select_related('group').order_by('-date')
         return Response(AttendanceSerializer(atts, many=True).data)
 
