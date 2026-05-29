@@ -16,11 +16,10 @@ class Command(BaseCommand):
                 'is_active': True,
             }
         )
-        user.set_password('9810')
-        user.full_name = 'Azizbek'
-        user.role = User.Role.TEACHER
-        user.is_active = True
-        user.save()
-        Teacher.objects.get_or_create(user=user, defaults={'phone': phone})
-        status = 'Created' if created else 'Updated'
-        self.stdout.write(self.style.SUCCESS(f'{status}: Azizbek teacher (+998941549810)'))
+        if created:
+            user.set_password('9810')
+            user.save()
+            Teacher.objects.get_or_create(user=user, defaults={'phone': phone})
+            self.stdout.write(self.style.SUCCESS('Created: Azizbek teacher (+998941549810)'))
+        else:
+            self.stdout.write('Already exists: Azizbek (+998941549810) — skipped')

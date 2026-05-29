@@ -5,7 +5,6 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('groups', '0004_add_room_to_lessonschedule'),
-        ('branches', '0001_initial'),
     ]
 
     operations = [

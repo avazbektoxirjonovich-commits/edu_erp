@@ -72,7 +72,7 @@
 initAuth();
 const _ME = getUser();
 if(_ME.role !== 'developer' && _ME.role !== 'admin'){
-  document.querySelector('.content-area').innerHTML = '<div class="empty"><i class="fas fa-lock"></i><p>Ruxsat yo\'q</p></div>';
+  document.querySelector('.content').innerHTML = '<div class="empty"><i class="fas fa-lock"></i><p>Ruxsat yo\'q</p></div>';
 }
 
 const ROLE_MAP = {
