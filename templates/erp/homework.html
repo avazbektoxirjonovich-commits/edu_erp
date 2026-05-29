@@ -37,7 +37,7 @@
 .due-pill{
   display:inline-flex;align-items:center;gap:4px;
   padding:3px 9px;border-radius:20px;font-size:.68rem;font-weight:600;
-  background:#fffbeb;color:#b45309;
+  background:var(--bg);color:var(--warning);
 }
 .due-pill.ok{background:#ecfdf5;color:#059669}
 .due-pill.late{background:#fef2f2;color:#b91c1c}
@@ -66,7 +66,7 @@
   display:flex;align-items:center;justify-content:space-between;
   padding:10px 14px;border-radius:9px;transition:background .15s;
 }
-.sub-row:hover{background:#f8f9fc}
+.sub-row:hover{background:var(--accent-hover)}
 
 /* ── EMPTY STATE ────────────────────────────────────────────── */
 .hw-empty{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--muted)}
@@ -211,13 +211,13 @@
     </div>
     <div class="m-body">
       <input type="hidden" id="gradeSubId">
-      <div style="background:#f8f9fc;border-radius:10px;padding:14px;margin-bottom:16px">
+      <div style="background:var(--bg);border-radius:10px;padding:14px;margin-bottom:16px">
         <div style="font-size:.75rem;color:var(--muted);margin-bottom:4px">O'quvchi javobi:</div>
         <div id="gradeStudentAnswer" style="font-size:.82rem;color:var(--text);white-space:pre-wrap"></div>
       </div>
       <div class="row2">
         <div class="fg"><label>Ball *</label><input class="fc" type="number" id="gradeScore" min="0" placeholder="0"></div>
-        <div class="fg"><label>Max ball</label><input class="fc" type="number" id="gradeMaxScore" readonly style="background:#f8f9fc;color:var(--muted)"></div>
+        <div class="fg"><label>Max ball</label><input class="fc" type="number" id="gradeMaxScore" readonly style="background:var(--bg);color:var(--muted)"></div>
       </div>
       <div class="fg"><label>Izoh (ixtiyoriy)</label><textarea class="fc" id="gradeFeedback" rows="3" placeholder="O'qituvchi izohi..."></textarea></div>
     </div>
@@ -285,7 +285,7 @@ function statusBdg(s) {
     draft: '<span class="bdg bdg-draft">Qoralama</span>',
     active: '<span class="bdg bdg-active-hw"><i class="fas fa-circle" style="font-size:.35rem"></i> Faol</span>',
     closed: '<span class="bdg bdg-frozen">Yopilgan</span>',
-    submitted: '<span class="bdg" style="background:#fffbeb;color:#b45309">Topshirilgan</span>',
+    submitted: '<span class="bdg" style="background:var(--bg);color:var(--warning)">Topshirilgan</span>',
     graded: '<span class="bdg" style="background:linear-gradient(135deg,#ecfdf5,#d1fae5);color:#059669"><i class="fas fa-star" style="font-size:.6rem"></i> Baholangan</span>',
     late: '<span class="bdg bdg-unpaid">Kech</span>',
     missing: '<span class="bdg" style="background:#fef2f2;color:#b91c1c">Topshirilmagan</span>',
@@ -315,7 +315,7 @@ function renderCard(a, idx) {
 
   let subInfo = '';
   if (isStudent && sub) {
-    subInfo = `<div style="margin-top:10px;padding:10px;background:#f8f9fc;border-radius:9px">
+    subInfo = `<div style="margin-top:10px;padding:10px;background:var(--bg);border-radius:9px">
       <div style="display:flex;align-items:center;justify-content:space-between">
         <span style="font-size:.72rem;color:var(--muted)">Holat:</span>
         ${statusBdg(sub.status)}
@@ -469,7 +469,7 @@ async function openDetail(id) {
   let mySubHtml = '';
   if (isStudent && a.my_submission) {
     const s = a.my_submission;
-    mySubHtml = `<div style="margin-top:20px;padding:16px;background:#f8f9fc;border-radius:12px;border:1px solid var(--border)">
+    mySubHtml = `<div style="margin-top:20px;padding:16px;background:var(--bg);border-radius:12px;border:1px solid var(--border)">
       <div style="font-size:.82rem;font-weight:700;margin-bottom:10px">Mening topshirishim</div>
       <div style="font-size:.8rem;color:var(--text);white-space:pre-wrap;margin-bottom:10px">${s.answer || '(fayl yuborildi)'}</div>
       ${s.score != null ? scoreBar(s.score, a.max_score) : ''}

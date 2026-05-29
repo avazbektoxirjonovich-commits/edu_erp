@@ -85,6 +85,77 @@ body.dark .tbl tr:hover td{background:rgba(255,255,255,.03)}
 body.dark .sett-hero{background:#0a0f1a}
 body.dark .topbar .page-title{color:var(--text)}
 
+/* ── DARK: Tables ── */
+body.dark .etable th{background:rgba(255,255,255,.04);color:var(--muted)}
+body.dark .etable tbody tr:hover{background:rgba(255,255,255,.03)}
+body.dark .etable td{border-bottom-color:var(--border);color:var(--text)}
+
+/* ── DARK: Filter bar ── */
+body.dark .fbar{background:rgba(255,255,255,.02);border-bottom-color:var(--border)}
+body.dark .fbar select,body.dark .fbar input{background:var(--card)!important;color:var(--text);border-color:var(--border)}
+body.dark .search-wrap{background:var(--card);border-color:var(--border)}
+body.dark .search-wrap input{background:var(--card);color:var(--text)}
+body.dark .search-wrap i{color:var(--muted)}
+
+/* ── DARK: Modal ── */
+body.dark .modal{background:var(--card)}
+body.dark .m-head{background:var(--card);border-bottom-color:var(--border)}
+body.dark .m-foot{background:var(--card);border-top-color:var(--border)}
+body.dark .m-body{background:var(--card)}
+
+/* ── DARK: Notifications ── */
+body.dark .notif-panel{background:var(--card)}
+body.dark .notif-item:hover{background:rgba(255,255,255,.04)}
+body.dark .notif-item.unread{background:rgba(5,150,105,.08);border-left-color:var(--accent)}
+body.dark .notif-item-title{color:var(--text)}
+body.dark .notif-panel-head h6{color:var(--text)}
+body.dark .notif-panel-head{border-bottom-color:var(--border)}
+
+/* ── DARK: Badges ── */
+body.dark .bdg-inactive{background:rgba(107,114,128,.15);color:#9ca3af}
+body.dark .bdg-partial{background:rgba(180,83,9,.15);color:#fbbf24}
+body.dark .bdg-unpaid{background:rgba(185,28,28,.15);color:#f87171}
+body.dark .bdg-absent{background:rgba(185,28,28,.15);color:#f87171}
+body.dark .bdg-late{background:rgba(180,83,9,.15);color:#fbbf24}
+body.dark .bdg-blue{background:rgba(59,130,246,.15);color:#93c5fd}
+body.dark .bdg-purple{background:rgba(139,92,246,.15);color:#c4b5fd}
+body.dark .bdg-info{background:rgba(59,130,246,.15);color:#93c5fd}
+body.dark .bdg-warning{background:rgba(245,158,11,.15);color:#fcd34d}
+body.dark .bdg-active{background:rgba(5,150,105,.15);color:#34d399}
+
+/* ── DARK: Buttons ── */
+body.dark .btn-ghost{background:transparent;border-color:var(--border);color:var(--text)}
+body.dark .btn-ghost:hover{background:rgba(255,255,255,.06)}
+body.dark .btn-outline{background:var(--card);border-color:var(--border);color:var(--text)}
+body.dark .btn-icon{background:rgba(255,255,255,.06);color:var(--muted)}
+body.dark .btn-icon:hover{background:rgba(255,255,255,.1);color:var(--text)}
+body.dark .btn-icon.del:hover{background:rgba(239,68,68,.15);color:#f87171}
+body.dark .btn-icon.edit:hover{background:rgba(5,150,105,.15);color:var(--accent)}
+
+/* ── DARK: Chat / Support ── */
+body.dark .chat-msg.recv{background:var(--card);border-color:var(--border)}
+body.dark .chat-msg.sent{background:var(--accent)}
+body.dark .chat-input-row textarea{background:var(--card);color:var(--text);border-color:var(--border)}
+body.dark .chat-send-btn{background:var(--grad)}
+body.dark .help-contact{background:rgba(255,255,255,.04);border-color:var(--border)}
+body.dark .hc-label{color:var(--muted)}
+body.dark .hc-phone{color:var(--text)}
+body.dark .help-divider{color:var(--muted)}
+body.dark .help-divider::before,body.dark .help-divider::after{background:var(--border)}
+
+/* ── DARK: Misc ── */
+body.dark .coins-badge{background:rgba(245,158,11,.12);color:#fcd34d;border-color:rgba(245,158,11,.3)}
+body.dark .xp-bar{background:rgba(255,255,255,.1)}
+body.dark .empty{color:var(--muted)}
+body.dark .loading{color:var(--muted)}
+body.dark .sb-logout:hover{color:var(--danger);background:rgba(239,68,68,.1)}
+body.dark .m-close:hover{background:rgba(239,68,68,.1);color:var(--danger)}
+body.dark .sb-logo .logo-text{color:var(--text)}
+body.dark .toast{background:#1e293b;color:var(--text);border-color:var(--border)}
+body.dark .pag-btn{background:var(--card);border-color:var(--border);color:var(--text)}
+body.dark .pag-btn:hover{background:rgba(255,255,255,.06)}
+body.dark .pag-btn.active{background:var(--grad);color:#fff;border-color:transparent}
+
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;font-size:14px;-webkit-font-smoothing:antialiased;transition:background .2s,color .2s}
@@ -958,10 +1029,31 @@ document.querySelectorAll('.stat-card').forEach(el=>{el.style.opacity='0';observ
   if(dark) document.body.classList.add('dark');
 })();
 
+function _applyChartDark(isDark){
+  if(typeof Chart === 'undefined') return;
+  const grid = isDark ? 'rgba(255,255,255,.07)' : 'rgba(0,0,0,.04)';
+  const tick = isDark ? '#94a3b8' : '#9ca3af';
+  Chart.defaults.color = tick;
+  Chart.defaults.borderColor = grid;
+  Object.values(Chart.instances || {}).forEach(c => {
+    if(c.config.type !== 'doughnut' && c.config.type !== 'pie'){
+      ['x','y'].forEach(ax => {
+        if(c.options.scales?.[ax]){
+          c.options.scales[ax].grid && (c.options.scales[ax].grid.color = grid);
+          c.options.scales[ax].ticks && (c.options.scales[ax].ticks.color = tick);
+        }
+      });
+    }
+    c.update('none');
+  });
+}
+
 function toggleDark(){
   const isDark = document.body.classList.toggle('dark');
   localStorage.setItem('erp_dark', isDark ? '1' : '0');
   updateDarkBtn();
+  _applyChartDark(isDark);
+  document.dispatchEvent(new CustomEvent('darkModeChanged', {detail:{dark:isDark}}));
 }
 function updateDarkBtn(){
   const btn = document.getElementById('darkToggle');
@@ -972,7 +1064,10 @@ function updateDarkBtn(){
     : '<i class="fas fa-moon" style="color:#6366f1"></i>';
   btn.title = isDark ? 'Kunduzgi rejim' : 'Tungi rejim';
 }
-document.addEventListener('DOMContentLoaded', updateDarkBtn);
+document.addEventListener('DOMContentLoaded', ()=>{
+  updateDarkBtn();
+  _applyChartDark(document.body.classList.contains('dark'));
+});
 
 // ── PWA Service Worker ────────────────────────────────────────
 if('serviceWorker' in navigator){
