@@ -1,5 +1,6 @@
 import uuid
 import logging
+from functools import cached_property
 from django.db import models
 from django.core.validators import RegexValidator
 from apps.accounts.models import User
@@ -95,7 +96,7 @@ class Student(models.Model):
     def level_progress_pct(self):
         return min(100, (self.xp_points % 500) * 100 // 500)
 
-    @property
+    @cached_property
     def attendance_percentage(self):
         from apps.attendance.models import Attendance
         from django.db.models import Count, Q
@@ -107,7 +108,7 @@ class Student(models.Model):
             return 0
         return round(result['present'] / result['total'] * 100, 1)
 
-    @property
+    @cached_property
     def total_debt(self):
         from django.db.models import Sum
         from apps.payments.models import Payment
