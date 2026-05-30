@@ -4,6 +4,7 @@ from functools import cached_property
 from django.db import models
 from apps.accounts.models import User
 from apps.common.validators import phone_validator
+from apps.common.utils import calculate_attendance_pct
 
 logger = logging.getLogger('apps.students')
 
@@ -103,9 +104,7 @@ class Student(models.Model):
             total=Count('id'),
             present=Count('id', filter=Q(status='present'))
         )
-        if not result['total']:
-            return 0
-        return round(result['present'] / result['total'] * 100, 1)
+        return calculate_attendance_pct(result['present'], result['total'])
 
     @cached_property
     def total_debt(self):

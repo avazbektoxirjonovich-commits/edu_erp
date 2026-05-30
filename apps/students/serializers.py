@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from apps.accounts.serializers import UserSerializer
+from apps.common.utils import calculate_attendance_pct
 from .models import Student
 
 
@@ -29,9 +30,7 @@ class StudentListSerializer(serializers.ModelSerializer):
         present = getattr(obj, '_present', None)
         if total is None:
             return obj.attendance_percentage
-        if not total:
-            return 0
-        return round(present / total * 100, 1)
+        return calculate_attendance_pct(present, total)
 
 
 class StudentDetailSerializer(serializers.ModelSerializer):

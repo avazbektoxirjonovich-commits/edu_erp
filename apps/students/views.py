@@ -12,6 +12,7 @@ from apps.common.utils import debt_annotation
 from apps.accounts.permissions import IsAdminOrTeacher, IsAdmin, IsStudent
 from apps.notifications.views import log_activity
 from apps.notifications.models import ActivityLog
+from apps.common.utils import debt_annotation, calculate_attendance_pct
 from .models import Student
 from .serializers import (
     StudentListSerializer, StudentDetailSerializer,
@@ -201,10 +202,7 @@ class ParentDashboardView(APIView):
 
         result = []
         for s in children:
-            att_pct = (
-                round(s._att_present / s._att_total * 100, 1)
-                if s._att_total else 0
-            )
+            att_pct = calculate_attendance_pct(s._att_present, s._att_total)
             g = s.group
             result.append({
                 'id':           str(s.id),

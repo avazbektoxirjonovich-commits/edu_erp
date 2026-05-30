@@ -7,6 +7,7 @@ from django.db.models.functions import Coalesce
 from django.utils import timezone
 
 from apps.accounts.permissions import IsAdmin
+from apps.common.utils import calculate_attendance_pct
 from apps.students.models import Student
 from apps.groups.models import Group
 from apps.attendance.models import Attendance
@@ -50,10 +51,7 @@ class DashboardView(APIView):
             total=Count('id'),
             present=Count('id', filter=Q(status='present')),
         )
-        att_pct = (
-            round(att_today['present'] / att_today['total'] * 100, 1)
-            if att_today['total'] else 0
-        )
+        att_pct = calculate_attendance_pct(att_today['present'], att_today['total'])
 
         # ── 6-month income — 1 query (was 6) ──
         six_months_ago = date(year if month > 6 else year - 1,
@@ -108,10 +106,7 @@ class DashboardView(APIView):
                 'id':         str(g.id),
                 'name':       g.name,
                 'students':   g.active_students,
-                'attendance': (
-                    round(g.attend_present / g.attend_total * 100, 1)
-                    if g.attend_total else 0
-                ),
+                'attendance': calculate_attendance_pct(g.attend_present, g.attend_total),
             }
             for g in groups_qs
         ]

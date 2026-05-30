@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Count, Q
+from apps.common.utils import calculate_attendance_pct
 from .models import Student
 
 
@@ -47,10 +48,7 @@ class LeaderboardView(APIView):
                 'xp_points':  s.xp_points,
                 'coins':      s.coins,
                 'level':      s.level,
-                'attendance': (
-                    round(s._att_present / s._att_total * 100, 1)
-                    if s._att_total else 0
-                ),
+                'attendance': calculate_attendance_pct(s._att_present, s._att_total),
             }
             for s in qs
         ]
