@@ -7,7 +7,6 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Count, Q
 from django_filters.rest_framework import DjangoFilterBackend
-from apps.common.utils import debt_annotation
 
 from apps.accounts.permissions import IsAdminOrTeacher, IsAdmin, IsStudent
 from apps.notifications.views import log_activity
@@ -35,9 +34,6 @@ class StudentViewSet(ModelViewSet):
         return [IsAdminOrTeacher()]
 
     def get_queryset(self):
-        from apps.attendance.models import Attendance
-        from apps.payments.models import Payment
-
         qs = Student.objects.select_related('user', 'group')
 
         # Teacher faqat o'z guruhi o'quvchilarini ko'radi

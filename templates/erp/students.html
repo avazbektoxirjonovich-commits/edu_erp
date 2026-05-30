@@ -256,8 +256,14 @@ async function loadStudents(pg=1){
   if(gr) url+=`&group=${gr}`;
 
   document.getElementById('tblWrap').innerHTML='<div class="loading"><div class="spinner"></div></div>';
-  const d=await get(url);
-  if(!d){document.getElementById('tblWrap').innerHTML='<div class="empty"><i class="fas fa-exclamation-triangle"></i><p>Xatolik yuz berdi</p></div>';return;}
+  const resp=await req(url);
+  if(!resp||!resp.ok){
+    let errMsg='Server xatosi';
+    try{const e=await resp?.json();errMsg=e?.detail||JSON.stringify(e)||`HTTP ${resp?.status}`;}catch{}
+    document.getElementById('tblWrap').innerHTML=`<div class="empty"><i class="fas fa-exclamation-triangle" style="color:var(--danger)"></i><p style="color:var(--danger);font-size:.8rem;margin-top:8px">${errMsg}</p></div>`;
+    return;
+  }
+  const d=await resp.json();
 
   const items=d.results||d;
   const count=d.count||items.length;
