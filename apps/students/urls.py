@@ -1,9 +1,9 @@
 from django.urls import path, include
-from rest_framework.routers import DefaultRouter
+from rest_framework.routers import SimpleRouter
 from .views import StudentViewSet, StudentMeView, ParentDashboardView
 from .export_views import ExportStudentsView
 
-router = DefaultRouter()
+router = SimpleRouter()
 router.register('', StudentViewSet, basename='student')
 
 urlpatterns = [
