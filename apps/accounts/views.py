@@ -147,6 +147,11 @@ class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
         _log(self.request.user, 'update', 'User', user.pk, str(user), self.request)
 
     def perform_destroy(self, instance):
+        from rest_framework.exceptions import PermissionDenied
+        if instance.role == User.Role.DEVELOPER:
+            raise PermissionDenied("Developer hisobini o'chirish mumkin emas.")
+        if instance.pk == self.request.user.pk:
+            raise PermissionDenied("O'z hisobingizni o'chira olmaysiz.")
         _log(self.request.user, 'delete', 'User', instance.pk, str(instance), self.request)
         instance.delete()
 
