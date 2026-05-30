@@ -5,7 +5,7 @@ from .views import TeacherViewSet, TeacherSalaryListCreateView, TeacherSalaryDet
 router = SimpleRouter()
 router.register('', TeacherViewSet, basename='teacher')
 urlpatterns = [
-    path('', include(router.urls)),
     path('salaries/',        TeacherSalaryListCreateView.as_view(), name='teacher-salary-list'),
     path('salaries/<uuid:pk>/', TeacherSalaryDetailView.as_view(),  name='teacher-salary-detail'),
+    path('', include(router.urls)),
 ]

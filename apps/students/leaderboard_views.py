@@ -13,7 +13,10 @@ class LeaderboardView(APIView):
     def get(self, request):
         period = request.query_params.get('period', 'all')   # all | month | week
         group  = request.query_params.get('group', '')
-        limit  = min(int(request.query_params.get('limit', 50)), 200)
+        try:
+            limit = min(int(request.query_params.get('limit', 50)), 200)
+        except (ValueError, TypeError):
+            limit = 50
 
         qs = (
             Student.objects

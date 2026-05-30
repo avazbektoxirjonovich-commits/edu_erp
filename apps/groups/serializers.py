@@ -54,10 +54,11 @@ class GroupCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model  = Group
         fields = [
-            'name', 'subject', 'description', 'teacher', 'status',
+            'id', 'name', 'subject', 'description', 'teacher', 'status',
             'max_students', 'monthly_fee',
             'start_date', 'end_date', 'start_time', 'end_time', 'days',
         ]
+        read_only_fields = ['id']
 
     def create(self, validated_data):
         from datetime import date

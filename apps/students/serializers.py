@@ -41,7 +41,15 @@ class StudentDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model  = Student
-        fields = '__all__'
+        fields = [
+            'id', 'user', 'group', 'group_name',
+            'phone', 'parent_phone', 'parent_name', 'parent_user',
+            'address', 'birth_date', 'status',
+            'joined_date', 'notes', 'photo',
+            'xp_points', 'coins', 'level',
+            'attendance_percentage', 'total_debt',
+            'created_at', 'updated_at',
+        ]
 
 
 class StudentCreateSerializer(serializers.ModelSerializer):
@@ -54,9 +62,10 @@ class StudentCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model  = Student
         fields = [
-            'full_name', 'phone', 'parent_name', 'parent_phone',
+            'id', 'full_name', 'phone', 'parent_name', 'parent_phone',
             'group', 'birth_date', 'address', 'notes', 'password',
         ]
+        read_only_fields = ['id']
 
     def validate_phone(self, value):
         import re

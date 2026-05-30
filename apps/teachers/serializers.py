@@ -23,7 +23,8 @@ class TeacherCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model  = Teacher
-        fields = ['full_name', 'phone', 'subject', 'salary', 'notes', 'password']
+        fields = ['id', 'full_name', 'phone', 'subject', 'salary', 'notes', 'password']
+        read_only_fields = ['id']
 
     def validate_phone(self, value):
         from apps.accounts.models import User

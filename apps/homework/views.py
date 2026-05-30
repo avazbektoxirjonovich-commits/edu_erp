@@ -74,7 +74,22 @@ class AssignmentDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Assignment.objects.select_related('group', 'teacher__user')
+        user = self.request.user
+        qs   = Assignment.objects.select_related('group', 'teacher__user')
+
+        if user.is_student:
+            student = getattr(user, 'student_profile', None)
+            if student and student.group:
+                return qs.filter(group=student.group)
+            return qs.none()
+
+        if user.is_teacher:
+            teacher = getattr(user, 'teacher_profile', None)
+            if teacher:
+                return qs.filter(teacher=teacher)
+            return qs.none()
+
+        return qs
 
     def get_serializer_class(self):
         if self.request.method in ['PUT', 'PATCH']:
@@ -143,8 +158,17 @@ class GradeSubmissionView(APIView):
 
     def post(self, request, pk):
         submission = get_object_or_404(
-            Submission.objects.select_related('student', 'assignment'), pk=pk
+            Submission.objects.select_related('student', 'assignment__group'), pk=pk
         )
+
+        if request.user.is_teacher:
+            teacher = getattr(request.user, 'teacher_profile', None)
+            if not teacher or not teacher.groups.filter(pk=submission.assignment.group.pk).exists():
+                return Response(
+                    {'detail': "Siz faqat o'z guruhingiz topshiriqlarini baholashingiz mumkin."},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
         serializer = GradeSubmissionSerializer(
             data=request.data,
             context={'submission': submission}

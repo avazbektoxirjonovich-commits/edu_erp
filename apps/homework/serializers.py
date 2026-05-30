@@ -67,6 +67,7 @@ class AssignmentCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         request = self.context.get('request')
+        # Teacher bo'lsa auto-assign; Admin bo'lsa teacher=None (intentional)
         teacher = getattr(request.user, 'teacher_profile', None) if request else None
         return Assignment.objects.create(teacher=teacher, **validated_data)
 
@@ -101,11 +102,14 @@ class SubmissionCreateSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
+        from rest_framework.exceptions import PermissionDenied
         request    = self.context['request']
-        student    = request.user.student_profile
+        student    = getattr(request.user, 'student_profile', None)
+        if student is None:
+            raise PermissionDenied("Faqat o'quvchilar vazifa topshira oladi.")
         assignment = validated_data['assignment']
 
-        is_late = timezone.now().date() > assignment.due_date
+        is_late = bool(assignment.due_date) and timezone.now().date() > assignment.due_date
         status  = Submission.Status.LATE if is_late else Submission.Status.SUBMITTED
 
         return Submission.objects.create(

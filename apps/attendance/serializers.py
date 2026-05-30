@@ -14,6 +14,20 @@ class AttendanceSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'created_at']
 
 
+class BulkRecordSerializer(serializers.Serializer):
+    """records[] ichidagi har bir satr uchun — faqat student va status kerak."""
+    student = serializers.UUIDField()
+    status  = serializers.ChoiceField(choices=Attendance.Status.choices)
+    note    = serializers.CharField(required=False, allow_blank=True, default='')
+
+    def validate_student(self, value):
+        from apps.students.models import Student
+        try:
+            return Student.objects.get(pk=value)
+        except Student.DoesNotExist:
+            raise serializers.ValidationError(f"O'quvchi topilmadi: {value}")
+
+
 class BulkAttendanceSerializer(serializers.Serializer):
     """
     Bir kunda guruhning barcha o'quvchilari uchun davomat belgilash.
@@ -28,7 +42,7 @@ class BulkAttendanceSerializer(serializers.Serializer):
     """
     group   = serializers.UUIDField()
     date    = serializers.DateField()
-    records = AttendanceSerializer(many=True)
+    records = BulkRecordSerializer(many=True)
 
     def create(self, validated_data):
         from django.db import transaction
