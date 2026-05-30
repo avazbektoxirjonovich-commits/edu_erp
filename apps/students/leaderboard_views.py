@@ -2,7 +2,7 @@ from datetime import date, timedelta
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from django.db.models import Q
+from django.db.models import Count, Q
 from .models import Student
 
 
@@ -14,15 +14,25 @@ class LeaderboardView(APIView):
         group  = request.query_params.get('group', '')
         limit  = min(int(request.query_params.get('limit', 50)), 200)
 
-        qs = Student.objects.select_related('user', 'group').filter(status='active')
+        qs = (
+            Student.objects
+            .select_related('user', 'group')
+            .filter(status='active')
+            .annotate(
+                _att_total=Count('attendances', distinct=True),
+                _att_present=Count(
+                    'attendances',
+                    filter=Q(attendances__status='present'),
+                    distinct=True
+                ),
+            )
+        )
 
         if group:
             qs = qs.filter(group__id=group)
 
-        # Period filter — filter by joined_date or just by xp earned in period
         if period == 'week':
-            week_ago = date.today() - timedelta(days=7)
-            qs = qs.filter(created_at__date__gte=week_ago)
+            qs = qs.filter(created_at__date__gte=date.today() - timedelta(days=7))
         elif period == 'month':
             today = date.today()
             qs = qs.filter(created_at__year=today.year, created_at__month=today.month)
@@ -37,7 +47,10 @@ class LeaderboardView(APIView):
                 'xp_points':  s.xp_points,
                 'coins':      s.coins,
                 'level':      s.level,
-                'attendance': s.attendance_percentage,
+                'attendance': (
+                    round(s._att_present / s._att_total * 100, 1)
+                    if s._att_total else 0
+                ),
             }
             for s in qs
         ]
