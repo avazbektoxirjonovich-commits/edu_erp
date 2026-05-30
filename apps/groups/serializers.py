@@ -48,7 +48,7 @@ class GroupListSerializer(serializers.ModelSerializer):
 
 
 class GroupCreateSerializer(serializers.ModelSerializer):
-    days       = serializers.ListField(child=serializers.IntegerField(), write_only=True, required=False, default=list)
+    days       = serializers.ListField(child=serializers.IntegerField(), write_only=True, required=False)
     start_date = serializers.DateField(required=False)
 
     class Meta:
