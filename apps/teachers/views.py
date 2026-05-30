@@ -5,7 +5,10 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Count, Q
 from apps.accounts.permissions import IsAdmin
 from .models import Teacher, TeacherSalaryPayment
-from .serializers import TeacherSerializer, TeacherCreateSerializer, TeacherSalaryPaymentSerializer
+from .serializers import (
+    TeacherSerializer, TeacherCreateSerializer,
+    TeacherUpdateSerializer, TeacherSalaryPaymentSerializer,
+)
 
 
 class TeacherViewSet(ModelViewSet):
@@ -31,8 +34,10 @@ class TeacherViewSet(ModelViewSet):
         )
 
     def get_serializer_class(self):
-        if self.action in ['create', 'update', 'partial_update']:
+        if self.action == 'create':
             return TeacherCreateSerializer
+        if self.action in ['update', 'partial_update']:
+            return TeacherUpdateSerializer
         return TeacherSerializer
 
     def perform_destroy(self, instance):

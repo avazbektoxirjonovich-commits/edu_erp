@@ -1,5 +1,5 @@
 import logging
-from rest_framework import filters
+from rest_framework import filters, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
@@ -158,6 +158,11 @@ class ParentDashboardView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
+        if not request.user.is_parent:
+            return Response(
+                {'detail': "Bu sahifa faqat ota-ona uchun."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         from apps.payments.models import Payment
         from apps.attendance.models import Attendance
         from django.db.models import Prefetch
@@ -236,7 +241,7 @@ class StudentMeView(APIView):
         try:
             student = Student.objects.select_related(
                 'user', 'group__teacher__user'
-            ).get(user=request.user)
+            ).prefetch_related('group__schedules').get(user=request.user)
         except Student.DoesNotExist:
             return Response({'detail': 'Student profil topilmadi.'}, status=404)
 

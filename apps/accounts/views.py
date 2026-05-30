@@ -87,7 +87,19 @@ class MeView(generics.RetrieveUpdateAPIView):
         return self.request.user
 
     def perform_update(self, serializer):
-        user = serializer.save()
+        from django.db import transaction
+        old_phone = self.request.user.phone
+        user      = serializer.save()
+        if user.phone != old_phone:
+            with transaction.atomic():
+                student = getattr(user, 'student_profile', None)
+                if student:
+                    student.phone = user.phone
+                    student.save(update_fields=['phone'])
+                teacher = getattr(user, 'teacher_profile', None)
+                if teacher:
+                    teacher.phone = user.phone
+                    teacher.save(update_fields=['phone'])
         _log(self.request.user, 'update', 'User', user.pk, f'Profil yangilandi: {user}', self.request)
 
 

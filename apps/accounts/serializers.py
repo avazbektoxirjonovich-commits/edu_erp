@@ -81,6 +81,12 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
         model  = User
         fields = ['full_name', 'phone']
 
+    def validate_phone(self, value):
+        user = self.instance
+        if user and User.objects.filter(phone=value).exclude(pk=user.pk).exists():
+            raise serializers.ValidationError("Bu telefon raqam allaqachon ro'yxatdan o'tgan.")
+        return value
+
 
 class ChangePasswordSerializer(serializers.Serializer):
     """Parol almashtirish"""

@@ -7,7 +7,7 @@ from django.db.models import Sum, Count, Q
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 
-from apps.accounts.permissions import IsAdmin
+from apps.accounts.permissions import IsAdmin, IsAdminOrTeacher
 from .models import Payment
 from .serializers import (
     PaymentSerializer, PaymentCreateSerializer,
@@ -22,16 +22,25 @@ class PaymentViewSet(generics.ListCreateAPIView):
     GET  /api/v1/payments/?month=5&year=2025&status=unpaid  → Admin+Teacher
     POST /api/v1/payments/                                   → Admin only
     """
-    permission_classes = [IsAdmin]
-    filter_backends    = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields   = ['status', 'month', 'year', 'student', 'group']
-    search_fields      = ['student__user__full_name']
-    ordering           = ['-year', '-month']
+    filter_backends  = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['status', 'month', 'year', 'student', 'group']
+    search_fields    = ['student__user__full_name']
+    ordering         = ['-year', '-month']
+
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            return [IsAdmin()]
+        return [IsAdminOrTeacher()]
 
     def get_queryset(self):
-        return Payment.objects.select_related(
-            'student__user', 'group', 'received_by'
-        ).all()
+        qs   = Payment.objects.select_related('student__user', 'group', 'received_by')
+        user = self.request.user
+        if user.is_teacher:
+            teacher = getattr(user, 'teacher_profile', None)
+            if teacher:
+                return qs.filter(student__group__teacher=teacher)
+            return qs.none()
+        return qs
 
     def get_serializer_class(self):
         if self.request.method == 'POST':

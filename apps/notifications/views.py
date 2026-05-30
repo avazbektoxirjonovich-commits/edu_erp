@@ -188,9 +188,12 @@ class SendPaymentRemindersView(APIView):
 
     def post(self, request):
         from apps.payments.models import Payment
-        now   = timezone.now()
-        month = int(request.data.get('month', now.month))
-        year  = int(request.data.get('year',  now.year))
+        now = timezone.now()
+        try:
+            month = int(request.data.get('month', now.month))
+            year  = int(request.data.get('year',  now.year))
+        except (ValueError, TypeError):
+            return Response({'detail': "month va year butun son bo'lishi kerak."}, status=400)
 
         unpaid = (
             Payment.objects

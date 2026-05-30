@@ -15,17 +15,10 @@ class AttendanceSerializer(serializers.ModelSerializer):
 
 
 class BulkRecordSerializer(serializers.Serializer):
-    """records[] ichidagi har bir satr uchun — faqat student va status kerak."""
+    """records[] ichidagi har bir satr uchun — faqat student UUID va status kerak."""
     student = serializers.UUIDField()
     status  = serializers.ChoiceField(choices=Attendance.Status.choices)
     note    = serializers.CharField(required=False, allow_blank=True, default='')
-
-    def validate_student(self, value):
-        from apps.students.models import Student
-        try:
-            return Student.objects.get(pk=value)
-        except Student.DoesNotExist:
-            raise serializers.ValidationError(f"O'quvchi topilmadi: {value}")
 
 
 class BulkAttendanceSerializer(serializers.Serializer):
@@ -43,6 +36,21 @@ class BulkAttendanceSerializer(serializers.Serializer):
     group   = serializers.UUIDField()
     date    = serializers.DateField()
     records = BulkRecordSerializer(many=True)
+
+    def validate(self, data):
+        from apps.students.models import Student
+        records     = data.get('records', [])
+        student_ids = [r['student'] for r in records]
+        # 1 ta query — N+1 dan saqlaymiz
+        found = {str(s.pk): s for s in Student.objects.filter(pk__in=student_ids)}
+        missing = [str(sid) for sid in student_ids if str(sid) not in found]
+        if missing:
+            raise serializers.ValidationError(
+                f"O'quvchilar topilmadi: {', '.join(missing)}"
+            )
+        for r in records:
+            r['student'] = found[str(r['student'])]
+        return data
 
     def create(self, validated_data):
         from django.db import transaction

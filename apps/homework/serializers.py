@@ -101,6 +101,15 @@ class SubmissionCreateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Bu vazifa faol emas.")
         return value
 
+    def validate(self, data):
+        request = self.context.get('request')
+        student = getattr(request.user, 'student_profile', None) if request else None
+        if student and Submission.objects.filter(
+            assignment=data['assignment'], student=student
+        ).exists():
+            raise serializers.ValidationError("Siz bu vazifani allaqachon topshirgansiz.")
+        return data
+
     def create(self, validated_data):
         from rest_framework.exceptions import PermissionDenied
         request    = self.context['request']

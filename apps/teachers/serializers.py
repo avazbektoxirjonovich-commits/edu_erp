@@ -44,6 +44,35 @@ class TeacherCreateSerializer(serializers.ModelSerializer):
         return Teacher.objects.create(user=user, **validated_data)
 
 
+class TeacherUpdateSerializer(serializers.ModelSerializer):
+    full_name = serializers.CharField(required=False)
+
+    class Meta:
+        model  = Teacher
+        fields = ['id', 'full_name', 'phone', 'subject', 'salary', 'notes', 'is_active']
+        read_only_fields = ['id']
+
+    def validate_phone(self, value):
+        from apps.accounts.models import User
+        teacher = self.instance
+        if teacher and User.objects.filter(phone=value).exclude(pk=teacher.user.pk).exists():
+            raise serializers.ValidationError("Bu telefon allaqachon ro'yxatda")
+        return value
+
+    def update(self, instance, validated_data):
+        from django.db import transaction
+        full_name = validated_data.pop('full_name', None)
+        phone     = validated_data.get('phone')
+        with transaction.atomic():
+            if full_name and instance.user.full_name != full_name:
+                instance.user.full_name = full_name
+                instance.user.save(update_fields=['full_name'])
+            if phone and instance.user.phone != phone:
+                instance.user.phone = phone
+                instance.user.save(update_fields=['phone'])
+        return super().update(instance, validated_data)
+
+
 class TeacherSalaryPaymentSerializer(serializers.ModelSerializer):
     teacher_name = serializers.CharField(source='teacher.user.full_name', read_only=True)
     paid_by_name = serializers.CharField(source='paid_by.full_name', read_only=True, default=None)
@@ -54,6 +83,19 @@ class TeacherSalaryPaymentSerializer(serializers.ModelSerializer):
         fields = ['id', 'teacher', 'teacher_name', 'month', 'year',
                   'amount', 'bonus', 'total', 'note', 'paid_by', 'paid_by_name', 'paid_at', 'created_at']
         read_only_fields = ['paid_by', 'paid_at', 'created_at']
+
+    def validate(self, data):
+        teacher = data.get('teacher')
+        month   = data.get('month')
+        year    = data.get('year')
+        qs = TeacherSalaryPayment.objects.filter(teacher=teacher, month=month, year=year)
+        if self.instance:
+            qs = qs.exclude(pk=self.instance.pk)
+        if qs.exists():
+            raise serializers.ValidationError(
+                f"{year}/{month:02d} oy uchun ish haqi allaqachon to'langan."
+            )
+        return data
 
     def create(self, validated_data):
         validated_data['paid_by'] = self.context['request'].user
