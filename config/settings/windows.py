@@ -118,10 +118,10 @@ CORS_ALLOW_ALL_ORIGINS = True
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 JAZZMIN_SETTINGS = {
-    "site_title": "Ta'lim Markazi ERP",
-    "site_header": "EduERP",
-    "site_brand": "EduERP",
-    "welcome_sign": "Xush kelibsiz!",
+    "site_title": "VLT.erp",
+    "site_header": "VLT.erp Admin",
+    "site_brand": "VLT.erp",
+    "welcome_sign": "VLT.erp — Ta'lim Markazi Boshqaruv Tizimiga Xush Kelibsiz",
     "show_sidebar": True,
     "navigation_expanded": True,
 }

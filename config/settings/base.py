@@ -169,11 +169,11 @@ TELEGRAM_BOT_TOKEN = config('TELEGRAM_BOT_TOKEN', default='')
 TELEGRAM_ADMIN_CHAT_ID = config('TELEGRAM_ADMIN_CHAT_ID', default='')
 
 JAZZMIN_SETTINGS = {
-    "site_title": "EduERP",
-    "site_header": "EduERP Admin",
-    "site_brand": "EduERP",
-    "welcome_sign": "Ta'lim Markazi ERP Tizimiga Xush Kelibsiz",
-    "copyright": "EduERP",
+    "site_title": "VLT.erp",
+    "site_header": "VLT.erp Admin",
+    "site_brand": "VLT.erp",
+    "welcome_sign": "VLT.erp — Ta'lim Markazi Boshqaruv Tizimiga Xush Kelibsiz",
+    "copyright": "VLT.erp",
     "search_model": ["accounts.User", "students.Student"],
     "topmenu_links": [
         {"name": "Dashboard", "url": "/", "new_window": False},

@@ -234,7 +234,9 @@ class StudentMeView(APIView):
 
     def get(self, request):
         try:
-            student = Student.objects.select_related('user', 'group').get(user=request.user)
+            student = Student.objects.select_related(
+                'user', 'group__teacher__user'
+            ).get(user=request.user)
         except Student.DoesNotExist:
             return Response({'detail': 'Student profil topilmadi.'}, status=404)
 

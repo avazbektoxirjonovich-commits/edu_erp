@@ -96,3 +96,23 @@ class StudentUpdateSerializer(serializers.ModelSerializer):
         if value and value.role != User.Role.PARENT:
             raise serializers.ValidationError("Bu foydalanuvchi ota-ona roliga ega emas")
         return value
+
+    def validate_phone(self, value):
+        from apps.accounts.models import User
+        # Boshqa User da bu telefon bo'lmasligi kerak (Student.user bundan mustasno)
+        student = self.instance
+        if student and User.objects.filter(phone=value).exclude(pk=student.user.pk).exists():
+            raise serializers.ValidationError(
+                "Bu telefon raqam boshqa foydalanuvchida allaqachon ro'yxatda bor."
+            )
+        return value
+
+    def update(self, instance, validated_data):
+        from django.db import transaction
+        phone = validated_data.get('phone')
+        with transaction.atomic():
+            # Student.phone va User.phone sinxron yangilanadi
+            if phone and instance.user.phone != phone:
+                instance.user.phone = phone
+                instance.user.save(update_fields=['phone'])
+            return super().update(instance, validated_data)

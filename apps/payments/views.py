@@ -55,9 +55,16 @@ class UnpaidStudentsView(APIView):
     permission_classes = [IsAdmin]
 
     def get(self, request):
-        now   = timezone.now()
-        month = int(request.query_params.get('month', now.month))
-        year  = int(request.query_params.get('year', now.year))
+        now = timezone.now()
+        try:
+            month = int(request.query_params.get('month', now.month))
+            year  = int(request.query_params.get('year',  now.year))
+        except (ValueError, TypeError):
+            return Response({'detail': "month va year butun son bo'lishi kerak."}, status=400)
+        if not (1 <= month <= 12):
+            return Response({'detail': "month 1 dan 12 gacha bo'lishi kerak."}, status=400)
+        if not (2000 <= year <= 2100):
+            return Response({'detail': "year 2000-2100 orasida bo'lishi kerak."}, status=400)
 
         unpaid = Payment.objects.filter(
             month=month, year=year,
@@ -72,9 +79,16 @@ class MonthlySummaryView(APIView):
     permission_classes = [IsAdmin]
 
     def get(self, request):
-        now   = timezone.now()
-        month = int(request.query_params.get('month', now.month))
-        year  = int(request.query_params.get('year', now.year))
+        now = timezone.now()
+        try:
+            month = int(request.query_params.get('month', now.month))
+            year  = int(request.query_params.get('year',  now.year))
+        except (ValueError, TypeError):
+            return Response({'detail': "month va year butun son bo'lishi kerak."}, status=400)
+        if not (1 <= month <= 12):
+            return Response({'detail': "month 1 dan 12 gacha bo'lishi kerak."}, status=400)
+        if not (2000 <= year <= 2100):
+            return Response({'detail': "year 2000-2100 orasida bo'lishi kerak."}, status=400)
 
         result = Payment.objects.filter(month=month, year=year).aggregate(
             total_amount  = Sum('amount'),

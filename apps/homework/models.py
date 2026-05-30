@@ -6,8 +6,15 @@ Submission: o'quvchi topshiradi, o'qituvchi baholaydi
 """
 import uuid
 import logging
+from django.core.validators import MinValueValidator, FileExtensionValidator
 from django.db import models
 from django.utils import timezone
+
+ALLOWED_HOMEWORK_EXTENSIONS = [
+    'pdf', 'doc', 'docx', 'txt', 'odt',
+    'jpg', 'jpeg', 'png', 'gif',
+    'ppt', 'pptx', 'xls', 'xlsx', 'zip',
+]
 
 logger = logging.getLogger('apps.homework')
 
@@ -35,7 +42,11 @@ class Assignment(models.Model):
     assigned_date = models.DateField(null=True, blank=True, verbose_name='Berilgan sana')
     lesson_date   = models.DateField(null=True, blank=True, verbose_name='Dars sanasi')
     due_date      = models.DateField(null=True, blank=True, verbose_name='Tugash sanasi', db_index=True)
-    max_score     = models.PositiveSmallIntegerField(default=100, verbose_name='Maksimal ball')
+    max_score     = models.PositiveSmallIntegerField(
+                        default=100,
+                        validators=[MinValueValidator(1)],
+                        verbose_name='Maksimal ball'
+                    )
     xp_reward   = models.PositiveSmallIntegerField(default=50,  verbose_name='XP mukofot')
     status      = models.CharField(
                       max_length=10, choices=Status.choices,
@@ -43,6 +54,7 @@ class Assignment(models.Model):
                   )
     file        = models.FileField(
                       upload_to='homework/assignments/', blank=True, null=True,
+                      validators=[FileExtensionValidator(ALLOWED_HOMEWORK_EXTENSIONS)],
                       verbose_name='Fayl (ixtiyoriy)'
                   )
     created_at  = models.DateTimeField(auto_now_add=True)
@@ -98,6 +110,7 @@ class Submission(models.Model):
     answer      = models.TextField(blank=True, verbose_name='Javob matni')
     file        = models.FileField(
                       upload_to='homework/submissions/', blank=True, null=True,
+                      validators=[FileExtensionValidator(ALLOWED_HOMEWORK_EXTENSIONS)],
                       verbose_name='Topshirilgan fayl'
                   )
     score       = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name='Ball')
@@ -130,6 +143,8 @@ class Submission(models.Model):
     def score_percentage(self):
         if self.score is None:
             return None
+        if not self.assignment.max_score:
+            return 0
         return round(self.score / self.assignment.max_score * 100, 1)
 
     def grade(self, score, feedback, graded_by):
@@ -140,8 +155,9 @@ class Submission(models.Model):
         self.graded_by  = graded_by
         self.save(update_fields=['score', 'feedback', 'status', 'graded_at', 'graded_by'])
 
-        # XP mukofot berish
-        xp = self.assignment.xp_reward * score // self.assignment.max_score
-        if xp > 0:
-            self.student.add_xp(xp, reason=f"Vazifa: {self.assignment.title}")
+        # XP mukofot berish — max_score=0 bo'lsa XP berilmaydi
+        if self.assignment.max_score > 0:
+            xp = self.assignment.xp_reward * score // self.assignment.max_score
+            if xp > 0:
+                self.student.add_xp(xp, reason=f"Vazifa: {self.assignment.title}")
         logger.info(f"Baholandi: {self.student.full_name} | {self.assignment.title} | {score}/{self.assignment.max_score}")

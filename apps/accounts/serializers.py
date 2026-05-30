@@ -3,7 +3,6 @@ ACCOUNTS — Serializerlar
 """
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.contrib.auth import authenticate
 from .models import User
 
 
@@ -50,11 +49,18 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField(write_only=True)
 
     def validate(self, data):
-        user = authenticate(username=data['phone'], password=data['password'])
-        if not user:
+        # authenticate() nofaol userni None qaytaradi — is_active tekshiruvi ishlamaydi.
+        # To'g'ri yondashuv: User ni topib, parol va holat alohida tekshiriladi.
+        try:
+            user = User.objects.get(phone=data['phone'])
+        except User.DoesNotExist:
+            raise serializers.ValidationError("Telefon yoki parol noto'g'ri")
+        if not user.check_password(data['password']):
             raise serializers.ValidationError("Telefon yoki parol noto'g'ri")
         if not user.is_active:
-            raise serializers.ValidationError("Hisob faol emas")
+            raise serializers.ValidationError(
+                "Hisob faol emas. Iltimos adminga murojaat qiling."
+            )
         data['user'] = user
         return data
 
