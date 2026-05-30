@@ -1,10 +1,8 @@
 import uuid
 from django.db import models
-from django.core.validators import RegexValidator
-from apps.accounts.models import User
 from django.utils import timezone
-
-phone_validator = RegexValidator(regex=r'^\+998\d{9}$', message="Format: +998901234567")
+from apps.accounts.models import User
+from apps.common.validators import phone_validator
 
 
 class Teacher(models.Model):

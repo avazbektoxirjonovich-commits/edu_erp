@@ -2,11 +2,10 @@ import uuid
 import logging
 from functools import cached_property
 from django.db import models
-from django.core.validators import RegexValidator
 from apps.accounts.models import User
+from apps.common.validators import phone_validator
 
 logger = logging.getLogger('apps.students')
-phone_validator = RegexValidator(regex=r'^\+998\d{9}$', message="Format: +998901234567")
 
 
 class Student(models.Model):

@@ -7,14 +7,9 @@ import uuid
 import logging
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
-from django.core.validators import RegexValidator
+from apps.common.validators import phone_validator
 
 logger = logging.getLogger('apps.accounts')
-
-phone_validator = RegexValidator(
-    regex=r'^\+998\d{9}$',
-    message="Telefon formati: +998901234567"
-)
 
 
 class UserManager(BaseUserManager):
