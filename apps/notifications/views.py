@@ -251,6 +251,7 @@ class ActivityLogListView(generics.ListAPIView):
     serializer_class   = ActivityLogSerializer
     permission_classes = [IsStaffLevel]
     pagination_class   = None
+    filter_backends    = []  # Manual filtering — sliced queryset bilan global backendlar ishlamaydi
 
     def get_queryset(self):
         qs = ActivityLog.objects.select_related('user').order_by('-created_at')

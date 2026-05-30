@@ -485,6 +485,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 .fbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 20px;border-bottom:1px solid var(--border);background:#f8f9fc}
 .fbar select,.fbar input{padding:7px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.78rem;color:var(--text);background:#fff;font-family:inherit;outline:none;transition:border .15s}
 .fbar select:focus,.fbar input:focus{border-color:var(--accent)}
+/* Search-wrap ichidagi input uchun alohida padding — icon bilan to'g'ri ko'rinsin */
+.fbar .search-wrap{flex-shrink:0}
+.fbar .search-wrap input{padding:9px 13px 9px 35px;width:230px}
+.fbar .search-wrap input:focus{border-color:var(--accent);width:270px;box-shadow:0 0 0 3px rgba(5,150,105,.1)}
 
 /* ══ TOAST ═══════════════════════════════════════════════════ */
 .toasts{position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px}

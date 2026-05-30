@@ -1,8 +1,8 @@
 from django.urls import path, include
-from rest_framework.routers import DefaultRouter
+from rest_framework.routers import SimpleRouter
 from .views import TeacherViewSet, TeacherSalaryListCreateView, TeacherSalaryDetailView
 
-router = DefaultRouter()
+router = SimpleRouter()
 router.register('', TeacherViewSet, basename='teacher')
 urlpatterns = [
     path('', include(router.urls)),
