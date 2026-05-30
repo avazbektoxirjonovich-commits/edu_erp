@@ -5,9 +5,9 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
-from django.db.models import Count, Q, Sum, DecimalField
-from django.db.models.functions import Coalesce
+from django.db.models import Count, Q
 from django_filters.rest_framework import DjangoFilterBackend
+from apps.common.utils import debt_annotation
 
 from apps.accounts.permissions import IsAdminOrTeacher, IsAdmin, IsStudent
 from apps.notifications.views import log_activity
@@ -57,12 +57,7 @@ class StudentViewSet(ModelViewSet):
                     filter=Q(attendances__status='present'),
                     distinct=True
                 ),
-                _total_debt=Coalesce(
-                    Sum('payments__debt_amount',
-                        output_field=DecimalField(max_digits=12, decimal_places=0)),
-                    0,
-                    output_field=DecimalField(max_digits=12, decimal_places=0)
-                ),
+                _total_debt=debt_annotation('payments__debt_amount'),
             )
         return qs
 
@@ -179,12 +174,7 @@ class ParentDashboardView(APIView):
             .filter(parent_user=request.user)
             .select_related('user', 'group__teacher__user')
             .annotate(
-                _total_debt=Coalesce(
-                    Sum('payments__debt_amount',
-                        output_field=DecimalField(max_digits=12, decimal_places=0)),
-                    0,
-                    output_field=DecimalField(max_digits=12, decimal_places=0)
-                ),
+                _total_debt=debt_annotation('payments__debt_amount'),
                 _att_total=Count('attendances', distinct=True),
                 _att_present=Count(
                     'attendances',
@@ -255,10 +245,8 @@ class StudentMeView(APIView):
             return Response({'detail': 'Student profil topilmadi.'}, status=404)
 
         from apps.payments.models import Payment
-        from django.db.models import Sum as DSum
         debt = Payment.objects.filter(student=student).aggregate(
-            d=Coalesce(DSum('debt_amount', output_field=DecimalField(max_digits=12, decimal_places=0)), 0,
-                       output_field=DecimalField(max_digits=12, decimal_places=0))
+            d=debt_annotation('debt_amount')
         )['d']
 
         g = student.group

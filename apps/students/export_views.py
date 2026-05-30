@@ -60,20 +60,12 @@ class ExportStudentsView(APIView):
 
     def get(self, request):
         from .models import Student
-        from django.db.models import Sum, DecimalField
-        from django.db.models.functions import Coalesce
+        from apps.common.utils import debt_annotation
 
         students = (
             Student.objects
             .select_related('user', 'group')
-            .annotate(
-                total_debt=Coalesce(
-                    Sum('payments__debt_amount',
-                        output_field=DecimalField(max_digits=12, decimal_places=0)),
-                    0,
-                    output_field=DecimalField(max_digits=12, decimal_places=0)
-                )
-            )
+            .annotate(total_debt=debt_annotation('payments__debt_amount'))
             .order_by('user__full_name')
         )
 
