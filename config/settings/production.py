@@ -77,6 +77,11 @@ if _render_host:
     if _render_url not in CSRF_TRUSTED_ORIGINS:
         CSRF_TRUSTED_ORIGINS.append(_render_url)
 
+# Cloudinary media storage — Render ephemeral filesystem muammosini hal qiladi
+_cloudinary_configured = bool(os.environ.get('CLOUDINARY_CLOUD_NAME'))
+if _cloudinary_configured:
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
 # Logging
 LOGGING = {
     'version': 1,
