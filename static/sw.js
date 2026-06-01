@@ -1,4 +1,4 @@
-const CACHE_NAME = 'eduerp-v2';
+const CACHE_NAME = 'vlt-erp-v1';
 const STATIC_ASSETS = [
   '/',
   '/login/',
