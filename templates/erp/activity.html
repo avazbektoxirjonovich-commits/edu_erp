@@ -77,7 +77,7 @@
           <th>Foydalanuvchi</th>
           <th>Obyekt</th>
           <th>O'zgarishlar</th>
-          <th>IP</th>
+          <th id="ipTh">IP</th>
           <th>Vaqt</th>
         </tr>
       </thead>
@@ -110,12 +110,14 @@ const ACTION_LABELS = {
   create:'Yaratildi', update:'Yangilandi', delete:"O'chirildi",
   login:'Kirdi', logout:'Chiqdi',
 };
+const _isDev = (getUser().role||'') === 'developer';
 
 async function loadActivity(){
   const action = document.getElementById('filterAction').value;
   const model  = document.getElementById('filterModel').value;
   const body   = document.getElementById('actBody');
-  body.innerHTML = '<tr><td colspan="6" class="act-empty"><i class="fas fa-spinner fa-spin"></i> Yuklanmoqda...</td></tr>';
+  const cols   = _isDev ? 6 : 5;
+  body.innerHTML = `<tr><td colspan="${cols}" class="act-empty"><i class="fas fa-spinner fa-spin"></i> Yuklanmoqda...</td></tr>`;
 
   let url = '/notifications/activity/';
   const params=[];
@@ -124,10 +126,10 @@ async function loadActivity(){
   if(params.length) url+='?'+params.join('&');
 
   const data = await get(url);
-  if(!data){ body.innerHTML='<tr><td colspan="6" class="act-empty"><i class="fas fa-exclamation-circle"></i> Yuklashda xatolik</td></tr>'; return; }
+  if(!data){ body.innerHTML=`<tr><td colspan="${cols}" class="act-empty"><i class="fas fa-exclamation-circle"></i> Yuklashda xatolik</td></tr>`; return; }
   const list = Array.isArray(data) ? data : (data.results||[]);
   if(!list.length){
-    body.innerHTML='<tr><td colspan="6" class="act-empty"><i class="fas fa-list-check"></i><br>Faoliyatlar topilmadi</td></tr>';
+    body.innerHTML=`<tr><td colspan="${cols}" class="act-empty"><i class="fas fa-list-check"></i><br>Faoliyatlar topilmadi</td></tr>`;
     return;
   }
   body.innerHTML = list.map(a=>{
@@ -148,7 +150,7 @@ async function loadActivity(){
         <div class="act-model">${escHtml(a.model_name||'')}</div>
       </td>
       <td>${changeBtn}</td>
-      <td class="act-ip">${a.ip_address||'—'}</td>
+      ${_isDev?`<td class="act-ip">${a.ip_address||'—'}</td>`:''}
       <td style="font-size:.72rem;color:var(--muted);white-space:nowrap">${fmtDate(a.created_at)}</td>
     </tr>`;
   }).join('');
@@ -178,6 +180,9 @@ function showChanges(jsonStr){
   openM('changesOverlay');
 }
 
-document.addEventListener('DOMContentLoaded', ()=>{ if(initAuth()) loadActivity(); });
+document.addEventListener('DOMContentLoaded', ()=>{
+  if(!_isDev){ const t=document.getElementById('ipTh'); if(t) t.style.display='none'; }
+  if(initAuth()) loadActivity();
+});
 </script>
 {% endblock %}

@@ -768,17 +768,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
     </div>
     <div class="m-body">
 
-      <!-- Aloqa kartochkasi -->
-      <div class="help-contact">
-        <div class="hc-icon"><i class="fas fa-phone"></i></div>
-        <div class="hc-info">
-          <div class="hc-label">Dasturchi — Avazbek</div>
-          <div class="hc-phone">+998 94 583 33 31</div>
-        </div>
-        <a href="tel:+998945833331" class="hc-call">
-          <i class="fas fa-phone-volume"></i> Qo'ng'iroq
-        </a>
-      </div>
+      <!-- Aloqa kartochkasi (rol bo'yicha JS to'ldiradi) -->
+      <div class="help-contact" id="helpContact"></div>
 
       <!-- Ajratuvchi chiziq -->
       <div class="help-divider">yoki xabar yuboring</div>
@@ -1176,22 +1167,41 @@ async function openHelpModal(){
 }
 
 function updateHelpHint(){
-  const role = (getUser().role||'').toLowerCase();
-  const hint = document.getElementById('helpHint');
+  const role     = (getUser().role||'').toLowerCase();
+  const hint     = document.getElementById('helpHint');
   const inputRow = document.querySelector('#helpOverlay .chat-input-row');
+  const contact  = document.getElementById('helpContact');
+  const divider  = document.querySelector('#helpOverlay .help-divider');
   if(!hint) return;
-  if(role==='student'||role==='teacher'){
+
+  if(role==='student'||role==='teacher'||role==='parent'){
     hint.textContent = 'Xabar administratorga yuboriladi';
-    hint.style.display='';
     if(inputRow) inputRow.style.display='';
+    if(divider)  divider.style.display='';
+    if(contact)  contact.innerHTML=`
+      <div class="hc-icon"><i class="fas fa-user-shield"></i></div>
+      <div class="hc-info">
+        <div class="hc-label">Administrator</div>
+        <div class="hc-phone" style="font-size:.88rem;font-weight:600">Tizim administratori</div>
+      </div>`;
   } else if(role==='admin'){
     hint.textContent = 'Xabar dasturchiga yuboriladi';
-    hint.style.display='';
     if(inputRow) inputRow.style.display='';
+    if(divider)  divider.style.display='';
+    if(contact)  contact.innerHTML=`
+      <div class="hc-icon"><i class="fas fa-code"></i></div>
+      <div class="hc-info">
+        <div class="hc-label">Dasturchi — Avazbek</div>
+        <div class="hc-phone">+998 94 583 33 31</div>
+      </div>
+      <a href="tel:+998945833331" class="hc-call">
+        <i class="fas fa-phone-volume"></i> Qo'ng'iroq
+      </a>`;
   } else {
     hint.textContent = "Siz faqat xabarlarni o'qiy olasiz";
-    hint.style.display='';
     if(inputRow) inputRow.style.display='none';
+    if(divider)  divider.style.display='none';
+    if(contact)  contact.style.display='none';
   }
 }
 
