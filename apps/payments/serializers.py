@@ -24,14 +24,14 @@ class PaymentCreateSerializer(serializers.ModelSerializer):
     amount = serializers.DecimalField(
         max_digits=10, decimal_places=0, required=False, default=0
     )
+    group = serializers.PrimaryKeyRelatedField(
+        queryset=Group.objects.all(), required=False, allow_null=True, default=None
+    )
 
     class Meta:
         model  = Payment
         fields = ['id', 'student', 'group', 'month', 'year', 'amount', 'paid_amount', 'note']
         read_only_fields = ['id']
-        extra_kwargs = {
-            'group': {'required': False, 'allow_null': True},
-        }
 
     def validate(self, data):
         student = data['student']

@@ -18,7 +18,7 @@ class Payment(models.Model):
                   )
     group       = models.ForeignKey(
                       'groups.Group', on_delete=models.SET_NULL,
-                      null=True, related_name='payments', verbose_name='Guruh',
+                      null=True, blank=True, related_name='payments', verbose_name='Guruh',
                       db_index=True
                   )
     month       = models.PositiveSmallIntegerField(verbose_name='Oy')

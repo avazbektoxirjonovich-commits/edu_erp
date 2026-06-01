@@ -264,8 +264,16 @@ async function doPay(){
   if(!sid){toast("O'quvchini tanlang",'wrn');return;}
   if(!amount){toast("Summani kiriting",'wrn');return;}
   const r=await post('/payments/',{student:sid,month:parseInt(month),year:parseInt(year),paid_amount:amount,note:document.getElementById('pNote').value});
-  if(r?.ok||r?.status===201){closeM('payModal');toast("To'lov qabul qilindi",'ok');load();loadKpi();}
-  else{const e=await r?.json();toast(e?.detail||"Xatolik",'err');}
+  if(!r){toast("Tarmoq xatoligi",'err');return;}
+  let body;
+  try{body=await r.json();}catch{body=null;}
+  if(r.ok||r.status===201){closeM('payModal');toast("To'lov qabul qilindi",'ok');load();loadKpi();}
+  else{
+    console.error('Payment 400 errors:',body);
+    const errs=body?.errors;
+    const msg=errs?Object.entries(errs).map(([f,v])=>`${f}: ${[].concat(v).join(', ')}`).join(' | '):body?.detail||`Server xatoligi (${r.status})`;
+    toast(msg,'err');
+  }
 }
 
 function printReceipt(p){
@@ -385,7 +393,8 @@ async function doBulkPay(){
     const amt=parseInt(document.querySelector(`.bulk-amt[data-id="${sid}"]`)?.value)||0;
     if(!amt)continue;
     const r=await post('/payments/',{student:sid,month,year,paid_amount:amt,note:'Ommaviy to\'lov'});
-    if(r?.ok||r?.status===201) ok++; else err++;
+    if(r&&(r.ok||r.status===201)) ok++;
+    else{err++;try{const e=await r?.json();console.error('Bulk pay err',sid,e);}catch{}}
   }
   closeM('bulkModal');
   if(ok) toast(`${ok} ta to'lov saqlandi`+(err?`, ${err} ta xatolik`:''),'ok');
