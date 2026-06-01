@@ -47,6 +47,18 @@ class PaymentViewSet(generics.ListCreateAPIView):
             return PaymentCreateSerializer
         return PaymentSerializer
 
+    def create(self, request, *args, **kwargs):
+        serializer = PaymentCreateSerializer(
+            data=request.data, context={'request': request}
+        )
+        serializer.is_valid(raise_exception=True)
+        payment = serializer.save()
+        # To'liq response — status, debt_amount va boshqa maydonlar bilan
+        return Response(
+            PaymentSerializer(payment).data,
+            status=status.HTTP_201_CREATED,
+        )
+
 
 class PaymentDetailView(generics.RetrieveUpdateAPIView):
     """GET/PUT/PATCH → Admin only"""
