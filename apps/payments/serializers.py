@@ -27,7 +27,8 @@ class PaymentCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model  = Payment
-        fields = ['student', 'group', 'month', 'year', 'amount', 'paid_amount', 'note']
+        fields = ['id', 'student', 'group', 'month', 'year', 'amount', 'paid_amount', 'note']
+        read_only_fields = ['id']
         extra_kwargs = {
             'group': {'required': False, 'allow_null': True},
         }
@@ -43,22 +44,31 @@ class PaymentCreateSerializer(serializers.ModelSerializer):
         if not data.get('amount'):
             data['amount'] = data['group'].monthly_fee if data.get('group') else 0
 
-        # Bir oy uchun ikki marta yozuv bo'lmasin
-        if data.get('group') and Payment.objects.filter(
-            student=student,
-            group=data['group'],
-            month=data['month'],
-            year=data['year'],
-        ).exists():
-            raise serializers.ValidationError(
-                f"{data['year']}/{data['month']:02d} uchun to'lov allaqachon mavjud."
-            )
         return data
 
     def create(self, validated_data):
         validated_data['received_by'] = self.context['request'].user
         validated_data['payment_date'] = timezone.now().date()
-        return super().create(validated_data)
+
+        student = validated_data['student']
+        group   = validated_data.get('group')
+        month   = validated_data['month']
+        year    = validated_data['year']
+
+        # Mavjud bo'lsa — yangilash (upsert); bo'lmasa — yaratish
+        existing = Payment.objects.filter(
+            student=student, group=group, month=month, year=year
+        ).first()
+        if existing:
+            existing.paid_amount  = validated_data['paid_amount']
+            existing.amount       = validated_data.get('amount', existing.amount)
+            existing.note         = validated_data.get('note', existing.note)
+            existing.received_by  = validated_data['received_by']
+            existing.payment_date = validated_data['payment_date']
+            existing.save()
+            return existing
+
+        return Payment.objects.create(**validated_data)
 
 
 class PaymentUpdateSerializer(serializers.ModelSerializer):

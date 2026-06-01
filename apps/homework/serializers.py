@@ -78,7 +78,7 @@ class SubmissionSerializer(serializers.ModelSerializer):
     max_score         = serializers.IntegerField(source='assignment.max_score', read_only=True)
     status_display    = serializers.CharField(source='get_status_display', read_only=True)
     score_percentage  = serializers.FloatField(read_only=True)
-    graded_by_name    = serializers.CharField(source='graded_by.full_name', read_only=True)
+    graded_by_name    = serializers.CharField(source='graded_by.full_name', read_only=True, allow_null=True, default=None)
 
     class Meta:
         model  = Submission
