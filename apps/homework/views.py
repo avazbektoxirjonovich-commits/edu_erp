@@ -139,11 +139,21 @@ class SubmitAssignmentView(APIView):
 
     def post(self, request, pk):
         assignment = get_object_or_404(Assignment, pk=pk)
+        # Form maydonlar + fayllarni birlashtirish
+        data = {'assignment': str(assignment.id)}
+        data.update(request.data.dict() if hasattr(request.data, 'dict') else request.data)
+        if 'file' in request.FILES:
+            data['file'] = request.FILES['file']
         serializer = SubmissionCreateSerializer(
-            data={**request.data, 'assignment': str(assignment.id)},
+            data=data,
             context={'request': request}
         )
-        serializer.is_valid(raise_exception=True)
+        if not serializer.is_valid():
+            return Response(
+                {'detail': next(iter(serializer.errors.values()), ['Xato'])[0],
+                 'errors': serializer.errors},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         submission = serializer.save()
         logger.info(f"Topshirildi: {submission.student.full_name} | {assignment.title}")
         return Response(SubmissionSerializer(submission).data, status=status.HTTP_201_CREATED)

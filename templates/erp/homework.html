@@ -514,7 +514,7 @@ function openSubmit(assignId) {
 }
 
 async function submitAssignment() {
-  const id = document.getElementById('subAssignId').value;
+  const id     = document.getElementById('subAssignId').value;
   const answer = document.getElementById('subAnswer').value.trim();
   const fileInput = document.getElementById('subFile');
 
@@ -526,20 +526,33 @@ async function submitAssignment() {
   if (answer) fd.append('answer', answer);
   if (fileInput.files[0]) fd.append('file', fileInput.files[0]);
 
-  const token = getAccess();
-  const res = await fetch(`/api/v1/homework/assignments/${id}/submit/`, {
-    method: 'POST',
-    headers: { Authorization: 'Bearer ' + token },
-    body: fd,
-  });
+  const btn = document.querySelector('#submitModal .btn-primary');
+  if (btn) { btn.disabled=true; btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Yuklanmoqda...'; }
 
-  if (res.ok) {
+  const doFetch = async () => {
+    const token = getAccess();
+    return fetch(`/api/v1/homework/assignments/${id}/submit/`, {
+      method: 'POST',
+      headers: { Authorization: 'Bearer ' + token },
+      body: fd,
+    });
+  };
+
+  let res = await doFetch();
+  if (res.status === 401) {
+    if (await refreshAccess()) res = await doFetch();
+    else { toLogin(); return; }
+  }
+
+  if (btn) { btn.disabled=false; btn.innerHTML='<i class="fas fa-paper-plane"></i>Topshirish'; }
+
+  if (res && res.ok) {
     toast('Vazifa muvaffaqiyatli topshirildi!', 'ok');
     closeM('submitModal');
     loadAssignments();
   } else {
-    const err = await res.json().catch(() => ({}));
-    toast(err.detail || err.error || 'Xatolik yuz berdi', 'err');
+    const err = await res?.json().catch(() => ({}));
+    toast(err?.detail || err?.error || 'Xatolik yuz berdi', 'err');
   }
 }
 
@@ -600,12 +613,17 @@ async function createAssignment() {
     fd.append('xp_reward', document.getElementById('cXp').value || 50);
     fd.append('file', fileInput.files[0]);
     fd.append('status', 'active');
-    const token = getAccess();
-    res = await fetch('/api/v1/homework/assignments/', {
-      method: 'POST',
-      headers: { Authorization: 'Bearer ' + token },
-      body: fd,
-    });
+    const doFetch = async () => {
+      const token = getAccess();
+      return fetch('/api/v1/homework/assignments/', {
+        method: 'POST', headers: { Authorization: 'Bearer ' + token }, body: fd,
+      });
+    };
+    res = await doFetch();
+    if (res.status === 401) {
+      if (await refreshAccess()) res = await doFetch();
+      else { toLogin(); return; }
+    }
   } else {
     res = await post('/homework/assignments/', {
       title,
