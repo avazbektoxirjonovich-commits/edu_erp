@@ -538,21 +538,24 @@ async function submitAssignment() {
     });
   };
 
-  let res = await doFetch();
-  if (res.status === 401) {
-    if (await refreshAccess()) res = await doFetch();
-    else { toLogin(); return; }
-  }
-
-  if (btn) { btn.disabled=false; btn.innerHTML='<i class="fas fa-paper-plane"></i>Topshirish'; }
-
-  if (res && res.ok) {
-    toast('Vazifa muvaffaqiyatli topshirildi!', 'ok');
-    closeM('submitModal');
-    loadAssignments();
-  } else {
-    const err = await res?.json().catch(() => ({}));
-    toast(err?.detail || err?.error || 'Xatolik yuz berdi', 'err');
+  try {
+    let res = await doFetch();
+    if (res.status === 401) {
+      if (await refreshAccess()) res = await doFetch();
+      else { toLogin(); return; }
+    }
+    if (res && res.ok) {
+      toast('Vazifa muvaffaqiyatli topshirildi!', 'ok');
+      closeM('submitModal');
+      loadAssignments();
+    } else {
+      const err = await res?.json().catch(() => ({}));
+      toast(err?.detail || err?.error || 'Xatolik yuz berdi', 'err');
+    }
+  } catch {
+    toast('Tarmoq xatoligi', 'err');
+  } finally {
+    if (btn) { btn.disabled=false; btn.innerHTML='<i class="fas fa-paper-plane"></i>Topshirish'; }
   }
 }
 
