@@ -51,9 +51,20 @@ class PaymentViewSet(generics.ListCreateAPIView):
         serializer = PaymentCreateSerializer(
             data=request.data, context={'request': request}
         )
-        serializer.is_valid(raise_exception=True)
-        payment = serializer.save()
-        # To'liq response — status, debt_amount va boshqa maydonlar bilan
+        if not serializer.is_valid():
+            # Xato tafsilotlarini detail kalitiga o'rab qaytarish
+            first_error = next(iter(serializer.errors.values()), ['Noto\'g\'ri ma\'lumot'])[0]
+            return Response(
+                {'detail': str(first_error), 'errors': serializer.errors},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        try:
+            payment = serializer.save()
+        except Exception as e:
+            return Response(
+                {'detail': f'Saqlashda xato: {str(e)}'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         return Response(
             PaymentSerializer(payment).data,
             status=status.HTTP_201_CREATED,

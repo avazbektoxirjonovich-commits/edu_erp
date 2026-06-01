@@ -59,11 +59,10 @@ class BulkAttendanceView(APIView):
         if serializer.is_valid():
             created = serializer.save()
             logger.info(f"Bulk davomat: {len(created)} ta yozuv | {request.user}")
-            return Response({
-                'success': True,
-                'saved':   len(created),
-                'detail':  f"{len(created)} ta davomat saqlandi.",
-            }, status=status.HTTP_200_OK)
+            return Response(
+                {'created': len(created)},
+                status=status.HTTP_201_CREATED,
+            )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
