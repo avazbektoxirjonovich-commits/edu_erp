@@ -20,20 +20,39 @@ class PaymentSerializer(serializers.ModelSerializer):
 
 
 class PaymentCreateSerializer(serializers.ModelSerializer):
+    # group va amount ixtiyoriy — avtomatik to'ldiriladi
+    group  = serializers.PrimaryKeyRelatedField(
+        queryset=Payment._meta.get_field('group').related_model.objects.all(),
+        required=False, allow_null=True
+    )
+    amount = serializers.DecimalField(
+        max_digits=10, decimal_places=0, required=False, allow_null=True
+    )
+
     class Meta:
         model  = Payment
         fields = ['student', 'group', 'month', 'year', 'amount', 'paid_amount', 'note']
 
     def validate(self, data):
+        student = data['student']
+
+        # group ko'rsatilmasa — student ning joriy guruhidan olish
+        if not data.get('group'):
+            data['group'] = student.group
+
+        # amount ko'rsatilmasa — guruh oylik to'lovidan olish
+        if not data.get('amount'):
+            data['amount'] = data['group'].monthly_fee if data.get('group') else 0
+
         # Bir oy uchun ikki marta yozuv bo'lmasin
-        if Payment.objects.filter(
-            student=data['student'],
+        if data.get('group') and Payment.objects.filter(
+            student=student,
             group=data['group'],
             month=data['month'],
-            year=data['year']
+            year=data['year'],
         ).exists():
             raise serializers.ValidationError(
-                f"{data['year']}/{data['month']:02d} uchun to'lov allaqachon mavjud"
+                f"{data['year']}/{data['month']:02d} uchun to'lov allaqachon mavjud."
             )
         return data
 

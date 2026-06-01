@@ -19,7 +19,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class UserCreateSerializer(serializers.ModelSerializer):
     """Yangi foydalanuvchi yaratish"""
-    password  = serializers.CharField(write_only=True, min_length=8)
+    password  = serializers.CharField(write_only=True, min_length=4)
     password2 = serializers.CharField(write_only=True)
 
     class Meta:

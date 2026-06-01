@@ -13,7 +13,8 @@ from django.utils import timezone
 ALLOWED_HOMEWORK_EXTENSIONS = [
     'pdf', 'doc', 'docx', 'txt', 'odt',
     'jpg', 'jpeg', 'png', 'gif',
-    'ppt', 'pptx', 'xls', 'xlsx', 'zip',
+    'ppt', 'pptx', 'xls', 'xlsx', 'csv',
+    'zip', 'rar', 'mp4', 'mp3',
 ]
 
 logger = logging.getLogger('apps.homework')

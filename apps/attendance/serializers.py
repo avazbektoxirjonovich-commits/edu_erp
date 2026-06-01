@@ -48,8 +48,11 @@ class BulkAttendanceSerializer(serializers.Serializer):
             raise serializers.ValidationError(
                 f"O'quvchilar topilmadi: {', '.join(missing)}"
             )
-        for r in records:
-            r['student'] = found[str(r['student'])]
+        # Yangi list — OrderedDict/ReturnDict ni o'zgartirmasdan
+        data['records'] = [
+            {**r, 'student': found[str(r['student'])]}
+            for r in records
+        ]
         return data
 
     def create(self, validated_data):
