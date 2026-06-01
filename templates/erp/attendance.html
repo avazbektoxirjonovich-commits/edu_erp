@@ -196,12 +196,22 @@ function updateSummary(){
 async function submitAttendance(){
   const gid=document.getElementById('fGroup').value;
   const date=document.getElementById('fDate').value;
-  const records=students.map(s=>({student:s.id,group:gid,date,status:attMap[s.id]||'present'}));
+  if(!gid||!date){toast("Guruh va sanani tanlang",'wrn');return;}
+  const records=students.map(s=>({student:s.id,status:attMap[s.id]||'present'}));
   const btn=document.getElementById('submitBtn');
   btn.disabled=true;
-  const r=await post('/attendance/bulk-create/',{records});
-  if(r?.ok||r?.status===201){toast("Davomat saqlandi!",'ok');loadHistory(gid);}
-  else{const e=await r?.json();toast(e?.detail||"Xatolik",'err');}
+  const r=await post('/attendance/bulk-create/',{group:gid,date,records});
+  if(!r){toast("Tarmoq xatoligi",'err');btn.disabled=false;return;}
+  let body;try{body=await r.json();}catch{body=null;}
+  if(r.ok||r.status===201){toast("Davomat saqlandi!",'ok');loadHistory(gid);}
+  else{
+    console.error('Attendance error:',body);
+    const errs=body?.errors||body;
+    const msg=errs&&typeof errs==='object'
+      ?Object.entries(errs).map(([f,v])=>`${f}: ${[].concat(v).join(', ')}`).join(' | ')
+      :body?.detail||`Xatolik (${r.status})`;
+    toast(msg,'err');
+  }
   btn.disabled=false;
 }
 

@@ -63,7 +63,12 @@ class BulkAttendanceView(APIView):
                 {'created': len(created)},
                 status=status.HTTP_201_CREATED,
             )
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        first_field = next(iter(serializer.errors.keys()), 'unknown')
+        first_error = next(iter(serializer.errors.values()), ['Xato'])[0]
+        return Response(
+            {'detail': f'{first_field}: {first_error}', 'errors': serializer.errors},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
 
 class MyAttendanceView(generics.ListAPIView):
