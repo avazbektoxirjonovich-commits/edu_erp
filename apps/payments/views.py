@@ -52,10 +52,10 @@ class PaymentViewSet(generics.ListCreateAPIView):
             data=request.data, context={'request': request}
         )
         if not serializer.is_valid():
-            # Xato tafsilotlarini detail kalitiga o'rab qaytarish
-            first_error = next(iter(serializer.errors.values()), ['Noto\'g\'ri ma\'lumot'])[0]
+            first_field = next(iter(serializer.errors.keys()), 'unknown')
+            first_error = next(iter(serializer.errors.values()), ['Xato'])[0]
             return Response(
-                {'detail': str(first_error), 'errors': serializer.errors},
+                {'detail': f'{first_field}: {first_error}', 'errors': serializer.errors},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         try:
