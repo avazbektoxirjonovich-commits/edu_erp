@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.utils import timezone
 from .models import Payment
+from apps.groups.models import Group
 
 
 class PaymentSerializer(serializers.ModelSerializer):
@@ -20,18 +21,16 @@ class PaymentSerializer(serializers.ModelSerializer):
 
 
 class PaymentCreateSerializer(serializers.ModelSerializer):
-    # group va amount ixtiyoriy — avtomatik to'ldiriladi
-    group  = serializers.PrimaryKeyRelatedField(
-        queryset=Payment._meta.get_field('group').related_model.objects.all(),
-        required=False, allow_null=True
-    )
     amount = serializers.DecimalField(
-        max_digits=10, decimal_places=0, required=False, allow_null=True
+        max_digits=10, decimal_places=0, required=False, default=0
     )
 
     class Meta:
         model  = Payment
         fields = ['student', 'group', 'month', 'year', 'amount', 'paid_amount', 'note']
+        extra_kwargs = {
+            'group': {'required': False, 'allow_null': True},
+        }
 
     def validate(self, data):
         student = data['student']
