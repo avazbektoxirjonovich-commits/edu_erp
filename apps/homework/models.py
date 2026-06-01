@@ -108,12 +108,15 @@ class Submission(models.Model):
                       related_name='submissions', verbose_name="O'quvchi",
                       db_index=True
                   )
-    answer      = models.TextField(blank=True, verbose_name='Javob matni')
-    file        = models.FileField(
-                      upload_to='homework/submissions/', blank=True, null=True,
-                      validators=[FileExtensionValidator(ALLOWED_HOMEWORK_EXTENSIONS)],
-                      verbose_name='Topshirilgan fayl'
-                  )
+    answer       = models.TextField(blank=True, verbose_name='Javob matni')
+    file         = models.FileField(
+                       upload_to='homework/submissions/', blank=True, null=True,
+                       validators=[FileExtensionValidator(ALLOWED_HOMEWORK_EXTENSIONS)],
+                       verbose_name='Topshirilgan fayl'
+                   )
+    # Fayl binary — Render ephemeral storage muammosi hal qilingan
+    file_name    = models.CharField(max_length=255, blank=True, verbose_name='Fayl nomi')
+    file_content = models.BinaryField(null=True, blank=True, editable=False, verbose_name='Fayl (binary)')
     score       = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name='Ball')
     feedback    = models.TextField(blank=True, verbose_name="O'qituvchi izohi")
     status      = models.CharField(

@@ -79,22 +79,27 @@ class SubmissionSerializer(serializers.ModelSerializer):
     status_display    = serializers.CharField(source='get_status_display', read_only=True)
     score_percentage  = serializers.FloatField(read_only=True)
     graded_by_name    = serializers.CharField(source='graded_by.full_name', read_only=True, allow_null=True, default=None)
+    has_file          = serializers.SerializerMethodField()
 
     class Meta:
         model  = Submission
         fields = [
             'id', 'assignment', 'assignment_title', 'student', 'student_name',
-            'answer', 'file', 'score', 'max_score', 'score_percentage',
+            'answer', 'file', 'file_name', 'has_file',
+            'score', 'max_score', 'score_percentage',
             'feedback', 'status', 'status_display',
             'submitted_at', 'graded_at', 'graded_by_name',
         ]
-        read_only_fields = ['id', 'submitted_at', 'graded_at', 'graded_by_name']
+        read_only_fields = ['id', 'submitted_at', 'graded_at', 'graded_by_name', 'file_name', 'has_file']
+
+    def get_has_file(self, obj):
+        return bool(obj.file_name)
 
 
 class SubmissionCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model  = Submission
-        fields = ['assignment', 'answer', 'file']
+        fields = ['assignment', 'answer']
 
     def validate_assignment(self, value):
         if value.status != Assignment.Status.ACTIVE:

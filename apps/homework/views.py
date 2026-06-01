@@ -1,8 +1,10 @@
 import logging
+import mimetypes
 from rest_framework import generics, status, filters
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from django.http import HttpResponse
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -139,22 +141,36 @@ class SubmitAssignmentView(APIView):
 
     def post(self, request, pk):
         assignment = get_object_or_404(Assignment, pk=pk)
-        # Form maydonlar + fayllarni birlashtirish
+
         data = {'assignment': str(assignment.id)}
         data.update(request.data.dict() if hasattr(request.data, 'dict') else request.data)
-        if 'file' in request.FILES:
-            data['file'] = request.FILES['file']
+
         serializer = SubmissionCreateSerializer(
-            data=data,
-            context={'request': request}
+            data=data, context={'request': request}
         )
         if not serializer.is_valid():
+            first_err = next(iter(serializer.errors.values()), ['Xato'])[0]
             return Response(
-                {'detail': next(iter(serializer.errors.values()), ['Xato'])[0],
-                 'errors': serializer.errors},
+                {'detail': str(first_err), 'errors': serializer.errors},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
         submission = serializer.save()
+
+        # Faylni bazada (binary) saqlash — Render ephemeral storage muammosini hal qiladi
+        uploaded = request.FILES.get('file')
+        if uploaded:
+            max_size = 5 * 1024 * 1024  # 5 MB
+            if uploaded.size > max_size:
+                submission.delete()
+                return Response(
+                    {'detail': f'Fayl hajmi 5MB dan oshmasligi kerak (yuborilgan: {uploaded.size//1024}KB).'},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            submission.file_content = uploaded.read()
+            submission.file_name    = uploaded.name
+            submission.save(update_fields=['file_content', 'file_name'])
+
         logger.info(f"Topshirildi: {submission.student.full_name} | {assignment.title}")
         return Response(SubmissionSerializer(submission).data, status=status.HTTP_201_CREATED)
 
@@ -190,6 +206,36 @@ class GradeSubmissionView(APIView):
             graded_by=request.user,
         )
         return Response(SubmissionSerializer(submission).data)
+
+
+class SubmissionFileView(APIView):
+    """GET /api/v1/homework/submissions/{id}/file/ — faylni yuklab olish"""
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, pk):
+        submission = get_object_or_404(
+            Submission.objects.select_related('student', 'assignment__group'), pk=pk
+        )
+        user = request.user
+
+        # Ruxsat tekshiruvi
+        if user.is_student:
+            student = getattr(user, 'student_profile', None)
+            if not student or submission.student != student:
+                return Response({'detail': "Ruxsat yo'q."}, status=403)
+        elif user.is_teacher:
+            teacher = getattr(user, 'teacher_profile', None)
+            if not teacher or not teacher.groups.filter(pk=submission.assignment.group.pk).exists():
+                return Response({'detail': "Ruxsat yo'q."}, status=403)
+
+        if not submission.file_content:
+            return Response({'detail': "Fayl topilmadi."}, status=404)
+
+        content_type, _ = mimetypes.guess_type(submission.file_name or 'file')
+        content_type = content_type or 'application/octet-stream'
+        resp = HttpResponse(bytes(submission.file_content), content_type=content_type)
+        resp['Content-Disposition'] = f'attachment; filename="{submission.file_name or "file"}"'
+        return resp
 
 
 class MyAssignmentsView(generics.ListAPIView):
