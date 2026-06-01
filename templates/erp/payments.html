@@ -158,8 +158,9 @@ async function sendReminders(){
   const y=document.getElementById('fYear')?.value||new Date().getFullYear();
   if(!confirm(`${y}-yil ${m}-oy uchun qarzdorlarga eslatma yuborilsinmi?`))return;
   const r=await post('/notifications/send-reminders/',{month:parseInt(m),year:parseInt(y)});
-  const d=await r?.json();
-  if(r?.ok) toast(d?.detail||`${d?.sent} ta eslatma yuborildi`,'ok');
+  if(!r){toast('Tarmoq xatoligi','err');return;}
+  let d;try{d=await r.json();}catch{d=null;}
+  if(r.ok) toast(d?.detail||`${d?.sent||0} ta eslatma yuborildi`,'ok');
   else toast(d?.detail||'Xatolik','err');
 }
 
@@ -253,6 +254,7 @@ async function initStudents(){
 function openQuickPay(sid,name,debt){
   document.getElementById('pStudent').value=sid;
   document.getElementById('pAmount').value=debt||'';
+  document.getElementById('pNote').value='';
   openM('payModal');
 }
 
@@ -387,6 +389,8 @@ async function doBulkPay(){
   const selected=[...document.querySelectorAll('.bulk-st-cb:checked')];
   if(!selected.length){toast("O'quvchi tanlanmagan",'wrn');return;}
 
+  const btn=document.querySelector('#bulkModal .btn-primary');
+  if(btn) btn.disabled=true;
   let ok=0, err=0;
   for(const cb of selected){
     const sid=cb.dataset.id;
@@ -396,6 +400,7 @@ async function doBulkPay(){
     if(r&&(r.ok||r.status===201)) ok++;
     else{err++;try{const e=await r?.json();console.error('Bulk pay err',sid,e);}catch{}}
   }
+  if(btn) btn.disabled=false;
   closeM('bulkModal');
   if(ok) toast(`${ok} ta to'lov saqlandi`+(err?`, ${err} ta xatolik`:''),'ok');
   else toast('Xatolik yuz berdi','err');
