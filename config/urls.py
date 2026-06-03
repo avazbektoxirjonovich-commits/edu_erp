@@ -55,6 +55,7 @@ api_v1_urlpatterns = [
     path('notifications/', include('apps.notifications.urls')),
     path('leaderboard/',   include('apps.students.leaderboard_urls')),
     path('homework/',      include('apps.homework.urls')),
+    path('vlt-ai/',        include('apps.vlt_ai.api.urls')),
     path('reports/monthly-pdf/', MonthlyReportPDFView.as_view(), name='monthly-pdf'),
     path('token/',         TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(),    name='token_refresh'),

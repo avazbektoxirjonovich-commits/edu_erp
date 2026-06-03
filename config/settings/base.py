@@ -35,6 +35,7 @@ LOCAL_APPS = [
     'apps.dashboard',
     'apps.notifications',
     'apps.homework',
+    'apps.vlt_ai',
 ]
 
 # jazzmin must come BEFORE django.contrib.admin
@@ -172,6 +173,12 @@ EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
 DEFAULT_FROM_EMAIL = config('EMAIL_HOST_USER', default='noreply@erp.uz')
 
 MONTHLY_FEE_DEFAULT = config('MONTHLY_FEE_DEFAULT', default=500000, cast=int)
+
+# ── VLT AI ──────────────────────────────────────────────────────
+VLT_AI_PROVIDER   = config('VLT_AI_PROVIDER',   default='anthropic')
+VLT_AI_MODEL      = config('VLT_AI_MODEL',      default='claude-haiku-4-5-20251001')
+VLT_AI_MAX_TOKENS = config('VLT_AI_MAX_TOKENS', default=1024, cast=int)
+ANTHROPIC_API_KEY = config('ANTHROPIC_API_KEY', default='')
 
 # Telegram notification settings (optional)
 TELEGRAM_BOT_TOKEN = config('TELEGRAM_BOT_TOKEN', default='')

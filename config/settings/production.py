@@ -82,6 +82,13 @@ _cloudinary_configured = bool(os.environ.get('CLOUDINARY_CLOUD_NAME'))
 if _cloudinary_configured:
     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
+# ── VLT AI ────────────────────────────────────────────────────
+import os as _os
+VLT_AI_PROVIDER   = _os.environ.get('VLT_AI_PROVIDER',   'anthropic')
+VLT_AI_MODEL      = _os.environ.get('VLT_AI_MODEL',      'claude-haiku-4-5-20251001')
+VLT_AI_MAX_TOKENS = int(_os.environ.get('VLT_AI_MAX_TOKENS', '1024'))
+ANTHROPIC_API_KEY = _os.environ.get('ANTHROPIC_API_KEY', '')
+
 # Logging
 LOGGING = {
     'version': 1,
