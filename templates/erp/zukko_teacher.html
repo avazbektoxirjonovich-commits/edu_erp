@@ -217,8 +217,14 @@
             <option value="easy">Oson</option><option value="medium">O'rta</option><option value="hard">Qiyin</option>
           </select>
         </div>
-        <div class="fg"><label>Ball</label><input class="fc" type="number" id="zkCPoints" value="20" min="1"></div>
+        <div class="fg"><label>Dasturlash tili</label>
+          <select class="fc fc-sel" id="zkCLang">
+            <option value="python">Python</option>
+            <option value="cpp">C++</option>
+          </select>
+        </div>
       </div>
+      <div class="fg"><label>Ball</label><input class="fc" type="number" id="zkCPoints" value="20" min="1"></div>
     </div>
     <div class="m-foot">
       <button class="btn btn-ghost" onclick="closeM('zkCodingModal')">Bekor qilish</button>
@@ -471,6 +477,7 @@ async function zkCreateCoding() {
       input_format: document.getElementById('zkCInputFmt').value,
       output_format: document.getElementById('zkCOutputFmt').value,
       difficulty: document.getElementById('zkCDifficulty').value,
+      programming_language: document.getElementById('zkCLang').value,
       points: parseInt(document.getElementById('zkCPoints').value) || 20,
     });
     if (res?.ok) {

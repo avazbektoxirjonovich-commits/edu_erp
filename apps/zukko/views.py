@@ -67,15 +67,15 @@ def _student_xp(user):
     return profile.xp_points if profile else 0
 
 
-def _run_test_cases(code, test_cases, time_limit_seconds):
+def _run_test_cases(code, test_cases, time_limit_seconds, language='python'):
     """Talaba kodini har bir yashirin test case bilan sandbox orqali ishga tushiradi."""
     results = []
     passed = 0
-    timeout = max(1, min(time_limit_seconds, 10))
+    timeout = max(1, min(time_limit_seconds, 30))
     for tc in test_cases:
         inp = tc.get('input', '')
         expected = str(tc.get('expected_output', '')).strip()
-        output = execute_student_code(code, inp, timeout=timeout)
+        output = execute_student_code(code, inp, timeout=timeout, language=language)
         actual = output.strip()
         ok = not actual.startswith('XATO:') and actual == expected
         results.append({'input': inp, 'expected': expected, 'actual': actual, 'passed': ok})
@@ -323,7 +323,8 @@ class SubmitChallengeView(APIView):
             return duplicate_error
 
         test_results, passed_count, total_count = _run_test_cases(
-            data['code'], challenge.hidden_test_cases, challenge.time_limit_seconds
+            data['code'], challenge.hidden_test_cases, challenge.time_limit_seconds,
+            language=challenge.programming_language,
         )
 
         if total_count == 0 or passed_count == 0:
