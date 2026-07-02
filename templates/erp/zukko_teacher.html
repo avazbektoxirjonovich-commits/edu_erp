@@ -405,23 +405,24 @@ async function zkCreateSession() {
   const group = document.getElementById('zkSGroup').value;
   if (!title) { toast('Nomi kiritish shart', 'wrn'); return; }
   if (!group) { toast('Guruh tanlash shart', 'wrn'); return; }
-
-  const res = await post('/challenges/sessions/', {
-    title, group,
-    session_type: document.getElementById('zkSType').value,
-    bugfind_count: parseInt(document.getElementById('zkSBugCount').value) || 0,
-    coding_count: parseInt(document.getElementById('zkSCodingCount').value) || 0,
-    time_limit_minutes: parseInt(document.getElementById('zkSTimeLimit').value) || 45,
-  });
-  if (res?.ok) {
-    toast('Sessiya yaratildi', 'ok');
-    closeM('zkSessionModal');
-    document.getElementById('zkSTitle').value = '';
-    zkLoadStats();
-  } else {
-    const err = await res?.json().catch(() => ({}));
-    toast(err?.detail || JSON.stringify(err) || 'Xatolik yuz berdi', 'err');
-  }
+  try {
+    const res = await post('/challenges/sessions/', {
+      title, group,
+      session_type: document.getElementById('zkSType').value,
+      bugfind_count: parseInt(document.getElementById('zkSBugCount').value) || 0,
+      coding_count: parseInt(document.getElementById('zkSCodingCount').value) || 0,
+      time_limit_minutes: parseInt(document.getElementById('zkSTimeLimit').value) || 45,
+    });
+    if (res?.ok) {
+      toast('Sessiya yaratildi', 'ok');
+      closeM('zkSessionModal');
+      document.getElementById('zkSTitle').value = '';
+      zkLoadStats();
+    } else {
+      const err = res ? await res.json().catch(() => ({})) : {};
+      toast(err?.detail || (res ? `HTTP ${res.status}` : 'Token muddati tugagan'), 'err');
+    }
+  } catch(e) { toast('Ulanish xatosi: ' + (e?.message || ''), 'err'); }
 }
 
 async function zkCreateBugfind() {
@@ -431,24 +432,26 @@ async function zkCreateBugfind() {
   const correct_code = document.getElementById('zkBCorrect').value;
   const bug_explanation = document.getElementById('zkBExplain').value.trim();
   if (!title || !description || !buggy_code || !correct_code || !bug_explanation) {
-    toast('Barcha majburiy maydonlarni to\'ldiring', 'wrn'); return;
+    toast('Barcha * maydonlarni to\'ldiring', 'wrn'); return;
   }
-
-  const res = await post('/challenges/bugfind/', {
-    title, description, buggy_code, correct_code, bug_explanation,
-    bug_line_number: parseInt(document.getElementById('zkBLine').value) || 1,
-    difficulty: document.getElementById('zkBDifficulty').value,
-    points: parseInt(document.getElementById('zkBPoints').value) || 10,
-    programming_language: document.getElementById('zkBLang').value.trim() || 'python',
-  });
-  if (res?.ok) {
-    toast('Bug-find topshiriq yaratildi', 'ok');
-    closeM('zkBugfindModal');
-    zkLoadStats();
-  } else {
-    const err = await res?.json().catch(() => ({}));
-    toast(err?.detail || JSON.stringify(err) || 'Xatolik yuz berdi', 'err');
-  }
+  try {
+    const res = await post('/challenges/bugfind/', {
+      title, description, buggy_code, correct_code, bug_explanation,
+      bug_line_number: parseInt(document.getElementById('zkBLine').value) || 1,
+      difficulty: document.getElementById('zkBDifficulty').value,
+      points: parseInt(document.getElementById('zkBPoints').value) || 10,
+      programming_language: document.getElementById('zkBLang').value.trim() || 'python',
+    });
+    if (res?.ok) {
+      toast('Bug-find topshiriq yaratildi ✓', 'ok');
+      closeM('zkBugfindModal');
+      document.querySelectorAll('#zkBugfindModal .fc').forEach(el => el.value = el.tagName === 'SELECT' ? el.options[0]?.value : '');
+      zkLoadStats();
+    } else {
+      const err = res ? await res.json().catch(() => ({})) : {};
+      toast(err?.detail || (res ? `HTTP ${res.status} xato` : 'Token muddati tugagan, qayta kiring'), 'err', 6000);
+    }
+  } catch(e) { toast('Ulanish xatosi: ' + (e?.message || ''), 'err', 6000); }
 }
 
 async function zkCreateCoding() {
@@ -457,27 +460,29 @@ async function zkCreateCoding() {
   const solution_code = document.getElementById('zkCSolution').value;
   const testsRaw = document.getElementById('zkCTests').value.trim();
   if (!title || !description || !solution_code || !testsRaw) {
-    toast('Barcha majburiy maydonlarni to\'ldiring', 'wrn'); return;
+    toast('Barcha * maydonlarni to\'ldiring', 'wrn'); return;
   }
   let hidden_test_cases;
   try { hidden_test_cases = JSON.parse(testsRaw); }
   catch { toast('Yashirin testlar JSON formatida bo\'lishi kerak', 'err'); return; }
-
-  const res = await post('/challenges/coding/', {
-    title, description, solution_code, hidden_test_cases,
-    input_format: document.getElementById('zkCInputFmt').value,
-    output_format: document.getElementById('zkCOutputFmt').value,
-    difficulty: document.getElementById('zkCDifficulty').value,
-    points: parseInt(document.getElementById('zkCPoints').value) || 20,
-  });
-  if (res?.ok) {
-    toast('Coding topshiriq yaratildi', 'ok');
-    closeM('zkCodingModal');
-    zkLoadStats();
-  } else {
-    const err = await res?.json().catch(() => ({}));
-    toast(err?.detail || JSON.stringify(err) || 'Xatolik yuz berdi', 'err');
-  }
+  try {
+    const res = await post('/challenges/coding/', {
+      title, description, solution_code, hidden_test_cases,
+      input_format: document.getElementById('zkCInputFmt').value,
+      output_format: document.getElementById('zkCOutputFmt').value,
+      difficulty: document.getElementById('zkCDifficulty').value,
+      points: parseInt(document.getElementById('zkCPoints').value) || 20,
+    });
+    if (res?.ok) {
+      toast('Coding topshiriq yaratildi ✓', 'ok');
+      closeM('zkCodingModal');
+      document.querySelectorAll('#zkCodingModal .fc').forEach(el => el.value = el.tagName === 'SELECT' ? el.options[0]?.value : '');
+      zkLoadStats();
+    } else {
+      const err = res ? await res.json().catch(() => ({})) : {};
+      toast(err?.detail || (res ? `HTTP ${res.status} xato` : 'Token muddati tugagan, qayta kiring'), 'err', 6000);
+    }
+  } catch(e) { toast('Ulanish xatosi: ' + (e?.message || ''), 'err', 6000); }
 }
 
 if (!initAuth()) { /* toLogin() already called */ } else {
