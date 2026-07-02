@@ -70,6 +70,13 @@ class CodingDetailSerializer(serializers.ModelSerializer):
 
 class CodingTeacherSerializer(serializers.ModelSerializer):
     """O'qituvchi uchun — to'liq."""
+    input_format = serializers.CharField(allow_blank=True, default='')
+    output_format = serializers.CharField(allow_blank=True, default='')
+    constraints = serializers.CharField(allow_blank=True, default='')
+    sample_input = serializers.CharField(allow_blank=True, default='')
+    sample_output = serializers.CharField(allow_blank=True, default='')
+    sample_explanation = serializers.CharField(allow_blank=True, default='')
+    starter_code = serializers.CharField(allow_blank=True, default='')
 
     class Meta:
         model = CodingChallenge
