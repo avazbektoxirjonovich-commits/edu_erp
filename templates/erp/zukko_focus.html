@@ -134,11 +134,10 @@ async function autoSubmit() {
 async function loadSession() {
   if (!SHARE_LINK) { showError("URL noto'g'ri. Share link topilmadi."); return; }
 
-  let data;
-  try { data = await get(`/challenges/start/${SHARE_LINK}/`); }
-  catch (e) {
-    const msg = e?.data?.detail || e?.message || "Sessiyaga kirishda xatolik";
-    showError(msg);
+  // get() xato bo'lsa null qaytaradi — throw qilmaydi
+  const data = await get(`/challenges/start/${SHARE_LINK}/`);
+  if (!data) {
+    showError("Sessiya topilmadi yoki hali aktivlashtirilmagan. Ustozingizdan sessiya havolasini so'rang.");
     return;
   }
 
@@ -151,7 +150,10 @@ async function loadSession() {
   const cd = (data.coding_challenges  || []).map(c => ({...c, kind:'coding'}));
   state.challenges = [...bf, ...cd];
 
-  if (!state.challenges.length) { showError("Bu sessiyada topshiriqlar yo'q."); return; }
+  if (!state.challenges.length) {
+    showError("Bu sessiyada hali topshiriqlar yo'q. Ustoz avval Bug-find yoki Coding topshiriqlar yaratishi kerak.");
+    return;
+  }
 
   document.getElementById('zkSessionTitle').textContent = data.title;
   document.getElementById('zkBar').style.display = '';

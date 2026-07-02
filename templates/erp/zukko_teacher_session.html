@@ -195,27 +195,30 @@ function susBdg(score) {
 }
 
 // ── Load ───────────────────────────────────────────────────────────────
+// ESLATMA: base.html get() xato bo'lsa throw qilmaydi — null qaytaradi
 async function loadAll() {
   if (!SESSION_ID) { showErr("URL noto'g'ri. Session ID topilmadi."); return; }
 
-  try {
-    const [session, results] = await Promise.all([
-      get('/challenges/sessions/' + SESSION_ID + '/'),
-      get('/challenges/sessions/' + SESSION_ID + '/results/'),
-    ]);
-    zkSession = session;
-    zkResults = results || {};
-
-    if (zkSession.group) {
-      const rData = await get('/students/?group=' + zkSession.group + '&page_size=200');
-      zkRoster = rData?.results || (Array.isArray(rData) ? rData : []);
-    }
-
-    buildPerUser();
-    renderPage();
-  } catch (e) {
-    showErr(e?.data?.detail || "Ma'lumotlarni yuklashda xatolik");
+  // 1. Sessiya (majburiy)
+  const session = await get('/challenges/sessions/' + SESSION_ID + '/');
+  if (!session) {
+    showErr("Sessiya topilmadi yoki ruxsat yo'q. Ehtimol guruh sizga tegishli emas.");
+    return;
   }
+  zkSession = session;
+
+  // 2. Natijalar (yangi sessiyada bo'sh bo'lishi normal)
+  const results = await get('/challenges/sessions/' + SESSION_ID + '/results/');
+  zkResults = results || {};
+
+  // 3. Guruh ro'yxati (xato bo'lsa sahifani buzmasin)
+  if (zkSession.group) {
+    const rData = await get('/students/?group=' + zkSession.group + '&page_size=200');
+    zkRoster = rData?.results || (Array.isArray(rData) ? rData : []);
+  }
+
+  buildPerUser();
+  renderPage();
 }
 
 function buildPerUser() {

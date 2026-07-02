@@ -5,7 +5,7 @@ from datetime import datetime, timezone as dt_timezone
 from difflib import SequenceMatcher
 
 from django.contrib.auth import get_user_model
-from django.db.models import Avg
+from django.db.models import Avg, Q
 from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
@@ -129,7 +129,9 @@ class ChallengeSessionViewSet(viewsets.ModelViewSet):
         user = self.request.user
         if user.is_staff_level:
             return ChallengeSession.objects.all()
-        return ChallengeSession.objects.filter(group__teacher__user=user)
+        return ChallengeSession.objects.filter(
+            Q(group__teacher__user=user) | Q(created_by=user)
+        )
 
     def perform_create(self, serializer):
         session = serializer.save(created_by=self.request.user)
