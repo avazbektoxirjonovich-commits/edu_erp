@@ -201,7 +201,7 @@ FACE_LOCKOUT_MINUTES  = config('FACE_LOCKOUT_MINUTES',  default=5,     cast=int)
 # Comma-separated roles that require face auth when FACE_AUTH_ENABLED=True
 FACE_REQUIRED_ROLES   = config(
     'FACE_REQUIRED_ROLES',
-    default='admin,developer',
+    default='student',
     cast=lambda v: [r.strip() for r in v.split(',') if r.strip()],
 )
 
