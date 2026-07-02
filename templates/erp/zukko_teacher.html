@@ -20,6 +20,13 @@
 
 .zk-empty{text-align:center;padding:50px 20px;color:var(--muted)}
 .zk-empty i{font-size:2.6rem;opacity:.15;margin-bottom:14px;display:block}
+
+.zk-lang-btn{display:inline-flex;align-items:center;gap:7px;padding:8px 18px;border-radius:8px;border:2px solid var(--border);background:#fff;font-size:.82rem;font-weight:700;color:var(--muted);cursor:pointer;transition:all .18s;font-family:inherit}
+.zk-lang-btn.active{border-color:var(--accent);background:var(--accent-light);color:var(--accent)}
+.zk-lang-btn:hover:not(.active){border-color:var(--accent);color:var(--accent)}
+.zk-test-row{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:start;background:var(--bg);border-radius:8px;padding:10px;border:1px solid var(--border)}
+.zk-test-row textarea{font-family:monospace;font-size:.78rem;min-height:54px;resize:vertical}
+.zk-test-row-num{font-size:.68rem;font-weight:700;color:var(--muted);margin-bottom:4px;grid-column:1/-1}
 </style>
 {% endblock %}
 
@@ -200,40 +207,63 @@
 
 <!-- ═══ CREATE CODING MODAL ═══ -->
 <div class="overlay" id="zkCodingModal">
-  <div class="modal modal-lg">
+  <div class="modal modal-lg" style="max-width:720px">
     <div class="m-head">
       <h5><i class="fas fa-code" style="color:var(--accent);margin-right:6px"></i>Yangi coding topshiriq</h5>
       <button class="m-close" onclick="closeM('zkCodingModal')"><i class="fas fa-times"></i></button>
     </div>
-    <div class="m-body">
-      <div class="fg"><label>Sarlavha *</label><input class="fc" id="zkCTitle" placeholder="Masalan: Eng katta sonni topish"></div>
-      <div class="fg"><label>Tavsif *</label><textarea class="fc" id="zkCDesc" rows="3"></textarea></div>
-      <div class="row2">
-        <div class="fg"><label>Kirish formati</label><textarea class="fc" id="zkCInputFmt" rows="2"></textarea></div>
-        <div class="fg"><label>Chiqish formati</label><textarea class="fc" id="zkCOutputFmt" rows="2"></textarea></div>
+    <div class="m-body" style="padding-bottom:4px">
+
+      <!-- 1. TIL TANLASH -->
+      <div style="margin-bottom:16px">
+        <div style="font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">Dasturlash tili</div>
+        <div style="display:flex;gap:8px">
+          <button class="zk-lang-btn active" data-lang="python" onclick="zkSetLang(this,'python')">
+            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" style="width:18px;height:18px" onerror="this.style.display='none'">
+            Python
+          </button>
+          <button class="zk-lang-btn" data-lang="cpp" onclick="zkSetLang(this,'cpp')">
+            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg" style="width:18px;height:18px" onerror="this.style.display='none'">
+            C++
+          </button>
+        </div>
+        <input type="hidden" id="zkCLang" value="python">
       </div>
-      <div class="fg"><label>Yashirin testlar (JSON) *</label>
-        <textarea class="fc" id="zkCTests" rows="3" style="font-family:monospace" placeholder='[{"input": "5\n3", "expected_output": "8"}]'></textarea>
+
+      <!-- 2. MASALA -->
+      <div class="fg"><label>Masala sarlavhasi *</label><input class="fc" id="zkCTitle" placeholder="Masalan: Ikki sonning yig'indisi"></div>
+      <div class="fg"><label>Masala sharti *</label><textarea class="fc" id="zkCDesc" rows="3" placeholder="Talabaga ko'rsatiladigan masala matni..."></textarea></div>
+
+      <!-- 3. TEST VARIANTLARI -->
+      <div style="margin-bottom:12px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <div style="font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px">Test variantlari *</div>
+          <button class="btn btn-sm btn-outline" onclick="zkAddTestRow()"><i class="fas fa-plus"></i> Test qo'shish</button>
+        </div>
+        <div id="zkTestRows" style="display:flex;flex-direction:column;gap:8px">
+          <!-- rows inject qilinadi -->
+        </div>
+        <div style="font-size:.7rem;color:var(--muted);margin-top:6px">Kirish bo'sh bo'lsa stdin yo'q deb qabul qilinadi</div>
       </div>
-      <div class="fg"><label>Yechim kodi *</label><textarea class="fc" id="zkCSolution" rows="4" style="font-family:monospace"></textarea></div>
+
+      <!-- 4. YECHIM KODI -->
+      <div class="fg"><label>Yechim kodi * <span style="font-size:.68rem;color:var(--muted)">(serverda tekshiriladi, talabaga ko'rsatilmaydi)</span></label>
+        <textarea class="fc" id="zkCSolution" rows="5" style="font-family:monospace;font-size:.8rem" placeholder="# To'g'ri yechim kodi..."></textarea>
+      </div>
+
+      <!-- 5. QIYINLIK + BALL -->
       <div class="row2">
         <div class="fg"><label>Qiyinlik</label>
           <select class="fc fc-sel" id="zkCDifficulty">
             <option value="easy">Oson</option><option value="medium">O'rta</option><option value="hard">Qiyin</option>
           </select>
         </div>
-        <div class="fg"><label>Dasturlash tili</label>
-          <select class="fc fc-sel" id="zkCLang">
-            <option value="python">Python</option>
-            <option value="cpp">C++</option>
-          </select>
-        </div>
+        <div class="fg"><label>Ball</label><input class="fc" type="number" id="zkCPoints" value="20" min="1"></div>
       </div>
-      <div class="fg"><label>Ball</label><input class="fc" type="number" id="zkCPoints" value="20" min="1"></div>
     </div>
     <div class="m-foot">
       <button class="btn btn-ghost" onclick="closeM('zkCodingModal')">Bekor qilish</button>
-      <button class="btn btn-primary" onclick="zkCreateCoding()"><i class="fas fa-save"></i>Saqlash</button>
+      <button class="btn btn-primary" onclick="zkCreateCoding()"><i class="fas fa-save"></i>Yaratish</button>
     </div>
   </div>
 </div>
@@ -409,7 +439,41 @@ async function zkActivateSession(id) {
 
 function zkOpenSessionModal() { openM('zkSessionModal'); }
 function zkOpenBugfindModal() { openM('zkBugfindModal'); }
-function zkOpenCodingModal() { openM('zkCodingModal'); }
+function zkOpenCodingModal() {
+  openM('zkCodingModal');
+  if (!document.getElementById('zkTestRows').children.length) zkAddTestRow();
+}
+
+let zkTestRowIndex = 0;
+function zkAddTestRow() {
+  zkTestRowIndex++;
+  const idx = zkTestRowIndex;
+  const div = document.createElement('div');
+  div.className = 'zk-test-row';
+  div.id = 'zkTR' + idx;
+  div.innerHTML = `
+    <div style="grid-column:1/-1;display:flex;align-items:center;justify-content:space-between">
+      <span style="font-size:.68rem;font-weight:700;color:var(--muted)">Test ${idx}</span>
+      <button type="button" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:.9rem;padding:0 2px" onclick="document.getElementById('zkTR${idx}').remove();zkRenumberTests()" title="O'chirish"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="fg" style="margin:0"><label style="font-size:.7rem">Kirish (stdin)</label><textarea class="fc zk-tin" rows="2" placeholder="5&#10;3"></textarea></div>
+    <div class="fg" style="margin:0"><label style="font-size:.7rem">Kutilgan chiqish *</label><textarea class="fc zk-tout" rows="2" placeholder="8"></textarea></div>
+  `;
+  document.getElementById('zkTestRows').appendChild(div);
+}
+
+function zkRenumberTests() {
+  document.querySelectorAll('#zkTestRows .zk-test-row').forEach((row, i) => {
+    const lbl = row.querySelector('span');
+    if (lbl) lbl.textContent = 'Test ' + (i + 1);
+  });
+}
+
+function zkSetLang(btn, lang) {
+  document.querySelectorAll('.zk-lang-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('zkCLang').value = lang;
+}
 
 async function zkCreateSession() {
   const title = document.getElementById('zkSTitle').value.trim();
@@ -468,31 +532,51 @@ async function zkCreateBugfind() {
 async function zkCreateCoding() {
   const title = document.getElementById('zkCTitle').value.trim();
   const description = document.getElementById('zkCDesc').value.trim();
-  const solution_code = document.getElementById('zkCSolution').value;
-  const testsRaw = document.getElementById('zkCTests').value.trim();
-  if (!title || !description || !solution_code || !testsRaw) {
-    toast('Barcha * maydonlarni to\'ldiring', 'wrn'); return;
-  }
-  let hidden_test_cases;
-  try { hidden_test_cases = JSON.parse(testsRaw); }
-  catch { toast('Yashirin testlar JSON formatida bo\'lishi kerak', 'err'); return; }
+  const solution_code = document.getElementById('zkCSolution').value.trim();
+  const lang = document.getElementById('zkCLang').value;
+
+  if (!title)         { toast('Masala sarlavhasini kiriting', 'wrn'); return; }
+  if (!description)   { toast('Masala shartini kiriting', 'wrn'); return; }
+  if (!solution_code) { toast('Yechim kodini kiriting', 'wrn'); return; }
+
+  // test variantlarini yig'ish
+  const rows = document.querySelectorAll('#zkTestRows .zk-test-row');
+  if (!rows.length) { toast('Kamida 1 ta test varianti qo\'shing', 'wrn'); return; }
+
+  const hidden_test_cases = [];
+  let missingOutput = false;
+  rows.forEach((row, i) => {
+    const inp = row.querySelector('.zk-tin')?.value ?? '';
+    const out = row.querySelector('.zk-tout')?.value.trim() ?? '';
+    if (!out) { missingOutput = true; return; }
+    hidden_test_cases.push({ input: inp, expected_output: out });
+  });
+  if (missingOutput) { toast('Barcha testlarda kutilgan chiqishni to\'ldiring', 'wrn'); return; }
+
   try {
     const res = await post('/challenges/coding/', {
       title, description, solution_code, hidden_test_cases,
-      input_format: document.getElementById('zkCInputFmt').value,
-      output_format: document.getElementById('zkCOutputFmt').value,
+      programming_language: lang,
+      input_format: '',
+      output_format: '',
       difficulty: document.getElementById('zkCDifficulty').value,
-      programming_language: document.getElementById('zkCLang').value,
       points: parseInt(document.getElementById('zkCPoints').value) || 20,
     });
     if (res?.ok) {
       toast('Coding topshiriq yaratildi ✓', 'ok');
       closeM('zkCodingModal');
-      document.querySelectorAll('#zkCodingModal .fc').forEach(el => el.value = el.tagName === 'SELECT' ? el.options[0]?.value : '');
+      // formni tozalash
+      ['zkCTitle','zkCSolution'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('zkCDesc').value = '';
+      document.getElementById('zkTestRows').innerHTML = '';
+      zkTestRowIndex = 0;
+      document.getElementById('zkCLang').value = 'python';
+      document.querySelectorAll('.zk-lang-btn').forEach((b,i) => { b.classList.toggle('active', i===0); });
       zkLoadStats();
     } else {
       const err = res ? await res.json().catch(() => ({})) : {};
-      toast(err?.detail || (res ? `HTTP ${res.status} xato` : 'Token muddati tugagan, qayta kiring'), 'err', 6000);
+      const detail = err?.detail || JSON.stringify(err).slice(0,200);
+      toast(detail || (res ? `HTTP ${res.status}` : 'Token muddati tugagan, qayta kiring'), 'err', 7000);
     }
   } catch(e) { toast('Ulanish xatosi: ' + (e?.message || ''), 'err', 6000); }
 }
