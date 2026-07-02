@@ -36,6 +36,8 @@ LOCAL_APPS = [
     'apps.notifications',
     'apps.homework',
     'apps.vlt_ai',
+    'apps.face_auth',
+    'apps.zukko',
 ]
 
 # jazzmin must come BEFORE django.contrib.admin
@@ -118,9 +120,10 @@ REST_FRAMEWORK = {
         'rest_framework.throttling.ScopedRateThrottle',
     ],
     'DEFAULT_THROTTLE_RATES': {
-        'anon':  '30/min',
-        'user':  '300/min',
-        'login': '5/min',
+        'anon':      '30/min',
+        'user':      '300/min',
+        'login':     '5/min',
+        'face_auth': '10/min',   # OTP request + verify endpoints
     },
     'DATE_FORMAT': '%Y-%m-%d',
     'DATETIME_FORMAT': '%Y-%m-%d %H:%M:%S',
@@ -183,6 +186,24 @@ ANTHROPIC_API_KEY = config('ANTHROPIC_API_KEY', default='')
 # Telegram notification settings (optional)
 TELEGRAM_BOT_TOKEN = config('TELEGRAM_BOT_TOKEN', default='')
 TELEGRAM_ADMIN_CHAT_ID = config('TELEGRAM_ADMIN_CHAT_ID', default='')
+
+# ── FACE AUTH (ikki faktorli yuz autentifikatsiyasi) ─────────────────────────
+# FACE_AUTH_ENABLED = False  →  face ID tekshiruvi o'chirilgan (xavfsiz standart)
+# Yoqish uchun: FACE_AUTH_ENABLED=True + FACE_ENCRYPTION_KEY=<fernet key>
+FACE_AUTH_ENABLED          = config('FACE_AUTH_ENABLED',           default=False, cast=bool)
+FACE_LANDMARKER_MODEL      = config('FACE_LANDMARKER_MODEL',       default='')
+FACE_SPOOF_THRESHOLD       = config('FACE_SPOOF_THRESHOLD',        default=0.7,   cast=float)
+FACE_LIVENESS_FAIL_OPEN    = config('FACE_LIVENESS_FAIL_OPEN',     default=False, cast=bool)
+FACE_ENCRYPTION_KEY   = config('FACE_ENCRYPTION_KEY',   default='')
+FACE_COSINE_THRESHOLD = config('FACE_COSINE_THRESHOLD', default=0.68,  cast=float)
+FACE_MAX_ATTEMPTS     = config('FACE_MAX_ATTEMPTS',     default=5,     cast=int)
+FACE_LOCKOUT_MINUTES  = config('FACE_LOCKOUT_MINUTES',  default=5,     cast=int)
+# Comma-separated roles that require face auth when FACE_AUTH_ENABLED=True
+FACE_REQUIRED_ROLES   = config(
+    'FACE_REQUIRED_ROLES',
+    default='admin,developer',
+    cast=lambda v: [r.strip() for r in v.split(',') if r.strip()],
+)
 
 JAZZMIN_SETTINGS = {
     "site_title": "VLT.erp",

@@ -1,0 +1,198 @@
+{% extends "erp/base.html" %}
+{% block title %}Natijalar — VLT.erp{% endblock %}
+{% block page_title %}ZUKKO — Natijalar{% endblock %}
+
+{% block extra_head %}
+<style>
+.zk-res-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}
+@media(max-width:700px){.zk-res-stats{grid-template-columns:1fr 1fr}}
+.zk-ch-card{margin-bottom:14px}
+.zk-ch-header{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:14px 18px;border-bottom:1px solid var(--border)}
+.zk-ch-body{padding:16px 18px}
+.zk-code-view{background:#0d1117;color:#e6edf3;font-family:'Fira Code',monospace;font-size:.8rem;border:1px solid #30363d;border-radius:6px;padding:12px;white-space:pre-wrap;word-break:break-all;max-height:260px;overflow-y:auto;line-height:1.7;margin-top:10px}
+.zk-test-row{display:flex;align-items:center;justify-content:space-between;padding:7px 12px;border-bottom:1px solid var(--border);font-size:.8rem}
+.zk-test-row:last-child{border-bottom:none}
+.zk-empty-r{text-align:center;padding:60px 20px;color:var(--muted)}
+.zk-empty-r i{font-size:2.8rem;opacity:.18;display:block;margin-bottom:16px}
+.zk-stat-big{font-size:2rem;font-weight:900;color:var(--accent);line-height:1.1}
+.zk-sus-warn{padding:14px 18px;border:1px solid var(--warning);border-radius:8px;background:rgba(217,119,6,.08);margin-bottom:16px;font-size:.84rem;color:var(--text)}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- ── Header ── -->
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;animation:fadeUp .3s ease both">
+  <div>
+    <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">Yakuniy natija</h2>
+    <p style="font-size:.78rem;color:var(--muted);margin-top:3px" id="zkResSessionTitle">—</p>
+  </div>
+  <a href="/zukko/student/" class="btn btn-outline btn-sm">
+    <i class="fas fa-arrow-left"></i> Boshqaruv paneli
+  </a>
+</div>
+
+<!-- ── No data state ── -->
+<div class="card" id="zkNoData" style="display:none">
+  <div class="zk-empty-r">
+    <i class="fas fa-inbox"></i>
+    <p>Natijalar ma'lumotlari topilmadi.</p>
+    <p style="font-size:.78rem;margin-top:6px">Sahifani qayta yuklash yoki sessiyani boshidan boshlash kerak bo'lishi mumkin.</p>
+    <a href="/zukko/student/" class="btn btn-primary btn-sm" style="margin-top:18px">
+      <i class="fas fa-home"></i> Boshqaruv panelga o'tish
+    </a>
+  </div>
+</div>
+
+<!-- ── Results ── -->
+<div id="zkResContent" style="display:none">
+
+  <!-- Anti-cheat warning -->
+  <div class="zk-sus-warn" id="zkSusWarn" style="display:none">
+    <i class="fas fa-triangle-exclamation" style="color:var(--warning);margin-right:8px"></i>
+    Anti-cheat tizimi shubhali harakatlarni qayd etdi.
+    O'qituvchingiz bu haqida xabardor bo'ladi.
+  </div>
+
+  <!-- 3 stat cards -->
+  <div class="zk-res-stats">
+    <div class="card" style="text-align:center;padding:24px 16px">
+      <div class="mini-stat-icon ic-amber" style="margin:0 auto 10px"><i class="fas fa-star"></i></div>
+      <div class="zk-stat-big" id="zkResTotalPts">0</div>
+      <div style="font-size:.78rem;color:var(--muted);margin-top:4px">Jami ball</div>
+    </div>
+    <div class="card" style="text-align:center;padding:24px 16px">
+      <div class="mini-stat-icon ic-green" style="margin:0 auto 10px"><i class="fas fa-check-circle"></i></div>
+      <div class="zk-stat-big" id="zkResSolved">0/0</div>
+      <div style="font-size:.78rem;color:var(--muted);margin-top:4px">Yechilgan</div>
+    </div>
+    <div class="card" style="text-align:center;padding:24px 16px">
+      <div class="mini-stat-icon ic-blue" style="margin:0 auto 10px"><i class="fas fa-bullseye"></i></div>
+      <div class="zk-stat-big" id="zkResAccuracy">—</div>
+      <div style="font-size:.78rem;color:var(--muted);margin-top:4px">Aniqlik</div>
+    </div>
+  </div>
+
+  <!-- Per-challenge cards -->
+  <div id="zkChallengeCards"></div>
+
+  <!-- Back button -->
+  <div style="text-align:center;margin-top:10px;padding-bottom:20px">
+    <a href="/zukko/student/" class="btn btn-primary">
+      <i class="fas fa-home"></i> Boshqaruv paneliga qaytish
+    </a>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function renderResults() {
+  let stored;
+  try { stored = JSON.parse(sessionStorage.getItem('zkLastSession') || 'null'); } catch { stored = null; }
+
+  if (!stored || !stored.submittedResults) {
+    document.getElementById('zkNoData').style.display = 'block';
+    return;
+  }
+
+  document.getElementById('zkResContent').style.display = 'block';
+  document.getElementById('zkResSessionTitle').textContent = stored.sessionTitle || '—';
+
+  const items = stored.submittedResults || [];
+  const totalPts = stored.totalPoints || items.reduce((s, x) => s + (x.result?.points_earned || 0), 0);
+  const correct  = items.filter(x => x.result?.submission?.status === 'correct').length;
+  const partial  = items.filter(x => x.result?.submission?.status === 'partial').length;
+  const maxSus   = Math.max(0, ...items.map(x => x.result?.submission?.suspicion_score || 0));
+
+  document.getElementById('zkResTotalPts').textContent = totalPts;
+  document.getElementById('zkResSolved').textContent = `${correct + partial}/${items.length}`;
+  const acc = items.length ? Math.round(((correct + partial * 0.5) / items.length) * 100) : 0;
+  document.getElementById('zkResAccuracy').textContent = items.length ? acc + '%' : '—';
+
+  if (maxSus > 0.3) document.getElementById('zkSusWarn').style.display = 'block';
+
+  const statusMap = {
+    correct:  { lbl:'To\'g\'ri',    cls:'bdg-active', icon:'fa-check-circle' },
+    partial:  { lbl:'Qisman',       cls:'bdg-warning', icon:'fa-circle-half-stroke' },
+    wrong:    { lbl:'Noto\'g\'ri',  cls:'bdg-danger',  icon:'fa-times-circle' },
+    cheating: { lbl:'Shubhali',     cls:'bdg-danger',  icon:'fa-triangle-exclamation' },
+    pending:  { lbl:'Kutilmoqda',   cls:'bdg',         icon:'fa-clock' },
+  };
+  const diffMap = { easy:'bdg-active', medium:'bdg-warning', hard:'bdg-danger' };
+  const diffLbl = { easy:'Oson', medium:"O'rta", hard:'Qiyin' };
+
+  const cards = document.getElementById('zkChallengeCards');
+  cards.innerHTML = items.map(({ challenge: c, result: r }, idx) => {
+    const sub = r?.submission || {};
+    const st  = statusMap[sub.status] || { lbl: sub.status || '—', cls:'bdg', icon:'fa-circle' };
+    const pts = r?.points_earned || 0;
+    const kind = c.kind === 'bugfind' ? '<i class="fas fa-bug"></i> Bug-find' : '<i class="fas fa-code"></i> Coding';
+    const diff = c.difficulty || 'easy';
+
+    let bodyHtml = `
+      <div style="margin-bottom:12px">
+        <span style="font-size:.78rem;color:var(--muted)">Yuborilgan kod:</span>
+        <pre class="zk-code-view">${escHtml(sub.submitted_code || '(bo\'sh)')}</pre>
+      </div>`;
+
+    if (c.kind === 'bugfind') {
+      bodyHtml += `
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px">
+          <div>
+            <div style="font-size:.75rem;color:var(--muted);margin-bottom:4px">Tanlagan qator</div>
+            <span class="bdg ${sub.identified_line === r?.correct_line ? 'bdg-active' : 'bdg-danger'}">${sub.identified_line ?? '—'}</span>
+          </div>
+          <div>
+            <div style="font-size:.75rem;color:var(--muted);margin-bottom:4px">To'g'ri qator</div>
+            <span class="bdg bdg-active">${r?.correct_line ?? '—'}</span>
+          </div>
+        </div>`;
+      if (r?.bug_explanation) bodyHtml += `
+        <div style="padding:10px 14px;border:1px solid var(--border);border-radius:6px;background:var(--hover);font-size:.82rem;color:var(--text)">
+          <i class="fas fa-lightbulb" style="color:var(--warning);margin-right:6px"></i>${escHtml(r.bug_explanation)}
+        </div>`;
+    } else if (r?.test_results?.length) {
+      bodyHtml += `
+        <div style="font-size:.78rem;color:var(--muted);margin-bottom:8px">${r.passed || 0}/${r.total || 0} test o'tdi</div>
+        <div class="card" style="overflow:hidden">
+          ${r.test_results.map((t, ti) => `
+            <div class="zk-test-row">
+              <span style="color:var(--muted)">Test ${ti+1}</span>
+              <div style="display:flex;gap:12px;font-family:monospace;font-size:.78rem">
+                <span title="Kirish" style="color:var(--muted)">${escHtml(String(t.input || '—'))}</span>
+                <span title="Kutilgan" style="color:var(--accent)">${escHtml(String(t.expected || '—'))}</span>
+                <span title="Olingan" style="color:${t.passed ? 'var(--success)' : 'var(--danger)'}">${escHtml(String(t.actual || '—'))}</span>
+              </div>
+              <span style="font-size:1rem">${t.passed ? '✅' : '❌'}</span>
+            </div>
+          `).join('')}
+        </div>`;
+    }
+
+    return `
+      <div class="card zk-ch-card" style="animation:fadeUp .3s ease both;animation-delay:${idx * .05}s">
+        <div class="zk-ch-header">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span style="font-size:.78rem;color:var(--muted)">${idx+1}.</span>
+            <span style="font-weight:700;color:var(--text)">${escHtml(c.title || '')}</span>
+            <span class="bdg ${diffMap[diff] || 'bdg'}">${diffLbl[diff] || diff}</span>
+            <span style="font-size:.75rem;color:var(--muted)">${kind}</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="bdg ${st.cls}"><i class="fas ${st.icon}"></i> ${st.lbl}</span>
+            <span style="font-weight:700;color:var(--accent)">${pts} ball</span>
+          </div>
+        </div>
+        <div class="zk-ch-body">${bodyHtml}</div>
+      </div>`;
+  }).join('');
+}
+
+if (!initAuth()) {
+  /* toLogin() already called */
+} else {
+  renderResults();
+}
+</script>
+{% endblock %}

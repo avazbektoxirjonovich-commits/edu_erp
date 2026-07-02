@@ -1061,6 +1061,7 @@ function buildSidebar(role){
     html+=item('/teacher/','house','Bosh sahifa');
     html+=item('/attendance/','calendar-check','Davomat');
     html+=item('/homework/','book-open','Uyga vazifalar');
+    html+=item('/zukko/teacher/','code','ZUKKO Challenges');
     html+=item('/leaderboard/','ranking-star','Reyting');
     html+=sec('Profil');
     html+=item('/teacher/profile/','user','Profilim');
@@ -1079,6 +1080,7 @@ function buildSidebar(role){
     html+=item('/student/stats/','chart-bar',"Ko'rsatgichlarim");
     html+=item('/leaderboard/','ranking-star','Reyting');
     html+=item('/homework/','book-open',"Uyga vazifalar");
+    html+=item('/zukko/student/','code','ZUKKO Challenges');
     html+=sec('Sozlamalar');
     html+=item('/student/settings/','gear','Sozlamalar');
   }
@@ -1111,6 +1113,8 @@ const _ROUTE_ROLES = {
   '/student/stats/':   ['student','admin','developer'],
   '/student/settings/':['student','admin','developer'],
   '/parent/':      ['parent','admin','developer'],
+  '/zukko/teacher/':['teacher','admin','developer'],
+  '/zukko/student/':['student','admin','developer'],
 };
 const _ROLE_HOME = {
   admin:'/', developer:'/', teacher:'/teacher/', student:'/student/', parent:'/parent/'

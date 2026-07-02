@@ -1,0 +1,116 @@
+{% extends "erp/base.html" %}
+{% block title %}ZUKKO Challenges — VLT.erp{% endblock %}
+{% block page_title %}ZUKKO Challenges{% endblock %}
+
+{% block extra_head %}
+<style>
+.zk-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+@media(max-width:900px){.zk-stats{grid-template-columns:repeat(2,1fr)}}
+.zk-empty{text-align:center;padding:50px 20px;color:var(--muted)}
+.zk-empty i{font-size:2.6rem;opacity:.15;margin-bottom:14px;display:block}
+.zk-session-row{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border-bottom:1px solid var(--border)}
+.zk-session-row:last-child{border-bottom:none}
+.zk-session-title{font-size:.85rem;font-weight:700;color:var(--text)}
+.zk-session-meta{font-size:.72rem;color:var(--muted);margin-top:3px}
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;animation:fadeUp .3s ease both">
+  <div>
+    <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">ZUKKO Challenges</h2>
+    <p style="font-size:.75rem;color:var(--muted);margin-top:3px">Kod topshiriqlarini yeching, XP va ball to'plang</p>
+  </div>
+</div>
+
+<div class="zk-stats">
+  <div class="mini-stat" style="animation-delay:.05s">
+    <div class="mini-stat-icon ic-amber"><i class="fas fa-bolt"></i></div>
+    <div><div class="mini-stat-val" id="zkXp">—</div><div class="mini-stat-lbl">Jami XP</div></div>
+  </div>
+  <div class="mini-stat" style="animation-delay:.1s">
+    <div class="mini-stat-icon ic-purple"><i class="fas fa-fire"></i></div>
+    <div><div class="mini-stat-val" id="zkSolved">—</div><div class="mini-stat-lbl">Yechilgan topshiriqlar</div></div>
+  </div>
+  <div class="mini-stat" style="animation-delay:.15s">
+    <div class="mini-stat-icon ic-green"><i class="fas fa-bullseye"></i></div>
+    <div><div class="mini-stat-val" id="zkAccuracy">—</div><div class="mini-stat-lbl">Aniqlik</div></div>
+  </div>
+  <div class="mini-stat" style="animation-delay:.2s">
+    <div class="mini-stat-icon ic-blue"><i class="fas fa-chart-line"></i></div>
+    <div><div class="mini-stat-val" id="zkMastery">—</div><div class="mini-stat-lbl">O'zlashtirish</div></div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <span class="card-title">Faol sessiyalar</span>
+  </div>
+  <div class="card-body" style="padding:0" id="zkSessionsList">
+    <div class="loading"><div class="spinner"></div><p>Yuklanmoqda...</p></div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+async function zkLoadProgress() {
+  const progress = await get('/challenges/progress/');
+  const items = Array.isArray(progress) ? progress : [];
+
+  let totalXp = 0, totalSolved = 0, totalAttempts = 0, totalCorrect = 0, masterySum = 0;
+  items.forEach(p => {
+    totalXp += p.total_xp || 0;
+    totalSolved += p.total_solved || 0;
+    totalAttempts += p.total_attempts || 0;
+    totalCorrect += p.correct_count || 0;
+    masterySum += p.mastery_percentage || 0;
+  });
+
+  document.getElementById('zkXp').textContent = totalXp;
+  document.getElementById('zkSolved').textContent = totalSolved;
+  document.getElementById('zkAccuracy').textContent = totalAttempts
+    ? Math.round((totalCorrect / totalAttempts) * 100) + '%' : '—';
+  document.getElementById('zkMastery').textContent = items.length
+    ? Math.round(masterySum / items.length) + '%' : '—';
+}
+
+function zkSessionTypeLabel(t) {
+  return { mixed: 'Aralash', bugfind: 'Bug-find', coding: 'Coding', quiz: 'Test' }[t] || t;
+}
+
+async function zkLoadSessions() {
+  const list = document.getElementById('zkSessionsList');
+  const sessions = await get('/challenges/available/');
+  const items = Array.isArray(sessions) ? sessions : [];
+
+  if (!items.length) {
+    list.innerHTML = '<div class="zk-empty"><i class="fas fa-layer-group"></i><p>Hozircha faol sessiya yo\'q</p></div>';
+    return;
+  }
+
+  list.innerHTML = items.map(s => `
+    <div class="zk-session-row">
+      <div>
+        <div class="zk-session-title">${s.title}</div>
+        <div class="zk-session-meta">
+          <i class="fas fa-shapes" style="margin-right:3px"></i>${zkSessionTypeLabel(s.session_type)}
+          &nbsp;|&nbsp;
+          <i class="fas fa-clock" style="margin-right:3px"></i>${s.time_limit_minutes} daqiqa
+          &nbsp;|&nbsp;
+          <i class="fas fa-list-ol" style="margin-right:3px"></i>${s.challenges_count} ta topshiriq
+        </div>
+      </div>
+      ${s.already_submitted
+        ? '<span class="bdg" style="background:#eff6ff;color:#1d4ed8">Qatnashgansiz</span>'
+        : `<a class="btn btn-primary btn-sm" href="/zukko/focus/${s.share_link}/"><i class="fas fa-play"></i>Boshlash</a>`}
+    </div>
+  `).join('');
+}
+
+if (!initAuth()) { /* toLogin() already called */ } else {
+  zkLoadProgress();
+  zkLoadSessions();
+}
+</script>
+{% endblock %}

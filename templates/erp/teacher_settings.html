@@ -65,6 +65,30 @@
 .pass-strength.s2{width:50%;background:#f59e0b}
 .pass-strength.s3{width:75%;background:#3b82f6}
 .pass-strength.s4{width:100%;background:#10b981}
+
+/* ── FACE ID ──────────────────────────────────────────────── */
+.faceid-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:700;margin-top:6px}
+.faceid-on{background:rgba(16,185,129,.15);color:#059669;border:1px solid rgba(16,185,129,.25)}
+.faceid-off{background:rgba(239,68,68,.1);color:#dc2626;border:1px solid rgba(239,68,68,.2)}
+.fi-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9000;align-items:center;justify-content:center}
+.fi-modal-overlay.open{display:flex}
+.fi-modal{background:#0D1B2A;border-radius:18px;padding:28px;width:min(95vw,480px);position:relative;animation:fadeUp .3s ease both}
+.fi-modal-title{font-size:1rem;font-weight:800;color:#fff;margin-bottom:4px}
+.fi-modal-sub{font-size:.75rem;color:rgba(255,255,255,.5);margin-bottom:18px}
+.fi-video-wrap{position:relative;border-radius:12px;overflow:hidden;background:#000;aspect-ratio:4/3}
+.fi-video-wrap video{width:100%;display:block}
+.fi-video-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.fi-face-ring{width:140px;height:140px;border-radius:50%;border:2px dashed rgba(5,150,105,.6);box-shadow:0 0 0 4px rgba(5,150,105,.1)}
+.fi-status-bar{margin-top:10px;padding:8px 12px;border-radius:8px;font-size:.77rem;font-weight:600;text-align:center}
+.fi-status-bar.checking{background:rgba(59,130,246,.1);color:#60a5fa}
+.fi-status-bar.ok{background:rgba(16,185,129,.1);color:#34d399}
+.fi-status-bar.err{background:rgba(239,68,68,.1);color:#f87171}
+.fi-consent-box{margin-top:14px;padding:12px;background:rgba(255,255,255,.04);border-radius:9px;border:1px solid rgba(255,255,255,.08)}
+.fi-consent-box label{display:flex;gap:8px;align-items:flex-start;font-size:.74rem;color:rgba(255,255,255,.65);cursor:pointer;line-height:1.5}
+.fi-consent-box input[type=checkbox]{margin-top:2px;accent-color:#059669;flex-shrink:0}
+.fi-btns{display:flex;gap:8px;margin-top:16px}
+.fi-close-btn{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.08);border:none;border-radius:50%;width:28px;height:28px;color:rgba(255,255,255,.6);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.8rem}
+.fi-close-btn:hover{background:rgba(255,255,255,.16);color:#fff}
 </style>
 {% endblock %}
 
@@ -76,7 +100,7 @@
   <div class="ts-hero-inner">
     <div class="ts-av-wrap">
       <div class="ts-av" id="tsAv">?</div>
-      <div class="ts-av-edit" title="Rasm o'zgartirish"><i class="fas fa-camera"></i></div>
+      <div class="ts-av-edit" title="Face ID o'rnatish" onclick="openFaceModal()"><i class="fas fa-camera"></i></div>
     </div>
     <div style="flex:1;min-width:0">
       <div class="ts-name" id="tsName">Yuklanmoqda...</div>
@@ -85,6 +109,10 @@
         <span class="ts-pill ts-pill-o"><i class="fas fa-users" style="font-size:.6rem"></i><span id="tsGrpCnt">0</span> guruh</span>
         <span class="ts-pill ts-pill-b"><i class="fas fa-user-graduate" style="font-size:.6rem"></i><span id="tsStuCnt">0</span> o'quvchi</span>
         <span class="ts-pill ts-pill-g" id="tsStatusPill"><i class="fas fa-circle" style="font-size:.45rem"></i> Faol</span>
+      </div>
+      <div id="faceIdBadge" class="faceid-badge faceid-off" style="cursor:pointer" onclick="openFaceModal()">
+        <i class="fas fa-face-smile" style="font-size:.6rem"></i>
+        <span id="faceIdLabel">Face ID: O'rnatilmagan</span>
       </div>
     </div>
   </div>
@@ -181,6 +209,37 @@
     </div>
   </div>
 
+</div>
+<!-- ═══ FACE ID ENROLLMENT MODAL ═════════════════════════════════════════════ -->
+<div class="fi-modal-overlay" id="faceModal">
+  <div class="fi-modal">
+    <button class="fi-close-btn" onclick="closeFaceModal()"><i class="fas fa-times"></i></button>
+    <div class="fi-modal-title"><i class="fas fa-face-smile" style="color:#059669;margin-right:7px"></i>Face ID</div>
+    <div class="fi-modal-sub" id="faceModalSub">Yuzingizni ro'yxatga olish uchun kameraga qarang</div>
+
+    <div class="fi-video-wrap">
+      <video id="faceVideo" autoplay playsinline muted></video>
+      <div class="fi-video-overlay"><div class="fi-face-ring" id="faceRing"></div></div>
+      <canvas id="faceCanvas" style="display:none"></canvas>
+    </div>
+
+    <div class="fi-status-bar checking" id="faceStatusBar">Kamera ishga tushirilmoqda...</div>
+
+    <div class="fi-consent-box" id="faceConsentBox">
+      <label>
+        <input type="checkbox" id="faceConsent">
+        Men biometrik ma'lumotlarim (yuz tasviri) VLT.erp tizimida xavfsiz saqlanishiga roziman.
+        Ma'lumotlar O'zbekiston shaxsiy ma'lumotlar to'g'risidagi qonuniga muvofiq himoyalanadi.
+      </label>
+    </div>
+
+    <div class="fi-btns">
+      <button class="btn btn-primary" style="flex:1" id="faceEnrollBtn" onclick="doEnroll()" disabled>
+        <i class="fas fa-check"></i> Saqlash
+      </button>
+      <button class="btn btn-ghost" onclick="closeFaceModal()">Bekor qilish</button>
+    </div>
+  </div>
 </div>
 {% endblock %}
 
@@ -298,5 +357,128 @@ async function changePass(){
 }
 
 load();
+
+// ── Face ID ──────────────────────────────────────────────────────────────────
+let _faceStream = null;
+
+async function loadFaceStatus() {
+  try {
+    const r = await req('/face-auth/status/');
+    if (r?.ok) {
+      const d = await r.json();
+      const badge = document.getElementById('faceIdBadge');
+      const lbl   = document.getElementById('faceIdLabel');
+      if (d.enrolled) {
+        badge.className = 'faceid-badge faceid-on';
+        lbl.textContent = 'Face ID: Yoqilgan';
+      } else {
+        badge.className = 'faceid-badge faceid-off';
+        lbl.textContent = "Face ID: O'rnatilmagan";
+      }
+    }
+  } catch(e) {}
+}
+
+async function openFaceModal() {
+  document.getElementById('faceModal').classList.add('open');
+  document.getElementById('faceEnrollBtn').disabled = true;
+  document.getElementById('faceConsent').checked = false;
+  setFaceStatus('Kamera ishga tushirilmoqda...', 'checking');
+  await startFaceCamera();
+}
+
+function closeFaceModal() {
+  stopFaceCamera();
+  document.getElementById('faceModal').classList.remove('open');
+}
+
+function setFaceStatus(msg, type) {
+  const bar = document.getElementById('faceStatusBar');
+  bar.textContent = msg;
+  bar.className = 'fi-status-bar ' + (type || 'checking');
+}
+
+async function startFaceCamera() {
+  try {
+    _faceStream = await navigator.mediaDevices.getUserMedia({
+      video: { width: 640, height: 480, facingMode: 'user' },
+      audio: false
+    });
+    const video = document.getElementById('faceVideo');
+    video.srcObject = _faceStream;
+    await video.play();
+    setFaceStatus('Yuzingizni doira ichiga joylashtiring', 'checking');
+    runQualityPreview();
+  } catch(e) {
+    setFaceStatus("Kamera ochilmadi: " + e.message, 'err');
+  }
+}
+
+function stopFaceCamera() {
+  if (_faceStream) {
+    _faceStream.getTracks().forEach(t => t.stop());
+    _faceStream = null;
+  }
+}
+
+let _qualityTimer = null;
+function runQualityPreview() {
+  _qualityTimer = setInterval(async () => {
+    const video = document.getElementById('faceVideo');
+    if (!video.srcObject) { clearInterval(_qualityTimer); return; }
+    // Simple client-side hint: green ring if stream is live
+    document.getElementById('faceRing').style.borderColor = 'rgba(5,150,105,.8)';
+    setFaceStatus('Tasvir sifati yaxshi. Rozilikni belgilab "Saqlash"ni bosing.', 'ok');
+    document.getElementById('faceEnrollBtn').disabled =
+      !document.getElementById('faceConsent').checked;
+  }, 1500);
+}
+
+document.getElementById('faceConsent').addEventListener('change', function() {
+  document.getElementById('faceEnrollBtn').disabled = !this.checked;
+});
+
+async function doEnroll() {
+  if (!document.getElementById('faceConsent').checked) {
+    setFaceStatus("Rozilikni belgilang", 'err');
+    return;
+  }
+  const btn = document.getElementById('faceEnrollBtn');
+  btn.disabled = true;
+  setFaceStatus("Tekshirilmoqda...", 'checking');
+
+  // Capture frame from video
+  const video  = document.getElementById('faceVideo');
+  const canvas = document.getElementById('faceCanvas');
+  canvas.width  = video.videoWidth  || 640;
+  canvas.height = video.videoHeight || 480;
+  canvas.getContext('2d').drawImage(video, 0, 0);
+  const frameB64 = canvas.toDataURL('image/jpeg', 0.9);
+
+  clearInterval(_qualityTimer);
+  stopFaceCamera();
+
+  try {
+    const r = await req('/face-auth/enroll/', {
+      method:  'POST',
+      body: JSON.stringify({ frame: frameB64, consent: true }),
+    });
+    const d = await r.json();
+    if (r.ok) {
+      setFaceStatus("Face ID muvaffaqiyatli o'rnatildi ✓", 'ok');
+      toast("Face ID muvaffaqiyatli o'rnatildi", 'ok');
+      setTimeout(() => { closeFaceModal(); loadFaceStatus(); }, 1500);
+    } else {
+      setFaceStatus(d.detail || 'Xatolik yuz berdi', 'err');
+      btn.disabled = false;
+      startFaceCamera();
+    }
+  } catch(e) {
+    setFaceStatus("Server bilan bog'lanishda xatolik", 'err');
+    btn.disabled = false;
+  }
+}
+
+loadFaceStatus();
 </script>
 {% endblock %}

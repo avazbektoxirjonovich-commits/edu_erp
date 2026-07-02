@@ -56,6 +56,8 @@ api_v1_urlpatterns = [
     path('leaderboard/',   include('apps.students.leaderboard_urls')),
     path('homework/',      include('apps.homework.urls')),
     path('vlt-ai/',        include('apps.vlt_ai.api.urls')),
+    path('face-auth/',     include('apps.face_auth.api.urls')),
+    path('challenges/',    include('apps.zukko.urls')),
     path('reports/monthly-pdf/', MonthlyReportPDFView.as_view(), name='monthly-pdf'),
     path('token/',         TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(),    name='token_refresh'),
@@ -86,6 +88,17 @@ frontend_urlpatterns = [
     path('teacher/group/',    TemplateView.as_view(template_name='erp/teacher_group.html'),    name='teacher_group'),
     path('teacher/profile/',  TemplateView.as_view(template_name='erp/teacher_settings.html'),name='teacher_settings'),
     path('users/',            TemplateView.as_view(template_name='erp/users.html'),            name='users'),
+    path('zukko/teacher/',    TemplateView.as_view(template_name='erp/zukko_teacher.html'),    name='zukko_teacher'),
+    path('zukko/student/',    TemplateView.as_view(template_name='erp/zukko_student.html'),    name='zukko_student'),
+    path('zukko/focus/<str:share_link>/',
+         TemplateView.as_view(template_name='erp/zukko_focus.html'),
+         name='zukko_focus'),
+    path('zukko/teacher/session/<uuid:session_id>/',
+         TemplateView.as_view(template_name='erp/zukko_teacher_session.html'),
+         name='zukko_teacher_session'),
+    path('zukko/results/<uuid:submission_id>/',
+         TemplateView.as_view(template_name='erp/zukko_results.html'),
+         name='zukko_results'),
 ]
 
 urlpatterns = [

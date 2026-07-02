@@ -1,11 +1,15 @@
-from pathlib import Path
+"""
+Test settings — minimal, SQLite, no external services.
+Used by pytest (pytest.ini) and makemigrations for face_auth.
+"""
 from datetime import timedelta
-from decouple import config as env
+from pathlib import Path
+from decouple import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-SECRET_KEY = env('SECRET_KEY', default='dev-only-secret-key-change-in-production')
-DEBUG = True
+SECRET_KEY = 'test-only-secret-key-do-not-use-in-production'
+DEBUG      = True
 ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
@@ -22,7 +26,6 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_filters',
     'apps.accounts',
-    'apps.branches',
     'apps.students',
     'apps.teachers',
     'apps.groups',
@@ -32,21 +35,7 @@ INSTALLED_APPS = [
     'apps.notifications',
     'apps.homework',
     'apps.face_auth',
-    'apps.vlt_ai',
-    'apps.zukko',
 ]
-
-# ── Face Auth ────────────────────────────────────────────────────────────────
-FACE_AUTH_ENABLED     = env('FACE_AUTH_ENABLED', default=False, cast=bool)
-FACE_ENCRYPTION_KEY   = env('FACE_ENCRYPTION_KEY', default='')
-FACE_COSINE_THRESHOLD = env('FACE_COSINE_THRESHOLD', default=0.68, cast=float)
-FACE_MAX_ATTEMPTS     = env('FACE_MAX_ATTEMPTS', default=5, cast=int)
-FACE_LOCKOUT_MINUTES  = env('FACE_LOCKOUT_MINUTES', default=5, cast=int)
-FACE_REQUIRED_ROLES   = env(
-    'FACE_REQUIRED_ROLES',
-    default='student',
-    cast=lambda v: [r.strip() for r in v.split(',') if r.strip()],
-)
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -59,7 +48,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'config.urls'
+ROOT_URLCONF = 'config.urls_test'
 
 TEMPLATES = [
     {
@@ -79,12 +68,8 @@ TEMPLATES = [
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': env('DB_NAME', default='erp_db'),
-        'USER': env('DB_USER', default='erp_user'),
-        'PASSWORD': env('DB_PASSWORD', default=''),
-        'HOST': env('DB_HOST', default='localhost'),
-        'PORT': env('DB_PORT', default='5432'),
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME':   BASE_DIR / 'db_test.sqlite3',
     }
 }
 
@@ -98,64 +83,69 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 20,
+    'PAGE_SIZE': 50,
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend',
         'rest_framework.filters.SearchFilter',
         'rest_framework.filters.OrderingFilter',
     ],
-    'DATE_FORMAT': '%Y-%m-%d',
-    'DATETIME_FORMAT': '%Y-%m-%d %H:%M:%S',
+    'DEFAULT_RENDERER_CLASSES': ('rest_framework.renderers.JSONRenderer',),
+    'DEFAULT_THROTTLE_RATES': {
+        'anon':      '1000/min',
+        'user':      '5000/min',
+        'login':     '100/min',
+        'face_auth': '100/min',   # OTP request + verify endpoints
+    },
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'ACCESS_TOKEN_LIFETIME':  timedelta(minutes=60),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
-    'ROTATE_REFRESH_TOKENS': True,
+    'ROTATE_REFRESH_TOKENS':  True,
     'BLACKLIST_AFTER_ROTATION': True,
-    'UPDATE_LAST_LOGIN': True,
-    'AUTH_HEADER_TYPES': ('Bearer',),
+    'UPDATE_LAST_LOGIN':      True,
+    'AUTH_HEADER_TYPES':      ('Bearer',),
 }
 
 LANGUAGE_CODE = 'uz'
-TIME_ZONE = 'Asia/Tashkent'
-USE_I18N = True
-USE_TZ = True
+TIME_ZONE     = 'Asia/Tashkent'
+USE_I18N      = True
+USE_TZ        = True
 
-STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+STATIC_URL  = '/static/'
+MEDIA_URL   = '/media/'
+MEDIA_ROOT  = BASE_DIR / 'media'
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD  = 'django.db.models.BigAutoField'
 CORS_ALLOW_ALL_ORIGINS = True
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+# ── Face Auth ────────────────────────────────────────────────────────────────
+FACE_AUTH_ENABLED      = False
+FACE_ENCRYPTION_KEY    = ''   # overridden per-test by fernet_key fixture
+FACE_COSINE_THRESHOLD  = 0.68
+FACE_MAX_ATTEMPTS      = 5
+FACE_LOCKOUT_MINUTES   = 5
+FACE_REQUIRED_ROLES    = ['admin', 'developer']
+FACE_OTP_BACKEND              = 'console'   # console | sms | telegram
+FACE_SMS_PROVIDER             = 'eskiz'     # eskiz | playmobile
+FACE_PASSIVE_LIVENESS_ENABLED = False
+FACE_SPOOF_THRESHOLD          = 0.7   # raised from 0.5; env-configurable
+FACE_LIVENESS_FAIL_OPEN       = False  # fail-CLOSED by default (secure)
+FACE_LANDMARKER_MODEL         = ''   # empty = use default models_weights/ path
+
 JAZZMIN_SETTINGS = {
-    "site_title": "VLT.erp",
-    "site_header": "VLT.erp Admin",
-    "site_brand": "VLT.erp",
-    "welcome_sign": "VLT.erp — Ta'lim Markazi Boshqaruv Tizimiga Xush Kelibsiz",
-    "show_sidebar": True,
-    "navigation_expanded": True,
+    'site_title':   'VLT.erp',
+    'site_header':  'VLT.erp Admin',
+    'site_brand':   'VLT.erp',
+    'welcome_sign': 'VLT.erp',
+    'show_sidebar': True,
+    'navigation_expanded': True,
 }
 
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
-    'handlers': {
-        'console': {'class': 'logging.StreamHandler'},
-    },
-    'loggers': {
-        'apps': {'handlers': ['console'], 'level': 'INFO'},
-    },
+    'handlers': {'console': {'class': 'logging.StreamHandler'}},
+    'loggers': {'apps': {'handlers': ['console'], 'level': 'WARNING'}},
 }
-CSRF_TRUSTED_ORIGINS = [
-    'https://*.lhr.life',
-    'https://*.localhost.run',
-    'https://*.ngrok-free.app',
-    'https://*.ngrok.io',
-    'http://localhost:8000',
-    'http://127.0.0.1:8000',
-]

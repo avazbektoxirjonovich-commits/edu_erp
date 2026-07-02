@@ -144,6 +144,33 @@ html,body{height:100%;font-family:'Inter',sans-serif;-webkit-font-smoothing:anti
 .l-footer strong{color:#059669}
 
 .spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite}
+
+/* ── FACE ID STEP ─────────────────────────────────────────── */
+.face-step{display:none;animation:fadeUp .4s ease}
+.face-step.active{display:block}
+.face-title{font-size:1rem;font-weight:800;color:#0D1B2A;margin-bottom:4px}
+.face-sub{font-size:.76rem;color:#9ca3af;margin-bottom:16px}
+.face-video-wrap{position:relative;border-radius:12px;overflow:hidden;background:#111;aspect-ratio:4/3;margin-bottom:10px}
+.face-video-wrap video{width:100%;display:block}
+.face-ring-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.face-ring{width:140px;height:140px;border-radius:50%;border:2px dashed rgba(5,150,105,.7);box-shadow:0 0 0 4px rgba(5,150,105,.1)}
+.face-ring.active{border-color:#10b981;animation:pulseRing 1s ease infinite}
+@keyframes pulseRing{0%,100%{box-shadow:0 0 0 4px rgba(16,185,129,.1)}50%{box-shadow:0 0 0 8px rgba(16,185,129,.2)}}
+.face-challenge{text-align:center;padding:10px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;margin-bottom:10px}
+.face-challenge-lbl{font-size:.74rem;color:#6b7280;margin-bottom:2px}
+.face-challenge-action{font-size:1rem;font-weight:800;color:#059669}
+.face-prog{height:4px;border-radius:2px;background:#e5e9f0;margin-bottom:10px;overflow:hidden}
+.face-prog-inner{height:100%;background:linear-gradient(90deg,#059669,#10b981);width:0;transition:width .1s}
+.face-status{padding:8px 12px;border-radius:8px;font-size:.76rem;font-weight:600;text-align:center;margin-bottom:10px}
+.face-status.info{background:#eff6ff;color:#2563eb}
+.face-status.ok{background:#f0fdf4;color:#059669}
+.face-status.err{background:#fef2f2;color:#dc2626}
+.face-status.warn{background:#fffbeb;color:#d97706}
+.otp-box{display:none;margin-top:10px}
+.otp-box input{width:100%;text-align:center;font-size:1.5rem;letter-spacing:.5rem;padding:10px;border:1.5px solid #e5e9f0;border-radius:11px;font-weight:700}
+.otp-box input:focus{border-color:#059669;outline:none;box-shadow:0 0 0 3px rgba(5,150,105,.12)}
+.face-back{background:none;border:none;color:#9ca3af;font-size:.74rem;cursor:pointer;text-decoration:underline;margin-top:8px}
+.face-back:hover{color:#059669}
 </style>
 </head>
 <body>
@@ -241,6 +268,43 @@ html,body{height:100%;font-family:'Inter',sans-serif;-webkit-font-smoothing:anti
           </button>
         </form>
 
+        <!-- ── FACE ID STEP (hidden initially) ──────────────────── -->
+        <div id="faceStep" class="face-step">
+          <div class="face-title"><i class="fas fa-face-smile" style="color:#059669;margin-right:6px"></i>Yuz tekshiruvi</div>
+          <div class="face-sub">Kameraga qarang va rasmga olish tugmasini bosing</div>
+
+          <div class="face-video-wrap" id="faceVideoWrap" style="display:none">
+            <video id="faceVideo" autoplay playsinline muted></video>
+            <div class="face-ring-overlay"><div class="face-ring" id="faceRing"></div></div>
+            <canvas id="faceCanvas" style="display:none"></canvas>
+          </div>
+
+          <div class="face-status info" id="faceStatus">Kamera ochilmoqda...</div>
+
+          <!-- OTP Fallback -->
+          <div class="otp-box" id="otpBox">
+            <div style="font-size:.76rem;color:#374151;font-weight:600;margin-bottom:8px">
+              <i class="fas fa-envelope" style="color:#059669;margin-right:5px"></i>Email zaxira kodi
+            </div>
+            <input type="text" id="otpInput" maxlength="6" placeholder="——————" inputmode="numeric">
+            <button class="btn-login" style="margin-top:10px;padding:10px" onclick="verifyOTP()">
+              <i class="fas fa-check"></i> Kodni tasdiqlash
+            </button>
+          </div>
+
+          <div style="display:flex;gap:8px;margin-top:12px">
+            <button class="btn-login" style="flex:1" id="faceCaptureBtn" onclick="captureAndVerify()" disabled>
+              <i class="fas fa-camera"></i> Rasmga olish
+            </button>
+            <button class="btn-login" id="faceOtpBtn" onclick="requestOTP()" style="display:none;background:linear-gradient(135deg,#6b7280,#9ca3af)">
+              <i class="fas fa-envelope"></i> Zaxira kod
+            </button>
+          </div>
+          <div style="text-align:center">
+            <button class="face-back" onclick="resetToLogin()">← Parol bilan qayta kirish</button>
+          </div>
+        </div>
+
         <div class="l-footer">
           Login yoki parolingizni unutgan bo'lsangiz,<br>
           <strong>adminga murojaat qiling</strong>
@@ -251,71 +315,224 @@ html,body{height:100%;font-family:'Inter',sans-serif;-webkit-font-smoothing:anti
 
 </div>
 <script>
-const API='/api/v1';
+const API = '/api/v1';
 
 // Already logged in → redirect
 (function(){
-  const t=localStorage.getItem('erp_access');
-  if(!t) return;
-  const u=JSON.parse(localStorage.getItem('erp_user')||'{}');
-  const homes={student:'/student/',teacher:'/teacher/',parent:'/parent/'};
-  window.location.href=homes[u.role]||'/';
+  const t = localStorage.getItem('erp_access');
+  if (!t) return;
+  const u = JSON.parse(localStorage.getItem('erp_user') || '{}');
+  const homes = {student:'/student/', teacher:'/teacher/', parent:'/parent/'};
+  window.location.href = homes[u.role] || '/';
 })();
 
+// ── Password step ─────────────────────────────────────────────────────────────
 function togglePwd(){
-  const i=document.getElementById('password');
-  const ico=document.getElementById('eyeIcon');
-  if(i.type==='password'){i.type='text';ico.className='fas fa-eye-slash';}
-  else{i.type='password';ico.className='fas fa-eye';}
+  const i = document.getElementById('password');
+  const ico = document.getElementById('eyeIcon');
+  if(i.type==='password'){i.type='text'; ico.className='fas fa-eye-slash';}
+  else{i.type='password'; ico.className='fas fa-eye';}
 }
-
 function showErr(msg){
-  const b=document.getElementById('errBox');
-  document.getElementById('errMsg').textContent=msg;
-  b.style.display='flex';
+  const b = document.getElementById('errBox');
+  document.getElementById('errMsg').textContent = msg;
+  b.style.display = 'flex';
 }
-function hideErr(){document.getElementById('errBox').style.display='none'}
+function hideErr(){ document.getElementById('errBox').style.display = 'none'; }
 
 async function doLogin(e){
   e.preventDefault();
   hideErr();
-  const btn=document.getElementById('loginBtn');
-  const txt=document.getElementById('btnText');
-  const phone=document.getElementById('phone').value.trim();
-  const password=document.getElementById('password').value;
-
-  btn.disabled=true;
-  txt.innerHTML='<div class="spinner"></div>';
+  const btn = document.getElementById('loginBtn');
+  const txt = document.getElementById('btnText');
+  const phone = document.getElementById('phone').value.trim();
+  const password = document.getElementById('password').value;
+  btn.disabled = true;
+  txt.innerHTML = '<div class="spinner"></div>';
 
   try{
-    const res=await fetch(`${API}/auth/login/`,{
+    const res = await fetch(`${API}/auth/login/`,{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({phone,password})
+      body: JSON.stringify({phone, password}),
     });
-    const data=await res.json();
+    const data = await res.json();
     if(res.ok){
-      localStorage.setItem('erp_access',data.access||'');
-      localStorage.setItem('erp_refresh',data.refresh||'');
-      localStorage.setItem('erp_user',JSON.stringify(data.user||{}));
-      const role=data.user?.role;
-      const homes={student:'/student/',teacher:'/teacher/',parent:'/parent/'};
-      window.location.href=homes[role]||'/';
+      if(data.face_required){
+        _facePendingToken = data.face_pending_token;
+        showFaceStep();
+      } else {
+        // ── Normal login ───────────────────────────────────────────────────
+        finishLogin(data);
+      }
     } else {
-      showErr(data.detail||data.message||"Telefon yoki parol noto'g'ri");
-      btn.disabled=false;
-      txt.textContent='Kirish';
+      showErr(data.detail || data.message || "Telefon yoki parol noto'g'ri");
+      btn.disabled = false;
+      txt.textContent = 'Kirish';
     }
   } catch{
     showErr("Server bilan bog'lanishda xatolik. Qayta urinib ko'ring.");
-    btn.disabled=false;
-    txt.textContent='Kirish';
+    btn.disabled = false;
+    txt.textContent = 'Kirish';
+  }
+}
+
+function finishLogin(data){
+  localStorage.setItem('erp_access',  data.access  || '');
+  localStorage.setItem('erp_refresh', data.refresh || '');
+  localStorage.setItem('erp_user',    JSON.stringify(data.user || {}));
+  const homes = {student:'/student/', teacher:'/teacher/', parent:'/parent/'};
+  window.location.href = homes[data.user?.role] || '/';
+}
+
+// ── Face ID step ──────────────────────────────────────────────────────────────
+let _facePendingToken = null;
+let _faceStream       = null;
+let _otpVerifyToken   = null;
+
+function showFaceStep(){
+  document.getElementById('loginForm').style.display = 'none';
+  document.getElementById('faceStep').classList.add('active');
+  document.getElementById('faceOtpBtn').style.display = 'none';
+  document.getElementById('otpBox').style.display = 'none';
+  openCamera();
+}
+
+function resetToLogin(){
+  stopCamera();
+  document.getElementById('loginForm').style.display = '';
+  document.getElementById('faceStep').classList.remove('active');
+  document.getElementById('loginBtn').disabled = false;
+  document.getElementById('btnText').textContent = 'Kirish';
+  document.getElementById('faceVideoWrap').style.display = 'none';
+  document.getElementById('faceCaptureBtn').disabled = true;
+  _facePendingToken = null;
+}
+
+function setFaceStatus(msg, type){
+  const el = document.getElementById('faceStatus');
+  el.textContent = msg;
+  el.className = 'face-status ' + (type || 'info');
+}
+
+async function openCamera(){
+  setFaceStatus("Kamera ochilmoqda...", 'info');
+  try{
+    _faceStream = await navigator.mediaDevices.getUserMedia({
+      video:{width:640, height:480, facingMode:'user'}, audio:false
+    });
+    const video = document.getElementById('faceVideo');
+    video.srcObject = _faceStream;
+    await video.play();
+    document.getElementById('faceVideoWrap').style.display = 'block';
+    document.getElementById('faceRing').classList.add('active');
+    document.getElementById('faceCaptureBtn').disabled = false;
+    setFaceStatus("Kameraga qarang va 'Rasmga olish' tugmasini bosing", 'info');
+  } catch(e){
+    setFaceStatus("Kamera ochilmadi: " + e.message, 'err');
+  }
+}
+
+function stopCamera(){
+  if(_faceStream){ _faceStream.getTracks().forEach(t => t.stop()); _faceStream = null; }
+}
+
+async function captureAndVerify(){
+  const btn    = document.getElementById('faceCaptureBtn');
+  const canvas = document.getElementById('faceCanvas');
+  const video  = document.getElementById('faceVideo');
+
+  btn.disabled = true;
+  canvas.width  = video.videoWidth  || 640;
+  canvas.height = video.videoHeight || 480;
+  canvas.getContext('2d').drawImage(video, 0, 0);
+  const frame = canvas.toDataURL('image/jpeg', 0.85);
+
+  stopCamera();
+  document.getElementById('faceRing').classList.remove('active');
+  setFaceStatus("Tekshirilmoqda...", 'info');
+
+  try{
+    const res = await fetch(`${API}/face-auth/verify-login/`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        face_pending_token: _facePendingToken,
+        frames: [frame],
+      }),
+    });
+    const data = await res.json();
+    if(res.ok){
+      setFaceStatus("Muvaffaqiyatli! Tizimga kirilmoqda...", 'ok');
+      setTimeout(() => finishLogin(data), 800);
+    } else {
+      setFaceStatus(data.detail || "Yuz tekshiruvi muvaffaqiyatsiz", 'err');
+      if(data.otp_available){
+        document.getElementById('faceOtpBtn').style.display = '';
+      }
+      // Qayta urinish uchun kamerani qayta och
+      setTimeout(() => openCamera(), 1200);
+    }
+  } catch{
+    setFaceStatus("Server bilan bog'lanishda xatolik", 'err');
+    setTimeout(() => openCamera(), 1200);
+  }
+}
+
+// ── OTP Fallback ──────────────────────────────────────────────────────────────
+async function requestOTP(){
+  document.getElementById('faceOtpBtn').disabled = true;
+  setFaceStatus("OTP kod yuborilmoqda...", 'info');
+  try{
+    const res = await fetch(`${API}/face-auth/otp-request/`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({face_pending_token: _facePendingToken}),
+    });
+    const data = await res.json();
+    if(res.ok){
+      _otpVerifyToken = data.otp_verification_token;
+      setFaceStatus("OTP kod emailingizga yuborildi. Kodni kiriting:", 'ok');
+      document.getElementById('otpBox').style.display = 'block';
+    } else {
+      setFaceStatus(data.detail || "OTP yuborishda xatolik", 'err');
+      document.getElementById('faceOtpBtn').disabled = false;
+    }
+  } catch{
+    setFaceStatus("Server bilan bog'lanishda xatolik", 'err');
+    document.getElementById('faceOtpBtn').disabled = false;
+  }
+}
+
+async function verifyOTP(){
+  const otp = document.getElementById('otpInput').value.trim();
+  if(otp.length !== 6){ setFaceStatus("6 raqamli kodni kiriting", 'warn'); return; }
+  setFaceStatus("Tekshirilmoqda...", 'info');
+  try{
+    const res = await fetch(`${API}/face-auth/otp-verify/`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        face_pending_token:     _facePendingToken,
+        otp_verification_token: _otpVerifyToken,
+        otp:                    otp,
+      }),
+    });
+    const data = await res.json();
+    if(res.ok){
+      setFaceStatus("OTP tasdiqlandi! Tizimga kirilmoqda...", 'ok');
+      setTimeout(() => finishLogin(data), 800);
+    } else {
+      setFaceStatus(data.detail || "Noto'g'ri OTP kod", 'err');
+    }
+  } catch{
+    setFaceStatus("Server bilan bog'lanishda xatolik", 'err');
   }
 }
 
 // Stagger feature card animations
 document.querySelectorAll('.feat').forEach((el,i)=>{
-  el.style.cssText=`animation:slideUp .5s ease ${.55+i*.1}s both;opacity:0`;
+  el.style.cssText = `animation:slideUp .5s ease ${.55+i*.1}s both;opacity:0`;
 });
 </script>
 </body>

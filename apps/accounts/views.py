@@ -26,11 +26,30 @@ def _log(user, action, model='User', object_id='', object_repr='', request=None)
         pass
 
 
+def _face_auth_required(user) -> bool:
+    """Return True when face 2FA must be completed before issuing full tokens."""
+    from django.conf import settings
+    if not getattr(settings, 'FACE_AUTH_ENABLED', False):
+        return False
+    required_roles = getattr(settings, 'FACE_REQUIRED_ROLES', [])
+    if user.role not in required_roles:
+        return False
+    try:
+        return user.face_profile.is_enrolled
+    except Exception:
+        return False
+
+
 class LoginView(APIView):
     """
     POST /api/v1/auth/login/
     Body: { "phone": "+998901234567", "password": "secret123" }
-    Javob: { "access": "...", "refresh": "...", "user": {...} }
+
+    Normal response:
+        { "access": "...", "refresh": "...", "user": {...} }
+
+    When face 2FA is required:
+        { "face_required": true, "face_pending_token": "...", "challenge": {...} }
     """
     permission_classes = [AllowAny]
     throttle_scope = 'login'
@@ -38,7 +57,29 @@ class LoginView(APIView):
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
         if serializer.is_valid():
-            user   = serializer.validated_data['user']
+            user = serializer.validated_data['user']
+
+            # ── Face 2FA gate ──────────────────────────────────────────────
+            if _face_auth_required(user):
+                from django.core import signing
+                from apps.face_auth.api.views import FACE_PENDING_SALT, FALLBACK_SALT
+                face_token = signing.dumps(
+                    {'user_id': str(user.pk)},
+                    salt=FACE_PENDING_SALT,
+                    compress=True,
+                )
+                fallback_token = signing.dumps(
+                    {'user_id': str(user.pk)},
+                    salt=FALLBACK_SALT,
+                    compress=True,
+                )
+                logger.info("Yuz tekshiruvi talab qilinmoqda: %s", user.phone)
+                return Response({
+                    'face_required':      True,
+                    'face_pending_token': face_token,
+                    'fallback_token':     fallback_token,
+                })
+            # ── Normal login ───────────────────────────────────────────────
             tokens = serializer.get_tokens(user)
             logger.info(f"Kirdi: {user.phone}")
             _log(user, 'login', 'User', user.pk, str(user), request)

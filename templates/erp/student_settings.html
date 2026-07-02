@@ -24,6 +24,29 @@
 .tab-btn.active{background:var(--grad);color:#fff;border-color:transparent}
 .tab-pane{display:none}
 .tab-pane.active{display:block}
+/* Face ID */
+.faceid-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:700;margin-top:6px;cursor:pointer}
+.faceid-on{background:rgba(16,185,129,.15);color:#059669;border:1px solid rgba(16,185,129,.25)}
+.faceid-off{background:rgba(239,68,68,.1);color:#dc2626;border:1px solid rgba(239,68,68,.2)}
+.fi-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9000;align-items:center;justify-content:center}
+.fi-modal-overlay.open{display:flex}
+.fi-modal{background:#0D1B2A;border-radius:18px;padding:28px;width:min(95vw,480px);position:relative;animation:fadeUp .3s ease both}
+.fi-modal-title{font-size:1rem;font-weight:800;color:#fff;margin-bottom:4px}
+.fi-modal-sub{font-size:.75rem;color:rgba(255,255,255,.5);margin-bottom:18px}
+.fi-video-wrap{position:relative;border-radius:12px;overflow:hidden;background:#000;aspect-ratio:4/3}
+.fi-video-wrap video{width:100%;display:block}
+.fi-video-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.fi-face-ring{width:140px;height:140px;border-radius:50%;border:2px dashed rgba(5,150,105,.6);box-shadow:0 0 0 4px rgba(5,150,105,.1)}
+.fi-status-bar{margin-top:10px;padding:8px 12px;border-radius:8px;font-size:.77rem;font-weight:600;text-align:center}
+.fi-status-bar.checking{background:rgba(59,130,246,.1);color:#60a5fa}
+.fi-status-bar.ok{background:rgba(16,185,129,.1);color:#34d399}
+.fi-status-bar.err{background:rgba(239,68,68,.1);color:#f87171}
+.fi-consent-box{margin-top:14px;padding:12px;background:rgba(255,255,255,.04);border-radius:9px;border:1px solid rgba(255,255,255,.08)}
+.fi-consent-box label{display:flex;gap:8px;align-items:flex-start;font-size:.74rem;color:rgba(255,255,255,.65);cursor:pointer;line-height:1.5}
+.fi-consent-box input[type=checkbox]{margin-top:2px;accent-color:#059669;flex-shrink:0}
+.fi-btns{display:flex;gap:8px;margin-top:16px}
+.fi-close-btn{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.08);border:none;border-radius:50%;width:28px;height:28px;color:rgba(255,255,255,.6);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.8rem}
+.fi-close-btn:hover{background:rgba(255,255,255,.16);color:#fff}
 </style>
 {% endblock %}
 
@@ -31,12 +54,16 @@
 <!-- Profile Hero -->
 <div class="sett-hero">
   <div class="sett-hero-bg"></div><div class="sett-hero-glow"></div>
-  <div class="sett-av" id="settAv">?</div>
+  <div class="sett-av" id="settAv" style="cursor:pointer" onclick="openFaceModal()" title="Face ID o'rnatish">?</div>
   <div>
     <div class="sett-name" id="settName">Yuklanmoqda...</div>
     <div class="sett-phone" id="settPhone">—</div>
     <div>
       <span class="sett-id"><i class="fas fa-id-card" style="font-size:.62rem"></i> ID: <span id="settId">—</span></span>
+    </div>
+    <div id="faceIdBadge" class="faceid-badge faceid-off" onclick="openFaceModal()">
+      <i class="fas fa-face-smile" style="font-size:.6rem"></i>
+      <span id="faceIdLabel">Face ID: O'rnatilmagan</span>
     </div>
   </div>
 </div>
@@ -102,6 +129,38 @@
       <button class="btn btn-primary" onclick="changePwd()" style="width:100%;margin-top:4px">
         <i class="fas fa-shield-halved"></i>Parolni yangilash
       </button>
+    </div>
+  </div>
+</div>
+
+<!-- Face ID Modal -->
+<div class="fi-modal-overlay" id="faceModal">
+  <div class="fi-modal">
+    <button class="fi-close-btn" onclick="closeFaceModal()"><i class="fas fa-times"></i></button>
+    <div class="fi-modal-title"><i class="fas fa-face-smile" style="color:#059669;margin-right:7px"></i>Face ID</div>
+    <div class="fi-modal-sub">Yuzingizni ro'yxatga olish uchun kameraga qarang</div>
+    <div class="fi-video-wrap">
+      <video id="faceVideo" autoplay playsinline muted></video>
+      <div class="fi-video-overlay"><div class="fi-face-ring" id="faceRing"></div></div>
+      <canvas id="faceCanvas" style="display:none"></canvas>
+    </div>
+    <div class="fi-status-bar checking" id="faceStatusBar">Kamera ishga tushirilmoqda...</div>
+    <input type="file" id="facePhotoInput" accept="image/*" style="display:none" onchange="onFacePhotoChosen(event)">
+    <button class="btn btn-ghost" type="button" style="width:100%;margin-top:8px;font-size:.76rem" onclick="document.getElementById('facePhotoInput').click()">
+      <i class="fas fa-mobile-screen-button"></i> Telefon/rasm orqali tanlash (kamera xira bo'lsa)
+    </button>
+    <div class="fi-consent-box">
+      <label>
+        <input type="checkbox" id="faceConsent">
+        Men biometrik ma'lumotlarim (yuz tasviri) VLT.erp tizimida xavfsiz saqlanishiga roziman.
+        Ma'lumotlar O'zbekiston shaxsiy ma'lumotlar to'g'risidagi qonuniga muvofiq himoyalanadi.
+      </label>
+    </div>
+    <div class="fi-btns">
+      <button class="btn btn-primary" style="flex:1" id="faceEnrollBtn" onclick="doEnroll()">
+        <i class="fas fa-check"></i> Saqlash
+      </button>
+      <button class="btn btn-ghost" onclick="closeFaceModal()">Bekor qilish</button>
     </div>
   </div>
 </div>
@@ -211,5 +270,152 @@ async function changePwd(){
 }
 
 load();
+
+// ── Face ID ──────────────────────────────────────────────────────────────────
+let _faceStream = null;
+let _uploadedFrameB64 = null;
+
+function onFacePhotoChosen(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const img = new Image();
+  img.onload = function() {
+    const canvas = document.getElementById('faceCanvas');
+    canvas.width  = img.naturalWidth;
+    canvas.height = img.naturalHeight;
+    canvas.getContext('2d').drawImage(img, 0, 0);
+    _uploadedFrameB64 = canvas.toDataURL('image/jpeg', 0.92);
+
+    stopFaceCamera();
+    document.getElementById('faceVideo').style.display = 'none';
+    document.querySelector('.fi-video-overlay').style.display = 'none';
+    canvas.style.display    = 'block';
+    canvas.style.width       = '100%';
+    canvas.style.height      = '100%';
+    canvas.style.objectFit   = 'contain';
+    canvas.style.background  = '#000';
+    setFaceStatus("Rasm tanlandi. Rozilikni belgilab \"Saqlash\"ni bosing.", 'ok');
+  };
+  img.onerror = function() {
+    setFaceStatus("Rasmni o'qib bo'lmadi, boshqa fayl tanlang", 'err');
+  };
+  img.src = URL.createObjectURL(file);
+}
+
+async function loadFaceStatus() {
+  try {
+    const r = await req('/face-auth/status/');
+    if (r?.ok) {
+      const d = await r.json();
+      const badge = document.getElementById('faceIdBadge');
+      const lbl   = document.getElementById('faceIdLabel');
+      if (d.enrolled) {
+        badge.className = 'faceid-badge faceid-on';
+        lbl.textContent = 'Face ID: Yoqilgan';
+      } else {
+        badge.className = 'faceid-badge faceid-off';
+        lbl.textContent = "Face ID: O'rnatilmagan";
+      }
+    }
+  } catch(e) {}
+}
+
+async function openFaceModal() {
+  document.getElementById('faceModal').classList.add('open');
+  document.getElementById('faceConsent').checked = false;
+  _uploadedFrameB64 = null;
+  document.getElementById('faceVideo').style.display = '';
+  document.getElementById('faceCanvas').style.display = 'none';
+  document.querySelector('.fi-video-overlay').style.display = '';
+  document.getElementById('facePhotoInput').value = '';
+  setFaceStatus('Kamera ishga tushirilmoqda...', 'checking');
+  await startFaceCamera();
+}
+
+function closeFaceModal() {
+  stopFaceCamera();
+  _uploadedFrameB64 = null;
+  document.getElementById('faceModal').classList.remove('open');
+}
+
+function setFaceStatus(msg, type) {
+  const bar = document.getElementById('faceStatusBar');
+  bar.textContent = msg;
+  bar.className = 'fi-status-bar ' + (type || 'checking');
+}
+
+async function startFaceCamera() {
+  try {
+    _faceStream = await navigator.mediaDevices.getUserMedia({
+      video: { width: 640, height: 480, facingMode: 'user' }, audio: false
+    });
+    document.getElementById('faceVideo').srcObject = _faceStream;
+    await document.getElementById('faceVideo').play();
+    setFaceStatus('Yuzingizni doira ichiga joylashtiring. Rozilikni belgilab "Saqlash"ni bosing.', 'ok');
+  } catch(e) {
+    setFaceStatus("Kamera ochilmadi: " + e.message, 'err');
+  }
+}
+
+function stopFaceCamera() {
+  if (_faceStream) { _faceStream.getTracks().forEach(t => t.stop()); _faceStream = null; }
+}
+
+async function doEnroll() {
+ try {
+  if (!document.getElementById('faceConsent').checked) {
+    setFaceStatus("Rozilikni belgilang", 'err'); return;
+  }
+
+  let frameB64;
+  if (_uploadedFrameB64) {
+    frameB64 = _uploadedFrameB64;
+  } else {
+    if (!_faceStream) {
+      setFaceStatus("Kamera ishlamayapti — avval kameraga ruxsat bering", 'err'); return;
+    }
+    const video  = document.getElementById('faceVideo');
+    const canvas = document.getElementById('faceCanvas');
+    canvas.width = video.videoWidth || 640;
+    canvas.height = video.videoHeight || 480;
+    canvas.getContext('2d').drawImage(video, 0, 0);
+    frameB64 = canvas.toDataURL('image/jpeg', 0.9);
+  }
+
+  document.getElementById('faceEnrollBtn').disabled = true;
+  setFaceStatus("Tekshirilmoqda... (rasm yuborilmoqda, biroz kutib turing)", 'checking');
+  stopFaceCamera();
+
+  console.log('[FaceID] yuborilayotgan rasm hajmi (KB):', Math.round(frameB64.length / 1024));
+
+  try {
+    const r = await req('/face-auth/enroll/', {
+      method: 'POST', body: JSON.stringify({ frame: frameB64, consent: true }),
+    });
+    if (!r) { setFaceStatus("Server javob bermadi (req null qaytardi)", 'err'); document.getElementById('faceEnrollBtn').disabled = false; return; }
+    const d = await r.json();
+    if (r.ok) {
+      setFaceStatus("Face ID muvaffaqiyatli o'rnatildi ✓", 'ok');
+      toast("Face ID muvaffaqiyatli o'rnatildi", 'ok');
+      setTimeout(() => { closeFaceModal(); loadFaceStatus(); }, 1500);
+    } else {
+      setFaceStatus(d.detail || 'Xatolik', 'err');
+      document.getElementById('faceEnrollBtn').disabled = false;
+      startFaceCamera();
+    }
+  } catch(e) {
+    console.error('[FaceID] so\'rov xatosi:', e);
+    setFaceStatus("Server bilan bog'lanishda xatolik: " + e.message, 'err');
+    document.getElementById('faceEnrollBtn').disabled = false;
+  }
+ } catch (outerErr) {
+   console.error('[FaceID] doEnroll ichki xatosi:', outerErr);
+   setFaceStatus("Ichki xatolik: " + outerErr.message, 'err');
+   document.getElementById('faceEnrollBtn').disabled = false;
+ }
+}
+
+loadFaceStatus();
 </script>
 {% endblock %}

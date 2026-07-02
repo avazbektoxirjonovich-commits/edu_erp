@@ -1,0 +1,496 @@
+{% extends "erp/base.html" %}
+{% block title %}ZUKKO Focus Mode — VLT.erp{% endblock %}
+{% block page_title %}ZUKKO Focus{% endblock %}
+
+{% block extra_head %}
+<style>
+.zk-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 18px;margin-bottom:12px;position:sticky;top:0;z-index:50}
+.zk-bar-center{display:flex;flex-direction:column;align-items:center}
+.zk-timer{font-size:1.8rem;font-weight:900;font-family:monospace;color:var(--accent);letter-spacing:2px;transition:color .3s}
+.zk-timer.warn{color:var(--warning)}
+.zk-timer.danger{color:var(--danger);animation:pulseGlow 1s infinite}
+.zk-dots{display:flex;gap:6px;justify-content:center;margin:8px 0 14px}
+.zk-dot{width:11px;height:11px;border-radius:50%;background:var(--border);transition:background .3s}
+.zk-dot.done{background:var(--accent)}
+.zk-dot.active{background:var(--accent);animation:pulseGlow 1.2s infinite}
+.zk-grid{display:grid;grid-template-columns:35% 1fr;gap:14px}
+@media(max-width:900px){.zk-grid{grid-template-columns:1fr}}
+.zk-left{display:flex;flex-direction:column;gap:0}
+.zk-sample{background:#0d1117;color:#e6edf3;border:1px solid #30363d;border-radius:6px;padding:10px 12px;font-family:'Fira Code',monospace;font-size:.8rem;overflow-x:auto;margin:4px 0}
+.zk-code-display{display:flex;background:#0d1117;border:1px solid #30363d;border-radius:6px;overflow:auto;max-height:340px;font-family:'Fira Code',monospace;font-size:.81rem;line-height:1.7}
+.zk-lns{background:#0a0f17;border-right:1px solid #30363d;padding:10px 8px;text-align:right;color:#484f58;user-select:none;min-width:38px}
+.zk-ln{cursor:pointer;padding:0 6px;border-radius:3px;transition:background .15s}
+.zk-ln.selected{color:#58a6ff;font-weight:700}
+.zk-code-lines{padding:10px 14px;flex:1;color:#e6edf3}
+.zk-cl{cursor:pointer;white-space:pre;padding:0 6px;border-radius:3px;transition:background .15s}
+.zk-cl:hover,.zk-ln:hover{background:rgba(88,166,255,.08)}
+.zk-cl.selected,.zk-ln.selected{background:rgba(88,166,255,.15)}
+.zk-editor{width:100%;font-family:'Fira Code',monospace;font-size:.82rem;background:#0d1117;color:#e6edf3;border:1px solid #30363d;border-radius:6px;padding:12px;resize:vertical;outline:none;line-height:1.7}
+.zk-editor:focus{border-color:var(--accent)}
+.zk-hint-box{display:none;margin-top:10px;padding:10px 12px;border:1px solid var(--warning);border-radius:6px;background:rgba(217,119,6,.08);font-size:.8rem;color:var(--text);line-height:1.5}
+.zk-console{margin-top:14px;display:none}
+.zk-result-row{display:flex;align-items:center;gap:10px;padding:12px 16px}
+.zk-test-pills{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+.zk-empty-focus{text-align:center;padding:60px 20px;color:var(--muted)}
+.zk-empty-focus i{font-size:2.5rem;opacity:.2;display:block;margin-bottom:14px}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- ── Top bar ── -->
+<div class="card zk-bar" id="zkBar">
+  <div>
+    <div style="font-size:.75rem;color:var(--muted);margin-bottom:2px">Sessiya</div>
+    <div style="font-weight:700;font-size:.9rem;color:var(--text)" id="zkSessionTitle">Yuklanmoqda...</div>
+    <span class="bdg" id="zkProgress" style="margin-top:4px;display:inline-block">—</span>
+  </div>
+  <div class="zk-bar-center">
+    <div style="font-size:.68rem;color:var(--muted);margin-bottom:2px">Qolgan vaqt</div>
+    <div class="zk-timer" id="zkTimer">--:--</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px">
+    <span class="bdg bdg-active" id="zkTotalPts" style="font-size:.9rem">0 ball</span>
+    <button class="btn btn-primary" id="zkSubmitBtn" onclick="submitCurrent()" disabled>
+      <i class="fas fa-paper-plane"></i> Yuborish
+    </button>
+  </div>
+</div>
+
+<!-- ── Challenge dots ── -->
+<div class="zk-dots" id="zkDots"></div>
+
+<!-- ── 2-col grid ── -->
+<div class="zk-grid" id="zkGrid">
+  <!-- Left: description -->
+  <div class="card zk-left" id="zkLeft">
+    <div class="loading"><div class="spinner"></div><p>Yuklanmoqda...</p></div>
+  </div>
+  <!-- Right: code editor -->
+  <div class="card" id="zkRight">
+    <div class="loading"><div class="spinner"></div><p>Yuklanmoqda...</p></div>
+  </div>
+</div>
+
+<!-- ── Console / result panel ── -->
+<div class="card zk-console" id="zkConsole">
+  <div id="zkConsoleContent"></div>
+</div>
+
+<!-- ── Error state ── -->
+<div class="card" id="zkError" style="display:none">
+  <div class="zk-empty-focus">
+    <i class="fas fa-exclamation-circle" style="color:var(--danger)"></i>
+    <p id="zkErrorMsg">Xatolik yuz berdi</p>
+    <a href="/zukko/student/" class="btn btn-outline btn-sm" style="margin-top:16px">
+      <i class="fas fa-arrow-left"></i> Boshqaruv paneliga qaytish
+    </a>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const SHARE_LINK = window.location.pathname.match(/\/zukko\/focus\/([^\/]+)/)?.[1];
+
+let state = {
+  sessionId: null, sessionTitle: '', tabSwitchLimit: 3, antiPasteEnabled: true,
+  challenges: [], currentIdx: 0,
+  sessionStartedAt: null, challengeStartedAt: null,
+  submitting: false,
+  totalPoints: 0,
+  submittedResults: [],
+  acBuffer: [],
+  tabSwitches: 0,
+  usedHint: false,
+  selectedLine: null,
+};
+
+// ── Timer ──────────────────────────────────────────────────────────────
+let timerInterval = null, totalSeconds = 0, secondsLeft = 0;
+
+function startTimer(sec) {
+  totalSeconds = sec; secondsLeft = sec;
+  updateTimerDisplay();
+  timerInterval = setInterval(() => {
+    secondsLeft = Math.max(0, secondsLeft - 1);
+    updateTimerDisplay();
+    if (secondsLeft === 0) { clearInterval(timerInterval); autoSubmit(); }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(secondsLeft / 60), s = secondsLeft % 60;
+  const el = document.getElementById('zkTimer');
+  el.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  el.className = 'zk-timer' + (secondsLeft < 60 ? ' danger' : secondsLeft < 180 ? ' warn' : '');
+}
+
+async function autoSubmit() {
+  await submitCurrent(true);
+  complete();
+}
+
+// ── Load session ───────────────────────────────────────────────────────
+async function loadSession() {
+  if (!SHARE_LINK) { showError("URL noto'g'ri. Share link topilmadi."); return; }
+
+  let data;
+  try { data = await get(`/challenges/start/${SHARE_LINK}/`); }
+  catch (e) {
+    const msg = e?.data?.detail || e?.message || "Sessiyaga kirishda xatolik";
+    showError(msg);
+    return;
+  }
+
+  state.sessionId = data.session_id;
+  state.sessionTitle = data.title;
+  state.tabSwitchLimit = data.tab_switch_limit;
+  state.antiPasteEnabled = data.anti_paste_enabled;
+
+  const bf = (data.bugfind_challenges || []).map(c => ({...c, kind:'bugfind'}));
+  const cd = (data.coding_challenges  || []).map(c => ({...c, kind:'coding'}));
+  state.challenges = [...bf, ...cd];
+
+  if (!state.challenges.length) { showError("Bu sessiyada topshiriqlar yo'q."); return; }
+
+  document.getElementById('zkSessionTitle').textContent = data.title;
+  document.getElementById('zkBar').style.display = '';
+  renderDots();
+  state.sessionStartedAt = Date.now();
+  startTimer(data.time_limit_minutes * 60);
+  renderChallenge();
+}
+
+// ── Progress dots ──────────────────────────────────────────────────────
+function renderDots() {
+  document.getElementById('zkDots').innerHTML = state.challenges
+    .map((_, i) => `<div class="zk-dot" id="dot${i}"></div>`).join('');
+  updateDots();
+}
+
+function updateDots() {
+  state.challenges.forEach((_, i) => {
+    const el = document.getElementById('dot' + i);
+    if (!el) return;
+    el.className = 'zk-dot' + (i < state.currentIdx ? ' done' : i === state.currentIdx ? ' active' : '');
+  });
+}
+
+// ── Render challenge ───────────────────────────────────────────────────
+function renderChallenge() {
+  const c = state.challenges[state.currentIdx];
+  if (!c) { complete(); return; }
+
+  state.challengeStartedAt = Date.now();
+  state.usedHint = false;
+  state.selectedLine = null;
+
+  const n = state.currentIdx + 1, tot = state.challenges.length;
+  document.getElementById('zkProgress').textContent = `${n} / ${tot} topshiriq`;
+  updateDots();
+  document.getElementById('zkConsole').style.display = 'none';
+  document.getElementById('zkSubmitBtn').disabled = false;
+  document.getElementById('zkSubmitBtn').innerHTML = '<i class="fas fa-paper-plane"></i> Yuborish';
+
+  const diffCls = {easy:'bdg-active', medium:'bdg-warning', hard:'bdg-danger'}[c.difficulty] || 'bdg';
+  const diffLbl = {easy:'Oson', medium:"O'rta", hard:'Qiyin'}[c.difficulty] || c.difficulty;
+  const kindLbl = c.kind === 'bugfind' ? '<i class="fas fa-bug"></i> Bug-find' : '<i class="fas fa-code"></i> Coding';
+
+  // ── Left panel ──
+  let leftHtml = `
+    <div class="card-header">
+      <span class="card-title">${escHtml(c.title)}</span>
+      <span class="bdg ${diffCls}">${diffLbl}</span>
+    </div>
+    <div class="card-body" style="flex:1;overflow-y:auto">
+      <div style="font-size:.75rem;color:var(--muted);margin-bottom:10px">
+        ${kindLbl} &nbsp;·&nbsp; <b style="color:var(--text)">${c.points}</b> ball
+      </div>
+      <p style="font-size:.84rem;line-height:1.65;white-space:pre-wrap;color:var(--text)">${escHtml(c.description || '')}</p>`;
+
+  if (c.kind === 'coding') {
+    if (c.constraints) leftHtml += `<div style="margin-top:14px"><div style="font-size:.72rem;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Cheklovlar</div><p style="font-size:.8rem;color:var(--text)">${escHtml(c.constraints)}</p></div>`;
+    if (c.sample_input)  leftHtml += `<div style="margin-top:12px"><div style="font-size:.72rem;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Namuna kirish</div><pre class="zk-sample">${escHtml(c.sample_input)}</pre></div>`;
+    if (c.sample_output) leftHtml += `<div style="margin-top:10px"><div style="font-size:.72rem;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Namuna chiqish</div><pre class="zk-sample">${escHtml(c.sample_output)}</pre></div>`;
+  } else {
+    leftHtml += `
+      <div style="margin-top:14px">
+        <label style="display:block;font-size:.78rem;color:var(--muted);margin-bottom:6px">Xato qatorni kiriting yoki o'ngdagi koddan bosib tanlang:</label>
+        <input type="number" id="zkLineInput" min="1" placeholder="Qator raqami"
+          style="width:120px;padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:.85rem;background:var(--card);color:var(--text);outline:none"
+          oninput="selectLine(parseInt(this.value)||null)">
+      </div>`;
+    if (c.hint) leftHtml += `
+      <div style="margin-top:14px">
+        <button class="btn btn-ghost btn-sm" onclick="revealHint(${JSON.stringify(escHtml(c.hint))})">
+          <i class="fas fa-lightbulb" style="color:var(--warning)"></i> Maslahat ko'rish (-2 ball)
+        </button>
+        <div class="zk-hint-box" id="zkHintBox"></div>
+      </div>`;
+  }
+
+  leftHtml += `</div>`;
+  document.getElementById('zkLeft').innerHTML = leftHtml;
+
+  // ── Right panel ──
+  if (c.kind === 'bugfind') renderBugfindEditor(c);
+  else renderCodingEditor(c);
+}
+
+function revealHint(hintText) {
+  if (state.usedHint) return;
+  if (!confirm('Maslahat olsangiz ball -2 ga kamayadi. Davom etasizmi?')) return;
+  state.usedHint = true;
+  const box = document.getElementById('zkHintBox');
+  if (box) { box.style.display = 'block'; box.textContent = hintText; }
+}
+
+function renderBugfindEditor(c) {
+  const lines = (c.buggy_code || '').split('\n');
+  const lnHtml   = lines.map((_, i) => `<div class="zk-ln" id="ln${i+1}" onclick="selectLine(${i+1})">${i+1}</div>`).join('');
+  const codeHtml = lines.map((line, i) =>
+    `<div class="zk-cl" id="cl${i+1}" onclick="selectLine(${i+1})">${escHtml(line) || '&nbsp;'}</div>`).join('');
+
+  document.getElementById('zkRight').innerHTML = `
+    <div class="card-header">
+      <span class="card-title">Xatoli kod — qatorni bosing</span>
+    </div>
+    <div class="card-body" style="padding:0">
+      <div class="zk-code-display">
+        <div class="zk-lns">${lnHtml}</div>
+        <div class="zk-code-lines">${codeHtml}</div>
+      </div>
+    </div>
+    <div class="card-header" style="border-top:1px solid var(--border);padding-top:12px">
+      <span class="card-title">Tuzatilgan kodni yozing</span>
+    </div>
+    <div class="card-body" style="padding:8px">
+      <textarea id="zkFixedCode" class="zk-editor" rows="8"
+        placeholder="Xatoni tuzatib, to'g'ri kodni shu yerga yozing...">${escHtml(c.buggy_code || '')}</textarea>
+    </div>`;
+}
+
+function selectLine(n) {
+  state.selectedLine = n;
+  const inp = document.getElementById('zkLineInput');
+  if (inp) inp.value = n || '';
+  document.querySelectorAll('.zk-ln,.zk-cl').forEach(el => el.classList.remove('selected'));
+  if (n) {
+    document.getElementById('ln' + n)?.classList.add('selected');
+    document.getElementById('cl' + n)?.classList.add('selected');
+  }
+}
+
+function renderCodingEditor(c) {
+  document.getElementById('zkRight').innerHTML = `
+    <div class="card-header">
+      <span class="card-title">Kod yozish</span>
+      <span style="font-size:.72rem;color:var(--muted)">${escHtml(c.programming_language || 'python')}</span>
+    </div>
+    <div class="card-body" style="padding:8px">
+      <textarea id="zkCodingCode" class="zk-editor" rows="20"
+        placeholder="# Yechimingizni shu yerga yozing..."
+        onkeydown="handleTab(event)">${escHtml(c.starter_code || '')}</textarea>
+    </div>`;
+}
+
+function handleTab(e) {
+  if (e.key !== 'Tab') return;
+  e.preventDefault();
+  const ta = e.target, s = ta.selectionStart, end = ta.selectionEnd;
+  ta.value = ta.value.slice(0, s) + '    ' + ta.value.slice(end);
+  ta.selectionStart = ta.selectionEnd = s + 4;
+}
+
+// ── Submit ─────────────────────────────────────────────────────────────
+async function submitCurrent(force = false) {
+  if (state.submitting) return;
+  const c = state.challenges[state.currentIdx];
+  if (!c) return;
+
+  state.submitting = true;
+  const btn = document.getElementById('zkSubmitBtn');
+  if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Yuborilmoqda...'; }
+
+  const timeSpent = Math.round((Date.now() - state.challengeStartedAt) / 1000);
+
+  try {
+    let result;
+    if (c.kind === 'bugfind') {
+      result = await post('/challenges/submit/', {
+        submission_type: 'bugfind',
+        challenge_id: c.id,
+        session_id: state.sessionId,
+        identified_line: state.selectedLine || 0,
+        submitted_code: document.getElementById('zkFixedCode')?.value || '',
+        used_hint: state.usedHint,
+        time_spent_seconds: timeSpent,
+      });
+    } else {
+      result = await post('/challenges/submit/', {
+        submission_type: 'coding',
+        challenge_id: c.id,
+        session_id: state.sessionId,
+        code: document.getElementById('zkCodingCode')?.value || '',
+        time_spent_seconds: timeSpent,
+        keystroke_log: [],
+      });
+    }
+
+    const pts = result?.points_earned || 0;
+    state.totalPoints += pts;
+    document.getElementById('zkTotalPts').textContent = state.totalPoints + ' ball';
+
+    state.submittedResults.push({ challenge: c, result });
+    showConsoleResult(c.kind, result);
+    await flushAntiCheat();
+    if (!force) setTimeout(nextChallenge, 2200);
+
+  } catch (err) {
+    if (err?.status === 409) {
+      toast("Bu topshiriq allaqachon yuborilgan", 'warning', 3000);
+      if (!force) setTimeout(nextChallenge, 1000);
+    } else if (err?.status === 400) {
+      toast(err?.data?.error || "Vaqt tugagan yoki xato so'rov", 'error', 4000);
+      if (!force) setTimeout(nextChallenge, 1500);
+    } else {
+      toast("Yuborishda xatolik. Qayta urinib ko'ring.", 'error', 4000);
+      if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane"></i> Yuborish'; }
+    }
+  } finally {
+    state.submitting = false;
+  }
+}
+
+function showConsoleResult(kind, result) {
+  const panel = document.getElementById('zkConsole');
+  const content = document.getElementById('zkConsoleContent');
+  if (!panel || !content) return;
+
+  const statusMap = { correct:'✅ To\'g\'ri', partial:'⚡ Qisman', wrong:'❌ Noto\'g\'ri', cheating:'🚨 Shubhali' };
+  const sub = result?.submission || {};
+  const pts = result?.points_earned ?? 0;
+  const statusLbl = statusMap[sub.status] || sub.status || '—';
+
+  let html = `<div class="zk-result-row">
+    <span style="font-size:1rem;font-weight:700">${statusLbl}</span>
+    <span class="bdg bdg-active" style="font-size:.9rem">+${pts} ball</span>
+    <span style="margin-left:auto;font-size:.75rem;color:var(--muted)"><i class="fas fa-arrow-right"></i> Keyingi topshiriq...</span>
+  </div>`;
+
+  if (kind === 'bugfind') {
+    html += `<div style="padding:0 16px 14px;font-size:.82rem;color:var(--muted)">
+      To'g'ri qator: <b style="color:var(--text)">${result?.correct_line ?? '—'}</b>
+      ${result?.bug_explanation ? `<br><span style="color:var(--text)">${escHtml(result.bug_explanation)}</span>` : ''}
+    </div>`;
+  } else if (kind === 'coding' && result?.test_results) {
+    const p = result.passed || 0, t = result.total || 0;
+    html += `<div style="padding:0 16px 14px;font-size:.82rem">
+      <b>${p}/${t}</b> <span style="color:var(--muted)">test o'tdi</span>
+      <div class="zk-test-pills">
+        ${result.test_results.map((tc, i) => `<span class="bdg ${tc.passed ? 'bdg-active' : 'bdg-danger'}">T${i+1}</span>`).join('')}
+      </div>
+    </div>`;
+  }
+
+  content.innerHTML = html;
+  panel.style.display = 'block';
+  panel.scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+
+function nextChallenge() {
+  if (state.currentIdx >= state.challenges.length - 1) { complete(); return; }
+  state.currentIdx++;
+  renderChallenge();
+  document.getElementById('zkGrid')?.scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+function complete() {
+  clearInterval(timerInterval);
+  const stored = {
+    sessionId: state.sessionId,
+    sessionTitle: state.sessionTitle,
+    submittedResults: state.submittedResults,
+    totalPoints: state.totalPoints,
+  };
+  sessionStorage.setItem('zkLastSession', JSON.stringify(stored));
+
+  const lastSub = state.submittedResults[state.submittedResults.length - 1]?.result?.submission;
+  const redirectId = lastSub?.id || state.sessionId;
+  window.location.href = `/zukko/results/${redirectId}/`;
+}
+
+function showError(msg) {
+  document.getElementById('zkGrid').style.display = 'none';
+  document.getElementById('zkDots').style.display = 'none';
+  document.getElementById('zkConsole').style.display = 'none';
+  const errEl = document.getElementById('zkError');
+  errEl.style.display = 'block';
+  document.getElementById('zkErrorMsg').textContent = msg;
+  document.getElementById('zkSubmitBtn').disabled = true;
+  document.getElementById('zkSessionTitle').textContent = 'Xatolik';
+}
+
+// ── Anti-cheat ─────────────────────────────────────────────────────────
+function logEvent(type, severity, details = {}) {
+  state.acBuffer.push({ event_type: type, severity, details: { ...details, session_id: state.sessionId } });
+}
+
+async function flushAntiCheat() {
+  if (!state.acBuffer.length) return;
+  const batch = state.acBuffer.splice(0);
+  try { await post('/challenges/anticheat/log/', { events: batch }); } catch {}
+}
+
+function setupAntiCheat() {
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) return;
+    state.tabSwitches++;
+    logEvent('tab_switch', 0.3);
+    if (state.tabSwitchLimit && state.tabSwitches >= state.tabSwitchLimit) {
+      toast(`Tab almashtirishlar chegarasiga yetdingiz (${state.tabSwitchLimit} ta). Sessiya yakunlanadi.`, 'error', 3000);
+      setTimeout(complete, 3000);
+    }
+  });
+
+  window.addEventListener('blur', () => logEvent('focus_loss', 0.2));
+  document.addEventListener('contextmenu', e => { e.preventDefault(); logEvent('right_click', 0.1); });
+
+  document.addEventListener('paste', e => {
+    const text = e.clipboardData?.getData('text') || '';
+    if (state.antiPasteEnabled) e.preventDefault();
+    if (text.length > 30) logEvent('paste', 0.4, { chars: text.length });
+  });
+
+  let lastLen = 0;
+  document.addEventListener('input', e => {
+    const val = e.target?.value;
+    if (typeof val !== 'string') return;
+    const diff = val.length - lastLen;
+    lastLen = val.length;
+    if (diff > 50) logEvent('bulk_insert', 0.3, { chars: diff });
+  });
+
+  let lastInput = Date.now();
+  document.addEventListener('keydown', () => { lastInput = Date.now(); });
+
+  setInterval(() => {
+    if (Date.now() - lastInput > 60000) { logEvent('idle_long', 0.2); lastInput = Date.now(); }
+    if (window.outerWidth - window.innerWidth > 160 || window.outerHeight - window.innerHeight > 160) {
+      logEvent('devtools', 0.5);
+    }
+  }, 10000);
+
+  setInterval(flushAntiCheat, 5000);
+  window.addEventListener('beforeunload', () => flushAntiCheat());
+}
+
+// ── Init ───────────────────────────────────────────────────────────────
+if (!initAuth()) {
+  /* toLogin() already called */
+} else {
+  setupAntiCheat();
+  loadSession();
+}
+</script>
+{% endblock %}

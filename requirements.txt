@@ -34,7 +34,18 @@ anthropic>=0.40.0
 structlog>=25.0
 ruff>=0.4
 
+# Face Auth (2FA)
+insightface>=0.7.3
+onnxruntime>=1.16.0
+opencv-python>=4.8.0
+numpy>=1.24.0
+cryptography>=42.0.0
+
+# ZUKKO Challenges (kod bajarish sandbox)
+RestrictedPython==8.3
+
 # Development / Testing
 pytest>=8.0
 pytest-django>=4.8
+pytest-mock>=3.12
 # django-debug-toolbar==4.3.0

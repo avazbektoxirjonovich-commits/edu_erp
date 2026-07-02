@@ -1,0 +1,448 @@
+{% extends "erp/base.html" %}
+{% block title %}Sessiya tafsiloti — VLT.erp{% endblock %}
+{% block page_title %}ZUKKO — Sessiya tafsiloti{% endblock %}
+
+{% block extra_head %}
+<style>
+.zk-header-row{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+.zk-share-box{display:flex;align-items:center;gap:6px;padding:6px 10px;background:var(--hover);border:1px solid var(--border);border-radius:6px;margin-top:6px}
+.zk-share-box input{background:none;border:none;outline:none;font-size:.78rem;color:var(--muted);width:260px;max-width:100%}
+.zk-sus-bar{height:8px;border-radius:4px;overflow:hidden;background:var(--border);width:80px}
+.zk-sus-fill{height:100%;border-radius:4px;transition:width .4s}
+.zk-tab-bar{display:flex;gap:6px;margin-bottom:16px;border-bottom:2px solid var(--border);padding-bottom:0}
+.zk-tab{padding:8px 18px;font-size:.84rem;font-weight:600;cursor:pointer;border-radius:6px 6px 0 0;color:var(--muted);transition:all .2s;border-bottom:2px solid transparent;margin-bottom:-2px}
+.zk-tab.active{color:var(--accent);border-bottom-color:var(--accent);background:rgba(5,150,105,.06)}
+.zk-tab:hover:not(.active){background:var(--hover)}
+.zk-panel{display:none}
+.zk-panel.active{display:block}
+.zk-pair-row{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid var(--warning);border-radius:8px;background:rgba(217,119,6,.06);margin-bottom:8px}
+.zk-empty-s{text-align:center;padding:40px 20px;color:var(--muted)}
+.zk-empty-s i{font-size:2rem;opacity:.18;display:block;margin-bottom:12px}
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="zkLoadWrap">
+  <div class="loading"><div class="spinner"></div><p>Yuklanmoqda...</p></div>
+</div>
+
+<div id="zkMain" style="display:none">
+
+  <!-- ── Session header ── -->
+  <div class="zk-header-row">
+    <div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <h2 style="font-size:1.05rem;font-weight:800;color:var(--text)" id="zkTitle">—</h2>
+        <span class="bdg" id="zkStatusBdg">—</span>
+        <span class="bdg" id="zkTypeBdg">—</span>
+      </div>
+      <div class="zk-share-box">
+        <i class="fas fa-link" style="color:var(--muted);font-size:.75rem"></i>
+        <input readonly id="zkShareUrl" value="">
+        <button class="btn btn-ghost btn-sm" onclick="copyShareLink()" id="zkCopyBtn">
+          <i class="fas fa-copy"></i>
+        </button>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-outline btn-sm" onclick="exportCSV()">
+        <i class="fas fa-download"></i> CSV
+      </button>
+      <a href="/zukko/teacher/" class="btn btn-ghost btn-sm">
+        <i class="fas fa-arrow-left"></i> Orqaga
+      </a>
+    </div>
+  </div>
+
+  <!-- ── Mini-stats ── -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px" id="zkMiniStats">
+    <div class="mini-stat">
+      <div class="mini-stat-icon ic-blue"><i class="fas fa-users"></i></div>
+      <div><div class="mini-stat-val" id="zkStatStudents">—</div><div class="mini-stat-lbl">Talabalar</div></div>
+    </div>
+    <div class="mini-stat">
+      <div class="mini-stat-icon ic-green"><i class="fas fa-star"></i></div>
+      <div><div class="mini-stat-val" id="zkStatAvgPts">—</div><div class="mini-stat-lbl">O'rtacha ball</div></div>
+    </div>
+    <div class="mini-stat">
+      <div class="mini-stat-icon ic-amber"><i class="fas fa-triangle-exclamation"></i></div>
+      <div><div class="mini-stat-val" id="zkStatSus">—</div><div class="mini-stat-lbl">Shubhali javoblar</div></div>
+    </div>
+    <div class="mini-stat">
+      <div class="mini-stat-icon ic-red"><i class="fas fa-copy"></i></div>
+      <div><div class="mini-stat-val" id="zkStatPlagiat">—</div><div class="mini-stat-lbl">Plagiat juftlari</div></div>
+    </div>
+  </div>
+
+  <!-- ── Tabs ── -->
+  <div class="zk-tab-bar">
+    <div class="zk-tab active" onclick="switchTab('talabalar')" id="tab-talabalar">
+      <i class="fas fa-user-graduate"></i> Talabalar
+    </div>
+    <div class="zk-tab" onclick="switchTab('anticheat')" id="tab-anticheat">
+      <i class="fas fa-shield-halved"></i> Anti-cheat
+    </div>
+    <div class="zk-tab" onclick="switchTab('plagiat')" id="tab-plagiat">
+      <i class="fas fa-copy"></i> Plagiat
+    </div>
+  </div>
+
+  <!-- ── Tab: Talabalar ── -->
+  <div id="panel-talabalar" class="zk-panel active">
+    <div class="card">
+      <div class="card-body" style="padding:0">
+        <table class="etable" id="zkStudentTable">
+          <thead>
+            <tr>
+              <th>F.I.Sh.</th>
+              <th>Topshiriqlar</th>
+              <th>Jami ball</th>
+              <th>Vaqt (s)</th>
+              <th>Shubha darajasi</th>
+              <th>Holat</th>
+            </tr>
+          </thead>
+          <tbody id="zkStudentBody">
+            <tr><td colspan="6" style="text-align:center;color:var(--muted);padding:30px">Yuklanmoqda...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Tab: Anti-cheat ── -->
+  <div id="panel-anticheat" class="zk-panel">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Shubhali faollik</span>
+        <span class="bdg" id="zkAcCount">0 ta shubha</span>
+      </div>
+      <div class="card-body" style="padding:0">
+        <table class="etable" id="zkAcTable">
+          <thead>
+            <tr>
+              <th>Talaba</th>
+              <th>Topshiriq turi</th>
+              <th>Shubha bali</th>
+              <th>Darajasi</th>
+              <th>Holat</th>
+            </tr>
+          </thead>
+          <tbody id="zkAcBody">
+            <tr><td colspan="5" style="text-align:center;color:var(--muted);padding:30px">Yuklanmoqda...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Tab: Plagiat ── -->
+  <div id="panel-plagiat" class="zk-panel">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Kod o'xshashlik tekshiruvi</span>
+        <button class="btn btn-primary btn-sm" id="zkCheckBtn" onclick="checkSimilarity()">
+          <i class="fas fa-search"></i> Tekshirishni boshlash
+        </button>
+      </div>
+      <div class="card-body" id="zkPlagiatBody">
+        <div class="zk-empty-s"><i class="fas fa-magnifying-glass"></i><p>Tekshirish uchun yuqoridagi tugmani bosing</p></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /zkMain -->
+
+<div id="zkErrorWrap" style="display:none">
+  <div class="card">
+    <div class="zk-empty-s">
+      <i class="fas fa-exclamation-circle" style="color:var(--danger)"></i>
+      <p id="zkErrMsg">Xatolik yuz berdi</p>
+      <a href="/zukko/teacher/" class="btn btn-outline btn-sm" style="margin-top:16px">
+        <i class="fas fa-arrow-left"></i> Orqaga
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const SESSION_ID = window.location.pathname.match(/\/zukko\/teacher\/session\/([^\/]+)/)?.[1];
+
+let zkSession  = null;
+let zkResults  = {};   // { "Name": [sub, ...] }
+let zkPerUser  = [];   // aggregated
+let zkRoster   = [];   // full group student list
+let zkSimData  = null;
+
+function switchTab(name) {
+  document.querySelectorAll('.zk-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.zk-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+}
+
+function susColor(score) {
+  if (score > 0.7) return '#dc2626';
+  if (score > 0.3) return '#d97706';
+  return '#16a34a';
+}
+function susBdg(score) {
+  if (score > 0.7) return 'bdg-danger';
+  if (score > 0.3) return 'bdg-warning';
+  return 'bdg-active';
+}
+
+// ── Load ───────────────────────────────────────────────────────────────
+async function loadAll() {
+  if (!SESSION_ID) { showErr("URL noto'g'ri. Session ID topilmadi."); return; }
+
+  try {
+    const [session, results] = await Promise.all([
+      get('/challenges/sessions/' + SESSION_ID + '/'),
+      get('/challenges/sessions/' + SESSION_ID + '/results/'),
+    ]);
+    zkSession = session;
+    zkResults = results || {};
+
+    if (zkSession.group) {
+      const rData = await get('/students/?group=' + zkSession.group + '&page_size=200');
+      zkRoster = rData?.results || (Array.isArray(rData) ? rData : []);
+    }
+
+    buildPerUser();
+    renderPage();
+  } catch (e) {
+    showErr(e?.data?.detail || "Ma'lumotlarni yuklashda xatolik");
+  }
+}
+
+function buildPerUser() {
+  const submittedNames = new Set(Object.keys(zkResults));
+
+  zkPerUser = Object.entries(zkResults).map(([name, subs]) => ({
+    name,
+    submitted: true,
+    count: subs.length,
+    points: subs.reduce((s, x) => s + (x.points_earned || 0), 0),
+    timeSpent: subs.reduce((s, x) => s + (x.time_spent_seconds || 0), 0),
+    maxSuspicion: Math.max(0, ...subs.map(x => x.suspicion_score || 0)),
+    hasCheating: subs.some(x => x.status === 'cheating'),
+    subs,
+  }));
+
+  zkRoster.forEach(st => {
+    if (!submittedNames.has(st.full_name)) {
+      zkPerUser.push({
+        name: st.full_name,
+        submitted: false,
+        count: 0, points: 0, timeSpent: 0,
+        maxSuspicion: 0, hasCheating: false, subs: [],
+      });
+    }
+  });
+
+  zkPerUser.sort((a, b) => {
+    if (a.submitted !== b.submitted) return Number(b.submitted) - Number(a.submitted);
+    return b.points - a.points;
+  });
+}
+
+function renderPage() {
+  document.getElementById('zkLoadWrap').style.display = 'none';
+  document.getElementById('zkMain').style.display = 'block';
+
+  // Header
+  document.getElementById('zkTitle').textContent = zkSession.title || '—';
+  const sBdg = document.getElementById('zkStatusBdg');
+  sBdg.textContent = { draft:'Qoralama', active:'Aktiv', completed:'Tugagan', archived:'Arxiv' }[zkSession.status] || zkSession.status;
+  sBdg.className = 'bdg' + (zkSession.status === 'active' ? ' bdg-active' : '');
+  const tBdg = document.getElementById('zkTypeBdg');
+  tBdg.textContent = { mixed:'Aralash', bugfind:'Bug-find', coding:'Coding', quiz:'Test' }[zkSession.session_type] || zkSession.session_type;
+
+  const shareUrl = `${window.location.origin}/zukko/focus/${zkSession.share_link}/`;
+  document.getElementById('zkShareUrl').value = shareUrl;
+
+  // Mini-stats
+  const submitted = zkPerUser.filter(u => u.submitted);
+  const n = submitted.length;
+  const totalStudents = zkPerUser.length;
+  const totalPts = submitted.reduce((s, u) => s + u.points, 0);
+  const avgPts = n ? Math.round(totalPts / n) : 0;
+  const susCount = submitted.filter(u => u.maxSuspicion > 0.3).length;
+
+  document.getElementById('zkStatStudents').textContent = n + '/' + totalStudents;
+  document.getElementById('zkStatAvgPts').textContent = avgPts;
+  document.getElementById('zkStatSus').textContent = susCount;
+  document.getElementById('zkStatPlagiat').textContent = '—';
+
+  renderTalabalar();
+  renderAntiCheat();
+}
+
+// ── Tab: Talabalar ─────────────────────────────────────────────────────
+function renderTalabalar() {
+  const tbody = document.getElementById('zkStudentBody');
+  if (!zkPerUser.length) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:30px">Guruhda talaba yo'q</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = zkPerUser.map(u => `
+    <tr style="${u.hasCheating ? 'background:rgba(220,38,38,.05)' : !u.submitted ? 'opacity:.65' : ''}">
+      <td>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="av av-sm" style="background:${u.submitted ? 'var(--accent)' : 'var(--muted)'}">${initials(u.name)}</div>
+          <span style="font-weight:600;color:var(--text)">${escHtml(u.name)}</span>
+        </div>
+      </td>
+      <td>${u.submitted ? u.count : '—'}</td>
+      <td>${u.submitted ? `<b style="color:var(--accent)">${u.points}</b>` : '—'}</td>
+      <td style="color:var(--muted)">${u.submitted ? u.timeSpent + 's' : '—'}</td>
+      <td>
+        ${u.submitted ? `
+          <div style="display:flex;align-items:center;gap:8px">
+            <div class="zk-sus-bar">
+              <div class="zk-sus-fill" style="width:${Math.round(u.maxSuspicion*100)}%;background:${susColor(u.maxSuspicion)}"></div>
+            </div>
+            <span style="font-size:.75rem;color:${susColor(u.maxSuspicion)}">${Math.round(u.maxSuspicion*100)}%</span>
+          </div>` : '—'}
+      </td>
+      <td>
+        ${!u.submitted
+          ? '<span class="bdg">Kutilmoqda</span>'
+          : u.hasCheating
+          ? '<span class="bdg bdg-danger">Shubhali</span>'
+          : u.maxSuspicion > 0.3
+          ? '<span class="bdg bdg-warning">Kuzatishda</span>'
+          : '<span class="bdg bdg-active">Topshirdi</span>'}
+      </td>
+    </tr>
+  `).join('');
+}
+
+// ── Tab: Anti-cheat ────────────────────────────────────────────────────
+function renderAntiCheat() {
+  const tbody = document.getElementById('zkAcBody');
+  // Collect all suspicious submissions
+  const susItems = [];
+  zkPerUser.forEach(u => {
+    u.subs.forEach(sub => {
+      if ((sub.suspicion_score || 0) > 0 || sub.status === 'cheating') {
+        susItems.push({ name: u.name, sub });
+      }
+    });
+  });
+  susItems.sort((a, b) => (b.sub.suspicion_score || 0) - (a.sub.suspicion_score || 0));
+
+  document.getElementById('zkAcCount').textContent = susItems.length + ' ta shubha';
+
+  if (!susItems.length) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:30px">Shubhali faollik topilmadi ✅</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = susItems.map(({ name, sub }) => {
+    const score = sub.suspicion_score || 0;
+    const kind = sub.submission_type === 'bugfind' ? 'Bug-find' : 'Coding';
+    return `
+      <tr>
+        <td><b>${escHtml(name)}</b></td>
+        <td><span class="bdg">${kind}</span></td>
+        <td>
+          <div style="display:flex;align-items:center;gap:8px">
+            <div class="zk-sus-bar">
+              <div class="zk-sus-fill" style="width:${Math.round(score*100)}%;background:${susColor(score)}"></div>
+            </div>
+            <span style="font-size:.8rem;color:${susColor(score)};font-weight:700">${score.toFixed(2)}</span>
+          </div>
+        </td>
+        <td><span class="bdg ${susBdg(score)}">${Math.round(score*100)}%</span></td>
+        <td><span class="bdg ${sub.status === 'cheating' ? 'bdg-danger' : sub.status === 'correct' ? 'bdg-active' : 'bdg-warning'}">${sub.status || '—'}</span></td>
+      </tr>
+    `;
+  }).join('');
+}
+
+// ── Tab: Plagiat ───────────────────────────────────────────────────────
+async function checkSimilarity() {
+  const btn = document.getElementById('zkCheckBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Tekshirilmoqda...';
+  document.getElementById('zkPlagiatBody').innerHTML = '<div class="loading"><div class="spinner"></div><p>Kodlar taqqoslanmoqda...</p></div>';
+
+  try {
+    const data = await get('/challenges/similarity/' + SESSION_ID + '/');
+    zkSimData = data;
+    document.getElementById('zkStatPlagiat').textContent = (data.flagged_pairs || []).length;
+
+    const body = document.getElementById('zkPlagiatBody');
+    if (!data.flagged_pairs || !data.flagged_pairs.length) {
+      body.innerHTML = `<div class="zk-empty-s"><i class="fas fa-shield-check" style="color:var(--accent)"></i><p>O'xshash javoblar topilmadi. <span style="color:var(--muted)">${data.checked_submissions || 0} ta javob tekshirildi.</span></p></div>`;
+    } else {
+      body.innerHTML = `
+        <p style="font-size:.8rem;color:var(--muted);margin-bottom:14px">${data.checked_submissions} ta javob tekshirildi — ${data.flagged_pairs.length} ta juft shubhali</p>
+        ${data.flagged_pairs.map(pair => `
+          <div class="zk-pair-row">
+            <div>
+              <span style="font-weight:700;color:var(--text)">${escHtml(pair.user_a)}</span>
+              <span style="color:var(--muted);margin:0 8px">↔</span>
+              <span style="font-weight:700;color:var(--text)">${escHtml(pair.user_b)}</span>
+              <div style="font-size:.75rem;color:var(--muted);margin-top:3px">${escHtml(pair.challenge_title || '')}</div>
+            </div>
+            <span class="bdg bdg-warning" style="font-size:.9rem">${Math.round(pair.similarity * 100)}%</span>
+          </div>
+        `).join('')}
+      `;
+    }
+  } catch (e) {
+    document.getElementById('zkPlagiatBody').innerHTML = `<div class="zk-empty-s"><i class="fas fa-triangle-exclamation" style="color:var(--danger)"></i><p>Tekshirishda xatolik yuz berdi</p></div>`;
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-search"></i> Qayta tekshirish';
+  }
+}
+
+// ── CSV export ─────────────────────────────────────────────────────────
+function exportCSV() {
+  const rows = [['F.I.Sh.', 'Topshiriqlar', 'Jami ball', 'Vaqt (s)', 'Shubha darajasi', 'Holat']];
+  zkPerUser.forEach(u => {
+    rows.push([
+      u.name,
+      u.submitted ? u.count : '—',
+      u.submitted ? u.points : '—',
+      u.submitted ? u.timeSpent : '—',
+      u.submitted ? u.maxSuspicion.toFixed(2) : '—',
+      !u.submitted ? 'Kutilmoqda' : u.hasCheating ? 'Shubhali' : u.maxSuspicion > 0.3 ? 'Kuzatishda' : 'Topshirdi',
+    ]);
+  });
+  const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const url = URL.createObjectURL(new Blob(['﻿' + csv], { type:'text/csv;charset=utf-8' }));
+  const a = document.createElement('a'); a.href = url; a.download = `sessiya-${SESSION_ID}.csv`; a.click();
+  URL.revokeObjectURL(url);
+}
+
+function copyShareLink() {
+  const val = document.getElementById('zkShareUrl').value;
+  navigator.clipboard.writeText(val).then(() => {
+    const btn = document.getElementById('zkCopyBtn');
+    btn.innerHTML = '<i class="fas fa-check"></i>';
+    setTimeout(() => { btn.innerHTML = '<i class="fas fa-copy"></i>'; }, 1500);
+  });
+}
+
+function showErr(msg) {
+  document.getElementById('zkLoadWrap').style.display = 'none';
+  document.getElementById('zkMain').style.display = 'none';
+  document.getElementById('zkErrorWrap').style.display = 'block';
+  document.getElementById('zkErrMsg').textContent = msg;
+}
+
+// ── Init ───────────────────────────────────────────────────────────────
+if (!initAuth()) {
+  /* toLogin() called */
+} else {
+  loadAll();
+}
+</script>
+{% endblock %}
