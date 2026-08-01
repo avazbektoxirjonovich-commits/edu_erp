@@ -1,4 +1,4 @@
-# VLT AI — Yakuniy Hisobot
+# EDU ERP— Yakuniy Hisobot
 
 **Sana:** 2026-06-03  
 **Holat:** ✅ BARCHA QABUL QILISH MEZONLARI BAJARILDI  
