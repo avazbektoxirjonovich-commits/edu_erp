@@ -5,6 +5,8 @@ O'quvchilar va o'qituvchilar guruh orqali bog'lanadi.
 Dars jadvali (LessonSchedule) ham shu yerda.
 """
 import uuid
+
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 
@@ -48,6 +50,11 @@ class Group(models.Model):
     max_students = models.PositiveSmallIntegerField(default=20, verbose_name="Max o'quvchi")
     monthly_fee  = models.DecimalField(max_digits=10, decimal_places=0,
                                        default=500000, verbose_name='Oylik to\'lov')
+    payment_due_day = models.PositiveSmallIntegerField(
+                          default=10,
+                          validators=[MinValueValidator(1), MaxValueValidator(28)],
+                          verbose_name="To'lov muddati (oyning kuni)"
+                      )
     start_date  = models.DateField(verbose_name='Boshlanish sanasi')
     end_date    = models.DateField(null=True, blank=True, verbose_name='Tugash sanasi')
     start_time  = models.TimeField(verbose_name='Dars boshlanish vaqti')

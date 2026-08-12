@@ -1,6 +1,6 @@
 from rest_framework import serializers
+
 from .models import Teacher, TeacherSalaryPayment
-from apps.accounts.serializers import UserSerializer
 
 
 class TeacherSerializer(serializers.ModelSerializer):
@@ -9,7 +9,7 @@ class TeacherSerializer(serializers.ModelSerializer):
 
     class Meta:
         model  = Teacher
-        fields = ['id', 'full_name', 'phone', 'subject', 'salary',
+        fields = ['id', 'full_name', 'phone', 'subject', 'salary_type', 'salary', 'hourly_rate',
                   'is_active', 'group_count', 'notes', 'created_at']
 
     def get_group_count(self, obj):
@@ -23,7 +23,8 @@ class TeacherCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model  = Teacher
-        fields = ['id', 'full_name', 'phone', 'subject', 'salary', 'notes', 'password']
+        fields = ['id', 'full_name', 'phone', 'subject', 'salary_type', 'salary', 'hourly_rate',
+                  'notes', 'password']
         read_only_fields = ['id']
 
     def validate_phone(self, value):
@@ -49,7 +50,8 @@ class TeacherUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model  = Teacher
-        fields = ['id', 'full_name', 'phone', 'subject', 'salary', 'notes', 'is_active']
+        fields = ['id', 'full_name', 'phone', 'subject', 'salary_type', 'salary', 'hourly_rate',
+                  'notes', 'is_active']
         read_only_fields = ['id']
 
     def validate_phone(self, value):
@@ -76,18 +78,22 @@ class TeacherUpdateSerializer(serializers.ModelSerializer):
 class TeacherSalaryPaymentSerializer(serializers.ModelSerializer):
     teacher_name = serializers.CharField(source='teacher.user.full_name', read_only=True)
     paid_by_name = serializers.CharField(source='paid_by.full_name', read_only=True, default=None)
+    salary_type  = serializers.CharField(source='teacher.salary_type', read_only=True)
     total        = serializers.ReadOnlyField()
+    amount       = serializers.DecimalField(max_digits=12, decimal_places=0, required=False)
 
     class Meta:
         model  = TeacherSalaryPayment
-        fields = ['id', 'teacher', 'teacher_name', 'month', 'year',
-                  'amount', 'bonus', 'total', 'note', 'paid_by', 'paid_by_name', 'paid_at', 'created_at']
+        fields = ['id', 'teacher', 'teacher_name', 'salary_type', 'month', 'year',
+                  'amount', 'worked_hours', 'bonus', 'deductions', 'total', 'status',
+                  'note', 'paid_by', 'paid_by_name', 'paid_at', 'created_at']
         read_only_fields = ['paid_by', 'paid_at', 'created_at']
 
     def validate(self, data):
-        teacher = data.get('teacher')
-        month   = data.get('month')
-        year    = data.get('year')
+        teacher = data.get('teacher') or (self.instance.teacher if self.instance else None)
+        month   = data.get('month') or (self.instance.month if self.instance else None)
+        year    = data.get('year') or (self.instance.year if self.instance else None)
+
         qs = TeacherSalaryPayment.objects.filter(teacher=teacher, month=month, year=year)
         if self.instance:
             qs = qs.exclude(pk=self.instance.pk)
@@ -95,6 +101,17 @@ class TeacherSalaryPaymentSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 f"{year}/{month:02d} oy uchun ish haqi allaqachon to'langan."
             )
+
+        # Soatlik o'qituvchi uchun: amount berilmasa, hourly_rate * worked_hours'dan hisoblanadi.
+        if not data.get('amount') and teacher and teacher.salary_type == Teacher.SalaryType.HOURLY:
+            hours = data.get('worked_hours')
+            if hours is None and self.instance:
+                hours = self.instance.worked_hours
+            data['amount'] = teacher.hourly_rate * (hours or 0)
+
+        if not data.get('amount') and not self.instance:
+            raise serializers.ValidationError({'amount': "Summani kiriting yoki ishlagan soatni belgilang."})
+
         return data
 
     def create(self, validated_data):

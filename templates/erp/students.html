@@ -1,5 +1,5 @@
 ﻿{% extends "erp/base.html" %}
-{% block title %}O'quvchilar — VLT.erp{% endblock %}
+{% block title %}O'quvchilar — Qorako'l Ilm Ziyo{% endblock %}
 {% block page_title %}O'quvchilar{% endblock %}
 
 {% block extra_head %}
@@ -452,7 +452,7 @@ async function printStudentCard(id){
   const d = await get(`/students/${id}/`);
   if(!d){toast("Ma'lumot olinmadi",'err');return;}
   const name = d.full_name||d.user?.full_name||'—';
-  const org = document.querySelector('.logo-text')?.textContent||'VLT.erp';
+  const org = document.querySelector('.logo-text')?.textContent||"Qorako'l Ilm Ziyo";
   const html=`<!DOCTYPE html><html><head><meta charset="UTF-8">
 <title>O'quvchi kartochkasi</title>
 <style>

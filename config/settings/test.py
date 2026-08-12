@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'apps.groups',
     'apps.attendance',
     'apps.payments',
+    'apps.finance',
     'apps.dashboard',
     'apps.notifications',
     'apps.homework',
@@ -135,10 +136,10 @@ FACE_LIVENESS_FAIL_OPEN       = False  # fail-CLOSED by default (secure)
 FACE_LANDMARKER_MODEL         = ''   # empty = use default models_weights/ path
 
 JAZZMIN_SETTINGS = {
-    'site_title':   'VLT.erp',
-    'site_header':  'VLT.erp Admin',
-    'site_brand':   'VLT.erp',
-    'welcome_sign': 'VLT.erp',
+    'site_title':   "Qorako'l Ilm Ziyo",
+    'site_header':  "Qorako'l Ilm Ziyo Admin",
+    'site_brand':   "Qorako'l Ilm Ziyo",
+    'welcome_sign': "Qorako'l Ilm Ziyo",
     'show_sidebar': True,
     'navigation_expanded': True,
 }

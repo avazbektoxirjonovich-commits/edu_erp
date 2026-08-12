@@ -22,12 +22,12 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_filters',
     'apps.accounts',
-    'apps.branches',
     'apps.students',
     'apps.teachers',
     'apps.groups',
     'apps.attendance',
     'apps.payments',
+    'apps.finance',
     'apps.dashboard',
     'apps.notifications',
     'apps.homework',
@@ -133,10 +133,10 @@ CORS_ALLOW_ALL_ORIGINS = True
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 JAZZMIN_SETTINGS = {
-    "site_title": "VLT.erp",
-    "site_header": "VLT.erp Admin",
-    "site_brand": "VLT.erp",
-    "welcome_sign": "VLT.erp — Ta'lim Markazi Boshqaruv Tizimiga Xush Kelibsiz",
+    "site_title": "Qorako'l Ilm Ziyo",
+    "site_header": "Qorako'l Ilm Ziyo Admin",
+    "site_brand": "Qorako'l Ilm Ziyo",
+    "welcome_sign": "Qorako'l Ilm Ziyo — Ta'lim Markazi Boshqaruv Tizimiga Xush Kelibsiz",
     "show_sidebar": True,
     "navigation_expanded": True,
 }

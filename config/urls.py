@@ -1,15 +1,17 @@
-from django.contrib import admin
-from django.urls import path, include
+import os
+
 from django.conf import settings
 from django.conf.urls.static import static
-from django.views.generic import TemplateView
+from django.contrib import admin
 from django.http import FileResponse, Http404, HttpResponse
+from django.urls import include, path
+from django.views.generic import TemplateView
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
     TokenVerifyView,
 )
-import os
+
 from apps.students.pdf_views import MonthlyReportPDFView
 
 
@@ -51,6 +53,7 @@ api_v1_urlpatterns = [
     path('groups/',        include('apps.groups.urls')),
     path('attendance/',    include('apps.attendance.urls')),
     path('payments/',      include('apps.payments.urls')),
+    path('finance/',       include('apps.finance.urls')),
     path('dashboard/',     include('apps.dashboard.urls')),
     path('notifications/', include('apps.notifications.urls')),
     path('leaderboard/',   include('apps.students.leaderboard_urls')),
@@ -73,6 +76,8 @@ frontend_urlpatterns = [
     path('groups/',      TemplateView.as_view(template_name='erp/groups.html'),          name='groups'),
     path('attendance/',  TemplateView.as_view(template_name='erp/attendance.html'),      name='attendance'),
     path('payments/',    TemplateView.as_view(template_name='erp/payments.html'),        name='payments'),
+    path('finance/',     TemplateView.as_view(template_name='erp/finance_dashboard.html'), name='finance_dashboard'),
+    path('finance/receipt/<uuid:pk>/', TemplateView.as_view(template_name='erp/finance_receipt.html'), name='finance_receipt'),
     path('reports/',     TemplateView.as_view(template_name='erp/reports.html'),         name='reports'),
     path('leaderboard/', TemplateView.as_view(template_name='erp/leaderboard.html'),     name='leaderboard'),
     path('homework/',    TemplateView.as_view(template_name='erp/homework.html'),         name='homework'),

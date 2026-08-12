@@ -1,6 +1,7 @@
-from django.urls import path, include
+from django.urls import include, path
 from rest_framework.routers import SimpleRouter
-from .views import TeacherViewSet, TeacherSalaryListCreateView, TeacherSalaryDetailView
+
+from .views import TeacherSalaryDetailView, TeacherSalaryListCreateView, TeacherViewSet
 
 router = SimpleRouter()
 router.register('', TeacherViewSet, basename='teacher')

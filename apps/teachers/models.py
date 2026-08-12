@@ -1,18 +1,29 @@
 import uuid
+
 from django.db import models
 from django.utils import timezone
+
 from apps.accounts.models import User
 from apps.common.validators import phone_validator
 
 
 class Teacher(models.Model):
+
+    class SalaryType(models.TextChoices):
+        FIXED  = 'fixed',  'Oylik (belgilangan)'
+        HOURLY = 'hourly', 'Soatlik'
+
     id         = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user       = models.OneToOneField(User, on_delete=models.CASCADE,
                                       related_name='teacher_profile')
     phone      = models.CharField(max_length=15, validators=[phone_validator], db_index=True)
     subject    = models.CharField(max_length=100, blank=True, verbose_name="Fan / Yo'nalish")
+    salary_type = models.CharField(max_length=10, choices=SalaryType.choices,
+                                   default=SalaryType.FIXED, verbose_name='Maosh turi')
     salary     = models.DecimalField(max_digits=12, decimal_places=0,
-                                     default=0, verbose_name='Oylik maosh')
+                                     default=0, verbose_name='Oylik maosh (fixed uchun)')
+    hourly_rate = models.DecimalField(max_digits=10, decimal_places=0,
+                                      default=0, verbose_name="Soatlik stavka (hourly uchun)")
     is_active  = models.BooleanField(default=True, verbose_name='Faol', db_index=True)
     notes      = models.TextField(blank=True)
     photo      = models.ImageField(upload_to='teachers/photos/', blank=True, null=True)
@@ -37,18 +48,29 @@ class Teacher(models.Model):
 
 
 class TeacherSalaryPayment(models.Model):
-    id         = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    teacher    = models.ForeignKey(Teacher, on_delete=models.CASCADE,
-                                   related_name='salary_payments', verbose_name="O'qituvchi")
-    month      = models.PositiveSmallIntegerField(verbose_name='Oy')
-    year       = models.PositiveSmallIntegerField(verbose_name='Yil')
-    amount     = models.DecimalField(max_digits=12, decimal_places=0, verbose_name="To'langan summa")
-    bonus      = models.DecimalField(max_digits=10, decimal_places=0, default=0, verbose_name='Bonus')
-    note       = models.TextField(blank=True, verbose_name='Izoh')
-    paid_by    = models.ForeignKey(User, on_delete=models.SET_NULL, null=True,
-                                   related_name='salary_payments_made', verbose_name="Kim to'ladi")
-    paid_at    = models.DateTimeField(default=timezone.now, verbose_name="To'lov sanasi")
-    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Status(models.TextChoices):
+        PENDING = 'pending', 'Kutilmoqda'
+        PAID    = 'paid',    "To'langan"
+
+    id           = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    teacher      = models.ForeignKey(Teacher, on_delete=models.CASCADE,
+                                     related_name='salary_payments', verbose_name="O'qituvchi")
+    month        = models.PositiveSmallIntegerField(verbose_name='Oy')
+    year         = models.PositiveSmallIntegerField(verbose_name='Yil')
+    amount       = models.DecimalField(max_digits=12, decimal_places=0, verbose_name="Asosiy summa")
+    worked_hours = models.DecimalField(max_digits=6, decimal_places=1, null=True, blank=True,
+                                       verbose_name='Ishlagan soat')
+    bonus        = models.DecimalField(max_digits=10, decimal_places=0, default=0, verbose_name='Bonus')
+    deductions   = models.DecimalField(max_digits=10, decimal_places=0, default=0,
+                                       verbose_name='Ushlab qolingan summa')
+    status       = models.CharField(max_length=10, choices=Status.choices,
+                                    default=Status.PAID, verbose_name='Holat')
+    note         = models.TextField(blank=True, verbose_name='Izoh')
+    paid_by      = models.ForeignKey(User, on_delete=models.SET_NULL, null=True,
+                                     related_name='salary_payments_made', verbose_name="Kim to'ladi")
+    paid_at      = models.DateTimeField(default=timezone.now, verbose_name="To'lov sanasi")
+    created_at   = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         verbose_name        = "Ish haqi to'lovi"
@@ -61,4 +83,4 @@ class TeacherSalaryPayment(models.Model):
 
     @property
     def total(self):
-        return self.amount + self.bonus
+        return self.amount + self.bonus - self.deductions

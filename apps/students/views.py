@@ -1,21 +1,25 @@
 import logging
-from rest_framework import filters, status
-from rest_framework.decorators import action
-from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet
-from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
+
 from django.db.models import Count, Q
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, status
+from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet
 
-from apps.accounts.permissions import IsAdminOrTeacher, IsAdmin, IsStudent
-from apps.notifications.views import log_activity
+from apps.accounts.permissions import IsAdmin, IsAdminOrTeacher, IsFinance
+from apps.common.utils import calculate_attendance_pct, debt_annotation
 from apps.notifications.models import ActivityLog
-from apps.common.utils import debt_annotation, calculate_attendance_pct
+from apps.notifications.views import log_activity
+
 from .models import Student
 from .serializers import (
-    StudentListSerializer, StudentDetailSerializer,
-    StudentCreateSerializer, StudentUpdateSerializer
+    StudentCreateSerializer,
+    StudentDetailSerializer,
+    StudentListSerializer,
+    StudentUpdateSerializer,
 )
 
 logger = logging.getLogger('apps.students')
@@ -24,14 +28,14 @@ logger = logging.getLogger('apps.students')
 class StudentViewSet(ModelViewSet):
     filter_backends  = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['status', 'group']
-    search_fields    = ['user__full_name', 'phone']
+    search_fields    = ['user__full_name', 'phone', 'group__name']
     ordering_fields  = ['user__full_name', 'joined_date', 'created_at']
     ordering         = ['-created_at']
 
     def get_permissions(self):
         if self.action in ['create', 'destroy', 'update', 'partial_update']:
             return [IsAdmin()]
-        return [IsAdminOrTeacher()]
+        return [(IsAdminOrTeacher | IsFinance)()]
 
     def get_queryset(self):
         qs = Student.objects.select_related('user', 'group')
@@ -163,9 +167,10 @@ class ParentDashboardView(APIView):
                 {'detail': "Bu sahifa faqat ota-ona uchun."},
                 status=status.HTTP_403_FORBIDDEN,
             )
-        from apps.payments.models import Payment
-        from apps.attendance.models import Attendance
         from django.db.models import Prefetch
+
+        from apps.attendance.models import Attendance
+        from apps.payments.models import Payment
 
         # 3 query (bola soni nechta bo'lsa ham):
         # 1 — annotate bilan barcha bolalar + debt + attendance stats

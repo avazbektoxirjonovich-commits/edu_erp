@@ -1,14 +1,12 @@
 """Excel eksport: o'quvchilar, to'lovlar, davomat"""
 from django.http import HttpResponse
 from django.utils import timezone
-from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
 from openpyxl import Workbook
-from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 from openpyxl.utils import get_column_letter
+from rest_framework.views import APIView
 
-from apps.accounts.permissions import IsStaffLevel
-
+from apps.accounts.permissions import IsFinanceOrAdmin, IsStaffLevel
 
 HEADER_FILL   = PatternFill('solid', fgColor='FF6B35')
 HEADER_FONT   = Font(bold=True, color='FFFFFF', size=11)
@@ -59,8 +57,9 @@ class ExportStudentsView(APIView):
     permission_classes = [IsStaffLevel]
 
     def get(self, request):
-        from .models import Student
         from apps.common.utils import debt_annotation
+
+        from .models import Student
 
         students = (
             Student.objects
@@ -102,7 +101,7 @@ class ExportStudentsView(APIView):
 
 class ExportPaymentsView(APIView):
     """GET /api/v1/payments/export/?month=5&year=2025"""
-    permission_classes = [IsStaffLevel]
+    permission_classes = [IsFinanceOrAdmin]
 
     def get(self, request):
         from apps.payments.models import Payment
@@ -165,7 +164,6 @@ class ExportAttendanceView(APIView):
 
     def get(self, request):
         from apps.attendance.models import Attendance
-        from apps.groups.models import Group
         now   = timezone.now()
         month = int(request.query_params.get('month', now.month))
         year  = int(request.query_params.get('year',  now.year))

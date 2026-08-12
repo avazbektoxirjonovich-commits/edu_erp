@@ -114,7 +114,7 @@ def _send_eskiz(phone: str, code: str, settings) -> bool:
         return False
 
     # Step 2: send
-    msg = f"VLT.erp Face ID kodingiz: {code}\nKod 10 daqiqa amal qiladi."
+    msg = f"Qorako'l Ilm Ziyo Face ID kodingiz: {code}\nKod 10 daqiqa amal qiladi."
     try:
         resp = requests.post(
             'https://notify.eskiz.uz/api/message/sms/send',
@@ -146,12 +146,12 @@ def _send_playmobile(phone: str, code: str, settings) -> bool:
 
     login      = os.environ.get('PLAYMOBILE_LOGIN',      '')
     password   = os.environ.get('PLAYMOBILE_PASSWORD',   '')
-    originator = os.environ.get('PLAYMOBILE_ORIGINATOR', 'VLT.erp')
+    originator = os.environ.get('PLAYMOBILE_ORIGINATOR', 'Qorakol')
     if not login or not password:
         logger.error("PLAYMOBILE_LOGIN / PLAYMOBILE_PASSWORD topilmadi")
         return False
 
-    msg = f"VLT.erp Face ID: {code} (10 daqiqa)"
+    msg = f"Qorako'l Ilm Ziyo Face ID: {code} (10 daqiqa)"
     try:
         resp = requests.post(
             'https://send.smsxabar.uz/broker-api/send',
@@ -204,7 +204,7 @@ def _send_telegram(user, code: str) -> bool:
         return False
 
     msg = (
-        f"🔐 *VLT.erp Face ID zaxira kodi*\n\n"
+        f"🔐 *Qorako'l Ilm Ziyo Face ID zaxira kodi*\n\n"
         f"Kodingiz: `{code}`\n\n"
         f"Bu kod 10 daqiqa amal qiladi."
     )

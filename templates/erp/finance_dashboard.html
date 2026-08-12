@@ -1,0 +1,151 @@
+{% extends "erp/base.html" %}
+{% block title %}Moliya paneli — Qorako'l Ilm Ziyo{% endblock %}
+{% block page_title %}Moliya paneli{% endblock %}
+
+{% block extra_head %}
+<style>
+.fin-filters{display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+.fin-filters select{border:1.5px solid var(--border);border-radius:9px;padding:8px 32px 8px 12px;font-size:.78rem;background:#fff;outline:none;cursor:pointer}
+.fin-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+@media(max-width:1100px){.fin-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.fin-grid{grid-template-columns:1fr}}
+.fin-kpi{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;transition:all .2s}
+.fin-kpi:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.fin-kpi-icon{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.05rem;flex-shrink:0}
+.fin-kpi-val{font-size:1.18rem;font-weight:900;color:var(--text);letter-spacing:-.4px;line-height:1.1}
+.fin-kpi-lbl{font-size:.68rem;color:var(--muted);margin-top:3px}
+.fin-kpi-val.pos{color:var(--success)}
+.fin-kpi-val.neg{color:var(--danger)}
+.fin-section-title{font-size:.9rem;font-weight:800;color:var(--text);margin:22px 0 12px}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="fin-filters" style="animation:fadeUp .3s ease both">
+  <select id="fMonth" onchange="loadFinDash()"></select>
+  <select id="fYear"  onchange="loadFinDash()"></select>
+  <span style="margin-left:auto;display:flex;gap:8px">
+    <button class="btn btn-ghost btn-sm" onclick="location.href='/payments/'"><i class="fas fa-credit-card"></i> To'lovlar</button>
+    <button class="btn btn-ghost btn-sm" onclick="location.href='/salary/'"><i class="fas fa-money-bill-wave"></i> Ish haqi</button>
+  </span>
+</div>
+
+<div class="fin-section-title">To'lovlar holati</div>
+<div class="fin-grid">
+  <div class="fin-kpi" style="animation:fadeUp .35s ease .02s both">
+    <div class="fin-kpi-icon ic-blue"><i class="fas fa-file-invoice-dollar"></i></div>
+    <div><div class="fin-kpi-val" id="kExpected">—</div><div class="fin-kpi-lbl">Kutilayotgan oylik daromad</div></div>
+  </div>
+  <div class="fin-kpi" style="animation:fadeUp .35s ease .06s both">
+    <div class="fin-kpi-icon ic-green"><i class="fas fa-hand-holding-dollar"></i></div>
+    <div><div class="fin-kpi-val" id="kReceived">—</div><div class="fin-kpi-lbl">Qabul qilingan (shu oy hisobi)</div></div>
+  </div>
+  <div class="fin-kpi" style="animation:fadeUp .35s ease .1s both">
+    <div class="fin-kpi-icon ic-red"><i class="fas fa-triangle-exclamation"></i></div>
+    <div><div class="fin-kpi-val" id="kDebtMonth">—</div><div class="fin-kpi-lbl">Qarz (shu oy)</div></div>
+  </div>
+  <div class="fin-kpi" style="animation:fadeUp .35s ease .14s both">
+    <div class="fin-kpi-icon ic-amber"><i class="fas fa-scale-balanced"></i></div>
+    <div><div class="fin-kpi-val" id="kDebtTotal">—</div><div class="fin-kpi-lbl">Umumiy qarz (barcha oylar)</div></div>
+  </div>
+
+  <div class="fin-kpi" style="animation:fadeUp .35s ease .18s both">
+    <div class="fin-kpi-icon ic-green"><i class="fas fa-circle-check"></i></div>
+    <div><div class="fin-kpi-val" id="kPaid">—</div><div class="fin-kpi-lbl">To'liq to'lagan o'quvchi</div></div>
+  </div>
+  <div class="fin-kpi" style="animation:fadeUp .35s ease .22s both">
+    <div class="fin-kpi-icon ic-amber"><i class="fas fa-clock"></i></div>
+    <div><div class="fin-kpi-val" id="kPartial">—</div><div class="fin-kpi-lbl">Qisman to'lagan</div></div>
+  </div>
+  <div class="fin-kpi" style="animation:fadeUp .35s ease .26s both">
+    <div class="fin-kpi-icon ic-red"><i class="fas fa-circle-xmark"></i></div>
+    <div><div class="fin-kpi-val" id="kUnpaid">—</div><div class="fin-kpi-lbl">To'lamagan</div></div>
+  </div>
+  <div class="fin-kpi" style="animation:fadeUp .35s ease .3s both">
+    <div class="fin-kpi-icon ic-purple"><i class="fas fa-sun"></i></div>
+    <div><div class="fin-kpi-val" id="kToday">—</div><div class="fin-kpi-lbl">Bugungi tushum</div></div>
+  </div>
+</div>
+
+<div class="fin-section-title">Moliyaviy natija (naqd asosida)</div>
+<div class="fin-grid">
+  <div class="fin-kpi" style="animation:fadeUp .35s ease .34s both">
+    <div class="fin-kpi-icon ic-green"><i class="fas fa-coins"></i></div>
+    <div><div class="fin-kpi-val" id="kMonthlyIncome">—</div><div class="fin-kpi-lbl">Oylik qabul qilingan mablag'</div></div>
+  </div>
+  <div class="fin-kpi" style="animation:fadeUp .35s ease .38s both">
+    <div class="fin-kpi-icon ic-blue"><i class="fas fa-chalkboard-teacher"></i></div>
+    <div><div class="fin-kpi-val" id="kSalaries">—</div><div class="fin-kpi-lbl">O'qituvchilar ish haqi</div></div>
+  </div>
+  <div class="fin-kpi" style="animation:fadeUp .35s ease .42s both">
+    <div class="fin-kpi-icon ic-orange"><i class="fas fa-receipt"></i></div>
+    <div><div class="fin-kpi-val" id="kExpenses">—</div><div class="fin-kpi-lbl">Markaz xarajatlari</div></div>
+  </div>
+  <div class="fin-kpi" style="animation:fadeUp .35s ease .46s both">
+    <div class="fin-kpi-icon ic-purple"><i class="fas fa-scale-unbalanced"></i></div>
+    <div><div class="fin-kpi-val" id="kNet">—</div><div class="fin-kpi-lbl">Sof natija</div></div>
+  </div>
+</div>
+
+<div class="fin-section-title">Mulklar</div>
+<div class="fin-grid" style="grid-template-columns:repeat(4,1fr)">
+  <div class="fin-kpi" style="animation:fadeUp .35s ease .5s both">
+    <div class="fin-kpi-icon ic-blue"><i class="fas fa-boxes-stacked"></i></div>
+    <div><div class="fin-kpi-val" id="kAssetValue">—</div><div class="fin-kpi-lbl">Mulklar umumiy qiymati</div></div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+initAuth();
+const FMN=['Yanvar','Fevral','Mart','Aprel','May','Iyun','Iyul','Avgust','Sentabr','Oktabr','Noyabr','Dekabr'];
+const FNOW=new Date();
+let finMonth=FNOW.getMonth()+1, finYear=FNOW.getFullYear();
+
+function populateFinFilters(){
+  const mEl=document.getElementById('fMonth'), yEl=document.getElementById('fYear');
+  mEl.innerHTML=FMN.map((m,i)=>`<option value="${i+1}" ${i+1===finMonth?'selected':''}>${m}</option>`).join('');
+  let yOpts='';
+  for(let y=finYear;y>=finYear-3;y--) yOpts+=`<option value="${y}" ${y===finYear?'selected':''}>${y}</option>`;
+  yEl.innerHTML=yOpts;
+}
+
+function setKpi(id, val, opts={}){
+  const el=document.getElementById(id);
+  if(opts.money) el.textContent=fmoney(val);
+  else el.textContent=val;
+  if(opts.signed){
+    el.classList.remove('pos','neg');
+    el.classList.add(val>=0?'pos':'neg');
+  }
+}
+
+async function loadFinDash(){
+  const month=parseInt(document.getElementById('fMonth').value)||finMonth;
+  const year=parseInt(document.getElementById('fYear').value)||finYear;
+  const d=await get(`/finance/dashboard/?month=${month}&year=${year}`);
+  if(!d) return;
+
+  setKpi('kExpected', d.expected_monthly_income, {money:true});
+  setKpi('kReceived', d.received_income, {money:true});
+  setKpi('kDebtMonth', d.outstanding_debt_this_month, {money:true});
+  setKpi('kDebtTotal', d.outstanding_debt_total, {money:true});
+
+  document.getElementById('kPaid').textContent = d.paid_students + " ta";
+  document.getElementById('kPartial').textContent = d.partial_students + " ta";
+  document.getElementById('kUnpaid').textContent = d.unpaid_students + " ta";
+  setKpi('kToday', d.today_income, {money:true});
+
+  setKpi('kMonthlyIncome', d.monthly_income, {money:true});
+  setKpi('kSalaries', d.teacher_salaries, {money:true});
+  setKpi('kExpenses', d.expenses, {money:true});
+  setKpi('kNet', d.net_result, {money:true, signed:true});
+
+  setKpi('kAssetValue', d.total_asset_value, {money:true});
+}
+
+populateFinFilters();
+loadFinDash();
+</script>
+{% endblock %}

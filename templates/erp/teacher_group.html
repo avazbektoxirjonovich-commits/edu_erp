@@ -1,5 +1,5 @@
 ﻿{% extends "erp/base.html" %}
-{% block title %}Guruh — VLT.erp{% endblock %}
+{% block title %}Guruh — Qorako'l Ilm Ziyo{% endblock %}
 {% block page_title %}<span id="pgTitle">Guruh</span>{% endblock %}
 
 {% block extra_head %}
@@ -245,7 +245,7 @@ async function load(){
 
   document.getElementById('heroLoader').style.display='none';
   document.getElementById('groupHero').style.display='';
-  document.title = grp.name+' — VLT.erp';
+  document.title = grp.name+" — Qorako'l Ilm Ziyo";
   document.getElementById('pgTitle').textContent = grp.name||'Guruh';
   document.getElementById('grpName').textContent  = grp.name||'—';
   document.getElementById('grpCourse').textContent= grp.course_name||grp.subject||'—';

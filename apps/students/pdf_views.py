@@ -1,20 +1,17 @@
 """PDF hisobot: oylik moliyaviy hisobot"""
 from io import BytesIO
+
 from django.http import HttpResponse
 from django.utils import timezone
-from rest_framework.views import APIView
-from apps.accounts.permissions import IsAdmin
-
-from reportlab.lib.pagesizes import A4
 from reportlab.lib import colors
+from reportlab.lib.enums import TA_CENTER
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import cm
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.platypus import (
-    SimpleDocTemplate, Table, TableStyle, Paragraph,
-    Spacer, HRFlowable
-)
-from reportlab.lib.enums import TA_CENTER, TA_RIGHT
+from reportlab.platypus import HRFlowable, Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
+from rest_framework.views import APIView
 
+from apps.accounts.permissions import IsAdmin
 
 ACCENT   = colors.HexColor('#FF6B35')
 DARK     = colors.HexColor('#1e293b')
@@ -40,10 +37,11 @@ class MonthlyReportPDFView(APIView):
     permission_classes = [IsAdmin]
 
     def get(self, request):
-        from apps.payments.models import Payment
+        from django.db.models import Count, Q, Sum
+
         from apps.attendance.models import Attendance
+        from apps.payments.models import Payment
         from apps.students.models import Student
-        from django.db.models import Sum, Count, Q
 
         month = int(request.GET.get('month', timezone.now().month))
         year  = int(request.GET.get('year',  timezone.now().year))
@@ -103,7 +101,7 @@ class MonthlyReportPDFView(APIView):
         story = []
 
         # Header
-        story.append(Paragraph("EduERP — Oylik Hisobot", title_style))
+        story.append(Paragraph("Qorako'l Ilm Ziyo — Oylik Hisobot", title_style))
         story.append(Paragraph(f"{month_name} {year}", subtitle_style))
         story.append(HRFlowable(width="100%", thickness=2, color=ACCENT, spaceAfter=16))
 
@@ -243,7 +241,7 @@ class MonthlyReportPDFView(APIView):
         story.append(Spacer(1, 6))
         now_str = timezone.now().strftime('%d.%m.%Y %H:%M')
         story.append(Paragraph(
-            f"EduERP tomonidan yaratildi | {now_str}",
+            f"Qorako'l Ilm Ziyo tomonidan yaratildi | {now_str}",
             ParagraphStyle('footer', fontSize=8, textColor=MUTED, alignment=TA_CENTER)
         ))
 

@@ -1,17 +1,20 @@
 from django.db.models import Q
 from django.utils import timezone
-from rest_framework import generics, status
+from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
 
-from .models import Notification, ActivityLog
-from .serializers import (
-    NotificationSerializer, SupportMessageSerializer,
-    SupportReplySerializer, ActivityLogSerializer,
-)
 from apps.accounts.models import User
-from apps.accounts.permissions import IsStaffLevel
+from apps.accounts.permissions import IsFinance, IsStaffLevel
+
+from .models import ActivityLog, Notification
+from .serializers import (
+    ActivityLogSerializer,
+    NotificationSerializer,
+    SupportMessageSerializer,
+    SupportReplySerializer,
+)
 
 
 def _get_client_ip(request):
@@ -250,9 +253,9 @@ class SendPaymentRemindersView(APIView):
 # ── Faoliyat jurnali ──────────────────────────────────────────────────────────
 
 class ActivityLogListView(generics.ListAPIView):
-    """GET /api/v1/notifications/activity/ — so'nggi amallar (faqat admin/developer)"""
+    """GET /api/v1/notifications/activity/ — so'nggi amallar (admin/developer/moliyachi)"""
     serializer_class   = ActivityLogSerializer
-    permission_classes = [IsStaffLevel]
+    permission_classes = [IsStaffLevel | IsFinance]
     pagination_class   = None
     filter_backends    = []  # Manual filtering — sliced queryset bilan global backendlar ishlamaydi
 

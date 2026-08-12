@@ -1,21 +1,26 @@
-from rest_framework import serializers
 from django.utils import timezone
-from .models import Payment
+from rest_framework import serializers
+
 from apps.groups.models import Group
+
+from .models import Payment
 
 
 class PaymentSerializer(serializers.ModelSerializer):
-    student_name   = serializers.CharField(source='student.user.full_name', read_only=True)
-    group_name     = serializers.CharField(source='group.name', read_only=True, allow_null=True)
-    status_display = serializers.CharField(source='get_status_display', read_only=True)
+    student_name     = serializers.CharField(source='student.user.full_name', read_only=True)
+    group_name       = serializers.CharField(source='group.name', read_only=True, allow_null=True)
+    status_display   = serializers.CharField(source='get_status_display', read_only=True)
+    is_overdue       = serializers.BooleanField(read_only=True)
+    effective_status = serializers.CharField(read_only=True)
+    due_date         = serializers.DateField(read_only=True)
 
     class Meta:
         model  = Payment
         fields = [
             'id', 'student', 'student_name', 'group', 'group_name',
             'month', 'year', 'amount', 'paid_amount', 'debt_amount',
-            'status', 'status_display', 'payment_date', 'note',
-            'received_by', 'created_at'
+            'status', 'status_display', 'is_overdue', 'effective_status', 'due_date',
+            'payment_date', 'note', 'received_by', 'created_at'
         ]
         read_only_fields = ['id', 'debt_amount', 'status', 'created_at']
 

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>To'lov cheki — Qorako'l Ilm Ziyo</title>
+<style>
+:root{
+  --accent:#059669; --accent2:#10b981;
+  --grad: linear-gradient(135deg,#047857 0%,#059669 100%);
+  --dark:#0D1B2A; --muted:#64748b; --border:#e2e8f0;
+  --danger:#dc2626; --bg:#f8fafc;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--dark);
+     display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px}
+.receipt{background:#fff;width:100%;max-width:420px;border-radius:16px;
+         box-shadow:0 10px 40px rgba(13,27,42,.12);overflow:hidden}
+.r-head{background:var(--grad);color:#fff;padding:24px;text-align:center}
+.r-head .logo{width:48px;height:48px;border-radius:12px;background:rgba(255,255,255,.2);
+              display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:22px}
+.r-head h1{font-size:1.1rem;font-weight:800}
+.r-head p{font-size:.8rem;opacity:.9;margin-top:2px}
+.r-body{padding:20px 24px}
+.r-meta{display:flex;justify-content:space-between;font-size:.78rem;color:var(--muted);
+        border-bottom:1px dashed var(--border);padding-bottom:12px;margin-bottom:12px}
+.r-row{display:flex;justify-content:space-between;padding:9px 0;font-size:.88rem;
+       border-bottom:1px solid #f1f5f9}
+.r-row .label{color:var(--muted)}
+.r-row .value{font-weight:700;text-align:right}
+.r-debt{margin-top:14px;padding:14px;border-radius:10px;background:#f0fdf9;
+        display:flex;justify-content:space-between;align-items:center}
+.r-debt.has-debt{background:#fef2f2}
+.r-debt .label{font-size:.82rem;color:var(--muted)}
+.r-debt .value{font-size:1.05rem;font-weight:800;color:var(--accent)}
+.r-debt.has-debt .value{color:var(--danger)}
+.r-actions{display:flex;gap:10px;padding:0 24px 24px}
+.btn{flex:1;padding:11px;border-radius:10px;border:none;font-weight:700;font-size:.85rem;
+     cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
+.btn-primary{background:var(--grad);color:#fff}
+.btn-secondary{background:#f1f5f9;color:var(--dark)}
+.r-foot{text-align:center;font-size:.7rem;color:var(--muted);padding:0 24px 20px}
+.state{text-align:center;padding:40px;color:var(--muted)}
+@media print{
+  body{background:#fff;padding:0}
+  .receipt{box-shadow:none;max-width:100%}
+  .r-actions{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="receipt" id="receiptBox" style="display:none">
+  <div class="r-head">
+    <div class="logo">🎓</div>
+    <h1>Qorako'l Ilm Ziyo</h1>
+    <p>To'lov cheki</p>
+  </div>
+  <div class="r-body">
+    <div class="r-meta">
+      <span id="fReceiptNo">—</span>
+      <span id="fDate">—</span>
+    </div>
+    <div class="r-row"><span class="label">O'quvchi</span><span class="value" id="fStudent">—</span></div>
+    <div class="r-row"><span class="label">Guruh</span><span class="value" id="fGroup">—</span></div>
+    <div class="r-row"><span class="label">To'lov summasi</span><span class="value" id="fAmount">—</span></div>
+    <div class="r-row"><span class="label">To'lov turi</span><span class="value" id="fType">—</span></div>
+    <div class="r-row"><span class="label">Qabul qildi</span><span class="value" id="fReceivedBy">—</span></div>
+    <div class="r-debt" id="fDebtBox">
+      <span class="label">Qolgan qarz</span>
+      <span class="value" id="fDebt">—</span>
+    </div>
+  </div>
+  <div class="r-actions">
+    <button class="btn btn-secondary" onclick="window.print()">🖨️ Chop etish</button>
+    <button class="btn btn-primary" id="pdfBtn">⬇ PDF yuklab olish</button>
+  </div>
+  <div class="r-foot">Qorako'l Ilm Ziyo | Bu hujjat avtomatik yaratildi</div>
+</div>
+
+<div class="state" id="loadingState">Yuklanmoqda...</div>
+<div class="state" id="errorState" style="display:none">Chek topilmadi yoki ko'rish huquqingiz yo'q.</div>
+
+<script>
+const txnId = location.pathname.split('/').filter(Boolean).pop();
+const token = localStorage.getItem('erp_access');
+
+function fmtMoney(n){
+  return Math.round(Number(n)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + " so'm";
+}
+function fmtDate(iso){
+  const d = new Date(iso);
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+async function load(){
+  if(!token){
+    document.getElementById('loadingState').style.display='none';
+    document.getElementById('errorState').style.display='block';
+    document.getElementById('errorState').textContent = 'Tizimga kirish talab qilinadi.';
+    return;
+  }
+  try{
+    const res = await fetch(`/api/v1/finance/transactions/${txnId}/`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if(!res.ok) throw new Error('not found');
+    const t = await res.json();
+
+    document.getElementById('fReceiptNo').textContent = t.receipt_number;
+    document.getElementById('fDate').textContent = fmtDate(t.paid_at);
+    document.getElementById('fStudent').textContent = t.student_name || '—';
+    document.getElementById('fGroup').textContent = t.group_name || '—';
+    document.getElementById('fAmount').textContent = fmtMoney(t.amount);
+    document.getElementById('fType').textContent = t.payment_type_display || t.payment_type;
+    document.getElementById('fReceivedBy').textContent = t.received_by_name || '—';
+
+    const debt = Number(t.debt_after || 0);
+    const debtBox = document.getElementById('fDebtBox');
+    if(debt > 0){
+      debtBox.classList.add('has-debt');
+      document.getElementById('fDebt').textContent = fmtMoney(debt);
+    } else {
+      document.getElementById('fDebt').textContent = "Yo'q (to'liq to'langan)";
+    }
+
+    document.getElementById('loadingState').style.display = 'none';
+    document.getElementById('receiptBox').style.display = 'block';
+  } catch(e){
+    document.getElementById('loadingState').style.display = 'none';
+    document.getElementById('errorState').style.display = 'block';
+  }
+}
+
+document.getElementById('pdfBtn')?.addEventListener('click', async () => {
+  const res = await fetch(`/api/v1/finance/transactions/${txnId}/receipt-pdf/`, {
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  if(!res.ok) return;
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `chek_${txnId}.pdf`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+});
+
+load();
+</script>
+</body>
+</html>

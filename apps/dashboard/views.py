@@ -1,23 +1,24 @@
 import logging
 from datetime import date
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from django.db.models import Sum, Count, Q, DecimalField
+
+from django.db.models import Count, DecimalField, Q, Sum
 from django.db.models.functions import Coalesce
 from django.utils import timezone
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from apps.accounts.permissions import IsAdmin
-from apps.common.utils import calculate_attendance_pct
-from apps.students.models import Student
-from apps.groups.models import Group
+from apps.accounts.permissions import IsFinanceOrAdmin
 from apps.attendance.models import Attendance
+from apps.common.utils import calculate_attendance_pct
+from apps.groups.models import Group
 from apps.payments.models import Payment
+from apps.students.models import Student
 
 logger = logging.getLogger('apps.dashboard')
 
 
 class DashboardView(APIView):
-    permission_classes = [IsAdmin]
+    permission_classes = [IsFinanceOrAdmin]
 
     def get(self, request):
         now   = timezone.now()

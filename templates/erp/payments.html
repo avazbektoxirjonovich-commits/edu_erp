@@ -1,5 +1,5 @@
 ﻿{% extends "erp/base.html" %}
-{% block title %}To'lovlar — VLT.erp{% endblock %}
+{% block title %}To'lovlar — Qorako'l Ilm Ziyo{% endblock %}
 {% block page_title %}To'lovlar{% endblock %}
 
 {% block extra_head %}
@@ -280,7 +280,7 @@ async function doPay(){
 
 function printReceipt(p){
   const MNS2=['Yanvar','Fevral','Mart','Aprel','May','Iyun','Iyul','Avgust','Sentabr','Oktabr','Noyabr','Dekabr'];
-  const org=document.querySelector('.logo-text')?.textContent||'VLT.erp';
+  const org=document.querySelector('.logo-text')?.textContent||"Qorako'l Ilm Ziyo";
   const status=p.status==='paid'?"To'liq to'langan":p.status==='partial'?"Qisman to'langan":"To'lanmagan";
   const html=`<!DOCTYPE html><html><head><meta charset="UTF-8">
 <title>To'lov cheki</title>

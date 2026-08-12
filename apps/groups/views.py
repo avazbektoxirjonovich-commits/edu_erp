@@ -1,12 +1,14 @@
-from rest_framework.viewsets import ModelViewSet
+from django.db.models import Count, Q
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from django_filters.rest_framework import DjangoFilterBackend
-from django.db.models import Count, Q
-from apps.accounts.permissions import IsAdminOrTeacher, IsAdmin
+from rest_framework.viewsets import ModelViewSet
+
+from apps.accounts.permissions import IsAdmin, IsAdminOrTeacher, IsFinance
+
 from .models import Group, LessonSchedule
-from .serializers import GroupListSerializer, GroupCreateSerializer, LessonScheduleSerializer
+from .serializers import GroupCreateSerializer, GroupListSerializer
 
 
 class GroupViewSet(ModelViewSet):
@@ -23,7 +25,7 @@ class GroupViewSet(ModelViewSet):
     def get_permissions(self):
         if self.action in ['create', 'destroy', 'update', 'partial_update']:
             return [IsAdmin()]
-        return [IsAdminOrTeacher()]
+        return [(IsAdminOrTeacher | IsFinance)()]
 
     def get_queryset(self):
         qs = (

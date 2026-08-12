@@ -32,6 +32,7 @@ LOCAL_APPS = [
     'apps.groups',
     'apps.attendance',
     'apps.payments',
+    'apps.finance',
     'apps.dashboard',
     'apps.notifications',
     'apps.homework',
@@ -206,11 +207,11 @@ FACE_REQUIRED_ROLES   = config(
 )
 
 JAZZMIN_SETTINGS = {
-    "site_title": "VLT.erp",
-    "site_header": "VLT.erp Admin",
-    "site_brand": "VLT.erp",
-    "welcome_sign": "VLT.erp — Ta'lim Markazi Boshqaruv Tizimiga Xush Kelibsiz",
-    "copyright": "VLT.erp",
+    "site_title": "Qorako'l Ilm Ziyo",
+    "site_header": "Qorako'l Ilm Ziyo Admin",
+    "site_brand": "Qorako'l Ilm Ziyo",
+    "welcome_sign": "Qorako'l Ilm Ziyo — Ta'lim Markazi Boshqaruv Tizimiga Xush Kelibsiz",
+    "copyright": "Qorako'l Ilm Ziyo",
     "search_model": ["accounts.User", "students.Student"],
     "topmenu_links": [
         {"name": "Dashboard", "url": "/", "new_window": False},

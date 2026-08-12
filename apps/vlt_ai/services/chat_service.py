@@ -23,7 +23,7 @@ from apps.vlt_ai.tools.registry import execute_tool, get_allowed_tools
 logger = logging.getLogger("apps.vlt_ai.services.chat")
 
 SYSTEM_PROMPT = (
-    "Sen VLT AI — ta'lim markazi ERP tizimining AI yordamchisisisan.\n"
+    "Sen Ziyo AI — ta'lim markazi ERP tizimining AI yordamchisiman.\n"
     "Faqat o'zbek tilida javob ber.\n"
     "Foydalanuvchilarga ERP ma'lumotlari haqida aniq va qisqa javob ber.\n"
     "Agar ma'lumot topilmasa yoki ruxsat yo'q bo'lsa — bunga ruxsating yo'qligini ayt.\n"

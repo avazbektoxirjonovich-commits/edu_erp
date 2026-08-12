@@ -1,17 +1,22 @@
 import logging
-from rest_framework import generics, status, filters
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-from django.db.models import Sum, Count, Q
+
+from django.db.models import Count, Q, Sum
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, generics, status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from apps.accounts.permissions import IsAdmin, IsAdminOrTeacher
+from apps.accounts.permissions import IsAdminOrTeacher, IsFinance, IsFinanceOrAdmin
+from apps.notifications.models import ActivityLog
+from apps.notifications.views import log_activity
+
 from .models import Payment
 from .serializers import (
-    PaymentSerializer, PaymentCreateSerializer,
-    PaymentUpdateSerializer, MonthlyPaymentSummarySerializer
+    PaymentCreateSerializer,
+    PaymentSerializer,
+    PaymentUpdateSerializer,
 )
 
 logger = logging.getLogger('apps.payments')
@@ -29,8 +34,8 @@ class PaymentViewSet(generics.ListCreateAPIView):
 
     def get_permissions(self):
         if self.request.method == 'POST':
-            return [IsAdmin()]
-        return [IsAdminOrTeacher()]
+            return [IsFinanceOrAdmin()]
+        return [(IsAdminOrTeacher | IsFinance)()]
 
     def get_queryset(self):
         qs   = Payment.objects.select_related('student__user', 'group', 'received_by')
@@ -65,6 +70,10 @@ class PaymentViewSet(generics.ListCreateAPIView):
                 {'detail': f'Saqlashda xato: {str(e)}'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        log_activity(
+            request.user, ActivityLog.Action.CREATE, 'Payment',
+            payment.pk, str(payment), request=request,
+        )
         return Response(
             PaymentSerializer(payment).data,
             status=status.HTTP_201_CREATED,
@@ -72,19 +81,26 @@ class PaymentViewSet(generics.ListCreateAPIView):
 
 
 class PaymentDetailView(generics.RetrieveUpdateAPIView):
-    """GET/PUT/PATCH → Admin only"""
+    """GET/PUT/PATCH → Admin yoki Moliyachi"""
     queryset           = Payment.objects.all()
-    permission_classes = [IsAdmin]
+    permission_classes = [IsFinanceOrAdmin]
 
     def get_serializer_class(self):
         if self.request.method in ['PUT', 'PATCH']:
             return PaymentUpdateSerializer
         return PaymentSerializer
 
+    def perform_update(self, serializer):
+        payment = serializer.save()
+        log_activity(
+            self.request.user, ActivityLog.Action.UPDATE, 'Payment',
+            payment.pk, str(payment), request=self.request,
+        )
+
 
 class UnpaidStudentsView(APIView):
-    """GET /api/v1/payments/unpaid/ — Admin only"""
-    permission_classes = [IsAdmin]
+    """GET /api/v1/payments/unpaid/ — Admin yoki Moliyachi"""
+    permission_classes = [IsFinanceOrAdmin]
 
     def get(self, request):
         now = timezone.now()
@@ -107,8 +123,8 @@ class UnpaidStudentsView(APIView):
 
 
 class MonthlySummaryView(APIView):
-    """GET /api/v1/payments/summary/ — Admin only"""
-    permission_classes = [IsAdmin]
+    """GET /api/v1/payments/summary/ — Admin yoki Moliyachi"""
+    permission_classes = [IsFinanceOrAdmin]
 
     def get(self, request):
         now = timezone.now()

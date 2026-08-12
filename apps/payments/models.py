@@ -1,6 +1,12 @@
+import calendar
 import uuid
-from django.db import models
+from datetime import date
+
 from django.core.validators import MinValueValidator
+from django.db import models
+from django.utils import timezone
+
+DEFAULT_PAYMENT_DUE_DAY = 10  # Payment.group yo'q bo'lsa ishlatiladigan standart muddat
 
 
 class Payment(models.Model):
@@ -84,3 +90,23 @@ class Payment(models.Model):
             self.amount, self.discount, self.paid_amount
         )
         super().save(*args, **kwargs)
+
+    @property
+    def due_date(self):
+        """Shu oy uchun to'lov muddati sanasi — guruhning payment_due_day'iga asoslanadi."""
+        day = self.group.payment_due_day if self.group else DEFAULT_PAYMENT_DUE_DAY
+        last_day_of_month = calendar.monthrange(self.year, self.month)[1]
+        return date(self.year, self.month, min(day, last_day_of_month))
+
+    @property
+    def is_overdue(self):
+        """PAID bo'lmagan va muddati o'tgan to'lovlar uchun True.
+        Bu vaqtga bog'liq — DB'da saqlanmaydi, har doim jonli hisoblanadi."""
+        if self.status == self.Status.PAID:
+            return False
+        return timezone.localdate() > self.due_date
+
+    @property
+    def effective_status(self):
+        """Frontend uchun 4-holatli status: paid / partial / unpaid / overdue."""
+        return 'overdue' if self.is_overdue else self.status

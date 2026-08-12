@@ -4,10 +4,11 @@ ACCOUNTS — Ruxsat tizimi (Permissions)
 Rollar matritsasi:
   developer : Hammasiga ruxsat (texnik xodim)
   admin     : Tizim boshqaruvi (foydalanuvchi, to'lov, guruh CRUD)
+  finance   : Moliyaviy operatsiyalar (to'lov, xarajat, mulk, ish haqi)
   teacher   : O'z guruhlari: davomat, vazifa yaratish, baholash
   student   : Faqat o'z ma'lumotlari, vazifa topshirish
 """
-from rest_framework.permissions import BasePermission, SAFE_METHODS
+from rest_framework.permissions import SAFE_METHODS, BasePermission
 
 
 # ── Asosiy yordamchilar ────────────────────────────────────────
@@ -146,3 +147,31 @@ class IsAdminOrTeacherOwn(BasePermission):
             if hasattr(group, 'teacher'):
                 return group.teacher == teacher
         return False
+
+
+# ── 10. Faqat moliyachi ───────────────────────────────────────
+class IsFinance(BasePermission):
+    """Faqat moliyachi"""
+    message = "Bu amal uchun moliyachi huquqi kerak"
+
+    def has_permission(self, request, view):
+        return bool(
+            request.user and
+            request.user.is_authenticated and
+            request.user.is_finance
+        )
+
+
+# ── 11. Moliyachi yoki admin ──────────────────────────────────
+class IsFinanceOrAdmin(BasePermission):
+    """Moliyachi, Admin yoki Developer — moliyaviy operatsiyalar"""
+    message = "Bu amal uchun moliyachi yoki administrator huquqi kerak"
+
+    def has_permission(self, request, view):
+        return bool(
+            request.user and
+            request.user.is_authenticated and
+            (request.user.is_finance or
+             request.user.is_admin or
+             request.user.is_developer)
+        )
