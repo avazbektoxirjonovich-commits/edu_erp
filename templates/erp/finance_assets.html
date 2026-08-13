@@ -1,0 +1,267 @@
+{% extends "erp/base.html" %}
+{% block title %}Markaz buyumlari — Qorako'l Ilm Ziyo{% endblock %}
+{% block page_title %}Markaz buyumlari{% endblock %}
+
+{% block extra_head %}
+<style>
+.as-kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
+@media(max-width:800px){.as-kpi{grid-template-columns:1fr}}
+.kpi{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;transition:all .2s}
+.kpi:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.kpi-icon{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.kpi-val{font-size:1.3rem;font-weight:900;color:var(--text);letter-spacing:-.5px;line-height:1}
+.kpi-lbl{font-size:.7rem;color:var(--muted);margin-top:2px}
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;animation:fadeUp .35s ease both">
+  <div>
+    <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">Markaz buyumlari</h2>
+    <p style="font-size:.75rem;color:var(--muted);margin-top:3px">Mebel, jihoz va boshqa mulklarni hisobga olish</p>
+  </div>
+  <button class="btn btn-primary" onclick="openAddModal()"><i class="fas fa-plus"></i>Buyum qo'shish</button>
+</div>
+
+<!-- KPI -->
+<div class="as-kpi">
+  <div class="kpi" style="animation:fadeUp .4s ease .04s both">
+    <div class="kpi-icon ic-blue"><i class="fas fa-boxes-stacked"></i></div>
+    <div><div class="kpi-val" id="kCount">—</div><div class="kpi-lbl">Jami buyum turlari</div></div>
+  </div>
+  <div class="kpi" style="animation:fadeUp .4s ease .1s both">
+    <div class="kpi-icon ic-green"><i class="fas fa-sack-dollar"></i></div>
+    <div><div class="kpi-val" id="kValue">—</div><div class="kpi-lbl">Umumiy qiymati</div></div>
+  </div>
+  <div class="kpi" style="animation:fadeUp .4s ease .16s both">
+    <div class="kpi-icon ic-red"><i class="fas fa-triangle-exclamation"></i></div>
+    <div><div class="kpi-val" id="kBad">—</div><div class="kpi-lbl">Ta'mir/Buzilgan</div></div>
+  </div>
+</div>
+
+<div class="card" style="animation:fadeUp .4s ease .08s both;overflow:hidden">
+  <div class="fbar">
+    <div class="search-wrap">
+      <i class="fas fa-search"></i>
+      <input type="text" id="srch" placeholder="Buyum nomi yoki kategoriya..." oninput="load()">
+    </div>
+    <select id="fCond" onchange="load()" style="border:1.5px solid var(--border);border-radius:8px;padding:7px 32px 7px 12px;font-size:.78rem;background:#fff;outline:none;cursor:pointer">
+      <option value="">Barcha holatlar</option>
+      <option value="new">Yangi</option>
+      <option value="good">Yaxshi</option>
+      <option value="needs_repair">Ta'mirlash kerak</option>
+      <option value="damaged">Buzilgan</option>
+      <option value="disposed">Hisobdan chiqarilgan</option>
+    </select>
+    <span style="margin-left:auto;font-size:.75rem;color:var(--muted)" id="cntLbl"></span>
+  </div>
+  <div id="tbl"><div class="loading"><div class="spinner"></div></div></div>
+</div>
+
+<!-- ADD/EDIT MODAL -->
+<div class="overlay" id="asModal">
+  <div class="modal">
+    <div class="m-head">
+      <h5><i class="fas fa-box" style="color:var(--accent);margin-right:6px"></i><span id="asModalTitle">Buyum qo'shish</span></h5>
+      <button class="m-close" onclick="closeM('asModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="m-body">
+      <input type="hidden" id="asId">
+      <div class="row2">
+        <div class="fg"><label>Buyum nomi *</label><input class="fc" id="asName" placeholder="Masalan: Stul"></div>
+        <div class="fg"><label>Kategoriya</label><input class="fc" id="asCategory" placeholder="Masalan: Mebel"></div>
+      </div>
+      <div class="row2">
+        <div class="fg"><label>Soni *</label><input class="fc" type="number" min="1" step="1" id="asQty" placeholder="1"></div>
+        <div class="fg"><label>1 dona narxi *</label><input class="fc" type="number" min="0" step="1" id="asPrice" placeholder="0"></div>
+      </div>
+      <div class="fg" id="asTotalRow" style="background:var(--bg);border-radius:8px;padding:10px 12px;font-size:.85rem;font-weight:700;color:var(--accent)">
+        Jami qiymat: <span id="asTotalVal">0</span>
+      </div>
+      <div class="row2">
+        <div class="fg"><label>Holati *</label>
+          <select class="fc fc-sel" id="asCondition">
+            <option value="new">Yangi</option>
+            <option value="good">Yaxshi</option>
+            <option value="needs_repair">Ta'mirlash kerak</option>
+            <option value="damaged">Buzilgan</option>
+            <option value="disposed">Hisobdan chiqarilgan</option>
+          </select>
+        </div>
+        <div class="fg"><label>Sotib olingan sana</label><input class="fc" type="date" id="asDate"></div>
+      </div>
+      <div class="fg"><label>Izoh</label><input class="fc" id="asNotes" placeholder="Qo'shimcha izoh..."></div>
+    </div>
+    <div class="m-foot">
+      <button class="btn btn-ghost" onclick="closeM('asModal')">Bekor</button>
+      <button class="btn btn-primary" onclick="doSaveAsset()"><i class="fas fa-check"></i>Saqlash</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+initAuth();
+const _ME = getUser();
+const _CAN_DELETE = _ME.role === 'admin' || _ME.role === 'developer';
+
+const COND_MAP = {
+  new:          {label:'Yangi',              cls:'bdg-active'},
+  good:         {label:'Yaxshi',             cls:'bdg-info'},
+  needs_repair: {label:'Ta\'mirlash kerak',  cls:'bdg-warning'},
+  damaged:      {label:'Buzilgan',           cls:'bdg-unpaid'},
+  disposed:     {label:'Hisobdan chiqarilgan', cls:'bdg-inactive'},
+};
+
+let allAssets = [];
+
+// escHtml() alone is unsafe inside an inline onclick="..." JS-string argument:
+// the browser HTML-decodes the attribute (turning &#39; back into ') before
+// the click handler is parsed as JS, which breaks names containing an apostrophe.
+// JS-escape the quote/backslash first, then HTML-escape the rest.
+function jsAttrEscape(s){
+  return String(s)
+    .replace(/\\/g, '\\\\')
+    .replace(/'/g, "\\'")
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/\n/g, '\\n');
+}
+
+function updateAsTotal(){
+  const q = parseFloat(document.getElementById('asQty').value) || 0;
+  const p = parseFloat(document.getElementById('asPrice').value) || 0;
+  document.getElementById('asTotalVal').textContent = fmoney(q * p);
+}
+document.addEventListener('input', e => {
+  if(e.target.id === 'asQty' || e.target.id === 'asPrice') updateAsTotal();
+});
+
+async function load(){
+  const q = document.getElementById('srch').value.trim();
+  const c = document.getElementById('fCond').value;
+  let url = '/finance/assets/?page_size=200';
+  if(q) url += `&search=${encodeURIComponent(q)}`;
+  if(c) url += `&condition=${c}`;
+  document.getElementById('tbl').innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  const d = await get(url);
+  allAssets = d?.results || d || [];
+  renderTable();
+  renderKpi();
+}
+
+function renderKpi(){
+  document.getElementById('kCount').textContent = allAssets.length + ' ta';
+  const totalValue = allAssets.reduce((s,a) => s + parseFloat(a.total_value||0), 0);
+  document.getElementById('kValue').textContent = fmoney(totalValue);
+  const bad = allAssets.filter(a => a.condition === 'needs_repair' || a.condition === 'damaged').length;
+  document.getElementById('kBad').textContent = bad + ' ta';
+}
+
+function renderTable(){
+  document.getElementById('cntLbl').textContent = `${allAssets.length} ta buyum`;
+  if(!allAssets.length){
+    document.getElementById('tbl').innerHTML = '<div class="empty"><i class="fas fa-boxes-stacked"></i><p>Buyum topilmadi</p></div>';
+    return;
+  }
+  document.getElementById('tbl').innerHTML = `
+  <table class="etable"><thead><tr>
+    <th>#</th><th>Buyum</th><th>Soni</th><th>1 dona narxi</th><th>Jami qiymat</th><th>Holati</th><th></th>
+  </tr></thead><tbody>
+  ${allAssets.map((a,i) => {
+    const cm = COND_MAP[a.condition] || {label:a.condition_display||a.condition, cls:'bdg-info'};
+    return `<tr>
+      <td style="color:var(--muted);font-size:.75rem">${i+1}</td>
+      <td>
+        <div style="font-weight:600;font-size:.82rem">${escHtml(a.name||'—')}</div>
+        ${a.category ? `<div style="font-size:.72rem;color:var(--muted)">${escHtml(a.category)}</div>` : ''}
+      </td>
+      <td style="font-size:.82rem">${a.quantity}</td>
+      <td style="font-size:.82rem">${fmoney(a.purchase_price)}</td>
+      <td style="font-size:.88rem;font-weight:800;color:var(--accent)">${fmoney(a.total_value)}</td>
+      <td><span class="bdg ${cm.cls}">${cm.label}</span></td>
+      <td>
+        <div style="display:flex;gap:4px">
+          <button class="btn-icon edit" onclick="openEditModal('${a.id}')" title="Tahrirlash"><i class="fas fa-pen"></i></button>
+          ${_CAN_DELETE ? `<button class="btn-icon del" onclick="doDeleteAsset('${a.id}','${jsAttrEscape(a.name||'')}')" title="O'chirish"><i class="fas fa-trash"></i></button>` : ''}
+        </div>
+      </td>
+    </tr>`;
+  }).join('')}
+  </tbody></table>`;
+}
+
+function openAddModal(){
+  document.getElementById('asModalTitle').textContent = "Buyum qo'shish";
+  document.getElementById('asId').value = '';
+  document.getElementById('asName').value = '';
+  document.getElementById('asCategory').value = '';
+  document.getElementById('asQty').value = '1';
+  document.getElementById('asPrice').value = '';
+  document.getElementById('asCondition').value = 'new';
+  document.getElementById('asDate').value = '';
+  document.getElementById('asNotes').value = '';
+  updateAsTotal();
+  openM('asModal');
+}
+
+function openEditModal(id){
+  const a = allAssets.find(x => x.id === id);
+  if(!a) return;
+  document.getElementById('asModalTitle').textContent = 'Buyumni tahrirlash';
+  document.getElementById('asId').value = a.id;
+  document.getElementById('asName').value = a.name || '';
+  document.getElementById('asCategory').value = a.category || '';
+  document.getElementById('asQty').value = a.quantity;
+  document.getElementById('asPrice').value = a.purchase_price;
+  document.getElementById('asCondition').value = a.condition;
+  document.getElementById('asDate').value = a.purchase_date || '';
+  document.getElementById('asNotes').value = a.notes || '';
+  updateAsTotal();
+  openM('asModal');
+}
+
+async function doSaveAsset(){
+  const id = document.getElementById('asId').value;
+  const name = document.getElementById('asName').value.trim();
+  const qty = parseInt(document.getElementById('asQty').value);
+  const price = parseFloat(document.getElementById('asPrice').value);
+
+  if(!name){toast("Buyum nomini kiriting",'wrn');return;}
+  if(!qty || qty < 1){toast("Soni kamida 1 bo'lishi kerak",'wrn');return;}
+  if(isNaN(price) || price < 0){toast("Narx manfiy bo'lishi mumkin emas",'wrn');return;}
+
+  const body = {
+    name,
+    category: document.getElementById('asCategory').value.trim(),
+    quantity: qty,
+    purchase_price: price,
+    condition: document.getElementById('asCondition').value,
+    purchase_date: document.getElementById('asDate').value || null,
+    notes: document.getElementById('asNotes').value.trim(),
+  };
+
+  const r = id ? await put(`/finance/assets/${id}/`, body) : await post('/finance/assets/', body);
+  if(r?.ok){
+    closeM('asModal');
+    toast(id ? 'Yangilandi' : "Buyum qo'shildi", 'ok');
+    load();
+  } else {
+    try{const e = await r?.json(); toast(e?.detail || Object.values(e||{}).flat()[0] || 'Xatolik', 'err');}
+    catch{toast('Server xatosi', 'err');}
+  }
+}
+
+async function doDeleteAsset(id, name){
+  if(!confirm(`"${name}" ni o'chirishni tasdiqlaysizmi?`)) return;
+  const r = await del(`/finance/assets/${id}/`);
+  if(r?.ok || r?.status === 204){toast("O'chirildi", 'ok'); load();}
+  else{try{const e = await r?.json(); toast(e?.detail || 'Xatolik', 'err');}catch{toast('Server xatosi', 'err');}}
+}
+
+load();
+</script>
+{% endblock %}

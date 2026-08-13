@@ -8,7 +8,7 @@ from rest_framework import filters, generics, status, viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.accounts.permissions import IsFinanceOrAdmin
+from apps.accounts.permissions import IsAdmin, IsFinanceOrAdmin
 from apps.notifications.models import ActivityLog
 from apps.notifications.views import log_activity
 from apps.payments.models import Payment
@@ -198,13 +198,18 @@ class AssetViewSet(viewsets.ModelViewSet):
     """
     /api/v1/finance/assets/ — Markaz mulklari CRUD (oddiy ro'yxat, ombor tizimi emas).
     Filtr: ?condition=&category=&search=
+    Finance: view/add/edit. Faqat Admin/Developer o'chira oladi.
     """
-    permission_classes = [IsFinanceOrAdmin]
     serializer_class    = AssetSerializer
     filter_backends     = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields    = ['condition']
     search_fields        = ['name', 'category']
     ordering             = ['-created_at']
+
+    def get_permissions(self):
+        if self.action == 'destroy':
+            return [IsAdmin()]
+        return [IsFinanceOrAdmin()]
 
     def get_queryset(self):
         return Asset.objects.select_related('created_by')

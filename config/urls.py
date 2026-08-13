@@ -78,6 +78,7 @@ frontend_urlpatterns = [
     path('payments/',    TemplateView.as_view(template_name='erp/payments.html'),        name='payments'),
     path('finance/',     TemplateView.as_view(template_name='erp/finance_dashboard.html'), name='finance_dashboard'),
     path('finance/receipt/<uuid:pk>/', TemplateView.as_view(template_name='erp/finance_receipt.html'), name='finance_receipt'),
+    path('finance/assets/', TemplateView.as_view(template_name='erp/finance_assets.html'), name='finance_assets'),
     path('reports/',     TemplateView.as_view(template_name='erp/reports.html'),         name='reports'),
     path('leaderboard/', TemplateView.as_view(template_name='erp/leaderboard.html'),     name='leaderboard'),
     path('homework/',    TemplateView.as_view(template_name='erp/homework.html'),         name='homework'),

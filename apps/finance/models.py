@@ -119,6 +119,7 @@ class Asset(models.Model):
                                                  verbose_name='Miqdor')
     purchase_date  = models.DateField(null=True, blank=True, verbose_name='Sotib olingan sana')
     purchase_price = models.DecimalField(max_digits=12, decimal_places=0, default=0,
+                                         validators=[MinValueValidator(0)],
                                          verbose_name='Narxi (dona)')
     condition      = models.CharField(max_length=15, choices=Condition.choices,
                                       default=Condition.NEW, verbose_name='Holati',

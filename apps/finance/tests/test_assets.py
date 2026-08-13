@@ -21,6 +21,14 @@ def teacher_role_user(db):
     )
 
 
+@pytest.fixture
+def admin_user(db):
+    return User.objects.create_user(
+        phone='+998900000082', password='pass1234',
+        full_name='Admin User', role=User.Role.ADMIN,
+    )
+
+
 def auth_client(user):
     client = APIClient()
     client.force_authenticate(user=user)
@@ -69,12 +77,26 @@ class TestAssetCRUD:
         assert resp.status_code == 200
         assert resp.data['total_value'] == 800000
 
-    def test_delete_asset(self, finance_user):
+    def test_finance_cannot_delete_asset(self, finance_user):
         asset = Asset.objects.create(name='Old chair', quantity=1, purchase_price=50000)
         client = auth_client(finance_user)
         resp = client.delete(f'/api/v1/finance/assets/{asset.id}/')
+        assert resp.status_code == 403
+        assert Asset.objects.filter(id=asset.id).exists()
+
+    def test_admin_can_delete_asset(self, admin_user):
+        asset = Asset.objects.create(name='Old chair', quantity=1, purchase_price=50000)
+        client = auth_client(admin_user)
+        resp = client.delete(f'/api/v1/finance/assets/{asset.id}/')
         assert resp.status_code == 204
         assert not Asset.objects.filter(id=asset.id).exists()
+
+    def test_negative_price_rejected(self, finance_user):
+        client = auth_client(finance_user)
+        resp = client.post('/api/v1/finance/assets/', {
+            'name': 'Broken laptop', 'quantity': 1, 'purchase_price': -1000,
+        })
+        assert resp.status_code == 400
 
 
 @pytest.mark.django_db

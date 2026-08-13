@@ -23,6 +23,7 @@
       <option value="teacher">O'qituvchi</option>
       <option value="student">O'quvchi</option>
       <option value="parent">Ota-ona</option>
+      <option value="finance">Moliyachi</option>
       <option value="developer">Developer</option>
     </select>
     <select id="fActive" onchange="load()" style="border:1.5px solid var(--border);border-radius:8px;padding:7px 32px 7px 12px;font-size:.78rem;background:#fff;outline:none;cursor:pointer">
@@ -55,6 +56,7 @@
             <option value="teacher">O'qituvchi</option>
             <option value="student">O'quvchi</option>
             <option value="parent">Ota-ona</option>
+            <option value="finance">Moliyachi</option>
           </select>
         </div>
       </div>
@@ -81,6 +83,7 @@ const ROLE_MAP = {
   teacher:   {label:"O'qituvchi", cls:'bdg-active'},
   student:   {label:"O'quvchi",  cls:'bdg-info'},
   parent:    {label:'Ota-ona',   cls:'bdg-warning'},
+  finance:   {label:'Moliyachi', cls:'bdg-paid'},
 };
 
 async function load(){
@@ -145,7 +148,7 @@ async function doAdd(){
   const pwd = document.getElementById('aPwd').value;
   const role = document.getElementById('aRole').value;
   if(!name||!phone||!pwd){toast('Ism, telefon va parol majburiy!','wrn');return;}
-  const r = await post('/auth/users/', {full_name:name, phone, password:pwd, role});
+  const r = await post('/auth/users/', {full_name:name, phone, password:pwd, password2:pwd, role});
   if(r?.ok){closeM('addModal');toast('Foydalanuvchi yaratildi','ok');load();}
   else{try{const e=await r?.json();toast(e?.detail||Object.values(e||{}).flat()[0]||'Xatolik','err');}catch{toast('Server xatosi','err');}}
 }
