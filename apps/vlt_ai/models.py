@@ -40,6 +40,12 @@ class Message(models.Model):
         ASSISTANT = "assistant", "AI"
         TOOL      = "tool",      "Tool natijasi"
 
+    class RequestStatus(models.TextChoices):
+        OK           = "ok",         "Muvaffaqiyatli"
+        ERROR        = "error",      "Xatolik"
+        RATE_LIMITED = "ratelimit",  "Limit tugagan"
+        DENIED       = "denied",     "Rad etilgan"
+
     id           = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     conversation = models.ForeignKey(
                        Conversation,
@@ -58,6 +64,20 @@ class Message(models.Model):
                        null=True, blank=True,
                        verbose_name="Tool chaqiruvlari",
                    )
+    # Populated on assistant replies only (the LLM's own final/tool-use turn).
+    # Left blank on user/tool-role rows.
+    model          = models.CharField(max_length=100, blank=True, verbose_name="LLM modeli")
+    input_tokens   = models.PositiveIntegerField(null=True, blank=True, verbose_name="Kirish tokenlari")
+    output_tokens  = models.PositiveIntegerField(null=True, blank=True, verbose_name="Chiqish tokenlari")
+    estimated_cost = models.DecimalField(
+                         max_digits=10, decimal_places=6, null=True, blank=True,
+                         verbose_name="Taxminiy narx (USD)",
+                     )
+    request_status = models.CharField(
+                         max_length=10, choices=RequestStatus.choices,
+                         default=RequestStatus.OK, db_index=True,
+                         verbose_name="So'rov holati",
+                     )
     created_at   = models.DateTimeField(auto_now_add=True)
 
     class Meta:

@@ -82,6 +82,18 @@ class LLMClient:
         )
         return response
 
+    def simple_complete(self, prompt: str, system: str = "", max_tokens: int | None = None) -> str:
+        """One-shot, non-streaming, tool-free completion. Used for isolated
+        tasks like manual error analysis — never part of the chat tool loop."""
+        client = self._get_client()
+        response = client.messages.create(
+            model=self.model,
+            max_tokens=max_tokens or self.max_tokens,
+            system=system,
+            messages=[{"role": "user", "content": prompt}],
+        )
+        return "".join(getattr(b, "text", "") for b in response.content)
+
     def stream_text(
         self,
         messages: list[dict],

@@ -11,7 +11,10 @@ class ChatRequestSerializer(serializers.Serializer):
 class MessageSerializer(serializers.ModelSerializer):
     class Meta:
         model  = Message
-        fields = ("id", "role", "content", "tool_calls", "created_at")
+        fields = (
+            "id", "role", "content", "tool_calls", "created_at",
+            "model", "input_tokens", "output_tokens", "estimated_cost", "request_status",
+        )
 
 
 class ConversationSerializer(serializers.ModelSerializer):

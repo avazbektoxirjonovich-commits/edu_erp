@@ -8,6 +8,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from apps.accounts.permissions import IsAdminOrTeacher
 from .models import Attendance
 from .serializers import AttendanceSerializer, BulkAttendanceSerializer
+from .services import sync_attendance_kumush
 
 logger = logging.getLogger('apps.attendance')
 
@@ -35,7 +36,8 @@ class AttendanceListCreateView(generics.ListCreateAPIView):
         return qs
 
     def perform_create(self, serializer):
-        serializer.save(marked_by=self.request.user)
+        attendance = serializer.save(marked_by=self.request.user)
+        sync_attendance_kumush(attendance, actor=self.request.user)
 
 
 class AttendanceDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -43,6 +45,10 @@ class AttendanceDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset           = Attendance.objects.all()
     serializer_class   = AttendanceSerializer
     permission_classes = [IsAdminOrTeacher]
+
+    def perform_update(self, serializer):
+        attendance = serializer.save()
+        sync_attendance_kumush(attendance, actor=self.request.user)
 
 
 class BulkAttendanceView(APIView):

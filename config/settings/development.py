@@ -27,6 +27,7 @@ REST_FRAMEWORK = {
         'anon': '1000/min',
         'user': '5000/min',
         'login': '100/min',
+        'submit': '100/min',
     },
 }
 

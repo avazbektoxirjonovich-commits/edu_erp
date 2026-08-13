@@ -1020,6 +1020,21 @@ const patch = (p,b)=>req(p,{method:'PATCH',body:JSON.stringify(b)});
 const put   = (p,b)=>req(p,{method:'PUT',body:JSON.stringify(b)});
 const del   = p=>req(p,{method:'DELETE'});
 
+// FormData bilan yuborish (rasm yuklash) — req() har doim JSON Content-Type
+// qo'yadi, shu bois multipart uchun alohida: Content-Type headerini
+// qo'ymaymiz (brauzer o'zi boundary bilan qo'yadi), token/401-refresh esa
+// xuddi req() kabi ishlaydi.
+async function reqForm(path, formData, method='POST'){
+  const t = getAccess();
+  const headers = t ? {'Authorization': 'Bearer '+t} : {};
+  let res = await fetch(API+path, {method, headers, body: formData});
+  if(res.status === 401){
+    if(await refreshAccess()) return reqForm(path, formData, method);
+    toLogin(); return null;
+  }
+  return res;
+}
+
 // ── Sidebar menu (rol bo'yicha) ────────────────────────────────
 function buildSidebar(role){
   const sec=(t)=>`<div class="sb-section">${t}</div>`;
@@ -1040,6 +1055,9 @@ function buildSidebar(role){
     html+=item('/payments/','credit-card',"To'lovlar",'payments');
     html+=item('/salary/','money-bill-wave',"Ish haqi",'salary');
     html+=item('/finance/assets/','boxes-stacked',"Markaz buyumlari",'finance_assets');
+    html+=sec("Do'kon");
+    html+=item('/store/','store','Do\'kon','store');
+    html+=item('/store/manage/','gifts',"Do'kon boshqaruvi",'store_manage');
     html+=sec("O'quv");
     html+=item('/homework/','book-open','Uyga vazifalar','homework');
     html+=sec('Tahlil');
@@ -1052,6 +1070,7 @@ function buildSidebar(role){
       html+=item('/users/','users-cog','Foydalanuvchilar','users');
     }
     if(role==='developer'){
+      html+=item('/error-monitor/','bug',"Xatoliklar monitoringi",'error_monitor');
       html+=`<a class="sb-item" href="/admin/" target="_blank"><span class="sb-icon"><i class="fas fa-shield-halved"></i></span>Django Admin</a>`;
       html+=`<a class="sb-item" href="/api/v1/" target="_blank"><span class="sb-icon"><i class="fas fa-code"></i></span>API Explorer</a>`;
     }
@@ -1064,6 +1083,7 @@ function buildSidebar(role){
     html+=item('/homework/','book-open','Uyga vazifalar');
     html+=item('/zukko/teacher/','code','ZUKKO Challenges');
     html+=item('/leaderboard/','ranking-star','Reyting');
+    html+=item('/store/','store',"Do'kon",'store');
     html+=sec('Profil');
     html+=item('/teacher/profile/','user','Profilim');
   }
@@ -1090,6 +1110,7 @@ function buildSidebar(role){
     html+=item('/leaderboard/','ranking-star','Reyting');
     html+=item('/homework/','book-open',"Uyga vazifalar");
     html+=item('/zukko/student/','code','ZUKKO Challenges');
+    html+=item('/store/','store',"Do'kon",'store');
     html+=sec('Sozlamalar');
     html+=item('/student/settings/','gear','Sozlamalar');
   }
@@ -1110,6 +1131,9 @@ const _ROUTE_ROLES = {
   '/salary/':      ['admin','developer','finance'],
   '/finance/':     ['admin','developer','finance'],
   '/finance/assets/': ['admin','developer','finance'],
+  '/store/':          ['admin','developer','teacher','student'],
+  '/store/manage/':   ['admin','developer'],
+  '/error-monitor/':  ['developer'],
   '/reports/':     ['admin','developer'],
   '/activity/':    ['admin','developer'],
   '/users/':       ['admin','developer'],

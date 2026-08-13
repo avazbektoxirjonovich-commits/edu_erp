@@ -66,11 +66,13 @@ class Notification(models.Model):
 class ActivityLog(models.Model):
 
     class Action(models.TextChoices):
-        CREATE = 'create', 'Yaratildi'
-        UPDATE = 'update', 'Yangilandi'
-        DELETE = 'delete', "O'chirildi"
-        LOGIN  = 'login',  'Tizimga kirdi'
-        LOGOUT = 'logout', 'Tizimdan chiqdi'
+        CREATE       = 'create',    'Yaratildi'
+        UPDATE       = 'update',    'Yangilandi'
+        DELETE       = 'delete',    "O'chirildi"
+        LOGIN        = 'login',     'Tizimga kirdi'
+        LOGOUT       = 'logout',    'Tizimdan chiqdi'
+        DENIED       = 'denied',    'Rad etildi'
+        RATE_LIMITED = 'ratelimit', 'Limit tugadi'
 
     id          = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user        = models.ForeignKey(

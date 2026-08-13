@@ -16,8 +16,11 @@ import json
 import logging
 from collections.abc import Generator
 
+from apps.notifications.models import ActivityLog
+from apps.notifications.views import log_activity
 from apps.vlt_ai.models import Conversation, Message
 from apps.vlt_ai.services.llm_client import llm_client
+from apps.vlt_ai.services.pricing import estimate_cost
 from apps.vlt_ai.tools.registry import execute_tool, get_allowed_tools
 
 logger = logging.getLogger("apps.vlt_ai.services.chat")
@@ -94,9 +97,16 @@ def process_chat(
     )
     conversation.title = conversation.title or user_message[:80]
     conversation.save(update_fields=["title", "updated_at"])
+    log_activity(user, ActivityLog.Action.CREATE, 'VltAiQuestion', conversation.pk,
+                 user_message[:100])
 
     messages = _build_history(conversation)
     tools = get_allowed_tools(user)
+
+    # Accumulated across tool-loop iterations so the final persisted message
+    # reflects the full cost of the turn, not just its last LLM call.
+    total_input_tokens = 0
+    total_output_tokens = 0
 
     for _iteration in range(MAX_TOOL_ITERATIONS):
         try:
@@ -115,10 +125,19 @@ def process_chat(
                 conversation=conversation,
                 role=Message.Role.ASSISTANT,
                 content=err_text,
+                request_status=Message.RequestStatus.ERROR,
+            )
+            from apps.error_monitor.capture import capture_exception
+            capture_exception(
+                exc, user=user, endpoint="vlt_ai.chat", method="POST",
+                page="/api/v1/vlt-ai/chat/",
             )
             yield f"data: {json.dumps({'type': 'error', 'text': err_text})}\n\n"
             yield "data: [DONE]\n\n"
             return
+
+        total_input_tokens += response.usage.input_tokens
+        total_output_tokens += response.usage.output_tokens
 
         if response.stop_reason == "tool_use":
             # Collect tool_use blocks and execute each
@@ -170,13 +189,29 @@ def process_chat(
             if not final_text:
                 final_text = "Kechirasiz, javob tuzishda xatolik yuz berdi."
 
-            # Persist assistant reply
+            # Persist assistant reply, with the turn's accumulated token usage/cost
+            estimated_cost = estimate_cost(llm_client.model, total_input_tokens, total_output_tokens)
             Message.objects.create(
                 conversation=conversation,
                 role=Message.Role.ASSISTANT,
                 content=final_text,
+                model=llm_client.model,
+                input_tokens=total_input_tokens,
+                output_tokens=total_output_tokens,
+                estimated_cost=estimated_cost,
+                request_status=Message.RequestStatus.OK,
             )
             conversation.save(update_fields=["updated_at"])
+            log_activity(
+                user, ActivityLog.Action.CREATE, 'VltAiResponse', conversation.pk,
+                final_text[:100],
+                changes={
+                    'model': llm_client.model,
+                    'input_tokens': total_input_tokens,
+                    'output_tokens': total_output_tokens,
+                    'estimated_cost': str(estimated_cost) if estimated_cost is not None else None,
+                },
+            )
 
             # Stream in chunks
             for i in range(0, len(final_text), SSE_CHUNK_SIZE):

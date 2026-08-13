@@ -1,0 +1,176 @@
+{% extends "erp/base.html" %}
+{% block title %}Do'kon — Qorako'l Ilm Ziyo{% endblock %}
+{% block page_title %}Do'kon{% endblock %}
+
+{% block extra_head %}
+<style>
+.st-balance{
+  display:flex;align-items:center;gap:14px;background:#fff;border:1px solid var(--border);
+  border-radius:14px;padding:16px 20px;box-shadow:var(--shadow);margin-bottom:20px;
+}
+.st-balance-icon{
+  width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+  background:rgba(139,92,246,.12);color:#8b5cf6;font-size:1.3rem;flex-shrink:0;
+}
+.st-balance-lbl{font-size:.72rem;color:var(--muted);font-weight:600;letter-spacing:.02em}
+.st-balance-val{font-size:1.4rem;font-weight:900;color:#8b5cf6;letter-spacing:-.4px}
+
+.st-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px;margin-bottom:26px}
+.st-card{
+  background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden;
+  box-shadow:var(--shadow);transition:all .2s;display:flex;flex-direction:column;
+}
+.st-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.st-img{width:100%;aspect-ratio:4/3;background:var(--bg);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.st-img img{width:100%;height:100%;object-fit:cover}
+.st-img i{font-size:2rem;color:var(--muted);opacity:.4}
+.st-body{padding:14px;display:flex;flex-direction:column;gap:6px;flex:1}
+.st-name{font-size:.9rem;font-weight:800;color:var(--text)}
+.st-desc{font-size:.74rem;color:var(--muted);line-height:1.5;flex:1}
+.st-price{display:flex;align-items:center;gap:5px;font-size:.95rem;font-weight:800;color:#8b5cf6}
+.st-stock{font-size:.72rem;color:var(--muted)}
+.st-stock.out{color:var(--danger);font-weight:700}
+.st-buy-btn{
+  width:100%;padding:9px;border:none;border-radius:9px;font-size:.8rem;font-weight:700;
+  cursor:pointer;background:linear-gradient(135deg,#059669,#10b981);color:#fff;transition:all .2s;
+}
+.st-buy-btn:hover{box-shadow:0 6px 16px rgba(5,150,105,.35);transform:translateY(-1px)}
+.st-buy-btn:disabled{background:#e5e9f0;color:#9ca3af;cursor:not-allowed;box-shadow:none;transform:none}
+
+.st-order-row{display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--border)}
+.st-order-row:last-child{border-bottom:none}
+.st-order-img{width:44px;height:44px;border-radius:10px;background:var(--bg);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0}
+.st-order-img img{width:100%;height:100%;object-fit:cover}
+.st-order-img i{color:var(--muted);opacity:.5}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="st-balance" id="stBalanceBox" style="animation:fadeUp .35s ease both;display:none">
+  <div class="st-balance-icon"><i class="fas fa-gem"></i></div>
+  <div>
+    <div class="st-balance-lbl">MENING KUMUSHIM</div>
+    <div class="st-balance-val" id="stBalance">—</div>
+  </div>
+</div>
+
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+  <h2 style="font-size:1rem;font-weight:800;color:var(--text)">Mukofotlar</h2>
+</div>
+<div id="stGrid" class="st-grid"><div class="loading"><div class="spinner"></div></div></div>
+
+<div class="card" id="stOrdersBox" style="overflow:hidden;animation:fadeUp .4s ease .1s both;display:none">
+  <div class="card-header"><div class="card-title"><i class="fas fa-receipt" style="margin-right:6px;color:var(--accent)"></i>Mening buyurtmalarim</div></div>
+  <div id="stOrders"><div class="loading"><div class="spinner"></div></div></div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+initAuth();
+const _ME = getUser();
+const _IS_STUDENT = _ME.role === 'student';
+
+if(_IS_STUDENT){
+  document.getElementById('stBalanceBox').style.display = 'flex';
+  document.getElementById('stOrdersBox').style.display = 'block';
+}
+
+const STATUS_MAP = {
+  pending:  {label:'Kutilmoqda',              cls:'bdg-warning'},
+  approved: {label:'Tasdiqlangan / Berildi',  cls:'bdg-active'},
+  rejected: {label:'Rad etildi',              cls:'bdg-unpaid'},
+};
+
+let myCoins = 0;
+
+async function loadBalance(){
+  const me = await get('/students/me/');
+  myCoins = me?.coins || 0;
+  document.getElementById('stBalance').textContent = myCoins.toLocaleString('uz-UZ');
+}
+
+async function loadItems(){
+  const d = await get('/store/items/?page_size=100&is_active=true');
+  const items = (d?.results || d || []).filter(i => i.is_active);
+  const grid = document.getElementById('stGrid');
+  if(!items.length){
+    grid.innerHTML = '<div class="empty"><i class="fas fa-store"></i><p>Hozircha mukofotlar mavjud emas</p></div>';
+    return;
+  }
+  grid.innerHTML = items.map(it => {
+    const outOfStock = it.stock <= 0;
+    return `<div class="st-card">
+      <div class="st-img">${it.image ? `<img src="${it.image}" alt="${escHtml(it.name)}">` : '<i class="fas fa-gift"></i>'}</div>
+      <div class="st-body">
+        <div class="st-name">${escHtml(it.name)}</div>
+        <div class="st-desc">${escHtml(it.description || '')}</div>
+        <div class="st-price"><i class="fas fa-gem" style="font-size:.8rem"></i> ${it.price.toLocaleString('uz-UZ')} KUMUSH</div>
+        <div class="st-stock ${outOfStock ? 'out' : ''}">${outOfStock ? "HOZIRCHA MAVJUD EMAS" : `Qoldiq: ${it.stock} ta`}</div>
+        ${_IS_STUDENT ? `<button class="st-buy-btn" ${outOfStock ? 'disabled' : ''} onclick="buyItem('${it.id}','${jsAttrEscape(it.name)}',${it.price})">
+          ${outOfStock ? "MAVJUD EMAS" : 'SOTIB OLISH'}
+        </button>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function jsAttrEscape(s){
+  return String(s)
+    .replace(/\\/g, '\\\\')
+    .replace(/'/g, "\\'")
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/\n/g, '\\n');
+}
+
+async function buyItem(id, name, price){
+  if(myCoins < price){ toast('Kumushingiz yetarli emas.', 'wrn'); return; }
+  if(!confirm(`"${name}" ni ${price.toLocaleString('uz-UZ')} KUMUSHga so'rov qilasizmi?`)) return;
+  const r = await post('/store/requests/', {item: id});
+  if(r?.ok || r?.status === 201){
+    toast("So'rov yuborildi, admin tasdiqlashini kuting", 'ok');
+    loadOrders();
+    loadItems();
+  } else {
+    try{
+      const e = await r?.json();
+      toast(e?.detail || Object.values(e || {}).flat()[0] || 'Xatolik', 'err');
+    } catch { toast('Server xatosi', 'err'); }
+  }
+}
+
+async function loadOrders(){
+  const d = await get('/store/requests/?page_size=100');
+  const orders = d?.results || d || [];
+  const box = document.getElementById('stOrders');
+  if(!orders.length){
+    box.innerHTML = '<div class="empty"><i class="fas fa-receipt"></i><p>Hali buyurtma yo\'q</p></div>';
+    return;
+  }
+  box.innerHTML = orders.map(o => {
+    const sm = STATUS_MAP[o.status] || {label:o.status_display||o.status, cls:'bdg-info'};
+    const date = o.requested_at ? o.requested_at.slice(0,16).replace('T',' ') : '—';
+    return `<div class="st-order-row">
+      <div class="st-order-img">${o.item_image ? `<img src="${o.item_image}">` : '<i class="fas fa-gift"></i>'}</div>
+      <div style="flex:1">
+        <div style="font-size:.82rem;font-weight:700;color:var(--text)">${escHtml(o.item_name || '—')}</div>
+        <div style="font-size:.72rem;color:var(--muted);margin-top:2px">
+          <i class="fas fa-gem" style="color:#8b5cf6"></i> ${o.price_at_request} KUMUSH &nbsp;·&nbsp; ${date}
+          ${o.status === 'rejected' && o.rejection_reason ? ` &nbsp;·&nbsp; Sabab: ${escHtml(o.rejection_reason)}` : ''}
+        </div>
+      </div>
+      <span class="bdg ${sm.cls}">${sm.label}</span>
+    </div>`;
+  }).join('');
+}
+
+if(_IS_STUDENT){
+  loadBalance();
+  loadOrders();
+}
+loadItems();
+</script>
+{% endblock %}

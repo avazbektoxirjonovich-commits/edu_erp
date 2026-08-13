@@ -266,6 +266,21 @@ class ChallengeSubmission(models.Model):
         verbose_name = "Topshiriq javobi"
         verbose_name_plural = "Topshiriq javoblari"
         ordering = ['-started_at']
+        constraints = [
+            # Bitta (user, session, challenge) kombinatsiyasi uchun faqat
+            # bitta javob — real concurrent so'rovlarga qarshi DB darajasida
+            # kafolat (ilova darajasidagi _check_duplicate() tekshiruvi
+            # ustiga qo'shimcha himoya). nulls_distinct=False (Django 5.0+)
+            # session=NULL (sessiyasiz/practice topshiriqlar) holatini ham
+            # PostgreSQL'ning odatiy "NULL != NULL" xatti-harakatisiz to'g'ri
+            # cheklaydi — aks holda ikkita NULL-sessiyali qator "boshqacha"
+            # hisoblanib, cheklov ishlamay qolardi.
+            models.UniqueConstraint(
+                fields=['user', 'session', 'bugfind_challenge', 'coding_challenge'],
+                nulls_distinct=False,
+                name='unique_submission_per_user_session_challenge',
+            ),
+        ]
 
     def __str__(self):
         name = self.user.full_name if self.user else '—'

@@ -1,0 +1,340 @@
+{% extends "erp/base.html" %}
+{% block title %}Do'kon boshqaruvi — Qorako'l Ilm Ziyo{% endblock %}
+{% block page_title %}Do'kon boshqaruvi{% endblock %}
+
+{% block extra_head %}
+<style>
+.sm-kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+@media(max-width:900px){.sm-kpi{grid-template-columns:repeat(2,1fr)}}
+.kpi{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px}
+.kpi-icon{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.05rem;flex-shrink:0}
+.kpi-val{font-size:1.15rem;font-weight:900;color:var(--text);letter-spacing:-.4px;line-height:1.1}
+.kpi-lbl{font-size:.68rem;color:var(--muted);margin-top:3px}
+
+.sm-tabs{display:flex;gap:8px;margin-bottom:18px}
+.sm-thumb{width:42px;height:42px;border-radius:9px;background:var(--bg);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0}
+.sm-thumb img{width:100%;height:100%;object-fit:cover}
+.sm-thumb i{color:var(--muted);opacity:.5;font-size:.9rem}
+.sm-img-preview{width:100%;max-width:180px;aspect-ratio:4/3;border-radius:10px;background:var(--bg);display:flex;align-items:center;justify-content:center;overflow:hidden;margin-bottom:8px}
+.sm-img-preview img{width:100%;height:100%;object-fit:cover}
+.sm-img-preview i{color:var(--muted);opacity:.4;font-size:1.6rem}
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;animation:fadeUp .35s ease both">
+  <div>
+    <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">Do'kon boshqaruvi</h2>
+    <p style="font-size:.75rem;color:var(--muted);margin-top:3px">Mukofotlar va xarid so'rovlarini boshqarish</p>
+  </div>
+  <button class="btn btn-primary" id="btnAddItem" onclick="openAddItemModal()"><i class="fas fa-plus"></i>Buyum qo'shish</button>
+</div>
+
+<div class="sm-kpi">
+  <div class="kpi" style="animation:fadeUp .4s ease .02s both">
+    <div class="kpi-icon ic-blue"><i class="fas fa-boxes-stacked"></i></div>
+    <div><div class="kpi-val" id="kItems">—</div><div class="kpi-lbl">Jami buyumlar</div></div>
+  </div>
+  <div class="kpi" style="animation:fadeUp .4s ease .06s both">
+    <div class="kpi-icon ic-red"><i class="fas fa-triangle-exclamation"></i></div>
+    <div><div class="kpi-val" id="kOutOfStock">—</div><div class="kpi-lbl">Tugagan buyumlar</div></div>
+  </div>
+  <div class="kpi" style="animation:fadeUp .4s ease .1s both">
+    <div class="kpi-icon ic-amber"><i class="fas fa-clock"></i></div>
+    <div><div class="kpi-val" id="kPending">—</div><div class="kpi-lbl">Kutilayotgan so'rovlar</div></div>
+  </div>
+  <div class="kpi" style="animation:fadeUp .4s ease .14s both">
+    <div class="kpi-icon ic-purple"><i class="fas fa-gem"></i></div>
+    <div><div class="kpi-val" id="kRedeemed">—</div><div class="kpi-lbl">Jami sarflangan Kumush</div></div>
+  </div>
+</div>
+
+<div class="sm-tabs">
+  <button class="btn btn-primary btn-sm" id="tabBtnItems" onclick="switchTab('items')"><i class="fas fa-store"></i> Buyumlar</button>
+  <button class="btn btn-ghost btn-sm" id="tabBtnOrders" onclick="switchTab('orders')"><i class="fas fa-receipt"></i> Buyurtmalar</button>
+</div>
+
+<div class="card" id="itemsPanel" style="overflow:hidden">
+  <div id="itemsTbl"><div class="loading"><div class="spinner"></div></div></div>
+</div>
+
+<div class="card" id="ordersPanel" style="overflow:hidden;display:none">
+  <div class="fbar">
+    <select id="fOrderStatus" onchange="loadOrders()" style="border:1.5px solid var(--border);border-radius:8px;padding:7px 32px 7px 12px;font-size:.78rem;background:#fff;outline:none;cursor:pointer">
+      <option value="">Barcha statuslar</option>
+      <option value="pending">Kutilmoqda</option>
+      <option value="approved">Tasdiqlangan / Berildi</option>
+      <option value="rejected">Rad etildi</option>
+    </select>
+  </div>
+  <div id="ordersTbl"><div class="loading"><div class="spinner"></div></div></div>
+</div>
+
+<!-- ITEM ADD/EDIT MODAL -->
+<div class="overlay" id="itemModal">
+  <div class="modal">
+    <div class="m-head">
+      <h5><i class="fas fa-gift" style="color:var(--accent);margin-right:6px"></i><span id="itemModalTitle">Buyum qo'shish</span></h5>
+      <button class="m-close" onclick="closeM('itemModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="m-body">
+      <input type="hidden" id="itId">
+      <div class="fg">
+        <label>Rasm</label>
+        <div class="sm-img-preview" id="itImgPreview"><i class="fas fa-image"></i></div>
+        <input class="fc" type="file" id="itImageFile" accept="image/*" onchange="previewItemImage()">
+        <button type="button" class="btn btn-ghost btn-sm" id="btnRemoveImg" style="display:none;margin-top:6px" onclick="removeItemImage()">
+          <i class="fas fa-trash"></i> Rasmni olib tashlash
+        </button>
+      </div>
+      <div class="fg"><label>Buyum nomi *</label><input class="fc" id="itName" placeholder="Masalan: Quloqchin"></div>
+      <div class="fg"><label>Tavsif</label><input class="fc" id="itDesc" placeholder="Qisqacha tavsif..."></div>
+      <div class="row2">
+        <div class="fg"><label>Narxi (KUMUSH) *</label><input class="fc" type="number" min="1" step="1" id="itPrice" placeholder="250"></div>
+        <div class="fg"><label>Qoldiq (stock) *</label><input class="fc" type="number" min="0" step="1" id="itStock" placeholder="0"></div>
+      </div>
+      <div class="fg">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+          <input type="checkbox" id="itActive" checked> Faol (do'konda ko'rinadi)
+        </label>
+      </div>
+    </div>
+    <div class="m-foot">
+      <button class="btn btn-ghost" onclick="closeM('itemModal')">Bekor</button>
+      <button class="btn btn-primary" onclick="doSaveItem()"><i class="fas fa-check"></i>Saqlash</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+initAuth();
+
+function jsAttrEscape(s){
+  return String(s)
+    .replace(/\\/g, '\\\\')
+    .replace(/'/g, "\\'")
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/\n/g, '\\n');
+}
+
+let allItems = [];
+
+function switchTab(tab){
+  const isItems = tab === 'items';
+  document.getElementById('itemsPanel').style.display  = isItems ? 'block' : 'none';
+  document.getElementById('ordersPanel').style.display  = isItems ? 'none' : 'block';
+  document.getElementById('btnAddItem').style.display    = isItems ? '' : 'none';
+  document.getElementById('tabBtnItems').className  = isItems ? 'btn btn-primary btn-sm' : 'btn btn-ghost btn-sm';
+  document.getElementById('tabBtnOrders').className = isItems ? 'btn btn-ghost btn-sm' : 'btn btn-primary btn-sm';
+  if(!isItems) loadOrders();
+}
+
+async function loadSummary(){
+  const d = await get('/store/summary/');
+  if(!d) return;
+  document.getElementById('kItems').textContent       = d.total_items + ' ta';
+  document.getElementById('kOutOfStock').textContent  = d.out_of_stock_items + ' ta';
+  document.getElementById('kPending').textContent     = d.pending_requests + ' ta';
+  document.getElementById('kRedeemed').textContent    = (d.total_kumush_redeemed||0).toLocaleString('uz-UZ');
+}
+
+async function loadItems(){
+  const d = await get('/store/items/?page_size=200');
+  allItems = d?.results || d || [];
+  const box = document.getElementById('itemsTbl');
+  if(!allItems.length){
+    box.innerHTML = '<div class="empty"><i class="fas fa-store"></i><p>Hali buyum qo\'shilmagan</p></div>';
+    return;
+  }
+  box.innerHTML = `<table class="etable"><thead><tr>
+    <th></th><th>Buyum</th><th>Narxi</th><th>Qoldiq</th><th>Sotilgan</th><th>Status</th><th></th>
+  </tr></thead><tbody>
+  ${allItems.map(it => `<tr>
+    <td><div class="sm-thumb">${it.image ? `<img src="${it.image}">` : '<i class="fas fa-gift"></i>'}</div></td>
+    <td>
+      <div style="font-weight:700;font-size:.83rem">${escHtml(it.name)}</div>
+      ${it.description ? `<div style="font-size:.72rem;color:var(--muted)">${escHtml(it.description)}</div>` : ''}
+    </td>
+    <td style="font-size:.85rem;font-weight:700;color:#8b5cf6"><i class="fas fa-gem" style="font-size:.75rem"></i> ${it.price}</td>
+    <td style="font-size:.82rem">${it.stock}</td>
+    <td style="font-size:.82rem">${it.sold_count}</td>
+    <td>${it.is_active
+      ? '<span class="bdg bdg-active">Faol</span>'
+      : '<span class="bdg bdg-inactive">Nofaol</span>'}
+      ${it.stock <= 0 ? '<div style="margin-top:3px"><span class="bdg bdg-unpaid">Mavjud emas</span></div>' : ''}
+    </td>
+    <td>
+      <div style="display:flex;gap:4px">
+        <button class="btn-icon edit" title="Tahrirlash" onclick="openEditItemModal('${it.id}')"><i class="fas fa-pen"></i></button>
+        <button class="btn-icon ${it.is_active?'del':'edit'}" title="${it.is_active?'Nofaol qilish':'Faollashtirish'}"
+          onclick="toggleItemActive('${it.id}',${it.is_active})">
+          <i class="fas fa-${it.is_active?'eye-slash':'eye'}"></i>
+        </button>
+      </div>
+    </td>
+  </tr>`).join('')}
+  </tbody></table>`;
+}
+
+function previewItemImage(){
+  const f = document.getElementById('itImageFile').files[0];
+  if(!f) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('itImgPreview').innerHTML = `<img src="${e.target.result}">`;
+  };
+  reader.readAsDataURL(f);
+}
+
+function openAddItemModal(){
+  document.getElementById('itemModalTitle').textContent = "Buyum qo'shish";
+  document.getElementById('itId').value = '';
+  document.getElementById('itName').value = '';
+  document.getElementById('itDesc').value = '';
+  document.getElementById('itPrice').value = '';
+  document.getElementById('itStock').value = '0';
+  document.getElementById('itActive').checked = true;
+  document.getElementById('itImageFile').value = '';
+  document.getElementById('itImgPreview').innerHTML = '<i class="fas fa-image"></i>';
+  document.getElementById('btnRemoveImg').style.display = 'none';
+  openM('itemModal');
+}
+
+function openEditItemModal(id){
+  const it = allItems.find(x => x.id === id);
+  if(!it) return;
+  document.getElementById('itemModalTitle').textContent = 'Buyumni tahrirlash';
+  document.getElementById('itId').value = it.id;
+  document.getElementById('itName').value = it.name;
+  document.getElementById('itDesc').value = it.description || '';
+  document.getElementById('itPrice').value = it.price;
+  document.getElementById('itStock').value = it.stock;
+  document.getElementById('itActive').checked = it.is_active;
+  document.getElementById('itImageFile').value = '';
+  document.getElementById('itImgPreview').innerHTML = it.image ? `<img src="${it.image}">` : '<i class="fas fa-image"></i>';
+  document.getElementById('btnRemoveImg').style.display = it.image ? '' : 'none';
+  openM('itemModal');
+}
+
+async function removeItemImage(){
+  const id = document.getElementById('itId').value;
+  if(!id) return;
+  if(!confirm("Rasmni olib tashlaysizmi?")) return;
+  const r = await patch(`/store/items/${id}/`, {image: null});
+  if(r?.ok){
+    toast('Rasm olib tashlandi', 'ok');
+    document.getElementById('itImgPreview').innerHTML = '<i class="fas fa-image"></i>';
+    document.getElementById('btnRemoveImg').style.display = 'none';
+    loadItems();
+  } else toast('Xatolik', 'err');
+}
+
+async function doSaveItem(){
+  const id = document.getElementById('itId').value;
+  const name = document.getElementById('itName').value.trim();
+  const price = parseInt(document.getElementById('itPrice').value);
+  const stock = parseInt(document.getElementById('itStock').value);
+  const isActive = document.getElementById('itActive').checked;
+  const file = document.getElementById('itImageFile').files[0];
+
+  if(!name){ toast("Buyum nomini kiriting", 'wrn'); return; }
+  if(!price || price < 1){ toast("Narx kamida 1 KUMUSH bo'lishi kerak", 'wrn'); return; }
+  if(isNaN(stock) || stock < 0){ toast("Qoldiq manfiy bo'lishi mumkin emas", 'wrn'); return; }
+
+  const fields = {
+    name, description: document.getElementById('itDesc').value.trim(),
+    price, stock, is_active: isActive,
+  };
+
+  let r;
+  if(file){
+    const fd = new FormData();
+    Object.entries(fields).forEach(([k, v]) => fd.append(k, v));
+    fd.append('image', file);
+    r = id ? await reqForm(`/store/items/${id}/`, fd, 'PATCH') : await reqForm('/store/items/', fd, 'POST');
+  } else {
+    r = id ? await patch(`/store/items/${id}/`, fields) : await post('/store/items/', fields);
+  }
+
+  if(r?.ok){
+    closeM('itemModal');
+    toast(id ? 'Yangilandi' : "Buyum qo'shildi", 'ok');
+    loadItems(); loadSummary();
+  } else {
+    try{ const e = await r?.json(); toast(e?.detail || Object.values(e||{}).flat()[0] || 'Xatolik', 'err'); }
+    catch{ toast('Server xatosi', 'err'); }
+  }
+}
+
+async function toggleItemActive(id, isActive){
+  const r = await patch(`/store/items/${id}/`, {is_active: !isActive});
+  if(r?.ok){ toast(isActive ? 'Nofaol qilindi' : 'Faollashtirildi', 'ok'); loadItems(); loadSummary(); }
+  else toast('Xatolik', 'err');
+}
+
+const ORDER_STATUS_MAP = {
+  pending:  {label:'Kutilmoqda',              cls:'bdg-warning'},
+  approved: {label:'Tasdiqlangan / Berildi',  cls:'bdg-active'},
+  rejected: {label:'Rad etildi',              cls:'bdg-unpaid'},
+};
+
+async function loadOrders(){
+  const st = document.getElementById('fOrderStatus').value;
+  let url = '/store/requests/?page_size=200';
+  if(st) url += `&status=${st}`;
+  const d = await get(url);
+  const orders = d?.results || d || [];
+  const box = document.getElementById('ordersTbl');
+  if(!orders.length){
+    box.innerHTML = '<div class="empty"><i class="fas fa-receipt"></i><p>So\'rovlar yo\'q</p></div>';
+    return;
+  }
+  box.innerHTML = `<table class="etable"><thead><tr>
+    <th>O'quvchi</th><th>Buyum</th><th>Kumush</th><th>Sana</th><th>Status</th><th></th>
+  </tr></thead><tbody>
+  ${orders.map(o => {
+    const sm = ORDER_STATUS_MAP[o.status] || {label:o.status_display||o.status, cls:'bdg-info'};
+    const date = o.requested_at ? o.requested_at.slice(0,16).replace('T',' ') : '—';
+    return `<tr>
+      <td style="font-size:.82rem;font-weight:600">${escHtml(o.student_name||'—')}</td>
+      <td style="font-size:.82rem">${escHtml(o.item_name||'—')}</td>
+      <td style="font-size:.82rem;font-weight:700;color:#8b5cf6"><i class="fas fa-gem" style="font-size:.72rem"></i> ${o.price_at_request}</td>
+      <td style="font-size:.76rem;color:var(--muted)">${date}</td>
+      <td><span class="bdg ${sm.cls}">${sm.label}</span>
+        ${o.status==='rejected' && o.rejection_reason ? `<div style="font-size:.68rem;color:var(--muted);margin-top:2px">${escHtml(o.rejection_reason)}</div>` : ''}
+      </td>
+      <td>
+        ${o.status === 'pending' ? `<div style="display:flex;gap:4px">
+          <button class="btn btn-primary btn-sm" onclick="approveOrder('${o.id}')"><i class="fas fa-check"></i> Tasdiqlash</button>
+          <button class="btn btn-ghost btn-sm" onclick="rejectOrder('${o.id}')"><i class="fas fa-times"></i> Rad etish</button>
+        </div>` : ''}
+      </td>
+    </tr>`;
+  }).join('')}
+  </tbody></table>`;
+}
+
+async function approveOrder(id){
+  if(!confirm("Bu so'rovni tasdiqlaysizmi? Kumush va qoldiq darhol yangilanadi.")) return;
+  const r = await post(`/store/requests/${id}/approve/`, {});
+  if(r?.ok){ toast('Tasdiqlandi', 'ok'); loadOrders(); loadSummary(); loadItems(); }
+  else { try{ const e = await r?.json(); toast(e?.detail || 'Xatolik', 'err'); } catch{ toast('Xatolik', 'err'); } }
+}
+
+async function rejectOrder(id){
+  const reason = prompt("Rad etish sababi (ixtiyoriy):", "") || '';
+  if(!confirm("Bu so'rovni rad etasizmi?")) return;
+  const r = await post(`/store/requests/${id}/reject/`, {reason});
+  if(r?.ok){ toast('Rad etildi', 'ok'); loadOrders(); loadSummary(); }
+  else { try{ const e = await r?.json(); toast(e?.detail || 'Xatolik', 'err'); } catch{ toast('Xatolik', 'err'); } }
+}
+
+loadSummary();
+loadItems();
+</script>
+{% endblock %}

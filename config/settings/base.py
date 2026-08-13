@@ -39,6 +39,8 @@ LOCAL_APPS = [
     'apps.vlt_ai',
     'apps.face_auth',
     'apps.zukko',
+    'apps.store',
+    'apps.error_monitor',
 ]
 
 # jazzmin must come BEFORE django.contrib.admin
@@ -125,9 +127,11 @@ REST_FRAMEWORK = {
         'user':      '300/min',
         'login':     '5/min',
         'face_auth': '10/min',   # OTP request + verify endpoints
+        'submit':    '30/min',   # ZUKKO challenge answer submission
     },
     'DATE_FORMAT': '%Y-%m-%d',
     'DATETIME_FORMAT': '%Y-%m-%d %H:%M:%S',
+    'EXCEPTION_HANDLER': 'apps.error_monitor.exception_handler.custom_exception_handler',
 }
 
 SIMPLE_JWT = {

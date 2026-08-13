@@ -68,6 +68,75 @@ class GetTeachersListInput(BaseModel):
     pass
 
 
+class GetMyProfileInput(BaseModel):
+    pass
+
+
+class GetMyPaymentsInput(BaseModel):
+    limit: int | None = Field(default=12, ge=1, le=60)
+
+
+class GetMyDebtInput(BaseModel):
+    pass
+
+
+class GetMyScheduleInput(BaseModel):
+    pass
+
+
+class GetMyKumushInput(BaseModel):
+    pass
+
+
+class GetMyStudentsInput(BaseModel):
+    group_id: str | None = None
+
+
+class GetPaymentReportInput(BaseModel):
+    month: int | None = Field(default=None, ge=1, le=12)
+    year: int | None = Field(default=None, ge=2000, le=2100)
+
+
+class GetDebtReportInput(BaseModel):
+    limit: int | None = Field(default=10, ge=1, le=100)
+
+
+class GetSalaryReportInput(BaseModel):
+    month: int | None = Field(default=None, ge=1, le=12)
+    year: int | None = Field(default=None, ge=2000, le=2100)
+
+
+class GetExpenseReportInput(BaseModel):
+    month: int | None = Field(default=None, ge=1, le=12)
+    year: int | None = Field(default=None, ge=2000, le=2100)
+
+
+class GetAssetReportInput(BaseModel):
+    pass
+
+
+class GetFinanceSummaryInput(BaseModel):
+    month: int | None = Field(default=None, ge=1, le=12)
+    year: int | None = Field(default=None, ge=2000, le=2100)
+
+
+class GetStudentStatisticsInput(BaseModel):
+    pass
+
+
+class GetAttendanceStatisticsInput(BaseModel):
+    month: int | None = Field(default=None, ge=1, le=12)
+    year: int | None = Field(default=None, ge=2000, le=2100)
+
+
+class GetErrorStatisticsInput(BaseModel):
+    pass
+
+
+class GetRecentErrorsInput(BaseModel):
+    limit: int | None = Field(default=10, ge=1, le=50)
+
+
 # Registry: tool_name → Pydantic input model class
 TOOL_INPUT_MODELS: dict[str, type[BaseModel]] = {
     "get_group_attendance": GetGroupAttendanceInput,
@@ -77,4 +146,20 @@ TOOL_INPUT_MODELS: dict[str, type[BaseModel]] = {
     "get_teacher_groups": GetTeacherGroupsInput,
     "get_payment_summary": GetPaymentSummaryInput,
     "get_teachers_list": GetTeachersListInput,
+    "get_my_profile": GetMyProfileInput,
+    "get_my_payments": GetMyPaymentsInput,
+    "get_my_debt": GetMyDebtInput,
+    "get_my_schedule": GetMyScheduleInput,
+    "get_my_kumush": GetMyKumushInput,
+    "get_my_students": GetMyStudentsInput,
+    "get_payment_report": GetPaymentReportInput,
+    "get_debt_report": GetDebtReportInput,
+    "get_salary_report": GetSalaryReportInput,
+    "get_expense_report": GetExpenseReportInput,
+    "get_asset_report": GetAssetReportInput,
+    "get_finance_summary": GetFinanceSummaryInput,
+    "get_student_statistics": GetStudentStatisticsInput,
+    "get_attendance_statistics": GetAttendanceStatisticsInput,
+    "get_error_statistics": GetErrorStatisticsInput,
+    "get_recent_errors": GetRecentErrorsInput,
 }

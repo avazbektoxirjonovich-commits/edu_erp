@@ -95,4 +95,12 @@ class BulkAttendanceSerializer(serializers.Serializer):
                     to_update, ['status', 'note', 'marked_by'], batch_size=500
                 )
 
+        # bulk_create/bulk_update deliberately bypass Django signals, so the
+        # KUMUSH sync has to be triggered explicitly here for every touched
+        # row — this is the primary real-world attendance path (a teacher
+        # marking a whole group at once), so it must not be missed.
+        from .services import sync_attendance_kumush
+        for attendance in to_create + to_update:
+            sync_attendance_kumush(attendance, actor=marked_by)
+
         return list(existing.values()) + to_create

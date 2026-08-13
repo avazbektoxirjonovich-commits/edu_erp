@@ -36,6 +36,10 @@ INSTALLED_APPS = [
     'apps.notifications',
     'apps.homework',
     'apps.face_auth',
+    'apps.store',
+    'apps.vlt_ai',
+    'apps.error_monitor',
+    'apps.zukko',
 ]
 
 MIDDLEWARE = [
@@ -96,7 +100,9 @@ REST_FRAMEWORK = {
         'user':      '5000/min',
         'login':     '100/min',
         'face_auth': '100/min',   # OTP request + verify endpoints
+        'submit':    '1000/min',
     },
+    'EXCEPTION_HANDLER': 'apps.error_monitor.exception_handler.custom_exception_handler',
 }
 
 SIMPLE_JWT = {

@@ -34,17 +34,26 @@ ROLE_PERMISSIONS: dict[str, set[str]] = {
         "teachers.view_any",
         "payments.view_any",
         "reports.view",
+        "finance.view_reports",
     },
     "teacher": {
         "attendance.view_own",
         "groups.view_own",
+        "students.view_own",
     },
     "student": {
         "attendance.view_self",
         "students.view_self",
+        "payments.view_self",
+        "kumush.view_self",
     },
     "parent": {
         "students.view_self",
+    },
+    "finance": {
+        "payments.view_any",
+        "reports.view",
+        "finance.view_reports",
     },
 }
 

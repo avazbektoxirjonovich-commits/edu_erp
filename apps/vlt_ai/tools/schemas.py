@@ -144,3 +144,174 @@ TEACHERS_LIST_SCHEMA: dict = {
         "required": [],
     },
 }
+
+# ── Student self-service ──────────────────────────────────────────
+
+MY_PROFILE_SCHEMA: dict = {
+    "name": "get_my_profile",
+    "description": "O'quvchi o'zining profil ma'lumotlarini ko'radi: ism, guruh, daraja, XP, Kumush.",
+    "input_schema": {"type": "object", "properties": {}, "required": []},
+}
+
+MY_PAYMENTS_SCHEMA: dict = {
+    "name": "get_my_payments",
+    "description": "O'quvchi o'zining to'lovlar tarixini ko'radi (oxirgi oylar bo'yicha).",
+    "input_schema": {
+        "type": "object",
+        "properties": {
+            "limit": {
+                "type": "integer",
+                "description": "Nechta oxirgi to'lov qaytarilsin (ixtiyoriy, standart 12)",
+            },
+        },
+        "required": [],
+    },
+}
+
+MY_DEBT_SCHEMA: dict = {
+    "name": "get_my_debt",
+    "description": "O'quvchi o'zining umumiy qarzini va to'lanmagan/qisman to'lovlarini ko'radi.",
+    "input_schema": {"type": "object", "properties": {}, "required": []},
+}
+
+MY_SCHEDULE_SCHEMA: dict = {
+    "name": "get_my_schedule",
+    "description": "O'quvchi o'zining guruhi dars jadvalini ko'radi (hafta kunlari, vaqt, xona).",
+    "input_schema": {"type": "object", "properties": {}, "required": []},
+}
+
+MY_KUMUSH_SCHEMA: dict = {
+    "name": "get_my_kumush",
+    "description": "O'quvchi o'zining Kumush balansi va so'nggi Kumush tranzaksiyalarini ko'radi.",
+    "input_schema": {"type": "object", "properties": {}, "required": []},
+}
+
+# ── Teacher ─────────────────────────────────────────────────────────
+
+MY_STUDENTS_SCHEMA: dict = {
+    "name": "get_my_students",
+    "description": "O'qituvchining o'z guruhlaridagi o'quvchilar ro'yxatini qaytaradi.",
+    "input_schema": {
+        "type": "object",
+        "properties": {
+            "group_id": {
+                "type": "string",
+                "description": "Faqat shu guruh (o'qituvchining o'z guruhi bo'lishi kerak, ixtiyoriy)",
+            },
+        },
+        "required": [],
+    },
+}
+
+# ── Finance ─────────────────────────────────────────────────────────
+
+PAYMENT_REPORT_SCHEMA: dict = {
+    "name": "get_payment_report",
+    "description": "Moliyachi uchun to'lovlar bo'yicha batafsil hisobot (oy/yil bo'yicha).",
+    "input_schema": {
+        "type": "object",
+        "properties": {
+            "month": {"type": "integer", "description": "Oy (1-12, ixtiyoriy, standart joriy oy)"},
+            "year": {"type": "integer", "description": "Yil (ixtiyoriy, standart joriy yil)"},
+        },
+        "required": [],
+    },
+}
+
+DEBT_REPORT_SCHEMA: dict = {
+    "name": "get_debt_report",
+    "description": "Qarzdor o'quvchilar hisoboti: eng ko'p qarzi borlar, umumiy qarz summasi.",
+    "input_schema": {
+        "type": "object",
+        "properties": {
+            "limit": {"type": "integer", "description": "Nechta eng katta qarzdor qaytarilsin (ixtiyoriy, standart 10)"},
+        },
+        "required": [],
+    },
+}
+
+SALARY_REPORT_SCHEMA: dict = {
+    "name": "get_salary_report",
+    "description": "O'qituvchilar ish haqi hisoboti (oy/yil bo'yicha, to'langan/kutilayotgan).",
+    "input_schema": {
+        "type": "object",
+        "properties": {
+            "month": {"type": "integer", "description": "Oy (1-12, ixtiyoriy, standart joriy oy)"},
+            "year": {"type": "integer", "description": "Yil (ixtiyoriy, standart joriy yil)"},
+        },
+        "required": [],
+    },
+}
+
+EXPENSE_REPORT_SCHEMA: dict = {
+    "name": "get_expense_report",
+    "description": "Markaz xarajatlari hisoboti, kategoriya bo'yicha taqsimlangan (oy/yil bo'yicha).",
+    "input_schema": {
+        "type": "object",
+        "properties": {
+            "month": {"type": "integer", "description": "Oy (1-12, ixtiyoriy, standart joriy oy)"},
+            "year": {"type": "integer", "description": "Yil (ixtiyoriy, standart joriy yil)"},
+        },
+        "required": [],
+    },
+}
+
+ASSET_REPORT_SCHEMA: dict = {
+    "name": "get_asset_report",
+    "description": "Markaz mulklari hisoboti: umumiy qiymat, holat bo'yicha taqsimot.",
+    "input_schema": {"type": "object", "properties": {}, "required": []},
+}
+
+FINANCE_SUMMARY_SCHEMA: dict = {
+    "name": "get_finance_summary",
+    "description": "Umumiy moliyaviy xulosa: daromad, xarajat, ish haqi, sof natija (oy/yil bo'yicha).",
+    "input_schema": {
+        "type": "object",
+        "properties": {
+            "month": {"type": "integer", "description": "Oy (1-12, ixtiyoriy, standart joriy oy)"},
+            "year": {"type": "integer", "description": "Yil (ixtiyoriy, standart joriy yil)"},
+        },
+        "required": [],
+    },
+}
+
+# ── Admin ───────────────────────────────────────────────────────────
+
+STUDENT_STATISTICS_SCHEMA: dict = {
+    "name": "get_student_statistics",
+    "description": "Barcha o'quvchilar bo'yicha umumiy statistika: holat, guruh taqsimoti.",
+    "input_schema": {"type": "object", "properties": {}, "required": []},
+}
+
+ATTENDANCE_STATISTICS_SCHEMA: dict = {
+    "name": "get_attendance_statistics",
+    "description": "Barcha guruhlar bo'yicha umumiy davomat statistikasi (oy/yil bo'yicha).",
+    "input_schema": {
+        "type": "object",
+        "properties": {
+            "month": {"type": "integer", "description": "Oy (1-12, ixtiyoriy)"},
+            "year": {"type": "integer", "description": "Yil (ixtiyoriy)"},
+        },
+        "required": [],
+    },
+}
+
+# ── Developer diagnostics ────────────────────────────────────────────
+
+ERROR_STATISTICS_SCHEMA: dict = {
+    "name": "get_error_statistics",
+    "description": "ERP xatoliklari monitoringi bo'yicha umumiy statistika (developer uchun).",
+    "input_schema": {"type": "object", "properties": {}, "required": []},
+}
+
+RECENT_ERRORS_SCHEMA: dict = {
+    "name": "get_recent_errors",
+    "description": "Eng so'nggi ERP xatoliklari ro'yxati (developer uchun).",
+    "input_schema": {
+        "type": "object",
+        "properties": {
+            "limit": {"type": "integer", "description": "Nechta xatolik qaytarilsin (ixtiyoriy, standart 10)"},
+        },
+        "required": [],
+    },
+}

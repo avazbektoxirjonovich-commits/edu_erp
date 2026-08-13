@@ -34,6 +34,8 @@ INSTALLED_APPS = [
     'apps.face_auth',
     'apps.vlt_ai',
     'apps.zukko',
+    'apps.store',
+    'apps.error_monitor',
 ]
 
 # ── Face Auth ────────────────────────────────────────────────────────────────
@@ -106,6 +108,15 @@ REST_FRAMEWORK = {
     ],
     'DATE_FORMAT': '%Y-%m-%d',
     'DATETIME_FORMAT': '%Y-%m-%d %H:%M:%S',
+    'EXCEPTION_HANDLER': 'apps.error_monitor.exception_handler.custom_exception_handler',
+    'DEFAULT_THROTTLE_RATES': {
+        'submit': '30/min',   # ZUKKO challenge answer submission — was
+                               # entirely unconfigured, which crashed every
+                               # submit-bugfind/submit-coding call with a
+                               # 500 (ImproperlyConfigured) on this settings
+                               # module specifically, since it's standalone
+                               # and doesn't inherit base.py's rates.
+    },
 }
 
 SIMPLE_JWT = {

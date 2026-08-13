@@ -119,6 +119,12 @@ class Submission(models.Model):
     file_content = models.BinaryField(null=True, blank=True, editable=False, verbose_name='Fayl (binary)')
     score       = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name='Ball')
     feedback    = models.TextField(blank=True, verbose_name="O'qituvchi izohi")
+    # Ushbu topshiriq uchun HOZIRGACHA berilgan jami KUMUSH — qayta baholashda
+    # faqat farq (delta) beriladi, to'liq miqdor emas (duplicate reward'ning
+    # oldini olish uchun). Eski (migratsiyadan oldingi) yozuvlar uchun 0 dan
+    # boshlanadi — tarixiy ma'lumot o'ylab topilmaydi (agar ular keyinchalik
+    # qayta baholansa, bu holat "Remaining issues"da hujjatlashtirilgan).
+    kumush_awarded = models.PositiveSmallIntegerField(default=0, verbose_name="Berilgan Kumush")
     status      = models.CharField(
                       max_length=12, choices=Status.choices,
                       default=Status.SUBMITTED, db_index=True
@@ -159,9 +165,45 @@ class Submission(models.Model):
         self.graded_by  = graded_by
         self.save(update_fields=['score', 'feedback', 'status', 'graded_at', 'graded_by'])
 
-        # XP mukofot berish — max_score=0 bo'lsa XP berilmaydi
+        # XP mukofot — eski, o'zgarmagan formula (assignment.xp_reward
+        # asosida). KUMUSH'dan ATAYLAB AJRATILGAN (add_xp_only): XP va
+        # KUMUSH endi bir xil miqdor emas, shuning uchun bittasi
+        # ikkinchisiga qo'shilib ketmasligi kerak. max_score=0 bo'lsa
+        # hech narsa berilmaydi.
         if self.assignment.max_score > 0:
             xp = self.assignment.xp_reward * score // self.assignment.max_score
             if xp > 0:
-                self.student.add_xp(xp, reason=f"Vazifa: {self.assignment.title}")
+                self.student.add_xp_only(xp)
+
+            # KUMUSH — YANGI qoida: mukofot = ball foizi (butun sonli
+            # arifmetika, float ishlatilmaydi). Qayta baholashda faqat
+            # FARQ (delta) beriladi — shu bois bir xil ball bilan qayta
+            # yuborish hech qanday qo'shimcha KUMUSH bermaydi, ball
+            # oshirilsa faqat farqi, pasaytirilsa ortig'i qaytarib olinadi
+            # (balans manfiyga tushishi mumkin bo'lgan holatda
+            # apply_kumush_and_xp o'zi xavfsiz rad etadi).
+            new_kumush = score * 100 // self.assignment.max_score
+            delta = new_kumush - self.kumush_awarded
+            if delta != 0:
+                reason = f"Vazifa: {self.assignment.title} ({score}/{self.assignment.max_score})"
+                txn = self.student.apply_kumush_and_xp(
+                    coins_delta=delta, reason=reason, created_by=graded_by,
+                    source_type='homework', source_id=str(self.pk),
+                )
+                if txn is not None:
+                    # Delta fully applied — kumush_awarded now equals the
+                    # full target amount for the current score.
+                    self.kumush_awarded = new_kumush
+                    Submission.objects.filter(pk=self.pk).update(kumush_awarded=new_kumush)
+                    from apps.notifications.models import ActivityLog
+                    from apps.notifications.views import log_activity
+                    log_activity(
+                        graded_by, ActivityLog.Action.UPDATE, 'Submission', self.pk, str(self),
+                        changes={'kumush_delta': delta, 'kumush_awarded': new_kumush,
+                                 'balance_before': txn.balance_before, 'balance_after': txn.balance_after},
+                    )
+                # else: refused (a downward correction whose balance the
+                # student no longer has) — kumush_awarded is deliberately
+                # left unchanged, since the reduction did not actually
+                # happen; apply_kumush_and_xp already logs a warning.
         logger.info(f"Baholandi: {self.student.full_name} | {self.assignment.title} | {score}/{self.assignment.max_score}")

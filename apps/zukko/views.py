@@ -5,6 +5,7 @@ from datetime import datetime, timezone as dt_timezone
 from difflib import SequenceMatcher
 
 from django.contrib.auth import get_user_model
+from django.db import IntegrityError, transaction
 from django.db.models import Avg, Q
 from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets
@@ -53,13 +54,36 @@ def _student_group(user):
     return profile.group if profile else None
 
 
-def _add_xp(user, points):
-    """ERP'da XP students.Student.add_xp() orqali boshqariladi (User'da xp maydoni yo'q)."""
+def _add_xp(user, points, submission_type=None, submission_id=None):
+    """ERP'da XP students.Student.add_xp() orqali boshqariladi (User'da xp maydoni yo'q).
+
+    KUMUSH ledger reason/source is differentiated by submission_type so every
+    ZUKKO reward is forensically traceable to the exact submission that earned it.
+    """
     if not points:
         return
     profile = getattr(user, 'student_profile', None)
-    if profile:
-        profile.add_xp(points, reason='ZUKKO Challenge')
+    if not profile:
+        return
+    if submission_type == 'bugfind':
+        reason = 'ZUKKO BugFind reward'
+    elif submission_type == 'coding':
+        reason = 'ZUKKO Coding reward'
+    else:
+        reason = 'ZUKKO Challenge'
+    txn = profile.add_xp(
+        points, reason=reason,
+        source_type=f'zukko_{submission_type}' if submission_type else 'zukko',
+        source_id=str(submission_id) if submission_id else '',
+    )
+    if txn is not None:
+        from apps.notifications.models import ActivityLog
+        from apps.notifications.views import log_activity
+        log_activity(
+            user, ActivityLog.Action.UPDATE, 'ChallengeSubmission', submission_id or '', reason,
+            changes={'kumush_awarded': points,
+                     'balance_before': txn.balance_before, 'balance_after': txn.balance_after},
+        )
 
 
 def _student_xp(user):
@@ -236,8 +260,14 @@ class SubmitChallengeView(APIView):
         return None
 
     def _check_duplicate(self, user, session, *, bugfind_challenge=None, coding_challenge=None):
-        if not session:
-            return None
+        """One legitimate attempt per (user, session, challenge) — including
+        when session is None ("practice"/sessionless submissions). This used
+        to skip the check entirely for the sessionless case (`if not
+        session: return None`), which let the same challenge be resubmitted
+        for reward an unlimited number of times; it now applies the exact
+        same one-attempt rule there, scoped to session__isnull=True, so
+        within-session retry behavior (already one-shot-per-challenge) is
+        completely unchanged."""
         qs = ChallengeSubmission.objects.filter(user=user, session=session)
         if bugfind_challenge is not None:
             qs = qs.filter(bugfind_challenge=bugfind_challenge)
@@ -286,16 +316,27 @@ class SubmitChallengeView(APIView):
             points = max(0, points - 2)
 
         ip = self._get_client_ip(request)
-        submission = ChallengeSubmission.objects.create(
-            user=request.user, session=session, submission_type='bugfind',
-            bugfind_challenge=challenge, submitted_code=data['submitted_code'],
-            identified_line=data['identified_line'], status=sub_status,
-            points_earned=points, submitted_at=datetime.now(tz=dt_timezone.utc),
-            time_spent_seconds=data['time_spent_seconds'], ip_address=ip,
-        )
+        try:
+            with transaction.atomic():
+                submission = ChallengeSubmission.objects.create(
+                    user=request.user, session=session, submission_type='bugfind',
+                    bugfind_challenge=challenge, submitted_code=data['submitted_code'],
+                    identified_line=data['identified_line'], status=sub_status,
+                    points_earned=points, submitted_at=datetime.now(tz=dt_timezone.utc),
+                    time_spent_seconds=data['time_spent_seconds'], ip_address=ip,
+                )
+        except IntegrityError:
+            # Lost a genuine concurrent-request race against the DB-level
+            # unique constraint (defense-in-depth behind _check_duplicate
+            # above) — same response a normal duplicate gets, not a 500.
+            return Response(
+                {'error': 'Bu savolga allaqachon javob yuborgansiz'},
+                status=status.HTTP_409_CONFLICT,
+            )
         self._update_progress(
             request.user, challenge.difficulty, sub_status, points,
             challenge.bug_type, data['time_spent_seconds'], category=challenge.category,
+            submission_type='bugfind', submission_id=submission.pk,
         )
         self._flag_shared_ip(request.user, session, ip)
         self._flag_rapid_typing(request.user, session, data['submitted_code'], data['time_spent_seconds'])
@@ -340,17 +381,25 @@ class SubmitChallengeView(APIView):
             points = round(challenge.points * passed_count / total_count)
 
         ip = self._get_client_ip(request)
-        submission = ChallengeSubmission.objects.create(
-            user=request.user, session=session, submission_type='coding',
-            coding_challenge=challenge, submitted_code=data['code'],
-            status=sub_status, points_earned=points, test_results={'cases': test_results},
-            submitted_at=datetime.now(tz=dt_timezone.utc),
-            time_spent_seconds=data['time_spent_seconds'],
-            keystroke_log=data.get('keystroke_log', []), ip_address=ip,
-        )
+        try:
+            with transaction.atomic():
+                submission = ChallengeSubmission.objects.create(
+                    user=request.user, session=session, submission_type='coding',
+                    coding_challenge=challenge, submitted_code=data['code'],
+                    status=sub_status, points_earned=points, test_results={'cases': test_results},
+                    submitted_at=datetime.now(tz=dt_timezone.utc),
+                    time_spent_seconds=data['time_spent_seconds'],
+                    keystroke_log=data.get('keystroke_log', []), ip_address=ip,
+                )
+        except IntegrityError:
+            return Response(
+                {'error': 'Bu savolga allaqachon javob yuborgansiz'},
+                status=status.HTTP_409_CONFLICT,
+            )
         self._update_progress(
             request.user, challenge.difficulty, sub_status, points,
             None, data['time_spent_seconds'], category=challenge.category,
+            submission_type='coding', submission_id=submission.pk,
         )
         self._flag_shared_ip(request.user, session, ip)
         self._flag_rapid_typing(request.user, session, data['code'], data['time_spent_seconds'])
@@ -366,7 +415,8 @@ class SubmitChallengeView(APIView):
             'points_earned': points,
         }, status=status.HTTP_201_CREATED)
 
-    def _update_progress(self, user, difficulty, sub_status, points, bug_type, time_spent, category=None):
+    def _update_progress(self, user, difficulty, sub_status, points, bug_type, time_spent,
+                          category=None, submission_type=None, submission_id=None):
         progress, _ = StudentProgress.objects.get_or_create(user=user, category=category)
         progress.total_attempts += 1
 
@@ -402,7 +452,7 @@ class SubmitChallengeView(APIView):
         progress.update_mastery()
         progress.save()
 
-        _add_xp(user, points)
+        _add_xp(user, points, submission_type=submission_type, submission_id=submission_id)
 
     def _attach_suspicion(self, submission, session_id):
         """Sessiya davomida to'plangan anti-cheat hodisalar asosida sigmoid shubha balli."""
