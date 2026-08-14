@@ -21,11 +21,21 @@ EduERP ta'lim markazining kundalik jarayonlarini boshqaradi: talaba va o'qituvch
 
 ## Demo
 
-_Hozircha mavjud emas — real ishlab turgan nusxadan tasvirga olish kutilayotgan ro'yxat uchun [docs/screenshots](docs/screenshots/), [docs/gifs](docs/gifs/) va [docs/video](docs/video/) papkalariga qarang._
+![Demo](docs/gifs/demo.gif)
+
+Real ishlab turgan nusxadan yozib olingan (SQLite dev sozlamalari, `scripts/create_sample_data.py`dan namuna ma'lumotlar). Video: joriy muhitda yozib olinmadi — skrin-yozish vositasi mavjud emas edi; qarang [docs/video/README.md](docs/video/README.md).
 
 ## Skrinshotlar
 
-_Kutilmoqda — aniq ro'yxat uchun [docs/screenshots/README.md](docs/screenshots/README.md) ga qarang._
+| Xususiyat | Ko'rinish |
+|---|---|
+| Login | ![Login](docs/screenshots/01-login.png) |
+| Dashboard | ![Dashboard](docs/screenshots/02-dashboard.png) |
+| O'quvchilar | ![O'quvchilar](docs/screenshots/03-students.png) |
+| Davomat | ![Davomat](docs/screenshots/04-attendance.png) |
+| Moliya | ![Moliya](docs/screenshots/05-finance.png) |
+
+AI Assistant va face-auth skrinlari bu yerda yozib olinmagan — ikkalasi ham mos ravishda jonli Anthropic API chaqiruvi / ro'yxatga olingan yuzni talab qiladi, bu safar ikkalasi ham ishlatilmadi.
 
 ## Xususiyatlar
 
@@ -44,7 +54,9 @@ _Kutilmoqda — aniq ro'yxat uchun [docs/screenshots/README.md](docs/screenshots
 
 ## Arxitektura
 
-To'liq diagramma uchun [docs/architecture/system-architecture.svg](docs/architecture/system-architecture.svg) ga qarang. Qisqacha:
+![Arxitektura](docs/architecture/system-architecture.svg)
+
+Qisqacha:
 
 ```
 Brauzer (server tomonida render qilingan sahifalar + REST mijozlar)

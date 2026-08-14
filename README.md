@@ -21,11 +21,21 @@ EduERP manages the day-to-day operations of an education center: student and tea
 
 ## Demo
 
-_Not yet available — see [docs/screenshots](docs/screenshots/), [docs/gifs](docs/gifs/), and [docs/video](docs/video/) for the capture checklist pending recording against a real running instance._
+![Demo](docs/gifs/demo.gif)
+
+Captured against a real running instance (SQLite dev settings, seed data from `scripts/create_sample_data.py`). Video: not captured in the current environment — no screen-recording tooling was available; see [docs/video/README.md](docs/video/README.md).
 
 ## Screenshots
 
-_Pending — see [docs/screenshots/README.md](docs/screenshots/README.md) for the exact list of screens to capture._
+| Feature | Preview |
+|---|---|
+| Login | ![Login](docs/screenshots/01-login.png) |
+| Dashboard | ![Dashboard](docs/screenshots/02-dashboard.png) |
+| Students | ![Students](docs/screenshots/03-students.png) |
+| Attendance | ![Attendance](docs/screenshots/04-attendance.png) |
+| Finance | ![Finance](docs/screenshots/05-finance.png) |
+
+AI Assistant and face-auth screens are not captured here — both require a live Anthropic API call / an enrolled face respectively, neither of which this pass exercised.
 
 ## Features
 
@@ -44,7 +54,9 @@ _Pending — see [docs/screenshots/README.md](docs/screenshots/README.md) for th
 
 ## Architecture
 
-See [docs/architecture/system-architecture.svg](docs/architecture/system-architecture.svg) for the full diagram. Summary:
+![Architecture](docs/architecture/system-architecture.svg)
+
+Summary:
 
 ```
 Browser (server-rendered templates + REST clients)
