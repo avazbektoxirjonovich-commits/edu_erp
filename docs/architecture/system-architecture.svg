@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 420" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#0B6E75"/>
+    </marker>
+  </defs>
+  <rect width="760" height="420" fill="#FFFFFF"/>
+  <text x="380" y="34" text-anchor="middle" font-size="18" font-weight="700" fill="#16212C">EduERP — System Architecture</text>
+
+  <rect x="230" y="60" width="300" height="56" rx="10" fill="#F4F5F2" stroke="#DCE0DA"/>
+  <text x="380" y="83" text-anchor="middle" font-size="13" fill="#16212C" font-weight="600">Browser</text>
+  <text x="380" y="101" text-anchor="middle" font-size="11" fill="#55606B">Server-rendered templates + REST clients</text>
+
+  <line x1="380" y1="116" x2="380" y2="152" stroke="#0B6E75" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="180" y="152" width="400" height="64" rx="10" fill="#DCEEEE" stroke="#0B6E75"/>
+  <text x="380" y="177" text-anchor="middle" font-size="13" fill="#16212C" font-weight="600">Django / Django REST Framework</text>
+  <text x="380" y="195" text-anchor="middle" font-size="11" fill="#55606B">apps/*  ·  /api/v1/*  ·  JWT auth  ·  templates/erp/*</text>
+
+  <line x1="380" y1="216" x2="380" y2="252" stroke="#0B6E75" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="140" y="252" width="480" height="64" rx="10" fill="#F4F5F2" stroke="#DCE0DA"/>
+  <text x="380" y="277" text-anchor="middle" font-size="13" fill="#16212C" font-weight="600">Per-app service &amp; model layer</text>
+  <text x="380" y="295" text-anchor="middle" font-size="11" fill="#55606B">students · teachers · groups · attendance · payments · finance · store · homework</text>
+
+  <line x1="380" y1="316" x2="380" y2="352" stroke="#0B6E75" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="230" y="352" width="300" height="52" rx="10" fill="#122029" stroke="#0B6E75"/>
+  <text x="380" y="374" text-anchor="middle" font-size="13" fill="#FFFFFF" font-weight="600">PostgreSQL</text>
+  <text x="380" y="392" text-anchor="middle" font-size="10" fill="#9BADB8">production · SQLite for local dev / tests</text>
+</svg>

@@ -4,7 +4,7 @@ from .base import *
 
 DEBUG = False
 
-SECRET_KEY = config('SECRET_KEY', default='django-insecure-render-fallback-change-me-in-env')
+SECRET_KEY = config('SECRET_KEY')  # no fallback — deployment fails fast if unset
 
 ALLOWED_HOSTS = config(
     'ALLOWED_HOSTS',

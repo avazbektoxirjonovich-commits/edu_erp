@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 540" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="arrow3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#0B6E75"/>
+    </marker>
+  </defs>
+  <rect width="760" height="540" fill="#FFFFFF"/>
+  <text x="380" y="34" text-anchor="middle" font-size="18" font-weight="700" fill="#16212C">EduERP — Face Authentication Flow (extension)</text>
+  <text x="380" y="54" text-anchor="middle" font-size="11" fill="#93590A">Optional module — disabled by default (FACE_AUTH_ENABLED=False)</text>
+
+  <rect x="230" y="76" width="300" height="52" rx="10" fill="#F4F5F2" stroke="#DCE0DA"/>
+  <text x="380" y="107" text-anchor="middle" font-size="13" fill="#16212C" font-weight="600">Camera capture</text>
+  <line x1="380" y1="128" x2="380" y2="164" stroke="#0B6E75" stroke-width="2" marker-end="url(#arrow3)"/>
+
+  <rect x="200" y="164" width="360" height="56" rx="10" fill="#F4F5F2" stroke="#DCE0DA"/>
+  <text x="380" y="187" text-anchor="middle" font-size="13" fill="#16212C" font-weight="600">Liveness check</text>
+  <text x="380" y="204" text-anchor="middle" font-size="11" fill="#55606B">MiniFASNetV2 (ONNX)</text>
+  <line x1="380" y1="220" x2="380" y2="256" stroke="#0B6E75" stroke-width="2" marker-end="url(#arrow3)"/>
+
+  <rect x="200" y="256" width="360" height="56" rx="10" fill="#F4F5F2" stroke="#DCE0DA"/>
+  <text x="380" y="279" text-anchor="middle" font-size="13" fill="#16212C" font-weight="600">Face embedding</text>
+  <text x="380" y="296" text-anchor="middle" font-size="11" fill="#55606B">InsightFace / onnxruntime</text>
+  <line x1="380" y1="312" x2="380" y2="348" stroke="#0B6E75" stroke-width="2" marker-end="url(#arrow3)"/>
+
+  <rect x="160" y="348" width="440" height="60" rx="10" fill="#DCEEEE" stroke="#0B6E75"/>
+  <text x="380" y="373" text-anchor="middle" font-size="13" fill="#16212C" font-weight="600">Encrypted embedding store + cosine-similarity match</text>
+  <text x="380" y="390" text-anchor="middle" font-size="11" fill="#55606B">FACE_ENCRYPTION_KEY  ·  FACE_COSINE_THRESHOLD</text>
+  <line x1="380" y1="408" x2="380" y2="444" stroke="#0B6E75" stroke-width="2" marker-end="url(#arrow3)"/>
+
+  <rect x="200" y="444" width="360" height="60" rx="10" fill="#122029" stroke="#0B6E75"/>
+  <text x="380" y="469" text-anchor="middle" font-size="13" fill="#FFFFFF" font-weight="600">Login decision</text>
+  <text x="380" y="486" text-anchor="middle" font-size="11" fill="#9BADB8">attempt limit + lockout (FACE_MAX_ATTEMPTS / FACE_LOCKOUT_MINUTES)</text>
+</svg>
