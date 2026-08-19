@@ -1,10 +1,11 @@
 ﻿{% extends "erp/base.html" %}
-{% block title %}Ota-ona portali — Qorako'l Ilm Ziyo{% endblock %}
-{% block page_title %}Ota-ona portali{% endblock %}
+{% load i18n %}
+{% block title %}{% translate "Ota-ona portali — Qorako'l Ilm Ziyo" %}{% endblock %}
+{% block page_title %}{% translate "Ota-ona portali" %}{% endblock %}
 
 {% block extra_head %}
 <style>
-.child-card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:20px;box-shadow:var(--shadow);margin-bottom:20px;animation:fadeUp .4s ease both}
+.child-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;box-shadow:var(--shadow);margin-bottom:20px;animation:fadeUp .4s ease both}
 .child-header{display:flex;align-items:center;gap:14px;margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid var(--border)}
 .child-name{font-size:1rem;font-weight:800;color:var(--text)}
 .child-meta{font-size:.75rem;color:var(--muted);margin-top:3px}
@@ -23,8 +24,8 @@
 
 {% block content %}
 <div style="margin-bottom:20px;animation:fadeUp .35s ease both">
-  <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">Farzandlarim</h2>
-  <p style="font-size:.75rem;color:var(--muted);margin-top:3px">Farzandlaringizning o'qish holati</p>
+  <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">{% translate "Farzandlarim" %}</h2>
+  <p style="font-size:.75rem;color:var(--muted);margin-top:3px">{% translate "Farzandlaringizning o'qish holati" %}</p>
 </div>
 
 <div id="childrenList">
@@ -33,10 +34,31 @@
 {% endblock %}
 
 {% block extra_js %}
+{% translate "Sizning akkauntingizga hech qanday o'quvchi biriktirilmagan." as p_no_children %}
+{% translate "Administrator bilan bog'laning." as p_contact_admin %}
+{% translate "Davomat" as p_attendance %}
+{% translate "XP Ball" as p_xp %}
+{% translate "Daraja" as p_level %}
+{% translate "Qarz" as p_debt %}
+{% translate "Oxirgi darslar" as p_recent_lessons %}
+{% translate "Ma'lumot yo'q" as p_no_data %}
+{% translate "Kech" as p_late_short %}
+{% translate "So'nggi to'lovlar" as p_recent_payments %}
 <script>
 initAuth();
-const MNS=['Yanvar','Fevral','Mart','Aprel','May','Iyun','Iyul','Avgust','Sentabr','Oktabr','Noyabr','Dekabr'];
-const ATT_STATUS={present:'Keldi',absent:'Kelmadi',late:'Kech keldi',excused:'Sababli'};
+const PI18N={
+  noChildren:"{{ p_no_children|escapejs }}",
+  contactAdmin:"{{ p_contact_admin|escapejs }}",
+  attendance:"{{ p_attendance|escapejs }}",
+  xp:"{{ p_xp|escapejs }}",
+  level:"{{ p_level|escapejs }}",
+  debt:"{{ p_debt|escapejs }}",
+  recentLessons:"{{ p_recent_lessons|escapejs }}",
+  noData:"{{ p_no_data|escapejs }}",
+  lateShort:"{{ p_late_short|escapejs }}",
+  recentPayments:"{{ p_recent_payments|escapejs }}",
+};
+const ATT_STATUS={present:I18N.stPresent,absent:I18N.stAbsent,late:I18N.stLate,excused:I18N.stExcused};
 const ATT_CLASS={present:'att-present',absent:'att-absent',late:'att-late',excused:'att-excused'};
 
 async function load(){
@@ -45,22 +67,20 @@ async function load(){
   if(!data || !data.length){
     cont.innerHTML=`<div class="card"><div class="empty">
       <i class="fas fa-child"></i>
-      <p>Sizning akkauntingizga hech qanday o'quvchi biriktirilmagan.</p>
-      <p style="font-size:.75rem;color:var(--muted);margin-top:6px">Administrator bilan bog'laning.</p>
+      <p>${PI18N.noChildren}</p>
+      <p style="font-size:.75rem;color:var(--muted);margin-top:6px">${PI18N.contactAdmin}</p>
     </div></div>`;
     return;
   }
   cont.innerHTML = data.map((c, idx) => {
-    const statusBdg = c.status==='active'
-      ? '<span class="bdg bdg-active">Faol</span>'
-      : '<span class="bdg bdg-inactive">Nofaol</span>';
+    const statusBdg = bdg(c.status);
     const attRecent = (c.recent_attendance||[]).map(a=>`
       <span title="${fdate(a.date)} — ${ATT_STATUS[a.status]||a.status}">
         <span class="att-dot ${ATT_CLASS[a.status]||''}"></span>
       </span>`).join('');
     const payRows = (c.recent_payments||[]).map(p=>`
       <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:.8rem">
-        <span style="color:var(--muted)">${MNS[(p.month||1)-1]} ${p.year}</span>
+        <span style="color:var(--muted)">${I18N.months[(p.month||1)-1]} ${p.year}</span>
         <span style="font-weight:600;color:var(--success)">${fmoney(p.paid_amount||0)}</span>
         <span style="color:${(p.debt_amount||0)>0?'var(--danger)':'var(--muted)'}">${(p.debt_amount||0)>0?fmoney(p.debt_amount):'✓'}</span>
       </div>`).join('');
@@ -79,38 +99,38 @@ async function load(){
       <div class="child-grid">
         <div class="c-kpi">
           <div class="c-kpi-val" style="color:var(--accent)">${c.attendance_percentage||0}%</div>
-          <div class="c-kpi-lbl">Davomat</div>
+          <div class="c-kpi-lbl">${PI18N.attendance}</div>
         </div>
         <div class="c-kpi">
           <div class="c-kpi-val" style="color:var(--success)">⭐ ${c.xp_points||0}</div>
-          <div class="c-kpi-lbl">XP Ball</div>
+          <div class="c-kpi-lbl">${PI18N.xp}</div>
         </div>
         <div class="c-kpi">
           <div class="c-kpi-val">${c.level||1}</div>
-          <div class="c-kpi-lbl">Daraja</div>
+          <div class="c-kpi-lbl">${PI18N.level}</div>
         </div>
         <div class="c-kpi">
           <div class="c-kpi-val" style="color:${(c.total_debt||0)>0?'var(--danger)':'var(--success)'}">
             ${(c.total_debt||0)>0?fmoney(c.total_debt):'0'}
           </div>
-          <div class="c-kpi-lbl">Qarz</div>
+          <div class="c-kpi-lbl">${PI18N.debt}</div>
         </div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
         <div>
-          <div style="font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Oxirgi darslar</div>
+          <div style="font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">${PI18N.recentLessons}</div>
           <div style="display:flex;flex-wrap:wrap;gap:4px;align-items:center">
-            ${attRecent||'<span style="font-size:.78rem;color:var(--muted)">Ma\'lumot yo\'q</span>'}
+            ${attRecent||`<span style="font-size:.78rem;color:var(--muted)">${PI18N.noData}</span>`}
           </div>
           <div style="font-size:.7rem;color:var(--muted);margin-top:6px">
-            <span style="margin-right:8px"><span class="att-dot att-present"></span>Keldi</span>
-            <span style="margin-right:8px"><span class="att-dot att-absent"></span>Kelmadi</span>
-            <span><span class="att-dot att-late"></span>Kech</span>
+            <span style="margin-right:8px"><span class="att-dot att-present"></span>${I18N.stPresent}</span>
+            <span style="margin-right:8px"><span class="att-dot att-absent"></span>${I18N.stAbsent}</span>
+            <span><span class="att-dot att-late"></span>${PI18N.lateShort}</span>
           </div>
         </div>
         <div>
-          <div style="font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">So'nggi to'lovlar</div>
-          ${payRows||'<div style="font-size:.78rem;color:var(--muted)">Ma\'lumot yo\'q</div>'}
+          <div style="font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">${PI18N.recentPayments}</div>
+          ${payRows||`<div style="font-size:.78rem;color:var(--muted)">${PI18N.noData}</div>`}
         </div>
       </div>
     </div>`;

@@ -1,4 +1,5 @@
 {% extends "erp/base.html" %}
+{% load i18n %}
 {% block title %}Natijalar — Qorako'l Ilm Ziyo{% endblock %}
 {% block page_title %}ZUKKO — Natijalar{% endblock %}
 
@@ -23,11 +24,11 @@
 <!-- ── Header ── -->
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;animation:fadeUp .3s ease both">
   <div>
-    <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">Yakuniy natija</h2>
+    <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">{% translate "Yakuniy natija" %}</h2>
     <p style="font-size:.78rem;color:var(--muted);margin-top:3px" id="zkResSessionTitle">—</p>
   </div>
   <a href="/zukko/student/" class="btn btn-outline btn-sm">
-    <i class="fas fa-arrow-left"></i> Boshqaruv paneli
+    <i class="fas fa-arrow-left"></i> {% translate "Boshqaruv paneliga qaytish" %}
   </a>
 </div>
 
@@ -35,10 +36,10 @@
 <div class="card" id="zkNoData" style="display:none">
   <div class="zk-empty-r">
     <i class="fas fa-inbox"></i>
-    <p>Natijalar ma'lumotlari topilmadi.</p>
-    <p style="font-size:.78rem;margin-top:6px">Sahifani qayta yuklash yoki sessiyani boshidan boshlash kerak bo'lishi mumkin.</p>
+    <p>{% translate "Natijalar ma'lumotlari topilmadi." %}</p>
+    <p style="font-size:.78rem;margin-top:6px">{% translate "Sahifani qayta yuklash yoki sessiyani boshidan boshlash kerak bo'lishi mumkin." %}</p>
     <a href="/zukko/student/" class="btn btn-primary btn-sm" style="margin-top:18px">
-      <i class="fas fa-home"></i> Boshqaruv panelga o'tish
+      <i class="fas fa-home"></i> {% translate "Boshqaruv paneliga qaytish" %}
     </a>
   </div>
 </div>
@@ -49,8 +50,7 @@
   <!-- Anti-cheat warning -->
   <div class="zk-sus-warn" id="zkSusWarn" style="display:none">
     <i class="fas fa-triangle-exclamation" style="color:var(--warning);margin-right:8px"></i>
-    Anti-cheat tizimi shubhali harakatlarni qayd etdi.
-    O'qituvchingiz bu haqida xabardor bo'ladi.
+    {% translate "Anti-cheat tizimi shubhali harakatlarni qayd etdi. O'qituvchingiz bu haqida xabardor bo'ladi." %}
   </div>
 
   <!-- 3 stat cards -->
@@ -58,17 +58,17 @@
     <div class="card" style="text-align:center;padding:24px 16px">
       <div class="mini-stat-icon ic-amber" style="margin:0 auto 10px"><i class="fas fa-star"></i></div>
       <div class="zk-stat-big" id="zkResTotalPts">0</div>
-      <div style="font-size:.78rem;color:var(--muted);margin-top:4px">Jami ball</div>
+      <div style="font-size:.78rem;color:var(--muted);margin-top:4px">{% translate "Jami ball" %}</div>
     </div>
     <div class="card" style="text-align:center;padding:24px 16px">
       <div class="mini-stat-icon ic-green" style="margin:0 auto 10px"><i class="fas fa-check-circle"></i></div>
       <div class="zk-stat-big" id="zkResSolved">0/0</div>
-      <div style="font-size:.78rem;color:var(--muted);margin-top:4px">Yechilgan</div>
+      <div style="font-size:.78rem;color:var(--muted);margin-top:4px">{% translate "Yechilgan" %}</div>
     </div>
     <div class="card" style="text-align:center;padding:24px 16px">
       <div class="mini-stat-icon ic-blue" style="margin:0 auto 10px"><i class="fas fa-bullseye"></i></div>
       <div class="zk-stat-big" id="zkResAccuracy">—</div>
-      <div style="font-size:.78rem;color:var(--muted);margin-top:4px">Aniqlik</div>
+      <div style="font-size:.78rem;color:var(--muted);margin-top:4px">{% translate "Aniqlik" %}</div>
     </div>
   </div>
 
@@ -78,7 +78,7 @@
   <!-- Back button -->
   <div style="text-align:center;margin-top:10px;padding-bottom:20px">
     <a href="/zukko/student/" class="btn btn-primary">
-      <i class="fas fa-home"></i> Boshqaruv paneliga qaytish
+      <i class="fas fa-home"></i> {% translate "Boshqaruv paneliga qaytish" %}
     </a>
   </div>
 
@@ -86,7 +86,50 @@
 {% endblock %}
 
 {% block extra_js %}
+{% translate "To'g'ri" as p_status_correct %}
+{% translate "Qisman" as p_status_partial %}
+{% translate "Noto'g'ri" as p_status_wrong %}
+{% translate "Shubhali" as p_status_cheating %}
+{% translate "Kutilmoqda" as p_status_pending %}
+{% translate "Oson" as p_diff_easy %}
+{% translate "O'rta" as p_diff_medium %}
+{% translate "Qiyin" as p_diff_hard %}
+{% translate "Bug-find" as p_kind_bugfind %}
+{% translate "Coding" as p_kind_coding %}
+{% translate "Yuborilgan kod:" as p_submitted_code %}
+{% translate "(bo'sh)" as p_empty_placeholder %}
+{% translate "Tanlagan qator" as p_chosen_line %}
+{% translate "To'g'ri qator" as p_correct_line %}
+{% translate "{passed}/{total} test o'tdi" as p_tests_passed_tpl %}
+{% translate "Test" as p_test_word %}
+{% translate "Kirish" as p_input_word %}
+{% translate "Kutilgan" as p_expected_word %}
+{% translate "Olingan" as p_actual_word %}
+{% translate "ball" as p_points_word %}
 <script>
+const ZRI18N = {
+  statusCorrect: "{{ p_status_correct|escapejs }}",
+  statusPartial: "{{ p_status_partial|escapejs }}",
+  statusWrong: "{{ p_status_wrong|escapejs }}",
+  statusCheating: "{{ p_status_cheating|escapejs }}",
+  statusPending: "{{ p_status_pending|escapejs }}",
+  diffEasy: "{{ p_diff_easy|escapejs }}",
+  diffMedium: "{{ p_diff_medium|escapejs }}",
+  diffHard: "{{ p_diff_hard|escapejs }}",
+  kindBugfind: "{{ p_kind_bugfind|escapejs }}",
+  kindCoding: "{{ p_kind_coding|escapejs }}",
+  submittedCode: "{{ p_submitted_code|escapejs }}",
+  emptyPlaceholder: "{{ p_empty_placeholder|escapejs }}",
+  chosenLine: "{{ p_chosen_line|escapejs }}",
+  correctLine: "{{ p_correct_line|escapejs }}",
+  testsPassedTpl: "{{ p_tests_passed_tpl|escapejs }}",
+  testWord: "{{ p_test_word|escapejs }}",
+  inputWord: "{{ p_input_word|escapejs }}",
+  expectedWord: "{{ p_expected_word|escapejs }}",
+  actualWord: "{{ p_actual_word|escapejs }}",
+  pointsWord: "{{ p_points_word|escapejs }}",
+};
+
 function renderResults() {
   let stored;
   try { stored = JSON.parse(sessionStorage.getItem('zkLastSession') || 'null'); } catch { stored = null; }
@@ -113,56 +156,56 @@ function renderResults() {
   if (maxSus > 0.3) document.getElementById('zkSusWarn').style.display = 'block';
 
   const statusMap = {
-    correct:  { lbl:'To\'g\'ri',    cls:'bdg-active', icon:'fa-check-circle' },
-    partial:  { lbl:'Qisman',       cls:'bdg-warning', icon:'fa-circle-half-stroke' },
-    wrong:    { lbl:'Noto\'g\'ri',  cls:'bdg-danger',  icon:'fa-times-circle' },
-    cheating: { lbl:'Shubhali',     cls:'bdg-danger',  icon:'fa-triangle-exclamation' },
-    pending:  { lbl:'Kutilmoqda',   cls:'bdg',         icon:'fa-clock' },
+    correct:  { lbl:ZRI18N.statusCorrect,  cls:'bdg-active',  icon:'fa-check-circle' },
+    partial:  { lbl:ZRI18N.statusPartial,  cls:'bdg-warning',  icon:'fa-circle-half-stroke' },
+    wrong:    { lbl:ZRI18N.statusWrong,    cls:'bdg-danger',  icon:'fa-times-circle' },
+    cheating: { lbl:ZRI18N.statusCheating, cls:'bdg-danger',  icon:'fa-triangle-exclamation' },
+    pending:  { lbl:ZRI18N.statusPending,  cls:'bdg',         icon:'fa-clock' },
   };
   const diffMap = { easy:'bdg-active', medium:'bdg-warning', hard:'bdg-danger' };
-  const diffLbl = { easy:'Oson', medium:"O'rta", hard:'Qiyin' };
+  const diffLbl = { easy:ZRI18N.diffEasy, medium:ZRI18N.diffMedium, hard:ZRI18N.diffHard };
 
   const cards = document.getElementById('zkChallengeCards');
   cards.innerHTML = items.map(({ challenge: c, result: r }, idx) => {
     const sub = r?.submission || {};
     const st  = statusMap[sub.status] || { lbl: sub.status || '—', cls:'bdg', icon:'fa-circle' };
     const pts = r?.points_earned || 0;
-    const kind = c.kind === 'bugfind' ? '<i class="fas fa-bug"></i> Bug-find' : '<i class="fas fa-code"></i> Coding';
+    const kind = c.kind === 'bugfind' ? `<i class="fas fa-bug"></i> ${ZRI18N.kindBugfind}` : `<i class="fas fa-code"></i> ${ZRI18N.kindCoding}`;
     const diff = c.difficulty || 'easy';
 
     let bodyHtml = `
       <div style="margin-bottom:12px">
-        <span style="font-size:.78rem;color:var(--muted)">Yuborilgan kod:</span>
-        <pre class="zk-code-view">${escHtml(sub.submitted_code || '(bo\'sh)')}</pre>
+        <span style="font-size:.78rem;color:var(--muted)">${ZRI18N.submittedCode}</span>
+        <pre class="zk-code-view">${escHtml(sub.submitted_code || ZRI18N.emptyPlaceholder)}</pre>
       </div>`;
 
     if (c.kind === 'bugfind') {
       bodyHtml += `
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px">
           <div>
-            <div style="font-size:.75rem;color:var(--muted);margin-bottom:4px">Tanlagan qator</div>
+            <div style="font-size:.75rem;color:var(--muted);margin-bottom:4px">${ZRI18N.chosenLine}</div>
             <span class="bdg ${sub.identified_line === r?.correct_line ? 'bdg-active' : 'bdg-danger'}">${sub.identified_line ?? '—'}</span>
           </div>
           <div>
-            <div style="font-size:.75rem;color:var(--muted);margin-bottom:4px">To'g'ri qator</div>
+            <div style="font-size:.75rem;color:var(--muted);margin-bottom:4px">${ZRI18N.correctLine}</div>
             <span class="bdg bdg-active">${r?.correct_line ?? '—'}</span>
           </div>
         </div>`;
       if (r?.bug_explanation) bodyHtml += `
-        <div style="padding:10px 14px;border:1px solid var(--border);border-radius:6px;background:var(--hover);font-size:.82rem;color:var(--text)">
+        <div style="padding:10px 14px;border:1px solid var(--border);border-radius:6px;background:var(--bg);font-size:.82rem;color:var(--text)">
           <i class="fas fa-lightbulb" style="color:var(--warning);margin-right:6px"></i>${escHtml(r.bug_explanation)}
         </div>`;
     } else if (r?.test_results?.length) {
       bodyHtml += `
-        <div style="font-size:.78rem;color:var(--muted);margin-bottom:8px">${r.passed || 0}/${r.total || 0} test o'tdi</div>
+        <div style="font-size:.78rem;color:var(--muted);margin-bottom:8px">${ZRI18N.testsPassedTpl.replace('{passed}', r.passed || 0).replace('{total}', r.total || 0)}</div>
         <div class="card" style="overflow:hidden">
           ${r.test_results.map((t, ti) => `
             <div class="zk-test-row">
-              <span style="color:var(--muted)">Test ${ti+1}</span>
+              <span style="color:var(--muted)">${ZRI18N.testWord} ${ti+1}</span>
               <div style="display:flex;gap:12px;font-family:monospace;font-size:.78rem">
-                <span title="Kirish" style="color:var(--muted)">${escHtml(String(t.input || '—'))}</span>
-                <span title="Kutilgan" style="color:var(--accent)">${escHtml(String(t.expected || '—'))}</span>
-                <span title="Olingan" style="color:${t.passed ? 'var(--success)' : 'var(--danger)'}">${escHtml(String(t.actual || '—'))}</span>
+                <span title="${ZRI18N.inputWord}" style="color:var(--muted)">${escHtml(String(t.input || '—'))}</span>
+                <span title="${ZRI18N.expectedWord}" style="color:var(--accent)">${escHtml(String(t.expected || '—'))}</span>
+                <span title="${ZRI18N.actualWord}" style="color:${t.passed ? 'var(--success)' : 'var(--danger)'}">${escHtml(String(t.actual || '—'))}</span>
               </div>
               <span style="font-size:1rem">${t.passed ? '✅' : '❌'}</span>
             </div>
@@ -181,7 +224,7 @@ function renderResults() {
           </div>
           <div style="display:flex;align-items:center;gap:8px">
             <span class="bdg ${st.cls}"><i class="fas ${st.icon}"></i> ${st.lbl}</span>
-            <span style="font-weight:700;color:var(--accent)">${pts} ball</span>
+            <span style="font-weight:700;color:var(--accent)">${pts} ${ZRI18N.pointsWord}</span>
           </div>
         </div>
         <div class="zk-ch-body">${bodyHtml}</div>

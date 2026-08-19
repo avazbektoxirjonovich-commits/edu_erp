@@ -84,3 +84,76 @@ class TestFinanceDashboard:
         client = auth_client(teacher_role_user)
         resp = client.get('/api/v1/finance/dashboard/')
         assert resp.status_code == 403
+
+
+@pytest.mark.django_db
+class TestDashboardIncomeBasesDoNotDoubleCount:
+    """
+    FIN-003: `received_income` (accrual — Payment billing period) and
+    `monthly_income` (cash — PaymentTransaction paid_at date) are two
+    deliberately different figures, not one double-counted into the other.
+    Uses RecordPaymentView (the real, now-live payment-recording endpoint from
+    Phase 20.1) so both figures are populated exactly the way production does it.
+    """
+
+    def _setup(self, finance_user):
+        group = Group.objects.create(name='FIN003 Group', start_date='2026-01-01',
+                                     start_time='09:00', end_time='10:00', monthly_fee=500000)
+        user = User.objects.create_user(phone='+998900000120', password='p', full_name='S', role=User.Role.STUDENT)
+        student = Student.objects.create(user=user, phone=user.phone, group=group)
+        return auth_client(finance_user), student
+
+    def test_single_on_time_payment_appears_once_in_each_basis(self, finance_user):
+        # RecordPaymentSerializer always stamps the PaymentTransaction with
+        # timezone.now() — so for the "cash arrives the same month it's billed
+        # for" case, the bill's month/year must be *today's*, not an arbitrary
+        # fixed month, otherwise this would (correctly) become a late-payment
+        # scenario like the test below instead of an on-time one.
+        from django.utils import timezone
+        today = timezone.localdate()
+        client, student = self._setup(finance_user)
+        resp = client.post('/api/v1/finance/transactions/record/', {
+            'student': str(student.id), 'month': today.month, 'year': today.year, 'amount': 500000,
+        })
+        assert resp.status_code == 201
+
+        dash = client.get(f'/api/v1/finance/dashboard/?month={today.month}&year={today.year}').data
+        # Accrual basis: this month's bill is fully paid.
+        assert dash['received_income'] == 500000.0
+        # Cash basis: the same 500,000 shows up once here too — not summed with
+        # received_income anywhere, and not doubled to 1,000,000.
+        assert dash['monthly_income'] == 500000.0
+        assert dash['net_result'] == 500000.0
+
+    def test_late_payment_diverges_correctly_across_calendar_months(self, finance_user):
+        """
+        A payment for November's bill, actually collected in December, must:
+        - count toward November's `received_income` (it settles November's bill)
+        - count toward December's `monthly_income` (the cash arrived in December)
+        - NOT count toward November's `monthly_income` (no cash moved that month)
+        - NOT count toward December's `received_income` (December's own bill is separate)
+        This is the exact scenario FIN-003 describes — both figures are correct,
+        simply defined on different bases, and this proves neither is broken by
+        the other's presence.
+        """
+        client, student = self._setup(finance_user)
+        # Backdate the PaymentTransaction itself to December by recording, then
+        # adjusting paid_at directly (RecordPaymentSerializer always uses "now"
+        # for paid_at, so we simulate the late-collection scenario at the model
+        # layer — this still exercises the real signal-driven paid_amount sync).
+        resp = client.post('/api/v1/finance/transactions/record/', {
+            'student': str(student.id), 'month': 11, 'year': 2026, 'amount': 500000,
+        })
+        assert resp.status_code == 201
+        txn = PaymentTransaction.objects.get(pk=resp.data['transaction']['id'])
+        txn.paid_at = datetime(2026, 12, 3, 10, 0, tzinfo=dt_timezone.utc)
+        txn.save(update_fields=['paid_at'])
+
+        nov = client.get('/api/v1/finance/dashboard/?month=11&year=2026').data
+        dec = client.get('/api/v1/finance/dashboard/?month=12&year=2026').data
+
+        assert nov['received_income'] == 500000.0   # November's bill is settled
+        assert nov['monthly_income'] == 0.0          # no cash moved in November
+
+        assert dec['received_income'] == 0.0          # December has no bill for this student
+        assert dec['monthly_income'] == 500000.0     # cash arrived in December

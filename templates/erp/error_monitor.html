@@ -1,12 +1,13 @@
 {% extends "erp/base.html" %}
-{% block title %}Xatoliklar monitoringi — Qorako'l Ilm Ziyo{% endblock %}
-{% block page_title %}Xatoliklar monitoringi{% endblock %}
+{% load i18n %}
+{% block title %}{% translate "Xatoliklar monitoringi" %} — Qorako'l Ilm Ziyo{% endblock %}
+{% block page_title %}{% translate "Xatoliklar monitoringi" %}{% endblock %}
 
 {% block extra_head %}
 <style>
 .sm-kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
 @media(max-width:1000px){.sm-kpi{grid-template-columns:repeat(2,1fr)}}
-.kpi{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px}
 .kpi-icon{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.05rem;flex-shrink:0}
 .kpi-val{font-size:1.15rem;font-weight:900;color:var(--text);letter-spacing:-.4px;line-height:1.1}
 .kpi-lbl{font-size:.68rem;color:var(--muted);margin-top:3px}
@@ -22,57 +23,57 @@
 {% block content %}
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;animation:fadeUp .35s ease both">
   <div>
-    <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">Xatoliklar monitoringi</h2>
-    <p style="font-size:.75rem;color:var(--muted);margin-top:3px">ERP xatoliklari va AI suhbatlar tarixi (faqat dasturchi)</p>
+    <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">{% translate "Xatoliklar monitoringi" %}</h2>
+    <p style="font-size:.75rem;color:var(--muted);margin-top:3px">{% translate "ERP xatoliklari va AI suhbatlar tarixi (faqat dasturchi)" %}</p>
   </div>
 </div>
 
 <div class="sm-kpi">
   <div class="kpi"><div class="kpi-icon ic-blue"><i class="fas fa-triangle-exclamation"></i></div>
-    <div><div class="kpi-val" id="kTotal">—</div><div class="kpi-lbl">Jami xatoliklar</div></div></div>
+    <div><div class="kpi-val" id="kTotal">—</div><div class="kpi-lbl">{% translate "Jami xatoliklar" %}</div></div></div>
   <div class="kpi"><div class="kpi-icon ic-amber"><i class="fas fa-clock"></i></div>
-    <div><div class="kpi-val" id="kToday">—</div><div class="kpi-lbl">Bugungi xatoliklar</div></div></div>
+    <div><div class="kpi-val" id="kToday">—</div><div class="kpi-lbl">{% translate "Bugungi xatoliklar" %}</div></div></div>
   <div class="kpi"><div class="kpi-icon ic-purple"><i class="fas fa-calendar-week"></i></div>
-    <div><div class="kpi-val" id="kWeek">—</div><div class="kpi-lbl">Shu hafta</div></div></div>
+    <div><div class="kpi-val" id="kWeek">—</div><div class="kpi-lbl">{% translate "Shu hafta" %}</div></div></div>
   <div class="kpi"><div class="kpi-icon ic-red"><i class="fas fa-fire"></i></div>
-    <div><div class="kpi-val" id="kCritical">—</div><div class="kpi-lbl">Kritik xatoliklar</div></div></div>
+    <div><div class="kpi-val" id="kCritical">—</div><div class="kpi-lbl">{% translate "Kritik xatoliklar" %}</div></div></div>
   <div class="kpi"><div class="kpi-icon ic-amber"><i class="fas fa-folder-open"></i></div>
-    <div><div class="kpi-val" id="kOpen">—</div><div class="kpi-lbl">Ochiq</div></div></div>
+    <div><div class="kpi-val" id="kOpen">—</div><div class="kpi-lbl">{% translate "Ochiq" %}</div></div></div>
   <div class="kpi"><div class="kpi-icon ic-blue"><i class="fas fa-check"></i></div>
-    <div><div class="kpi-val" id="kResolved">—</div><div class="kpi-lbl">Hal qilindi</div></div></div>
+    <div><div class="kpi-val" id="kResolved">—</div><div class="kpi-lbl">{% translate "Hal qilindi" %}</div></div></div>
   <div class="kpi"><div class="kpi-icon ic-purple"><i class="fas fa-users"></i></div>
-    <div><div class="kpi-val" id="kAffected">—</div><div class="kpi-lbl">Ta'sirlangan foydalanuvchilar</div></div></div>
+    <div><div class="kpi-val" id="kAffected">—</div><div class="kpi-lbl">{% translate "Ta'sirlangan foydalanuvchilar" %}</div></div></div>
   <div class="kpi"><div class="kpi-icon ic-red"><i class="fas fa-chart-line"></i></div>
-    <div><div class="kpi-val" id="kTopFreq">—</div><div class="kpi-lbl">Eng ko'p takrorlangan</div></div></div>
+    <div><div class="kpi-val" id="kTopFreq">—</div><div class="kpi-lbl">{% translate "Eng ko'p takrorlangan" %}</div></div></div>
 </div>
 
 <div class="sm-tabs">
-  <button class="btn btn-primary btn-sm" id="tabBtnErrors" onclick="switchTab('errors')"><i class="fas fa-bug"></i> Xatoliklar</button>
-  <button class="btn btn-ghost btn-sm" id="tabBtnAi" onclick="switchTab('ai')"><i class="fas fa-robot"></i> AI tarixi</button>
+  <button class="btn btn-primary btn-sm" id="tabBtnErrors" onclick="switchTab('errors')"><i class="fas fa-bug"></i> {% translate "Xatoliklar" %}</button>
+  <button class="btn btn-ghost btn-sm" id="tabBtnAi" onclick="switchTab('ai')"><i class="fas fa-robot"></i> {% translate "AI tarixi" %}</button>
 </div>
 
 <div class="card" id="errorsPanel" style="overflow:hidden">
   <div class="fbar">
-    <select id="fStatus" onchange="loadErrors()" style="border:1.5px solid var(--border);border-radius:8px;padding:7px 32px 7px 12px;font-size:.78rem;background:#fff;outline:none;cursor:pointer">
-      <option value="">Barcha statuslar</option>
-      <option value="open">Ochiq</option>
-      <option value="investigating">Tekshirilmoqda</option>
-      <option value="resolved">Hal qilindi</option>
-      <option value="ignored">E'tiborsiz qoldirildi</option>
+    <select id="fStatus" onchange="loadErrors()" style="border:1.5px solid var(--border);border-radius:8px;padding:7px 32px 7px 12px;font-size:.78rem;background:var(--card);color:var(--text);outline:none;cursor:pointer">
+      <option value="">{% translate "Barcha statuslar" %}</option>
+      <option value="open">{% translate "Ochiq" %}</option>
+      <option value="investigating">{% translate "Tekshirilmoqda" %}</option>
+      <option value="resolved">{% translate "Hal qilindi" %}</option>
+      <option value="ignored">{% translate "E'tiborsiz qoldirildi" %}</option>
     </select>
-    <select id="fSeverity" onchange="loadErrors()" style="border:1.5px solid var(--border);border-radius:8px;padding:7px 32px 7px 12px;font-size:.78rem;background:#fff;outline:none;cursor:pointer">
-      <option value="">Barcha jiddiylik</option>
-      <option value="critical">Kritik</option>
-      <option value="high">Yuqori</option>
-      <option value="medium">O'rta</option>
-      <option value="low">Past</option>
+    <select id="fSeverity" onchange="loadErrors()" style="border:1.5px solid var(--border);border-radius:8px;padding:7px 32px 7px 12px;font-size:.78rem;background:var(--card);color:var(--text);outline:none;cursor:pointer">
+      <option value="">{% translate "Barcha jiddiylik" %}</option>
+      <option value="critical">{% translate "Kritik" %}</option>
+      <option value="high">{% translate "Yuqori" %}</option>
+      <option value="medium">{% translate "O'rta" %}</option>
+      <option value="low">{% translate "Past" %}</option>
     </select>
   </div>
   <div id="errorsTbl"><div class="loading"><div class="spinner"></div></div></div>
 </div>
 
 <div class="card" id="aiPanel" style="overflow:hidden;display:none">
-  <div class="card-header"><div class="card-title"><i class="fas fa-comments" style="margin-right:6px;color:var(--accent)"></i>Barcha foydalanuvchilar AI suhbatlari</div></div>
+  <div class="card-header"><div class="card-title"><i class="fas fa-comments" style="margin-right:6px;color:var(--accent)"></i>{% translate "Barcha foydalanuvchilar AI suhbatlari" %}</div></div>
   <div id="aiTbl"><div class="loading"><div class="spinner"></div></div></div>
 </div>
 
@@ -80,17 +81,17 @@
 <div class="overlay" id="errorModal">
   <div class="modal" style="max-width:720px">
     <div class="m-head">
-      <h5><i class="fas fa-bug" style="color:var(--danger);margin-right:6px"></i><span id="errModalTitle">Xatolik tafsilotlari</span></h5>
+      <h5><i class="fas fa-bug" style="color:var(--danger);margin-right:6px"></i><span id="errModalTitle">{% translate "Xatolik tafsilotlari" %}</span></h5>
       <button class="m-close" onclick="closeM('errorModal')"><i class="fas fa-times"></i></button>
     </div>
     <div class="m-body" id="errModalBody"></div>
     <div class="m-foot" style="justify-content:space-between">
       <div style="display:flex;gap:6px">
-        <button class="btn btn-ghost btn-sm" onclick="setErrorStatus('investigating')">Tekshirilmoqda</button>
-        <button class="btn btn-ghost btn-sm" onclick="setErrorStatus('resolved')">Hal qilindi</button>
-        <button class="btn btn-ghost btn-sm" onclick="setErrorStatus('ignored')">E'tiborsiz</button>
+        <button class="btn btn-ghost btn-sm" onclick="setErrorStatus('investigating')">{% translate "Tekshirilmoqda" %}</button>
+        <button class="btn btn-ghost btn-sm" onclick="setErrorStatus('resolved')">{% translate "Hal qilindi" %}</button>
+        <button class="btn btn-ghost btn-sm" onclick="setErrorStatus('ignored')">{% translate "E'tiborsiz" %}</button>
       </div>
-      <button class="btn btn-primary" id="btnAnalyze" onclick="analyzeError()"><i class="fas fa-wand-magic-sparkles"></i> AI ORQALI TAHLIL QILISH</button>
+      <button class="btn btn-primary" id="btnAnalyze" onclick="analyzeError()"><i class="fas fa-wand-magic-sparkles"></i> {% translate "AI ORQALI TAHLIL QILISH" %}</button>
     </div>
   </div>
 </div>
@@ -99,7 +100,7 @@
 <div class="overlay" id="aiModal">
   <div class="modal" style="max-width:640px">
     <div class="m-head">
-      <h5><i class="fas fa-comments" style="color:var(--accent);margin-right:6px"></i><span id="aiModalTitle">Suhbat</span></h5>
+      <h5><i class="fas fa-comments" style="color:var(--accent);margin-right:6px"></i><span id="aiModalTitle">{% translate "Suhbat" %}</span></h5>
       <button class="m-close" onclick="closeM('aiModal')"><i class="fas fa-times"></i></button>
     </div>
     <div class="m-body" id="aiModalBody"></div>
@@ -108,10 +109,91 @@
 {% endblock %}
 
 {% block extra_js %}
+{% translate "Kritik" as p_severity_critical %}
+{% translate "Yuqori" as p_severity_high %}
+{% translate "O'rta" as p_severity_medium %}
+{% translate "Past" as p_severity_low %}
+{% translate "Ochiq" as p_status_open %}
+{% translate "Tekshirilmoqda" as p_status_investigating %}
+{% translate "Hal qilindi" as p_status_resolved %}
+{% translate "E'tiborsiz qoldirildi" as p_status_ignored %}
+{% translate "Xatoliklar yo'q" as p_no_errors %}
+{% translate "Xatolik" as p_col_error %}
+{% translate "Rol" as p_col_role %}
+{% translate "Foydalanuvchi" as p_col_user %}
+{% translate "Sahifa" as p_col_page %}
+{% translate "Endpoint" as p_col_endpoint %}
+{% translate "Status" as p_col_status %}
+{% translate "Takrorlanish" as p_col_repeat %}
+{% translate "Birinchi" as p_col_first %}
+{% translate "Oxirgi" as p_col_last %}
+{% translate "Jiddiylik" as p_col_severity %}
+{% translate "Ehtimoliy sabab" as p_probable_cause %}
+{% translate "Ta'sirlangan modul" as p_affected_module %}
+{% translate "Takrorlash qadamlari" as p_repro_steps %}
+{% translate "Tavsiya etilgan tuzatish" as p_recommended_fix %}
+{% translate "Mumkin bo'lgan yon ta'sirlar" as p_side_effects %}
+{% translate "Test tavsiyalari" as p_testing_recs %}
+{% translate "marta takrorlangan" as p_times_repeated %}
+{% translate "foydalanuvchiga ta'sir qildi" as p_users_affected %}
+{% translate "AI tahlili" as p_ai_analysis %}
+{% translate "Status yangilandi" as p_status_updated %}
+{% translate "Xatolik" as p_generic_error %}
+{% translate "Tahlil qilinmoqda..." as p_analyzing %}
+{% translate "AI ORQALI TAHLIL QILISH" as p_ai_analyze_btn %}
+{% translate "AI tahlili tayyor" as p_ai_analysis_ready %}
+{% translate "Hali suhbat yo'q" as p_no_conversations %}
+{% translate "Sarlavha" as p_col_title %}
+{% translate "Yaratildi" as p_col_created %}
+{% translate "Yangilandi" as p_col_updated %}
+{% translate "Nomsiz" as p_untitled %}
+{% translate "Nomsiz suhbat" as p_untitled_conversation %}
+{% translate "Foydalanuvchi" as p_role_user %}
+{% translate "token" as p_token %}
+{% translate "(tool chaqiruvi)" as p_tool_call %}
+{% translate "Xabarlar yo'q" as p_no_messages %}
 <script>
 initAuth();
 
 let currentErrorId = null;
+
+const EMI18N = {
+  noErrors: "{{ p_no_errors|escapejs }}",
+  colError: "{{ p_col_error|escapejs }}",
+  colRole: "{{ p_col_role|escapejs }}",
+  colUser: "{{ p_col_user|escapejs }}",
+  colPage: "{{ p_col_page|escapejs }}",
+  colEndpoint: "{{ p_col_endpoint|escapejs }}",
+  colStatus: "{{ p_col_status|escapejs }}",
+  colRepeat: "{{ p_col_repeat|escapejs }}",
+  colFirst: "{{ p_col_first|escapejs }}",
+  colLast: "{{ p_col_last|escapejs }}",
+  colSeverity: "{{ p_col_severity|escapejs }}",
+  probableCause: "{{ p_probable_cause|escapejs }}",
+  affectedModule: "{{ p_affected_module|escapejs }}",
+  reproSteps: "{{ p_repro_steps|escapejs }}",
+  recommendedFix: "{{ p_recommended_fix|escapejs }}",
+  sideEffects: "{{ p_side_effects|escapejs }}",
+  testingRecs: "{{ p_testing_recs|escapejs }}",
+  timesRepeated: "{{ p_times_repeated|escapejs }}",
+  usersAffected: "{{ p_users_affected|escapejs }}",
+  aiAnalysis: "{{ p_ai_analysis|escapejs }}",
+  statusUpdated: "{{ p_status_updated|escapejs }}",
+  genericError: "{{ p_generic_error|escapejs }}",
+  analyzing: "{{ p_analyzing|escapejs }}",
+  aiAnalyzeBtn: "{{ p_ai_analyze_btn|escapejs }}",
+  aiAnalysisReady: "{{ p_ai_analysis_ready|escapejs }}",
+  noConversations: "{{ p_no_conversations|escapejs }}",
+  colTitle: "{{ p_col_title|escapejs }}",
+  colCreated: "{{ p_col_created|escapejs }}",
+  colUpdated: "{{ p_col_updated|escapejs }}",
+  untitled: "{{ p_untitled|escapejs }}",
+  untitledConversation: "{{ p_untitled_conversation|escapejs }}",
+  roleUser: "{{ p_role_user|escapejs }}",
+  token: "{{ p_token|escapejs }}",
+  toolCall: "{{ p_tool_call|escapejs }}",
+  noMessages: "{{ p_no_messages|escapejs }}",
+};
 
 function switchTab(tab){
   const isErrors = tab === 'errors';
@@ -123,16 +205,16 @@ function switchTab(tab){
 }
 
 const SEVERITY_MAP = {
-  critical: {label:'Kritik', cls:'bdg-unpaid'},
-  high:     {label:'Yuqori', cls:'bdg-warning'},
-  medium:   {label:"O'rta",  cls:'bdg-info'},
-  low:      {label:'Past',   cls:'bdg-inactive'},
+  critical: {label:"{{ p_severity_critical|escapejs }}", cls:'bdg-unpaid'},
+  high:     {label:"{{ p_severity_high|escapejs }}", cls:'bdg-warning'},
+  medium:   {label:"{{ p_severity_medium|escapejs }}",  cls:'bdg-info'},
+  low:      {label:"{{ p_severity_low|escapejs }}",   cls:'bdg-inactive'},
 };
 const STATUS_MAP = {
-  open:          {label:'Ochiq',                cls:'bdg-unpaid'},
-  investigating: {label:'Tekshirilmoqda',        cls:'bdg-warning'},
-  resolved:      {label:'Hal qilindi',           cls:'bdg-active'},
-  ignored:       {label:"E'tiborsiz qoldirildi", cls:'bdg-inactive'},
+  open:          {label:"{{ p_status_open|escapejs }}",                cls:'bdg-unpaid'},
+  investigating: {label:"{{ p_status_investigating|escapejs }}",        cls:'bdg-warning'},
+  resolved:      {label:"{{ p_status_resolved|escapejs }}",           cls:'bdg-active'},
+  ignored:       {label:"{{ p_status_ignored|escapejs }}", cls:'bdg-inactive'},
 };
 
 async function loadStats(){
@@ -159,12 +241,12 @@ async function loadErrors(){
   const errors = d?.results || d || [];
   const box = document.getElementById('errorsTbl');
   if(!errors.length){
-    box.innerHTML = '<div class="empty"><i class="fas fa-check-circle"></i><p>Xatoliklar yo\'q</p></div>';
+    box.innerHTML = `<div class="empty"><i class="fas fa-check-circle"></i><p>${EMI18N.noErrors}</p></div>`;
     return;
   }
   box.innerHTML = `<table class="etable"><thead><tr>
-    <th>Xatolik</th><th>Rol</th><th>Foydalanuvchi</th><th>Sahifa</th><th>Endpoint</th>
-    <th>Status</th><th>Takrorlanish</th><th>Birinchi</th><th>Oxirgi</th><th>Jiddiylik</th>
+    <th>${EMI18N.colError}</th><th>${EMI18N.colRole}</th><th>${EMI18N.colUser}</th><th>${EMI18N.colPage}</th><th>${EMI18N.colEndpoint}</th>
+    <th>${EMI18N.colStatus}</th><th>${EMI18N.colRepeat}</th><th>${EMI18N.colFirst}</th><th>${EMI18N.colLast}</th><th>${EMI18N.colSeverity}</th>
   </tr></thead><tbody>
   ${errors.map(e => {
     const sm = STATUS_MAP[e.status] || {label:e.status_display||e.status, cls:'bdg-info'};
@@ -191,10 +273,10 @@ function renderAnalysis(a){
     return `<div class="em-analysis"><dd>${escHtml(a.raw)}</dd></div>`;
   }
   const rows = [
-    ['probable_cause', 'Ehtimoliy sabab'], ['affected_module', "Ta'sirlangan modul"],
-    ['severity', 'Jiddiylik'], ['reproduction_steps', 'Takrorlash qadamlari'],
-    ['recommended_fix', 'Tavsiya etilgan tuzatish'], ['possible_side_effects', 'Mumkin bo\'lgan yon ta\'sirlar'],
-    ['testing_recommendations', 'Test tavsiyalari'],
+    ['probable_cause', EMI18N.probableCause], ['affected_module', EMI18N.affectedModule],
+    ['severity', EMI18N.colSeverity], ['reproduction_steps', EMI18N.reproSteps],
+    ['recommended_fix', EMI18N.recommendedFix], ['possible_side_effects', EMI18N.sideEffects],
+    ['testing_recommendations', EMI18N.testingRecs],
   ];
   return `<div class="em-analysis"><dl>${rows.map(([k,label]) =>
     a[k] ? `<dt>${label}</dt><dd>${escHtml(String(a[k]))}</dd>` : ''
@@ -214,33 +296,33 @@ async function openErrorModal(id){
     <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
       <span class="bdg ${STATUS_MAP[e.status]?.cls||'bdg-info'}">${STATUS_MAP[e.status]?.label||e.status}</span>
       <span class="bdg ${SEVERITY_MAP[e.severity]?.cls||'bdg-info'}">${SEVERITY_MAP[e.severity]?.label||e.severity}</span>
-      <span class="bdg bdg-info">${e.occurrence_count} marta takrorlangan</span>
-      <span class="bdg bdg-info">${e.affected_users} foydalanuvchiga ta'sir qildi</span>
+      <span class="bdg bdg-info">${e.occurrence_count} ${EMI18N.timesRepeated}</span>
+      <span class="bdg bdg-info">${e.affected_users} ${EMI18N.usersAffected}</span>
     </div>
-    <p style="font-size:.82rem;color:var(--text);margin-bottom:8px"><b>Endpoint:</b> ${escHtml(e.endpoint||'—')} (${escHtml(e.method||'—')}) · <b>Status:</b> ${e.status_code||'—'}</p>
+    <p style="font-size:.82rem;color:var(--text);margin-bottom:8px"><b>${EMI18N.colEndpoint}:</b> ${escHtml(e.endpoint||'—')} (${escHtml(e.method||'—')}) · <b>${EMI18N.colStatus}:</b> ${e.status_code||'—'}</p>
     <p style="font-size:.8rem;color:var(--muted);margin-bottom:10px">${escHtml(e.message||'')}</p>
     ${stack ? `<div class="em-stack">${escHtml(stack)}</div>` : ''}
-    ${e.ai_analysis ? `<h6 style="margin-top:14px;font-size:.8rem;font-weight:800"><i class="fas fa-robot"></i> AI tahlili ${e.ai_analyzed_at ? '(' + e.ai_analyzed_at.slice(0,16).replace('T',' ') + ')' : ''}</h6>${renderAnalysis(e.ai_analysis)}` : ''}
+    ${e.ai_analysis ? `<h6 style="margin-top:14px;font-size:.8rem;font-weight:800"><i class="fas fa-robot"></i> ${EMI18N.aiAnalysis} ${e.ai_analyzed_at ? '(' + e.ai_analyzed_at.slice(0,16).replace('T',' ') + ')' : ''}</h6>${renderAnalysis(e.ai_analysis)}` : ''}
   `;
 }
 
 async function setErrorStatus(newStatus){
   if(!currentErrorId) return;
   const r = await patch(`/error-monitor/errors/${currentErrorId}/status/`, {status: newStatus});
-  if(r?.ok){ toast('Status yangilandi', 'ok'); openErrorModal(currentErrorId); loadStats(); loadErrors(); }
-  else toast('Xatolik', 'err');
+  if(r?.ok){ toast(EMI18N.statusUpdated, 'ok'); openErrorModal(currentErrorId); loadStats(); loadErrors(); }
+  else toast(EMI18N.genericError, 'err');
 }
 
 async function analyzeError(){
   if(!currentErrorId) return;
   const btn = document.getElementById('btnAnalyze');
   btn.disabled = true;
-  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Tahlil qilinmoqda...';
+  btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${EMI18N.analyzing}`;
   const r = await post(`/error-monitor/errors/${currentErrorId}/analyze/`, {});
   btn.disabled = false;
-  btn.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i> AI ORQALI TAHLIL QILISH';
-  if(r?.ok){ toast('AI tahlili tayyor', 'ok'); openErrorModal(currentErrorId); }
-  else { try{ const e = await r?.json(); toast(e?.error || 'Xatolik', 'err'); } catch{ toast('Xatolik', 'err'); } }
+  btn.innerHTML = `<i class="fas fa-wand-magic-sparkles"></i> ${EMI18N.aiAnalyzeBtn}`;
+  if(r?.ok){ toast(EMI18N.aiAnalysisReady, 'ok'); openErrorModal(currentErrorId); }
+  else { try{ const e = await r?.json(); toast(e?.error || EMI18N.genericError, 'err'); } catch{ toast(EMI18N.genericError, 'err'); } }
 }
 
 async function loadAiHistory(){
@@ -248,15 +330,15 @@ async function loadAiHistory(){
   const list = d?.results || d || [];
   const box = document.getElementById('aiTbl');
   if(!list.length){
-    box.innerHTML = '<div class="empty"><i class="fas fa-comments"></i><p>Hali suhbat yo\'q</p></div>';
+    box.innerHTML = `<div class="empty"><i class="fas fa-comments"></i><p>${EMI18N.noConversations}</p></div>`;
     return;
   }
   box.innerHTML = `<table class="etable"><thead><tr>
-    <th>Foydalanuvchi</th><th>Sarlavha</th><th>Yaratildi</th><th>Yangilandi</th>
+    <th>${EMI18N.colUser}</th><th>${EMI18N.colTitle}</th><th>${EMI18N.colCreated}</th><th>${EMI18N.colUpdated}</th>
   </tr></thead><tbody>
   ${list.map(c => `<tr style="cursor:pointer" onclick="openAiModal('${c.id}')">
     <td style="font-size:.82rem;font-weight:600">${escHtml(c.user_name||'—')}</td>
-    <td style="font-size:.8rem">${escHtml(c.title||'Nomsiz')}</td>
+    <td style="font-size:.8rem">${escHtml(c.title||EMI18N.untitled)}</td>
     <td style="font-size:.72rem;color:var(--muted)">${(c.created_at||'').slice(0,16).replace('T',' ')}</td>
     <td style="font-size:.72rem;color:var(--muted)">${(c.updated_at||'').slice(0,16).replace('T',' ')}</td>
   </tr>`).join('')}
@@ -268,19 +350,19 @@ async function openAiModal(id){
   openM('aiModal');
   const c = await get(`/vlt-ai/admin/conversations/${id}/`);
   if(!c) return;
-  document.getElementById('aiModalTitle').textContent = c.title || 'Nomsiz suhbat';
+  document.getElementById('aiModalTitle').textContent = c.title || EMI18N.untitledConversation;
   const msgs = (c.messages || []).filter(m => m.role !== 'tool');
   document.getElementById('aiModalBody').innerHTML = msgs.map(m => `
     <div style="margin-bottom:12px;padding:10px 12px;border-radius:10px;background:${m.role==='user'?'var(--bg)':'rgba(5,150,105,.06)'}">
       <div style="font-size:.68rem;font-weight:800;color:${m.role==='user'?'var(--muted)':'var(--accent)'};margin-bottom:4px;text-transform:uppercase">
-        ${m.role==='user' ? "Foydalanuvchi" : 'AI'}
+        ${m.role==='user' ? EMI18N.roleUser : 'AI'}
         ${m.model ? ` · ${escHtml(m.model)}` : ''}
-        ${m.input_tokens ? ` · ${m.input_tokens}+${m.output_tokens} token` : ''}
+        ${m.input_tokens ? ` · ${m.input_tokens}+${m.output_tokens} ${EMI18N.token}` : ''}
         ${m.estimated_cost ? ` · ~$${parseFloat(m.estimated_cost).toFixed(4)}` : ''}
       </div>
-      <div style="font-size:.82rem;color:var(--text);white-space:pre-wrap">${escHtml(m.content||'(tool chaqiruvi)')}</div>
+      <div style="font-size:.82rem;color:var(--text);white-space:pre-wrap">${escHtml(m.content||EMI18N.toolCall)}</div>
     </div>
-  `).join('') || '<div class="empty"><p>Xabarlar yo\'q</p></div>';
+  `).join('') || `<div class="empty"><p>${EMI18N.noMessages}</p></div>`;
 }
 
 loadStats();

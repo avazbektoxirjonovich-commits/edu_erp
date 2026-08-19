@@ -115,6 +115,7 @@ frontend_urlpatterns = [
 urlpatterns = [
     path('admin/',       admin.site.urls),
     path('api/v1/',      include(api_v1_urlpatterns)),
+    path('i18n/',        include('django.conf.urls.i18n')),
     path('sw.js',        serve_sw,    name='service-worker'),
     path('robots.txt',   robots_txt,  name='robots'),
     path('sitemap.xml',  sitemap_xml, name='sitemap'),

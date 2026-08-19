@@ -1,18 +1,19 @@
 {% extends "erp/base.html" %}
+{% load i18n %}
 {% block title %}Sessiya tafsiloti — Qorako'l Ilm Ziyo{% endblock %}
 {% block page_title %}ZUKKO — Sessiya tafsiloti{% endblock %}
 
 {% block extra_head %}
 <style>
 .zk-header-row{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:18px}
-.zk-share-box{display:flex;align-items:center;gap:6px;padding:6px 10px;background:var(--hover);border:1px solid var(--border);border-radius:6px;margin-top:6px}
+.zk-share-box{display:flex;align-items:center;gap:6px;padding:6px 10px;background:var(--bg);border:1px solid var(--border);border-radius:6px;margin-top:6px}
 .zk-share-box input{background:none;border:none;outline:none;font-size:.78rem;color:var(--muted);width:260px;max-width:100%}
 .zk-sus-bar{height:8px;border-radius:4px;overflow:hidden;background:var(--border);width:80px}
 .zk-sus-fill{height:100%;border-radius:4px;transition:width .4s}
 .zk-tab-bar{display:flex;gap:6px;margin-bottom:16px;border-bottom:2px solid var(--border);padding-bottom:0}
 .zk-tab{padding:8px 18px;font-size:.84rem;font-weight:600;cursor:pointer;border-radius:6px 6px 0 0;color:var(--muted);transition:all .2s;border-bottom:2px solid transparent;margin-bottom:-2px}
 .zk-tab.active{color:var(--accent);border-bottom-color:var(--accent);background:rgba(5,150,105,.06)}
-.zk-tab:hover:not(.active){background:var(--hover)}
+.zk-tab:hover:not(.active){background:var(--bg)}
 .zk-panel{display:none}
 .zk-panel.active{display:block}
 .zk-pair-row{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid var(--warning);border-radius:8px;background:rgba(217,119,6,.06);margin-bottom:8px}
@@ -23,7 +24,7 @@
 
 {% block content %}
 <div id="zkLoadWrap">
-  <div class="loading"><div class="spinner"></div><p>Yuklanmoqda...</p></div>
+  <div class="loading"><div class="spinner"></div><p>{% translate "Yuklanmoqda..." %}</p></div>
 </div>
 
 <div id="zkMain" style="display:none">
@@ -49,7 +50,7 @@
         <i class="fas fa-download"></i> CSV
       </button>
       <a href="/zukko/teacher/" class="btn btn-ghost btn-sm">
-        <i class="fas fa-arrow-left"></i> Orqaga
+        <i class="fas fa-arrow-left"></i> {% translate "Orqaga" %}
       </a>
     </div>
   </div>
@@ -58,32 +59,32 @@
   <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px" id="zkMiniStats">
     <div class="mini-stat">
       <div class="mini-stat-icon ic-blue"><i class="fas fa-users"></i></div>
-      <div><div class="mini-stat-val" id="zkStatStudents">—</div><div class="mini-stat-lbl">Talabalar</div></div>
+      <div><div class="mini-stat-val" id="zkStatStudents">—</div><div class="mini-stat-lbl">{% translate "Talabalar" %}</div></div>
     </div>
     <div class="mini-stat">
       <div class="mini-stat-icon ic-green"><i class="fas fa-star"></i></div>
-      <div><div class="mini-stat-val" id="zkStatAvgPts">—</div><div class="mini-stat-lbl">O'rtacha ball</div></div>
+      <div><div class="mini-stat-val" id="zkStatAvgPts">—</div><div class="mini-stat-lbl">{% translate "O'rtacha ball" %}</div></div>
     </div>
     <div class="mini-stat">
       <div class="mini-stat-icon ic-amber"><i class="fas fa-triangle-exclamation"></i></div>
-      <div><div class="mini-stat-val" id="zkStatSus">—</div><div class="mini-stat-lbl">Shubhali javoblar</div></div>
+      <div><div class="mini-stat-val" id="zkStatSus">—</div><div class="mini-stat-lbl">{% translate "Shubhali javoblar" %}</div></div>
     </div>
     <div class="mini-stat">
       <div class="mini-stat-icon ic-red"><i class="fas fa-copy"></i></div>
-      <div><div class="mini-stat-val" id="zkStatPlagiat">—</div><div class="mini-stat-lbl">Plagiat juftlari</div></div>
+      <div><div class="mini-stat-val" id="zkStatPlagiat">—</div><div class="mini-stat-lbl">{% translate "Plagiat juftlari" %}</div></div>
     </div>
   </div>
 
   <!-- ── Tabs ── -->
   <div class="zk-tab-bar">
     <div class="zk-tab active" onclick="switchTab('talabalar')" id="tab-talabalar">
-      <i class="fas fa-user-graduate"></i> Talabalar
+      <i class="fas fa-user-graduate"></i> {% translate "Talabalar" %}
     </div>
     <div class="zk-tab" onclick="switchTab('anticheat')" id="tab-anticheat">
       <i class="fas fa-shield-halved"></i> Anti-cheat
     </div>
     <div class="zk-tab" onclick="switchTab('plagiat')" id="tab-plagiat">
-      <i class="fas fa-copy"></i> Plagiat
+      <i class="fas fa-copy"></i> {% translate "Plagiat" %}
     </div>
   </div>
 
@@ -94,16 +95,16 @@
         <table class="etable" id="zkStudentTable">
           <thead>
             <tr>
-              <th>F.I.Sh.</th>
-              <th>Topshiriqlar</th>
-              <th>Jami ball</th>
-              <th>Vaqt (s)</th>
-              <th>Shubha darajasi</th>
-              <th>Holat</th>
+              <th>{% translate "F.I.Sh." %}</th>
+              <th>{% translate "Topshiriqlar" %}</th>
+              <th>{% translate "Jami ball" %}</th>
+              <th>{% translate "Vaqt (s)" %}</th>
+              <th>{% translate "Shubha darajasi" %}</th>
+              <th>{% translate "Holat" %}</th>
             </tr>
           </thead>
           <tbody id="zkStudentBody">
-            <tr><td colspan="6" style="text-align:center;color:var(--muted);padding:30px">Yuklanmoqda...</td></tr>
+            <tr><td colspan="6" style="text-align:center;color:var(--muted);padding:30px">{% translate "Yuklanmoqda..." %}</td></tr>
           </tbody>
         </table>
       </div>
@@ -114,22 +115,22 @@
   <div id="panel-anticheat" class="zk-panel">
     <div class="card">
       <div class="card-header">
-        <span class="card-title">Shubhali faollik</span>
-        <span class="bdg" id="zkAcCount">0 ta shubha</span>
+        <span class="card-title">{% translate "Shubhali faollik" %}</span>
+        <span class="bdg" id="zkAcCount">0 {% translate "ta shubha" %}</span>
       </div>
       <div class="card-body" style="padding:0">
         <table class="etable" id="zkAcTable">
           <thead>
             <tr>
-              <th>Talaba</th>
-              <th>Topshiriq turi</th>
-              <th>Shubha bali</th>
-              <th>Darajasi</th>
-              <th>Holat</th>
+              <th>{% translate "Talaba" %}</th>
+              <th>{% translate "Topshiriq turi" %}</th>
+              <th>{% translate "Shubha bali" %}</th>
+              <th>{% translate "Darajasi" %}</th>
+              <th>{% translate "Holat" %}</th>
             </tr>
           </thead>
           <tbody id="zkAcBody">
-            <tr><td colspan="5" style="text-align:center;color:var(--muted);padding:30px">Yuklanmoqda...</td></tr>
+            <tr><td colspan="5" style="text-align:center;color:var(--muted);padding:30px">{% translate "Yuklanmoqda..." %}</td></tr>
           </tbody>
         </table>
       </div>
@@ -140,13 +141,13 @@
   <div id="panel-plagiat" class="zk-panel">
     <div class="card">
       <div class="card-header">
-        <span class="card-title">Kod o'xshashlik tekshiruvi</span>
+        <span class="card-title">{% translate "Kod o'xshashlik tekshiruvi" %}</span>
         <button class="btn btn-primary btn-sm" id="zkCheckBtn" onclick="checkSimilarity()">
-          <i class="fas fa-search"></i> Tekshirishni boshlash
+          <i class="fas fa-search"></i> {% translate "Tekshirishni boshlash" %}
         </button>
       </div>
       <div class="card-body" id="zkPlagiatBody">
-        <div class="zk-empty-s"><i class="fas fa-magnifying-glass"></i><p>Tekshirish uchun yuqoridagi tugmani bosing</p></div>
+        <div class="zk-empty-s"><i class="fas fa-magnifying-glass"></i><p>{% translate "Tekshirish uchun yuqoridagi tugmani bosing" %}</p></div>
       </div>
     </div>
   </div>
@@ -157,9 +158,9 @@
   <div class="card">
     <div class="zk-empty-s">
       <i class="fas fa-exclamation-circle" style="color:var(--danger)"></i>
-      <p id="zkErrMsg">Xatolik yuz berdi</p>
+      <p id="zkErrMsg">{% translate "Xatolik yuz berdi" %}</p>
       <a href="/zukko/teacher/" class="btn btn-outline btn-sm" style="margin-top:16px">
-        <i class="fas fa-arrow-left"></i> Orqaga
+        <i class="fas fa-arrow-left"></i> {% translate "Orqaga" %}
       </a>
     </div>
   </div>
@@ -167,7 +168,68 @@
 {% endblock %}
 
 {% block extra_js %}
+{% translate "URL noto'g'ri. Session ID topilmadi." as p_bad_url %}
+{% translate "Sessiya topilmadi yoki ruxsat yo'q. Ehtimol guruh sizga tegishli emas." as p_session_no_access %}
+{% translate "Guruhda talaba yo'q" as p_no_students_in_group %}
+{% translate "Kutilmoqda" as p_pending %}
+{% translate "Shubhali" as p_suspicious %}
+{% translate "Kuzatishda" as p_monitoring %}
+{% translate "Topshirdi" as p_submitted %}
+{% translate "Qoralama" as p_st_draft %}
+{% translate "Aktiv" as p_st_active %}
+{% translate "Tugagan" as p_st_completed %}
+{% translate "Arxiv" as p_st_archived %}
+{% translate "Aralash" as p_type_mixed %}
+{% translate "Bug-find" as p_type_bugfind %}
+{% translate "Coding" as p_type_coding %}
+{% translate "Test" as p_type_quiz %}
+{% translate "Shubhali faollik topilmadi ✅" as p_no_suspicious_activity %}
+{% translate "ta shubha" as p_suspicion_count %}
+{% translate "Tekshirilmoqda..." as p_checking %}
+{% translate "Kodlar taqqoslanmoqda..." as p_comparing_code %}
+{% translate "O'xshash javoblar topilmadi. {count} ta javob tekshirildi." as p_no_similar_found_tpl %}
+{% translate "{count} ta javob tekshirildi — {pairs} ta juft shubhali" as p_checked_pairs_tpl %}
+{% translate "Tekshirishda xatolik yuz berdi" as p_check_error %}
+{% translate "Qayta tekshirish" as p_recheck %}
+{% translate "F.I.Sh." as p_col_fish %}
+{% translate "Topshiriqlar" as p_col_tasks %}
+{% translate "Jami ball" as p_col_total_points %}
+{% translate "Vaqt (s)" as p_col_time_s %}
+{% translate "Shubha darajasi" as p_col_susp_level %}
+{% translate "Holat" as p_col_status %}
 <script>
+const ZTSI18N = {
+  badUrl: "{{ p_bad_url|escapejs }}",
+  sessionNoAccess: "{{ p_session_no_access|escapejs }}",
+  noStudentsInGroup: "{{ p_no_students_in_group|escapejs }}",
+  pending: "{{ p_pending|escapejs }}",
+  suspicious: "{{ p_suspicious|escapejs }}",
+  monitoring: "{{ p_monitoring|escapejs }}",
+  submitted: "{{ p_submitted|escapejs }}",
+  stDraft: "{{ p_st_draft|escapejs }}",
+  stActive: "{{ p_st_active|escapejs }}",
+  stCompleted: "{{ p_st_completed|escapejs }}",
+  stArchived: "{{ p_st_archived|escapejs }}",
+  typeMixed: "{{ p_type_mixed|escapejs }}",
+  typeBugfind: "{{ p_type_bugfind|escapejs }}",
+  typeCoding: "{{ p_type_coding|escapejs }}",
+  typeQuiz: "{{ p_type_quiz|escapejs }}",
+  noSuspiciousActivity: "{{ p_no_suspicious_activity|escapejs }}",
+  suspicionCount: "{{ p_suspicion_count|escapejs }}",
+  checking: "{{ p_checking|escapejs }}",
+  comparingCode: "{{ p_comparing_code|escapejs }}",
+  noSimilarFoundTpl: "{{ p_no_similar_found_tpl|escapejs }}",
+  checkedPairsTpl: "{{ p_checked_pairs_tpl|escapejs }}",
+  checkError: "{{ p_check_error|escapejs }}",
+  recheck: "{{ p_recheck|escapejs }}",
+  colFish: "{{ p_col_fish|escapejs }}",
+  colTasks: "{{ p_col_tasks|escapejs }}",
+  colTotalPoints: "{{ p_col_total_points|escapejs }}",
+  colTimeS: "{{ p_col_time_s|escapejs }}",
+  colSuspLevel: "{{ p_col_susp_level|escapejs }}",
+  colStatus: "{{ p_col_status|escapejs }}",
+};
+
 const SESSION_ID = window.location.pathname.match(/\/zukko\/teacher\/session\/([^\/]+)/)?.[1];
 
 let zkSession  = null;
@@ -197,12 +259,12 @@ function susBdg(score) {
 // ── Load ───────────────────────────────────────────────────────────────
 // ESLATMA: base.html get() xato bo'lsa throw qilmaydi — null qaytaradi
 async function loadAll() {
-  if (!SESSION_ID) { showErr("URL noto'g'ri. Session ID topilmadi."); return; }
+  if (!SESSION_ID) { showErr(ZTSI18N.badUrl); return; }
 
   // 1. Sessiya (majburiy)
   const session = await get('/challenges/sessions/' + SESSION_ID + '/');
   if (!session) {
-    showErr("Sessiya topilmadi yoki ruxsat yo'q. Ehtimol guruh sizga tegishli emas.");
+    showErr(ZTSI18N.sessionNoAccess);
     return;
   }
   zkSession = session;
@@ -259,10 +321,10 @@ function renderPage() {
   // Header
   document.getElementById('zkTitle').textContent = zkSession.title || '—';
   const sBdg = document.getElementById('zkStatusBdg');
-  sBdg.textContent = { draft:'Qoralama', active:'Aktiv', completed:'Tugagan', archived:'Arxiv' }[zkSession.status] || zkSession.status;
+  sBdg.textContent = { draft:ZTSI18N.stDraft, active:ZTSI18N.stActive, completed:ZTSI18N.stCompleted, archived:ZTSI18N.stArchived }[zkSession.status] || zkSession.status;
   sBdg.className = 'bdg' + (zkSession.status === 'active' ? ' bdg-active' : '');
   const tBdg = document.getElementById('zkTypeBdg');
-  tBdg.textContent = { mixed:'Aralash', bugfind:'Bug-find', coding:'Coding', quiz:'Test' }[zkSession.session_type] || zkSession.session_type;
+  tBdg.textContent = { mixed:ZTSI18N.typeMixed, bugfind:ZTSI18N.typeBugfind, coding:ZTSI18N.typeCoding, quiz:ZTSI18N.typeQuiz }[zkSession.session_type] || zkSession.session_type;
 
   const shareUrl = `${window.location.origin}/zukko/focus/${zkSession.share_link}/`;
   document.getElementById('zkShareUrl').value = shareUrl;
@@ -288,7 +350,7 @@ function renderPage() {
 function renderTalabalar() {
   const tbody = document.getElementById('zkStudentBody');
   if (!zkPerUser.length) {
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:30px">Guruhda talaba yo'q</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:30px">${ZTSI18N.noStudentsInGroup}</td></tr>`;
     return;
   }
   tbody.innerHTML = zkPerUser.map(u => `
@@ -313,12 +375,12 @@ function renderTalabalar() {
       </td>
       <td>
         ${!u.submitted
-          ? '<span class="bdg">Kutilmoqda</span>'
+          ? `<span class="bdg">${ZTSI18N.pending}</span>`
           : u.hasCheating
-          ? '<span class="bdg bdg-danger">Shubhali</span>'
+          ? `<span class="bdg bdg-danger">${ZTSI18N.suspicious}</span>`
           : u.maxSuspicion > 0.3
-          ? '<span class="bdg bdg-warning">Kuzatishda</span>'
-          : '<span class="bdg bdg-active">Topshirdi</span>'}
+          ? `<span class="bdg bdg-warning">${ZTSI18N.monitoring}</span>`
+          : `<span class="bdg bdg-active">${ZTSI18N.submitted}</span>`}
       </td>
     </tr>
   `).join('');
@@ -338,16 +400,16 @@ function renderAntiCheat() {
   });
   susItems.sort((a, b) => (b.sub.suspicion_score || 0) - (a.sub.suspicion_score || 0));
 
-  document.getElementById('zkAcCount').textContent = susItems.length + ' ta shubha';
+  document.getElementById('zkAcCount').textContent = susItems.length + ' ' + ZTSI18N.suspicionCount;
 
   if (!susItems.length) {
-    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:30px">Shubhali faollik topilmadi ✅</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:30px">${ZTSI18N.noSuspiciousActivity}</td></tr>`;
     return;
   }
 
   tbody.innerHTML = susItems.map(({ name, sub }) => {
     const score = sub.suspicion_score || 0;
-    const kind = sub.submission_type === 'bugfind' ? 'Bug-find' : 'Coding';
+    const kind = sub.submission_type === 'bugfind' ? ZTSI18N.typeBugfind : ZTSI18N.typeCoding;
     return `
       <tr>
         <td><b>${escHtml(name)}</b></td>
@@ -371,8 +433,8 @@ function renderAntiCheat() {
 async function checkSimilarity() {
   const btn = document.getElementById('zkCheckBtn');
   btn.disabled = true;
-  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Tekshirilmoqda...';
-  document.getElementById('zkPlagiatBody').innerHTML = '<div class="loading"><div class="spinner"></div><p>Kodlar taqqoslanmoqda...</p></div>';
+  btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${ZTSI18N.checking}`;
+  document.getElementById('zkPlagiatBody').innerHTML = `<div class="loading"><div class="spinner"></div><p>${ZTSI18N.comparingCode}</p></div>`;
 
   try {
     const data = await get('/challenges/similarity/' + SESSION_ID + '/');
@@ -381,10 +443,10 @@ async function checkSimilarity() {
 
     const body = document.getElementById('zkPlagiatBody');
     if (!data.flagged_pairs || !data.flagged_pairs.length) {
-      body.innerHTML = `<div class="zk-empty-s"><i class="fas fa-shield-check" style="color:var(--accent)"></i><p>O'xshash javoblar topilmadi. <span style="color:var(--muted)">${data.checked_submissions || 0} ta javob tekshirildi.</span></p></div>`;
+      body.innerHTML = `<div class="zk-empty-s"><i class="fas fa-shield-check" style="color:var(--accent)"></i><p>${ZTSI18N.noSimilarFoundTpl.replace('{count}', data.checked_submissions || 0)}</p></div>`;
     } else {
       body.innerHTML = `
-        <p style="font-size:.8rem;color:var(--muted);margin-bottom:14px">${data.checked_submissions} ta javob tekshirildi — ${data.flagged_pairs.length} ta juft shubhali</p>
+        <p style="font-size:.8rem;color:var(--muted);margin-bottom:14px">${ZTSI18N.checkedPairsTpl.replace('{count}', data.checked_submissions).replace('{pairs}', data.flagged_pairs.length)}</p>
         ${data.flagged_pairs.map(pair => `
           <div class="zk-pair-row">
             <div>
@@ -399,16 +461,16 @@ async function checkSimilarity() {
       `;
     }
   } catch (e) {
-    document.getElementById('zkPlagiatBody').innerHTML = `<div class="zk-empty-s"><i class="fas fa-triangle-exclamation" style="color:var(--danger)"></i><p>Tekshirishda xatolik yuz berdi</p></div>`;
+    document.getElementById('zkPlagiatBody').innerHTML = `<div class="zk-empty-s"><i class="fas fa-triangle-exclamation" style="color:var(--danger)"></i><p>${ZTSI18N.checkError}</p></div>`;
   } finally {
     btn.disabled = false;
-    btn.innerHTML = '<i class="fas fa-search"></i> Qayta tekshirish';
+    btn.innerHTML = `<i class="fas fa-search"></i> ${ZTSI18N.recheck}`;
   }
 }
 
 // ── CSV export ─────────────────────────────────────────────────────────
 function exportCSV() {
-  const rows = [['F.I.Sh.', 'Topshiriqlar', 'Jami ball', 'Vaqt (s)', 'Shubha darajasi', 'Holat']];
+  const rows = [[ZTSI18N.colFish, ZTSI18N.colTasks, ZTSI18N.colTotalPoints, ZTSI18N.colTimeS, ZTSI18N.colSuspLevel, ZTSI18N.colStatus]];
   zkPerUser.forEach(u => {
     rows.push([
       u.name,
@@ -416,7 +478,7 @@ function exportCSV() {
       u.submitted ? u.points : '—',
       u.submitted ? u.timeSpent : '—',
       u.submitted ? u.maxSuspicion.toFixed(2) : '—',
-      !u.submitted ? 'Kutilmoqda' : u.hasCheating ? 'Shubhali' : u.maxSuspicion > 0.3 ? 'Kuzatishda' : 'Topshirdi',
+      !u.submitted ? ZTSI18N.pending : u.hasCheating ? ZTSI18N.suspicious : u.maxSuspicion > 0.3 ? ZTSI18N.monitoring : ZTSI18N.submitted,
     ]);
   });
   const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');

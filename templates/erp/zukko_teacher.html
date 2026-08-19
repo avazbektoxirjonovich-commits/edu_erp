@@ -1,4 +1,5 @@
 {% extends "erp/base.html" %}
+{% load i18n %}
 {% block title %}ZUKKO Challenges — Qorako'l Ilm Ziyo{% endblock %}
 {% block page_title %}ZUKKO Challenges{% endblock %}
 
@@ -7,9 +8,9 @@
 .zk-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
 @media(max-width:900px){.zk-stats{grid-template-columns:repeat(2,1fr)}}
 
-.zk-tabs{display:flex;gap:4px;background:#f0f1f5;padding:4px;border-radius:10px;width:fit-content;margin-bottom:18px;flex-wrap:wrap}
+.zk-tabs{display:flex;gap:4px;background:var(--bg);padding:4px;border-radius:10px;width:fit-content;margin-bottom:18px;flex-wrap:wrap}
 .zk-tab-btn{padding:7px 18px;border-radius:7px;border:none;background:none;font-size:.78rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all .2s;font-family:inherit}
-.zk-tab-btn.active{background:#fff;color:var(--accent);box-shadow:0 1px 6px rgba(0,0,0,.1)}
+.zk-tab-btn.active{background:var(--card);color:var(--accent);box-shadow:0 1px 6px rgba(0,0,0,.1)}
 .zk-pane{display:none}
 .zk-pane.active{display:block}
 
@@ -21,7 +22,7 @@
 .zk-empty{text-align:center;padding:50px 20px;color:var(--muted)}
 .zk-empty i{font-size:2.6rem;opacity:.15;margin-bottom:14px;display:block}
 
-.zk-lang-btn{display:inline-flex;align-items:center;gap:7px;padding:8px 18px;border-radius:8px;border:2px solid var(--border);background:#fff;font-size:.82rem;font-weight:700;color:var(--muted);cursor:pointer;transition:all .18s;font-family:inherit}
+.zk-lang-btn{display:inline-flex;align-items:center;gap:7px;padding:8px 18px;border-radius:8px;border:2px solid var(--border);background:var(--card);font-size:.82rem;font-weight:700;color:var(--muted);cursor:pointer;transition:all .18s;font-family:inherit}
 .zk-lang-btn.active{border-color:var(--accent);background:var(--accent-light);color:var(--accent)}
 .zk-lang-btn:hover:not(.active){border-color:var(--accent);color:var(--accent)}
 .zk-test-row{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:start;background:var(--bg);border-radius:8px;padding:10px;border:1px solid var(--border)}
@@ -34,49 +35,49 @@
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;animation:fadeUp .3s ease both">
   <div>
     <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">ZUKKO Challenges</h2>
-    <p style="font-size:.75rem;color:var(--muted);margin-top:3px">Kod topshiriqlari, sessiyalar va anti-cheat nazorati</p>
+    <p style="font-size:.75rem;color:var(--muted);margin-top:3px">{% translate "Kod topshiriqlari, sessiyalar va anti-cheat nazorati" %}</p>
   </div>
 </div>
 
 <div class="zk-stats">
   <div class="mini-stat" style="animation-delay:.05s">
     <div class="mini-stat-icon ic-blue"><i class="fas fa-layer-group"></i></div>
-    <div><div class="mini-stat-val" id="zkTotalSessions">—</div><div class="mini-stat-lbl">Jami sessiyalar</div></div>
+    <div><div class="mini-stat-val" id="zkTotalSessions">—</div><div class="mini-stat-lbl">{% translate "Jami sessiyalar" %}</div></div>
   </div>
   <div class="mini-stat" style="animation-delay:.1s">
     <div class="mini-stat-icon ic-green"><i class="fas fa-circle-check"></i></div>
-    <div><div class="mini-stat-val" id="zkActiveSessions">—</div><div class="mini-stat-lbl">Aktiv sessiyalar</div></div>
+    <div><div class="mini-stat-val" id="zkActiveSessions">—</div><div class="mini-stat-lbl">{% translate "Aktiv sessiyalar" %}</div></div>
   </div>
   <div class="mini-stat" style="animation-delay:.15s">
     <div class="mini-stat-icon ic-amber"><i class="fas fa-bug"></i></div>
-    <div><div class="mini-stat-val" id="zkBugfindCount">—</div><div class="mini-stat-lbl">Bug-find topshiriqlar</div></div>
+    <div><div class="mini-stat-val" id="zkBugfindCount">—</div><div class="mini-stat-lbl">{% translate "Bug-find topshiriqlar" %}</div></div>
   </div>
   <div class="mini-stat" style="animation-delay:.2s">
     <div class="mini-stat-icon ic-purple"><i class="fas fa-code"></i></div>
-    <div><div class="mini-stat-val" id="zkCodingCount">—</div><div class="mini-stat-lbl">Coding topshiriqlar</div></div>
+    <div><div class="mini-stat-val" id="zkCodingCount">—</div><div class="mini-stat-lbl">{% translate "Coding topshiriqlar" %}</div></div>
   </div>
 </div>
 
 <div class="zk-tabs">
-  <button class="zk-tab-btn active" onclick="zkSwitchTab('sessions',this)">Sessiyalar</button>
+  <button class="zk-tab-btn active" onclick="zkSwitchTab('sessions',this)">{% translate "Sessiyalar" %}</button>
   <button class="zk-tab-btn" onclick="zkSwitchTab('bugfind',this)">Bug-Find</button>
   <button class="zk-tab-btn" onclick="zkSwitchTab('coding',this)">Coding</button>
-  <button class="zk-tab-btn" onclick="zkSwitchTab('results',this)">Natijalar</button>
+  <button class="zk-tab-btn" onclick="zkSwitchTab('results',this)">{% translate "Natijalar" %}</button>
 </div>
 
 <!-- SESSIYALAR -->
 <div class="zk-pane active" id="paneSessions">
   <div class="card">
     <div class="card-header">
-      <span class="card-title">Sessiyalar</span>
-      <button class="btn btn-primary btn-sm" onclick="zkOpenSessionModal()"><i class="fas fa-plus"></i>Yangi sessiya</button>
+      <span class="card-title">{% translate "Sessiyalar" %}</span>
+      <button class="btn btn-primary btn-sm" onclick="zkOpenSessionModal()"><i class="fas fa-plus"></i>{% translate "Yangi sessiya" %}</button>
     </div>
     <div class="card-body" style="padding:0">
       <table class="etable">
         <thead><tr>
-          <th>Nomi</th><th>Guruh</th><th>Turi</th><th>Holat</th><th>Havola</th><th>Yaratilgan</th><th></th>
+          <th>{% translate "Nomi" %}</th><th>{% translate "Guruh" %}</th><th>{% translate "Turi" %}</th><th>{% translate "Holat" %}</th><th>{% translate "Havola" %}</th><th>{% translate "Yaratilgan" %}</th><th></th>
         </tr></thead>
-        <tbody id="zkSessionsBody"><tr><td colspan="7" class="zk-empty">Yuklanmoqda...</td></tr></tbody>
+        <tbody id="zkSessionsBody"><tr><td colspan="7" class="zk-empty">{% translate "Yuklanmoqda..." %}</td></tr></tbody>
       </table>
     </div>
   </div>
@@ -86,15 +87,15 @@
 <div class="zk-pane" id="paneBugfind">
   <div class="card">
     <div class="card-header">
-      <span class="card-title">Bug-Find topshiriqlar</span>
-      <button class="btn btn-primary btn-sm" onclick="zkOpenBugfindModal()"><i class="fas fa-plus"></i>Yangi bug-find</button>
+      <span class="card-title">{% translate "Bug-Find topshiriqlar" %}</span>
+      <button class="btn btn-primary btn-sm" onclick="zkOpenBugfindModal()"><i class="fas fa-plus"></i>{% translate "Yangi bug-find" %}</button>
     </div>
     <div class="card-body" style="padding:0">
       <table class="etable">
         <thead><tr>
-          <th>Sarlavha</th><th>Qiyinlik</th><th>Xato turi</th><th>Til</th><th>Ball</th><th>Holat</th>
+          <th>{% translate "Sarlavha" %}</th><th>{% translate "Qiyinlik" %}</th><th>{% translate "Xato turi" %}</th><th>{% translate "Til" %}</th><th>{% translate "Ball" %}</th><th>{% translate "Holat" %}</th>
         </tr></thead>
-        <tbody id="zkBugfindBody"><tr><td colspan="6" class="zk-empty">Yuklanmoqda...</td></tr></tbody>
+        <tbody id="zkBugfindBody"><tr><td colspan="6" class="zk-empty">{% translate "Yuklanmoqda..." %}</td></tr></tbody>
       </table>
     </div>
   </div>
@@ -104,15 +105,15 @@
 <div class="zk-pane" id="paneCoding">
   <div class="card">
     <div class="card-header">
-      <span class="card-title">Coding topshiriqlar</span>
-      <button class="btn btn-primary btn-sm" onclick="zkOpenCodingModal()"><i class="fas fa-plus"></i>Yangi coding</button>
+      <span class="card-title">{% translate "Coding topshiriqlar" %}</span>
+      <button class="btn btn-primary btn-sm" onclick="zkOpenCodingModal()"><i class="fas fa-plus"></i>{% translate "Yangi coding" %}</button>
     </div>
     <div class="card-body" style="padding:0">
       <table class="etable">
         <thead><tr>
-          <th>Sarlavha</th><th>Qiyinlik</th><th>Til</th><th>Ball</th><th>Holat</th>
+          <th>{% translate "Sarlavha" %}</th><th>{% translate "Qiyinlik" %}</th><th>{% translate "Til" %}</th><th>{% translate "Ball" %}</th><th>{% translate "Holat" %}</th>
         </tr></thead>
-        <tbody id="zkCodingBody"><tr><td colspan="5" class="zk-empty">Yuklanmoqda...</td></tr></tbody>
+        <tbody id="zkCodingBody"><tr><td colspan="5" class="zk-empty">{% translate "Yuklanmoqda..." %}</td></tr></tbody>
       </table>
     </div>
   </div>
@@ -122,13 +123,13 @@
 <div class="zk-pane" id="paneResults">
   <div class="card">
     <div class="card-header">
-      <span class="card-title">Sessiya natijalari</span>
+      <span class="card-title">{% translate "Sessiya natijalari" %}</span>
       <select class="fc fc-sel" id="zkResultsSession" style="width:260px" onchange="zkLoadResults()">
-        <option value="">— Sessiya tanlang —</option>
+        <option value="">{% translate "— Sessiya tanlang —" %}</option>
       </select>
     </div>
     <div class="card-body" id="zkResultsBody">
-      <div class="zk-empty"><i class="fas fa-chart-column"></i><p>Natijalarni ko'rish uchun sessiya tanlang</p></div>
+      <div class="zk-empty"><i class="fas fa-chart-column"></i><p>{% translate "Natijalarni ko'rish uchun sessiya tanlang" %}</p></div>
     </div>
   </div>
 </div>
@@ -137,32 +138,32 @@
 <div class="overlay" id="zkSessionModal">
   <div class="modal modal-lg">
     <div class="m-head">
-      <h5><i class="fas fa-plus" style="color:var(--accent);margin-right:6px"></i>Yangi sessiya</h5>
+      <h5><i class="fas fa-plus" style="color:var(--accent);margin-right:6px"></i>{% translate "Yangi sessiya" %}</h5>
       <button class="m-close" onclick="closeM('zkSessionModal')"><i class="fas fa-times"></i></button>
     </div>
     <div class="m-body">
-      <div class="fg"><label>Nomi *</label><input class="fc" id="zkSTitle" placeholder="Masalan: 3-hafta Bug-Find sinovi"></div>
+      <div class="fg"><label>{% translate "Nomi *" %}</label><input class="fc" id="zkSTitle" placeholder="{% translate "Masalan: 3-hafta Bug-Find sinovi" %}"></div>
       <div class="row2">
-        <div class="fg"><label>Guruh *</label>
-          <select class="fc fc-sel" id="zkSGroup"><option value="">— Tanlang —</option></select>
+        <div class="fg"><label>{% translate "Guruh *" %}</label>
+          <select class="fc fc-sel" id="zkSGroup"><option value="">{% translate "— Tanlang —" %}</option></select>
         </div>
-        <div class="fg"><label>Turi</label>
+        <div class="fg"><label>{% translate "Turi" %}</label>
           <select class="fc fc-sel" id="zkSType">
-            <option value="mixed">Aralash</option>
+            <option value="mixed">{% translate "Aralash" %}</option>
             <option value="bugfind">Bug-find</option>
             <option value="coding">Coding</option>
           </select>
         </div>
       </div>
       <div class="row2">
-        <div class="fg"><label>Bug-find savollar soni</label><input class="fc" type="number" id="zkSBugCount" value="5" min="0" max="50"></div>
-        <div class="fg"><label>Coding savollar soni</label><input class="fc" type="number" id="zkSCodingCount" value="3" min="0" max="50"></div>
+        <div class="fg"><label>{% translate "Bug-find savollar soni" %}</label><input class="fc" type="number" id="zkSBugCount" value="5" min="0" max="50"></div>
+        <div class="fg"><label>{% translate "Coding savollar soni" %}</label><input class="fc" type="number" id="zkSCodingCount" value="3" min="0" max="50"></div>
       </div>
-      <div class="fg"><label>Vaqt chegarasi (daqiqa)</label><input class="fc" type="number" id="zkSTimeLimit" value="45" min="5" max="300"></div>
+      <div class="fg"><label>{% translate "Vaqt chegarasi (daqiqa)" %}</label><input class="fc" type="number" id="zkSTimeLimit" value="45" min="5" max="300"></div>
     </div>
     <div class="m-foot">
-      <button class="btn btn-ghost" onclick="closeM('zkSessionModal')">Bekor qilish</button>
-      <button class="btn btn-primary" onclick="zkCreateSession()"><i class="fas fa-save"></i>Yaratish</button>
+      <button class="btn btn-ghost" onclick="closeM('zkSessionModal')">{% translate "Bekor qilish" %}</button>
+      <button class="btn btn-primary" onclick="zkCreateSession()"><i class="fas fa-save"></i>{% translate "Yaratish" %}</button>
     </div>
   </div>
 </div>
@@ -171,26 +172,26 @@
 <div class="overlay" id="zkBugfindModal">
   <div class="modal modal-lg">
     <div class="m-head">
-      <h5><i class="fas fa-bug" style="color:var(--accent);margin-right:6px"></i>Yangi bug-find topshiriq</h5>
+      <h5><i class="fas fa-bug" style="color:var(--accent);margin-right:6px"></i>{% translate "Yangi bug-find topshiriq" %}</h5>
       <button class="m-close" onclick="closeM('zkBugfindModal')"><i class="fas fa-times"></i></button>
     </div>
     <div class="m-body">
-      <div class="fg"><label>Sarlavha *</label><input class="fc" id="zkBTitle" placeholder="Masalan: Ro'yxat indeksi xatosi"></div>
-      <div class="fg"><label>Masala sharti *</label><textarea class="fc" id="zkBDesc" rows="2"></textarea></div>
-      <div class="fg"><label>Xatoli kod *</label><textarea class="fc" id="zkBBuggy" rows="5" style="font-family:monospace"></textarea></div>
-      <div class="fg"><label>To'g'ri kod *</label><textarea class="fc" id="zkBCorrect" rows="5" style="font-family:monospace"></textarea></div>
+      <div class="fg"><label>{% translate "Sarlavha *" %}</label><input class="fc" id="zkBTitle" placeholder="{% translate "Masalan: Ro'yxat indeksi xatosi" %}"></div>
+      <div class="fg"><label>{% translate "Masala sharti *" %}</label><textarea class="fc" id="zkBDesc" rows="2"></textarea></div>
+      <div class="fg"><label>{% translate "Xatoli kod *" %}</label><textarea class="fc" id="zkBBuggy" rows="5" style="font-family:monospace"></textarea></div>
+      <div class="fg"><label>{% translate "To'g'ri kod *" %}</label><textarea class="fc" id="zkBCorrect" rows="5" style="font-family:monospace"></textarea></div>
       <div class="row2">
-        <div class="fg"><label>Xato qatori *</label><input class="fc" type="number" id="zkBLine" min="1" value="1"></div>
-        <div class="fg"><label>Qiyinlik</label>
+        <div class="fg"><label>{% translate "Xato qatori *" %}</label><input class="fc" type="number" id="zkBLine" min="1" value="1"></div>
+        <div class="fg"><label>{% translate "Qiyinlik" %}</label>
           <select class="fc fc-sel" id="zkBDifficulty">
-            <option value="easy">Oson</option><option value="medium">O'rta</option><option value="hard">Qiyin</option>
+            <option value="easy">{% translate "Oson" %}</option><option value="medium">{% translate "O'rta" %}</option><option value="hard">{% translate "Qiyin" %}</option>
           </select>
         </div>
       </div>
-      <div class="fg"><label>Xato tushuntirishi *</label><textarea class="fc" id="zkBExplain" rows="2"></textarea></div>
+      <div class="fg"><label>{% translate "Xato tushuntirishi *" %}</label><textarea class="fc" id="zkBExplain" rows="2"></textarea></div>
       <div class="row2">
-        <div class="fg"><label>Ball</label><input class="fc" type="number" id="zkBPoints" value="10" min="1"></div>
-        <div class="fg"><label>Dasturlash tili</label>
+        <div class="fg"><label>{% translate "Ball" %}</label><input class="fc" type="number" id="zkBPoints" value="10" min="1"></div>
+        <div class="fg"><label>{% translate "Dasturlash tili" %}</label>
           <select class="fc fc-sel" id="zkBLang">
             <option value="python">Python</option>
             <option value="cpp">C++</option>
@@ -199,8 +200,8 @@
       </div>
     </div>
     <div class="m-foot">
-      <button class="btn btn-ghost" onclick="closeM('zkBugfindModal')">Bekor qilish</button>
-      <button class="btn btn-primary" onclick="zkCreateBugfind()"><i class="fas fa-save"></i>Saqlash</button>
+      <button class="btn btn-ghost" onclick="closeM('zkBugfindModal')">{% translate "Bekor qilish" %}</button>
+      <button class="btn btn-primary" onclick="zkCreateBugfind()"><i class="fas fa-save"></i>{% translate "Saqlash" %}</button>
     </div>
   </div>
 </div>
@@ -209,14 +210,14 @@
 <div class="overlay" id="zkCodingModal">
   <div class="modal modal-lg" style="max-width:720px">
     <div class="m-head">
-      <h5><i class="fas fa-code" style="color:var(--accent);margin-right:6px"></i>Yangi coding topshiriq</h5>
+      <h5><i class="fas fa-code" style="color:var(--accent);margin-right:6px"></i>{% translate "Yangi coding topshiriq" %}</h5>
       <button class="m-close" onclick="closeM('zkCodingModal')"><i class="fas fa-times"></i></button>
     </div>
     <div class="m-body" style="padding-bottom:4px">
 
       <!-- 1. TIL TANLASH -->
       <div style="margin-bottom:16px">
-        <div style="font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">Dasturlash tili</div>
+        <div style="font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">{% translate "Dasturlash tili" %}</div>
         <div style="display:flex;gap:8px">
           <button class="zk-lang-btn active" data-lang="python" onclick="zkSetLang(this,'python')">
             <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" style="width:18px;height:18px" onerror="this.style.display='none'">
@@ -231,46 +232,126 @@
       </div>
 
       <!-- 2. MASALA -->
-      <div class="fg"><label>Masala sarlavhasi *</label><input class="fc" id="zkCTitle" placeholder="Masalan: Ikki sonning yig'indisi"></div>
-      <div class="fg"><label>Masala sharti *</label><textarea class="fc" id="zkCDesc" rows="3" placeholder="Talabaga ko'rsatiladigan masala matni..."></textarea></div>
+      <div class="fg"><label>{% translate "Masala sarlavhasi *" %}</label><input class="fc" id="zkCTitle" placeholder="{% translate "Masalan: Ikki sonning yig'indisi" %}"></div>
+      <div class="fg"><label>{% translate "Masala sharti *" %}</label><textarea class="fc" id="zkCDesc" rows="3" placeholder="{% translate "Talabaga ko'rsatiladigan masala matni..." %}"></textarea></div>
 
       <!-- 3. TEST VARIANTLARI -->
       <div style="margin-bottom:12px">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-          <div style="font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px">Test variantlari *</div>
-          <button class="btn btn-sm btn-outline" onclick="zkAddTestRow()"><i class="fas fa-plus"></i> Test qo'shish</button>
+          <div style="font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px">{% translate "Test variantlari *" %}</div>
+          <button class="btn btn-sm btn-outline" onclick="zkAddTestRow()"><i class="fas fa-plus"></i> {% translate "Test qo'shish" %}</button>
         </div>
         <div id="zkTestRows" style="display:flex;flex-direction:column;gap:8px">
           <!-- rows inject qilinadi -->
         </div>
-        <div style="font-size:.7rem;color:var(--muted);margin-top:6px">Kirish bo'sh bo'lsa stdin yo'q deb qabul qilinadi</div>
+        <div style="font-size:.7rem;color:var(--muted);margin-top:6px">{% translate "Kirish bo'sh bo'lsa stdin yo'q deb qabul qilinadi" %}</div>
       </div>
 
       <!-- 4. YECHIM KODI -->
-      <div class="fg"><label>Yechim kodi * <span style="font-size:.68rem;color:var(--muted)">(serverda tekshiriladi, talabaga ko'rsatilmaydi)</span></label>
-        <textarea class="fc" id="zkCSolution" rows="5" style="font-family:monospace;font-size:.8rem" placeholder="# To'g'ri yechim kodi..."></textarea>
+      <div class="fg"><label>{% translate "Yechim kodi *" %} <span style="font-size:.68rem;color:var(--muted)">{% translate "(serverda tekshiriladi, talabaga ko'rsatilmaydi)" %}</span></label>
+        <textarea class="fc" id="zkCSolution" rows="5" style="font-family:monospace;font-size:.8rem" placeholder="{% translate "# To'g'ri yechim kodi..." %}"></textarea>
       </div>
 
       <!-- 5. QIYINLIK + BALL -->
       <div class="row2">
-        <div class="fg"><label>Qiyinlik</label>
+        <div class="fg"><label>{% translate "Qiyinlik" %}</label>
           <select class="fc fc-sel" id="zkCDifficulty">
-            <option value="easy">Oson</option><option value="medium">O'rta</option><option value="hard">Qiyin</option>
+            <option value="easy">{% translate "Oson" %}</option><option value="medium">{% translate "O'rta" %}</option><option value="hard">{% translate "Qiyin" %}</option>
           </select>
         </div>
-        <div class="fg"><label>Ball</label><input class="fc" type="number" id="zkCPoints" value="20" min="1"></div>
+        <div class="fg"><label>{% translate "Ball" %}</label><input class="fc" type="number" id="zkCPoints" value="20" min="1"></div>
       </div>
     </div>
     <div class="m-foot">
-      <button class="btn btn-ghost" onclick="closeM('zkCodingModal')">Bekor qilish</button>
-      <button class="btn btn-primary" onclick="zkCreateCoding()"><i class="fas fa-save"></i>Yaratish</button>
+      <button class="btn btn-ghost" onclick="closeM('zkCodingModal')">{% translate "Bekor qilish" %}</button>
+      <button class="btn btn-primary" onclick="zkCreateCoding()"><i class="fas fa-save"></i>{% translate "Yaratish" %}</button>
     </div>
   </div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
+{% translate "Oson" as p_diff_easy %}
+{% translate "O'rta" as p_diff_medium %}
+{% translate "Qiyin" as p_diff_hard %}
+{% translate "Qoralama" as p_st_draft %}
+{% translate "Aktiv" as p_st_active %}
+{% translate "Tugagan" as p_st_completed %}
+{% translate "Arxivlangan" as p_st_archived %}
+{% translate "— Tanlang —" as p_choose %}
+{% translate "— Sessiya tanlang —" as p_choose_session %}
+{% translate "Sessiyalar yo'q" as p_no_sessions %}
+{% translate "Bug-find topshiriqlar yo'q" as p_no_bugfind %}
+{% translate "Coding topshiriqlar yo'q" as p_no_coding %}
+{% translate "Aktivlashtirish" as p_activate %}
+{% translate "Tafsilot" as p_details %}
+{% translate "Nofaol" as p_inactive %}
+{% translate "ta javob" as p_answers_count %}
+{% translate "ball" as p_points_word %}
+{% translate "Havola nusxalandi: " as p_link_copied %}
+{% translate "Sessiya aktivlashtirildi" as p_session_activated %}
+{% translate "Xatolik yuz berdi" as p_error_occurred %}
+{% translate "Natijalarni ko'rish uchun sessiya tanlang" as p_choose_session_results %}
+{% translate "Bu sessiyada hali javoblar yo'q" as p_no_answers_yet %}
+{% translate "O'chirish" as p_delete %}
+{% translate "Test" as p_test_word %}
+{% translate "Nomi kiritish shart" as p_name_required %}
+{% translate "Guruh tanlash shart" as p_group_required %}
+{% translate "Sessiya yaratildi" as p_session_created %}
+{% translate "Token muddati tugagan" as p_token_expired %}
+{% translate "Ulanish xatosi: " as p_conn_error %}
+{% translate "Barcha * maydonlarni to'ldiring" as p_fill_required %}
+{% translate "Bug-find topshiriq yaratildi ✓" as p_bugfind_created %}
+{% translate "Token muddati tugagan, qayta kiring" as p_token_expired_relogin %}
+{% translate "Masala sarlavhasini kiriting" as p_enter_problem_title %}
+{% translate "Masala shartini kiriting" as p_enter_problem_desc %}
+{% translate "Yechim kodini kiriting" as p_enter_solution %}
+{% translate "Kamida 1 ta test varianti qo'shing" as p_add_min_test %}
+{% translate "Barcha testlarda kutilgan chiqishni to'ldiring" as p_fill_expected_output %}
+{% translate "Coding topshiriq yaratildi ✓" as p_coding_created %}
 <script>
+const ZKI18N = {
+  diffEasy: "{{ p_diff_easy|escapejs }}",
+  diffMedium: "{{ p_diff_medium|escapejs }}",
+  diffHard: "{{ p_diff_hard|escapejs }}",
+  stDraft: "{{ p_st_draft|escapejs }}",
+  stActive: "{{ p_st_active|escapejs }}",
+  stCompleted: "{{ p_st_completed|escapejs }}",
+  stArchived: "{{ p_st_archived|escapejs }}",
+  choose: "{{ p_choose|escapejs }}",
+  chooseSession: "{{ p_choose_session|escapejs }}",
+  noSessions: "{{ p_no_sessions|escapejs }}",
+  noBugfind: "{{ p_no_bugfind|escapejs }}",
+  noCoding: "{{ p_no_coding|escapejs }}",
+  activate: "{{ p_activate|escapejs }}",
+  details: "{{ p_details|escapejs }}",
+  active: "{{ p_st_active|escapejs }}",
+  inactive: "{{ p_inactive|escapejs }}",
+  answersCount: "{{ p_answers_count|escapejs }}",
+  pointsWord: "{{ p_points_word|escapejs }}",
+  linkCopied: "{{ p_link_copied|escapejs }}",
+  sessionActivated: "{{ p_session_activated|escapejs }}",
+  errorOccurred: "{{ p_error_occurred|escapejs }}",
+  chooseSessionResults: "{{ p_choose_session_results|escapejs }}",
+  noAnswersYet: "{{ p_no_answers_yet|escapejs }}",
+  deleteWord: "{{ p_delete|escapejs }}",
+  testWord: "{{ p_test_word|escapejs }}",
+  nameRequired: "{{ p_name_required|escapejs }}",
+  groupRequired: "{{ p_group_required|escapejs }}",
+  sessionCreated: "{{ p_session_created|escapejs }}",
+  tokenExpired: "{{ p_token_expired|escapejs }}",
+  connError: "{{ p_conn_error|escapejs }}",
+  fillRequired: "{{ p_fill_required|escapejs }}",
+  bugfindCreated: "{{ p_bugfind_created|escapejs }}",
+  tokenExpiredRelogin: "{{ p_token_expired_relogin|escapejs }}",
+  enterProblemTitle: "{{ p_enter_problem_title|escapejs }}",
+  enterProblemDesc: "{{ p_enter_problem_desc|escapejs }}",
+  enterSolution: "{{ p_enter_solution|escapejs }}",
+  addMinTest: "{{ p_add_min_test|escapejs }}",
+  fillExpectedOutput: "{{ p_fill_expected_output|escapejs }}",
+  codingCreated: "{{ p_coding_created|escapejs }}",
+};
+
 let zkGroups = [];
 let zkSessions = [];
 
@@ -282,15 +363,15 @@ function zkSwitchTab(tab, btn) {
 }
 
 function zkDifficultyLabel(d) {
-  return { easy: 'Oson', medium: "O'rta", hard: 'Qiyin' }[d] || d;
+  return { easy: ZKI18N.diffEasy, medium: ZKI18N.diffMedium, hard: ZKI18N.diffHard }[d] || d;
 }
 
 function zkStatusBdg(s) {
   const m = {
-    draft: '<span class="bdg bdg-draft">Qoralama</span>',
-    active: '<span class="bdg bdg-active"><i class="fas fa-circle" style="font-size:.35rem"></i> Aktiv</span>',
-    completed: '<span class="bdg" style="background:#eff6ff;color:#1d4ed8">Tugagan</span>',
-    archived: '<span class="bdg bdg-inactive">Arxivlangan</span>',
+    draft: `<span class="bdg bdg-draft">${ZKI18N.stDraft}</span>`,
+    active: `<span class="bdg bdg-active"><i class="fas fa-circle" style="font-size:.35rem"></i> ${ZKI18N.stActive}</span>`,
+    completed: `<span class="bdg" style="background:var(--badge-info-bg);color:var(--badge-info-text)">${ZKI18N.stCompleted}</span>`,
+    archived: `<span class="bdg bdg-inactive">${ZKI18N.stArchived}</span>`,
   };
   return m[s] || `<span class="bdg bdg-inactive">${s}</span>`;
 }
@@ -299,7 +380,7 @@ async function zkLoadGroups() {
   const data = await get('/groups/?page_size=200');
   zkGroups = data?.results || [];
   const opts = zkGroups.map(g => `<option value="${g.id}">${g.name}</option>`).join('');
-  document.getElementById('zkSGroup').innerHTML = '<option value="">— Tanlang —</option>' + opts;
+  document.getElementById('zkSGroup').innerHTML = `<option value="">${ZKI18N.choose}</option>` + opts;
 }
 
 async function zkLoadStats() {
@@ -331,7 +412,7 @@ function zkGroupName(id) {
 function zkRenderSessions() {
   const tbody = document.getElementById('zkSessionsBody');
   if (!zkSessions.length) {
-    tbody.innerHTML = '<tr><td colspan="7" class="zk-empty"><i class="fas fa-layer-group"></i><p>Sessiyalar yo\'q</p></td></tr>';
+    tbody.innerHTML = `<tr><td colspan="7" class="zk-empty"><i class="fas fa-layer-group"></i><p>${ZKI18N.noSessions}</p></td></tr>`;
     return;
   }
   tbody.innerHTML = zkSessions.map(s => `
@@ -343,8 +424,8 @@ function zkRenderSessions() {
       <td><span class="zk-link-pill" onclick="zkCopyLink('${s.share_link}')"><i class="fas fa-link"></i>${s.share_link}</span></td>
       <td>${fdate(s.created_at)}</td>
       <td><div style="display:flex;gap:6px;align-items:center">
-        ${s.status === 'draft' ? `<button class="btn btn-sm btn-outline" onclick="zkActivateSession('${s.id}')">Aktivlashtirish</button>` : ''}
-        <a class="btn btn-sm btn-ghost" href="/zukko/teacher/session/${s.id}/"><i class="fas fa-eye"></i> Tafsilot</a>
+        ${s.status === 'draft' ? `<button class="btn btn-sm btn-outline" onclick="zkActivateSession('${s.id}')">${ZKI18N.activate}</button>` : ''}
+        <a class="btn btn-sm btn-ghost" href="/zukko/teacher/session/${s.id}/"><i class="fas fa-eye"></i> ${ZKI18N.details}</a>
       </div></td>
     </tr>
   `).join('');
@@ -353,7 +434,7 @@ function zkRenderSessions() {
 function zkRenderBugfind(items) {
   const tbody = document.getElementById('zkBugfindBody');
   if (!items.length) {
-    tbody.innerHTML = '<tr><td colspan="6" class="zk-empty"><i class="fas fa-bug"></i><p>Bug-find topshiriqlar yo\'q</p></td></tr>';
+    tbody.innerHTML = `<tr><td colspan="6" class="zk-empty"><i class="fas fa-bug"></i><p>${ZKI18N.noBugfind}</p></td></tr>`;
     return;
   }
   tbody.innerHTML = items.map(c => `
@@ -363,7 +444,7 @@ function zkRenderBugfind(items) {
       <td>${c.bug_type || '—'}</td>
       <td>${c.programming_language}</td>
       <td>${c.points}</td>
-      <td>${c.is_active ? '<span class="bdg bdg-active">Aktiv</span>' : '<span class="bdg bdg-inactive">Nofaol</span>'}</td>
+      <td>${c.is_active ? `<span class="bdg bdg-active">${ZKI18N.active}</span>` : `<span class="bdg bdg-inactive">${ZKI18N.inactive}</span>`}</td>
     </tr>
   `).join('');
 }
@@ -371,7 +452,7 @@ function zkRenderBugfind(items) {
 function zkRenderCoding(items) {
   const tbody = document.getElementById('zkCodingBody');
   if (!items.length) {
-    tbody.innerHTML = '<tr><td colspan="5" class="zk-empty"><i class="fas fa-code"></i><p>Coding topshiriqlar yo\'q</p></td></tr>';
+    tbody.innerHTML = `<tr><td colspan="5" class="zk-empty"><i class="fas fa-code"></i><p>${ZKI18N.noCoding}</p></td></tr>`;
     return;
   }
   tbody.innerHTML = items.map(c => `
@@ -380,14 +461,14 @@ function zkRenderCoding(items) {
       <td>${zkDifficultyLabel(c.difficulty)}</td>
       <td>${c.programming_language}</td>
       <td>${c.points}</td>
-      <td>${c.is_active ? '<span class="bdg bdg-active">Aktiv</span>' : '<span class="bdg bdg-inactive">Nofaol</span>'}</td>
+      <td>${c.is_active ? `<span class="bdg bdg-active">${ZKI18N.active}</span>` : `<span class="bdg bdg-inactive">${ZKI18N.inactive}</span>`}</td>
     </tr>
   `).join('');
 }
 
 function zkFillResultsSelect() {
   const sel = document.getElementById('zkResultsSession');
-  sel.innerHTML = '<option value="">— Sessiya tanlang —</option>' +
+  sel.innerHTML = `<option value="">${ZKI18N.chooseSession}</option>` +
     zkSessions.map(s => `<option value="${s.id}">${s.title}</option>`).join('');
 }
 
@@ -395,21 +476,21 @@ async function zkLoadResults() {
   const id = document.getElementById('zkResultsSession').value;
   const body = document.getElementById('zkResultsBody');
   if (!id) {
-    body.innerHTML = '<div class="zk-empty"><i class="fas fa-chart-column"></i><p>Natijalarni ko\'rish uchun sessiya tanlang</p></div>';
+    body.innerHTML = `<div class="zk-empty"><i class="fas fa-chart-column"></i><p>${ZKI18N.chooseSessionResults}</p></div>`;
     return;
   }
   body.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
   const data = await get(`/challenges/sessions/${id}/results/`);
   const names = Object.keys(data || {});
   if (!names.length) {
-    body.innerHTML = '<div class="zk-empty"><i class="fas fa-inbox"></i><p>Bu sessiyada hali javoblar yo\'q</p></div>';
+    body.innerHTML = `<div class="zk-empty"><i class="fas fa-inbox"></i><p>${ZKI18N.noAnswersYet}</p></div>`;
     return;
   }
   body.innerHTML = names.map(name => {
     const subs = data[name];
     const total = subs.reduce((s, x) => s + (x.points_earned || 0), 0);
     const maxSuspicion = Math.max(...subs.map(x => x.suspicion_score || 0));
-    const susColor = maxSuspicion < 0.3 ? '#16a34a' : maxSuspicion <= 0.7 ? '#d97706' : '#dc2626';
+    const susColor = maxSuspicion < 0.3 ? 'var(--success)' : maxSuspicion <= 0.7 ? 'var(--warning)' : 'var(--danger)';
     return `<div style="padding:12px 0;border-bottom:1px solid var(--border)">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
         <div style="display:flex;align-items:center;gap:10px">
@@ -417,8 +498,8 @@ async function zkLoadResults() {
           <span style="font-weight:700;font-size:.85rem">${name}</span>
         </div>
         <div style="display:flex;align-items:center;gap:10px">
-          <span style="font-size:.78rem;color:var(--muted)">${subs.length} ta javob</span>
-          <span style="font-weight:800;font-size:.85rem">${total} ball</span>
+          <span style="font-size:.78rem;color:var(--muted)">${subs.length} ${ZKI18N.answersCount}</span>
+          <span style="font-weight:800;font-size:.85rem">${total} ${ZKI18N.pointsWord}</span>
           <b style="color:${susColor};font-size:.78rem">⚠ ${maxSuspicion.toFixed(2)}</b>
         </div>
       </div>
@@ -428,13 +509,13 @@ async function zkLoadResults() {
 
 function zkCopyLink(link) {
   navigator.clipboard?.writeText(link);
-  toast("Havola nusxalandi: " + link, 'ok');
+  toast(ZKI18N.linkCopied + link, 'ok');
 }
 
 async function zkActivateSession(id) {
   const res = await post(`/challenges/sessions/${id}/activate/`, {});
-  if (res?.ok) { toast('Sessiya aktivlashtirildi', 'ok'); zkLoadStats(); }
-  else toast('Xatolik yuz berdi', 'err');
+  if (res?.ok) { toast(ZKI18N.sessionActivated, 'ok'); zkLoadStats(); }
+  else toast(ZKI18N.errorOccurred, 'err');
 }
 
 function zkOpenSessionModal() { openM('zkSessionModal'); }
@@ -453,8 +534,8 @@ function zkAddTestRow() {
   div.id = 'zkTR' + idx;
   div.innerHTML = `
     <div style="grid-column:1/-1;display:flex;align-items:center;justify-content:space-between">
-      <span style="font-size:.68rem;font-weight:700;color:var(--muted)">Test ${idx}</span>
-      <button type="button" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:.9rem;padding:0 2px" onclick="document.getElementById('zkTR${idx}').remove();zkRenumberTests()" title="O'chirish"><i class="fas fa-times"></i></button>
+      <span style="font-size:.68rem;font-weight:700;color:var(--muted)">${ZKI18N.testWord} ${idx}</span>
+      <button type="button" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:.9rem;padding:0 2px" onclick="document.getElementById('zkTR${idx}').remove();zkRenumberTests()" title="${ZKI18N.deleteWord}"><i class="fas fa-times"></i></button>
     </div>
     <div class="fg" style="margin:0"><label style="font-size:.7rem">Kirish (stdin)</label><textarea class="fc zk-tin" rows="2" placeholder="5&#10;3"></textarea></div>
     <div class="fg" style="margin:0"><label style="font-size:.7rem">Kutilgan chiqish *</label><textarea class="fc zk-tout" rows="2" placeholder="8"></textarea></div>
@@ -465,7 +546,7 @@ function zkAddTestRow() {
 function zkRenumberTests() {
   document.querySelectorAll('#zkTestRows .zk-test-row').forEach((row, i) => {
     const lbl = row.querySelector('span');
-    if (lbl) lbl.textContent = 'Test ' + (i + 1);
+    if (lbl) lbl.textContent = ZKI18N.testWord + ' ' + (i + 1);
   });
 }
 
@@ -478,8 +559,8 @@ function zkSetLang(btn, lang) {
 async function zkCreateSession() {
   const title = document.getElementById('zkSTitle').value.trim();
   const group = document.getElementById('zkSGroup').value;
-  if (!title) { toast('Nomi kiritish shart', 'wrn'); return; }
-  if (!group) { toast('Guruh tanlash shart', 'wrn'); return; }
+  if (!title) { toast(ZKI18N.nameRequired, 'wrn'); return; }
+  if (!group) { toast(ZKI18N.groupRequired, 'wrn'); return; }
   try {
     const res = await post('/challenges/sessions/', {
       title, group,
@@ -489,15 +570,15 @@ async function zkCreateSession() {
       time_limit_minutes: parseInt(document.getElementById('zkSTimeLimit').value) || 45,
     });
     if (res?.ok) {
-      toast('Sessiya yaratildi', 'ok');
+      toast(ZKI18N.sessionCreated, 'ok');
       closeM('zkSessionModal');
       document.getElementById('zkSTitle').value = '';
       zkLoadStats();
     } else {
       const err = res ? await res.json().catch(() => ({})) : {};
-      toast(err?.detail || (res ? `HTTP ${res.status}` : 'Token muddati tugagan'), 'err');
+      toast(err?.detail || (res ? `HTTP ${res.status}` : ZKI18N.tokenExpired), 'err');
     }
-  } catch(e) { toast('Ulanish xatosi: ' + (e?.message || ''), 'err'); }
+  } catch(e) { toast(ZKI18N.connError + (e?.message || ''), 'err'); }
 }
 
 async function zkCreateBugfind() {
@@ -507,7 +588,7 @@ async function zkCreateBugfind() {
   const correct_code = document.getElementById('zkBCorrect').value;
   const bug_explanation = document.getElementById('zkBExplain').value.trim();
   if (!title || !description || !buggy_code || !correct_code || !bug_explanation) {
-    toast('Barcha * maydonlarni to\'ldiring', 'wrn'); return;
+    toast(ZKI18N.fillRequired, 'wrn'); return;
   }
   try {
     const res = await post('/challenges/bugfind/', {
@@ -518,15 +599,15 @@ async function zkCreateBugfind() {
       programming_language: document.getElementById('zkBLang').value.trim() || 'python',
     });
     if (res?.ok) {
-      toast('Bug-find topshiriq yaratildi ✓', 'ok');
+      toast(ZKI18N.bugfindCreated, 'ok');
       closeM('zkBugfindModal');
       document.querySelectorAll('#zkBugfindModal .fc').forEach(el => el.value = el.tagName === 'SELECT' ? el.options[0]?.value : '');
       zkLoadStats();
     } else {
       const err = res ? await res.json().catch(() => ({})) : {};
-      toast(err?.detail || (res ? `HTTP ${res.status} xato` : 'Token muddati tugagan, qayta kiring'), 'err', 6000);
+      toast(err?.detail || (res ? `HTTP ${res.status} xato` : ZKI18N.tokenExpiredRelogin), 'err', 6000);
     }
-  } catch(e) { toast('Ulanish xatosi: ' + (e?.message || ''), 'err', 6000); }
+  } catch(e) { toast(ZKI18N.connError + (e?.message || ''), 'err', 6000); }
 }
 
 async function zkCreateCoding() {
@@ -535,13 +616,13 @@ async function zkCreateCoding() {
   const solution_code = document.getElementById('zkCSolution').value.trim();
   const lang = document.getElementById('zkCLang').value;
 
-  if (!title)         { toast('Masala sarlavhasini kiriting', 'wrn'); return; }
-  if (!description)   { toast('Masala shartini kiriting', 'wrn'); return; }
-  if (!solution_code) { toast('Yechim kodini kiriting', 'wrn'); return; }
+  if (!title)         { toast(ZKI18N.enterProblemTitle, 'wrn'); return; }
+  if (!description)   { toast(ZKI18N.enterProblemDesc, 'wrn'); return; }
+  if (!solution_code) { toast(ZKI18N.enterSolution, 'wrn'); return; }
 
   // test variantlarini yig'ish
   const rows = document.querySelectorAll('#zkTestRows .zk-test-row');
-  if (!rows.length) { toast('Kamida 1 ta test varianti qo\'shing', 'wrn'); return; }
+  if (!rows.length) { toast(ZKI18N.addMinTest, 'wrn'); return; }
 
   const hidden_test_cases = [];
   let missingOutput = false;
@@ -551,7 +632,7 @@ async function zkCreateCoding() {
     if (!out) { missingOutput = true; return; }
     hidden_test_cases.push({ input: inp, expected_output: out });
   });
-  if (missingOutput) { toast('Barcha testlarda kutilgan chiqishni to\'ldiring', 'wrn'); return; }
+  if (missingOutput) { toast(ZKI18N.fillExpectedOutput, 'wrn'); return; }
 
   try {
     const res = await post('/challenges/coding/', {
@@ -563,7 +644,7 @@ async function zkCreateCoding() {
       points: parseInt(document.getElementById('zkCPoints').value) || 20,
     });
     if (res?.ok) {
-      toast('Coding topshiriq yaratildi ✓', 'ok');
+      toast(ZKI18N.codingCreated, 'ok');
       closeM('zkCodingModal');
       // formni tozalash
       ['zkCTitle','zkCSolution'].forEach(id => document.getElementById(id).value = '');
@@ -576,9 +657,9 @@ async function zkCreateCoding() {
     } else {
       const err = res ? await res.json().catch(() => ({})) : {};
       const detail = err?.detail || JSON.stringify(err).slice(0,200);
-      toast(detail || (res ? `HTTP ${res.status}` : 'Token muddati tugagan, qayta kiring'), 'err', 7000);
+      toast(detail || (res ? `HTTP ${res.status}` : ZKI18N.tokenExpiredRelogin), 'err', 7000);
     }
-  } catch(e) { toast('Ulanish xatosi: ' + (e?.message || ''), 'err', 6000); }
+  } catch(e) { toast(ZKI18N.connError + (e?.message || ''), 'err', 6000); }
 }
 
 if (!initAuth()) { /* toLogin() already called */ } else {

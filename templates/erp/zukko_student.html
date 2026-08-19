@@ -1,4 +1,5 @@
 {% extends "erp/base.html" %}
+{% load i18n %}
 {% block title %}ZUKKO Challenges — Qorako'l Ilm Ziyo{% endblock %}
 {% block page_title %}ZUKKO Challenges{% endblock %}
 
@@ -19,41 +20,62 @@
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;animation:fadeUp .3s ease both">
   <div>
     <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">ZUKKO Challenges</h2>
-    <p style="font-size:.75rem;color:var(--muted);margin-top:3px">Kod topshiriqlarini yeching, XP va ball to'plang</p>
+    <p style="font-size:.75rem;color:var(--muted);margin-top:3px">{% translate "Kod topshiriqlarini yeching, XP va ball to'plang" %}</p>
   </div>
 </div>
 
 <div class="zk-stats">
   <div class="mini-stat" style="animation-delay:.05s">
     <div class="mini-stat-icon ic-amber"><i class="fas fa-bolt"></i></div>
-    <div><div class="mini-stat-val" id="zkXp">—</div><div class="mini-stat-lbl">Jami XP</div></div>
+    <div><div class="mini-stat-val" id="zkXp">—</div><div class="mini-stat-lbl">{% translate "Jami XP" %}</div></div>
   </div>
   <div class="mini-stat" style="animation-delay:.1s">
     <div class="mini-stat-icon ic-purple"><i class="fas fa-fire"></i></div>
-    <div><div class="mini-stat-val" id="zkSolved">—</div><div class="mini-stat-lbl">Yechilgan topshiriqlar</div></div>
+    <div><div class="mini-stat-val" id="zkSolved">—</div><div class="mini-stat-lbl">{% translate "Yechilgan topshiriqlar" %}</div></div>
   </div>
   <div class="mini-stat" style="animation-delay:.15s">
     <div class="mini-stat-icon ic-green"><i class="fas fa-bullseye"></i></div>
-    <div><div class="mini-stat-val" id="zkAccuracy">—</div><div class="mini-stat-lbl">Aniqlik</div></div>
+    <div><div class="mini-stat-val" id="zkAccuracy">—</div><div class="mini-stat-lbl">{% translate "Aniqlik" %}</div></div>
   </div>
   <div class="mini-stat" style="animation-delay:.2s">
     <div class="mini-stat-icon ic-blue"><i class="fas fa-chart-line"></i></div>
-    <div><div class="mini-stat-val" id="zkMastery">—</div><div class="mini-stat-lbl">O'zlashtirish</div></div>
+    <div><div class="mini-stat-val" id="zkMastery">—</div><div class="mini-stat-lbl">{% translate "O'zlashtirish" %}</div></div>
   </div>
 </div>
 
 <div class="card">
   <div class="card-header">
-    <span class="card-title">Faol sessiyalar</span>
+    <span class="card-title">{% translate "Faol sessiyalar" %}</span>
   </div>
   <div class="card-body" style="padding:0" id="zkSessionsList">
-    <div class="loading"><div class="spinner"></div><p>Yuklanmoqda...</p></div>
+    <div class="loading"><div class="spinner"></div><p>{% translate "Yuklanmoqda..." %}</p></div>
   </div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
+{% translate "Aralash" as p_type_mixed %}
+{% translate "Bug-find" as p_type_bugfind %}
+{% translate "Coding" as p_type_coding %}
+{% translate "Test" as p_type_quiz %}
+{% translate "Hozircha faol sessiya yo'q" as p_no_active_sessions %}
+{% translate "daqiqa" as p_minutes %}
+{% translate "ta topshiriq" as p_challenge_count %}
+{% translate "Qatnashgansiz" as p_already_participated %}
+{% translate "Boshlash" as p_start %}
 <script>
+const ZSI18N = {
+  typeMixed: "{{ p_type_mixed|escapejs }}",
+  typeBugfind: "{{ p_type_bugfind|escapejs }}",
+  typeCoding: "{{ p_type_coding|escapejs }}",
+  typeQuiz: "{{ p_type_quiz|escapejs }}",
+  noActiveSessions: "{{ p_no_active_sessions|escapejs }}",
+  minutes: "{{ p_minutes|escapejs }}",
+  challengeCount: "{{ p_challenge_count|escapejs }}",
+  alreadyParticipated: "{{ p_already_participated|escapejs }}",
+  start: "{{ p_start|escapejs }}",
+};
+
 async function zkLoadProgress() {
   const progress = await get('/challenges/progress/');
   const items = Array.isArray(progress) ? progress : [];
@@ -76,7 +98,7 @@ async function zkLoadProgress() {
 }
 
 function zkSessionTypeLabel(t) {
-  return { mixed: 'Aralash', bugfind: 'Bug-find', coding: 'Coding', quiz: 'Test' }[t] || t;
+  return { mixed: ZSI18N.typeMixed, bugfind: ZSI18N.typeBugfind, coding: ZSI18N.typeCoding, quiz: ZSI18N.typeQuiz }[t] || t;
 }
 
 async function zkLoadSessions() {
@@ -85,7 +107,7 @@ async function zkLoadSessions() {
   const items = Array.isArray(sessions) ? sessions : [];
 
   if (!items.length) {
-    list.innerHTML = '<div class="zk-empty"><i class="fas fa-layer-group"></i><p>Hozircha faol sessiya yo\'q</p></div>';
+    list.innerHTML = `<div class="zk-empty"><i class="fas fa-layer-group"></i><p>${ZSI18N.noActiveSessions}</p></div>`;
     return;
   }
 
@@ -96,14 +118,14 @@ async function zkLoadSessions() {
         <div class="zk-session-meta">
           <i class="fas fa-shapes" style="margin-right:3px"></i>${zkSessionTypeLabel(s.session_type)}
           &nbsp;|&nbsp;
-          <i class="fas fa-clock" style="margin-right:3px"></i>${s.time_limit_minutes} daqiqa
+          <i class="fas fa-clock" style="margin-right:3px"></i>${s.time_limit_minutes} ${ZSI18N.minutes}
           &nbsp;|&nbsp;
-          <i class="fas fa-list-ol" style="margin-right:3px"></i>${s.challenges_count} ta topshiriq
+          <i class="fas fa-list-ol" style="margin-right:3px"></i>${s.challenges_count} ${ZSI18N.challengeCount}
         </div>
       </div>
       ${s.already_submitted
-        ? '<span class="bdg" style="background:#eff6ff;color:#1d4ed8">Qatnashgansiz</span>'
-        : `<a class="btn btn-primary btn-sm" href="/zukko/focus/${s.share_link}/"><i class="fas fa-play"></i>Boshlash</a>`}
+        ? `<span class="bdg" style="background:var(--badge-info-bg);color:var(--badge-info-text)">${ZSI18N.alreadyParticipated}</span>`
+        : `<a class="btn btn-primary btn-sm" href="/zukko/focus/${s.share_link}/"><i class="fas fa-play"></i>${ZSI18N.start}</a>`}
     </div>
   `).join('');
 }

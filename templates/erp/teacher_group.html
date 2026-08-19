@@ -1,11 +1,12 @@
 ﻿{% extends "erp/base.html" %}
-{% block title %}Guruh — Qorako'l Ilm Ziyo{% endblock %}
-{% block page_title %}<span id="pgTitle">Guruh</span>{% endblock %}
+{% load i18n %}
+{% block title %}{% translate "Guruh — Qorako'l Ilm Ziyo" %}{% endblock %}
+{% block page_title %}<span id="pgTitle">{% translate "Guruh" %}</span>{% endblock %}
 
 {% block extra_head %}
 <style>
 /* ── BACK BUTTON ──────────────────────────────────────────── */
-.tg-back{display:inline-flex;align-items:center;gap:8px;color:var(--muted);text-decoration:none;font-size:.8rem;font-weight:600;padding:7px 14px;border-radius:9px;border:1.5px solid var(--border);background:#fff;transition:all .2s;margin-bottom:16px;animation:fadeUp .3s ease both}
+.tg-back{display:inline-flex;align-items:center;gap:8px;color:var(--muted);text-decoration:none;font-size:.8rem;font-weight:600;padding:7px 14px;border-radius:9px;border:1.5px solid var(--border);background:var(--card);transition:all .2s;margin-bottom:16px;animation:fadeUp .3s ease both}
 .tg-back:hover{background:var(--bg);color:var(--text);border-color:#cbd5e1;transform:translateX(-2px)}
 
 /* ── HERO ─────────────────────────────────────────────────── */
@@ -25,7 +26,7 @@
 .tg-pill-g{background:rgba(16,185,129,.16);color:#34d399;border:1px solid rgba(16,185,129,.2)}
 
 /* ── TABS ─────────────────────────────────────────────────── */
-.tg-tabs{display:flex;gap:4px;background:#fff;border:1px solid var(--border);border-radius:13px;padding:5px;margin-bottom:20px;animation:fadeUp .4s ease .06s both;box-shadow:var(--shadow)}
+.tg-tabs{display:flex;gap:4px;background:var(--card);border:1px solid var(--border);border-radius:13px;padding:5px;margin-bottom:20px;animation:fadeUp .4s ease .06s both;box-shadow:var(--shadow)}
 .tg-tab{flex:1;padding:10px;border-radius:9px;border:none;background:none;font-family:inherit;font-size:.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all .22s cubic-bezier(.4,0,.2,1);display:flex;align-items:center;justify-content:center;gap:7px;position:relative;overflow:hidden}
 .tg-tab::after{content:'';position:absolute;inset:0;background:var(--grad);opacity:0;transition:opacity .22s;border-radius:9px}
 .tg-tab:hover{color:var(--text);background:var(--bg)}
@@ -41,8 +42,8 @@
 /* ── INFO CARD ────────────────────────────────────────────── */
 .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 @media(max-width:700px){.info-grid{grid-template-columns:1fr}}
-.info-row{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;border-radius:11px;background:#f8f9fc;border:1px solid var(--border);transition:background .18s}
-.info-row:hover{background:#f0f1f5}
+.info-row{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;border-radius:11px;background:var(--card);border:1px solid var(--border);transition:background .18s}
+.info-row:hover{background:var(--bg)}
 .info-ic{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:.82rem;flex-shrink:0}
 .info-label{font-size:.68rem;color:var(--muted);font-weight:600;margin-bottom:3px;text-transform:uppercase;letter-spacing:.04em}
 .info-val{font-size:.86rem;font-weight:700;color:var(--text)}
@@ -53,7 +54,7 @@
 
 /* ── HOMEWORK TABLE ───────────────────────────────────────── */
 .hw-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px}
-.hw-count-chip{display:inline-flex;align-items:center;gap:6px;background:#f8f9fc;border:1px solid var(--border);padding:5px 12px;border-radius:8px;font-size:.75rem;font-weight:700;color:var(--muted)}
+.hw-count-chip{display:inline-flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--border);padding:5px 12px;border-radius:8px;font-size:.75rem;font-weight:700;color:var(--muted)}
 
 /* homework status mini badges */
 .hw-num{display:inline-flex;align-items:center;gap:4px;font-size:.75rem;font-weight:700}
@@ -64,7 +65,7 @@
 /* overdue row highlight */
 .row-overdue{background:rgba(239,68,68,.04)!important}
 .row-overdue:hover{background:rgba(239,68,68,.08)!important}
-.overdue-chip{display:inline-flex;align-items:center;gap:4px;background:#fef2f2;color:#b91c1c;border:1px solid #fecaca;padding:2px 8px;border-radius:5px;font-size:.65rem;font-weight:700}
+.overdue-chip{display:inline-flex;align-items:center;gap:4px;background:var(--badge-danger-bg);color:var(--badge-danger-text);border:1px solid #fecaca;padding:2px 8px;border-radius:5px;font-size:.65rem;font-weight:700}
 
 /* ── HW ADD BUTTON ────────────────────────────────────────── */
 .btn-hw-add{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:9px;background:var(--grad);color:#fff;font-size:.8rem;font-weight:700;border:none;cursor:pointer;font-family:inherit;box-shadow:0 3px 14px rgba(5,150,105,.3);transition:all .2s}
@@ -76,16 +77,16 @@
 .att-date-label{font-size:.82rem;font-weight:800}
 .att-date-stats{display:flex;gap:12px;font-size:.72rem;font-weight:700}
 .att-date-stat{display:flex;align-items:center;gap:4px}
-.att-student-list{background:#fff;border:1px solid var(--border);border-top:none;border-radius:0 0 11px 11px;overflow:hidden}
+.att-student-list{background:var(--card);border:1px solid var(--border);border-top:none;border-radius:0 0 11px 11px;overflow:hidden}
 .att-row{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border);transition:background .15s}
 .att-row:last-child{border-bottom:none}
-.att-row:hover{background:#f8f9fc}
+.att-row:hover{background:var(--bg)}
 .att-student-av{width:30px;height:30px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#fff;font-size:.62rem;font-weight:700;flex-shrink:0;box-shadow:0 2px 8px rgba(5,150,105,.2)}
 
 /* ── STAT MINI CARDS ──────────────────────────────────────── */
 .mini-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
 @media(max-width:700px){.mini-stats{grid-template-columns:1fr 1fr}}
-.mini-stat{background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center;box-shadow:var(--shadow);animation:fadeUp .38s ease both}
+.mini-stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center;box-shadow:var(--shadow);animation:fadeUp .38s ease both}
 .mini-stat-v{font-size:1.35rem;font-weight:900;color:var(--text);letter-spacing:-.4px;line-height:1.1}
 .mini-stat-l{font-size:.65rem;color:var(--muted);margin-top:4px;font-weight:600}
 
@@ -96,7 +97,7 @@
 {% endblock %}
 
 {% block content %}
-<a href="/teacher/" class="tg-back"><i class="fas fa-arrow-left"></i> Guruhlarim</a>
+<a href="/teacher/" class="tg-back"><i class="fas fa-arrow-left"></i> {% translate "Guruhlarim" %}</a>
 
 <!-- Hero -->
 <div class="tg-hero" id="groupHero" style="display:none">
@@ -113,8 +114,8 @@
         <span id="grpStatus">—</span>
       </div>
       <div class="tg-pills">
-        <span class="tg-pill tg-pill-o"><i class="fas fa-user-graduate" style="font-size:.6rem"></i><span id="grpStuCnt">0</span> o'quvchi</span>
-        <span class="tg-pill tg-pill-b"><i class="fas fa-book-open" style="font-size:.6rem"></i><span id="grpHwCnt">0</span> vazifa</span>
+        <span class="tg-pill tg-pill-o"><i class="fas fa-user-graduate" style="font-size:.6rem"></i><span id="grpStuCnt">0</span> {% translate "o'quvchi" %}</span>
+        <span class="tg-pill tg-pill-b"><i class="fas fa-book-open" style="font-size:.6rem"></i><span id="grpHwCnt">0</span> {% translate "vazifa" %}</span>
         <span class="tg-pill tg-pill-g"><i class="fas fa-calendar" style="font-size:.6rem"></i><span id="grpDays">—</span></span>
       </div>
     </div>
@@ -124,9 +125,9 @@
 
 <!-- Tabs -->
 <div class="tg-tabs">
-  <button class="tg-tab active" onclick="switchTab(0)" id="tab0"><i class="fas fa-info-circle"></i> Ma'lumotlar</button>
-  <button class="tg-tab" onclick="switchTab(1)" id="tab1"><i class="fas fa-book-open"></i> Uyga vazifalar</button>
-  <button class="tg-tab" onclick="switchTab(2)" id="tab2"><i class="fas fa-calendar-check"></i> Davomat</button>
+  <button class="tg-tab active" onclick="switchTab(0)" id="tab0"><i class="fas fa-info-circle"></i> {% translate "Ma'lumotlar" %}</button>
+  <button class="tg-tab" onclick="switchTab(1)" id="tab1"><i class="fas fa-book-open"></i> {% translate "Uyga vazifalar" %}</button>
+  <button class="tg-tab" onclick="switchTab(2)" id="tab2"><i class="fas fa-calendar-check"></i> {% translate "Davomat" %}</button>
 </div>
 
 <!-- Panel 0: Ma'lumotlar -->
@@ -138,11 +139,11 @@
 <div class="tg-panel" id="panel1">
   <div class="hw-toolbar">
     <div style="display:flex;align-items:center;gap:10px">
-      <span style="font-weight:800;font-size:.9rem;color:var(--text)">Uyga vazifalar</span>
-      <span class="hw-count-chip"><i class="fas fa-book-open" style="font-size:.65rem"></i><span id="hwTotalLbl">0</span> ta</span>
+      <span style="font-weight:800;font-size:.9rem;color:var(--text)">{% translate "Uyga vazifalar" %}</span>
+      <span class="hw-count-chip"><i class="fas fa-book-open" style="font-size:.65rem"></i><span id="hwTotalLbl">0</span> {% translate "ta" %}</span>
     </div>
     <button class="btn-hw-add" onclick="openM('hwModal')">
-      <i class="fas fa-plus"></i> Vazifa qo'shish
+      <i class="fas fa-plus"></i> {% translate "Vazifa qo'shish" %}
     </button>
   </div>
   <div class="card" style="overflow:hidden">
@@ -155,15 +156,15 @@
   <div class="mini-stats" id="attStats">
     <div class="mini-stat" style="animation-delay:.04s">
       <div class="mini-stat-v" id="msTotalDays">—</div>
-      <div class="mini-stat-l">Jami dars kunlari</div>
+      <div class="mini-stat-l">{% translate "Jami dars kunlari" %}</div>
     </div>
     <div class="mini-stat" style="animation-delay:.09s">
       <div class="mini-stat-v" id="msAvgAtt">—</div>
-      <div class="mini-stat-l">O'rtacha davomat</div>
+      <div class="mini-stat-l">{% translate "O'rtacha davomat" %}</div>
     </div>
     <div class="mini-stat" style="animation-delay:.14s">
       <div class="mini-stat-v" id="msTotalStu">—</div>
-      <div class="mini-stat-l">O'quvchilar soni</div>
+      <div class="mini-stat-l">{% translate "O'quvchilar soni" %}</div>
     </div>
   </div>
   <div id="attContent"><div class="loading"><div class="spinner"></div></div></div>
@@ -173,44 +174,109 @@
 <div class="overlay" id="hwModal">
   <div class="modal modal-lg">
     <div class="m-head">
-      <h5><i class="fas fa-plus-circle" style="color:var(--accent);margin-right:6px"></i> Yangi uyga vazifa</h5>
+      <h5><i class="fas fa-plus-circle" style="color:var(--accent);margin-right:6px"></i> {% translate "Yangi uyga vazifa" %}</h5>
       <button class="m-close" onclick="closeM('hwModal')"><i class="fas fa-times"></i></button>
     </div>
     <div class="m-body">
       <div class="fg">
-        <label>Mavzu (sarlavha)</label>
-        <input class="fc" id="hwTitle" placeholder="Masalan: 2-bob mashqlar" />
+        <label>{% translate "Mavzu (sarlavha)" %}</label>
+        <input class="fc" id="hwTitle" placeholder="{% translate "Masalan: 2-bob mashqlar" %}" />
       </div>
       <div class="row2">
         <div class="fg">
-          <label>Berilgan sana</label>
+          <label>{% translate "Berilgan sana" %}</label>
           <input class="fc" type="date" id="hwAssigned" />
         </div>
         <div class="fg">
-          <label>Tugash sanasi</label>
+          <label>{% translate "Tugash sanasi" %}</label>
           <input class="fc" type="date" id="hwDue" />
         </div>
       </div>
       <div class="fg">
-        <label>Dars sanasi</label>
+        <label>{% translate "Dars sanasi" %}</label>
         <input class="fc" type="date" id="hwLesson" />
       </div>
       <div class="fg">
-        <label>Tavsif (ixtiyoriy)</label>
-        <textarea class="fc" id="hwDesc" rows="3" placeholder="Qo'shimcha izohlar..."></textarea>
+        <label>{% translate "Tavsif (ixtiyoriy)" %}</label>
+        <textarea class="fc" id="hwDesc" rows="3" placeholder="{% translate "Qo'shimcha izohlar..." %}"></textarea>
       </div>
     </div>
     <div class="m-foot">
-      <button class="btn btn-outline" onclick="closeM('hwModal')">Bekor qilish</button>
-      <button class="btn btn-primary" onclick="saveHw()"><i class="fas fa-save"></i> Saqlash</button>
+      <button class="btn btn-outline" onclick="closeM('hwModal')">{% translate "Bekor qilish" %}</button>
+      <button class="btn btn-primary" onclick="saveHw()"><i class="fas fa-save"></i> {% translate "Saqlash" %}</button>
     </div>
   </div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
+{% translate "Guruh topilmadi" as p_group_not_found %}
+{% translate "Guruh" as p_group_fallback %}
+{% translate "Guruh nomi" as p_lbl_name %}
+{% translate "Kurs / Yo'nalish" as p_lbl_course %}
+{% translate "O'qituvchi" as p_lbl_teacher %}
+{% translate "O'quvchilar soni" as p_lbl_stu_count %}
+{% translate "ta" as p_ta_unit %}
+{% translate "Dars vaqti" as p_lbl_time %}
+{% translate "Boshlangan sana" as p_lbl_start %}
+{% translate "Tugash sanasi" as p_lbl_end %}
+{% translate "Belgilanmagan" as p_not_set %}
+{% translate "Hafta kunlari" as p_lbl_days %}
+{% translate "Holati" as p_lbl_status %}
+{% translate "O'quvchilar ro'yxati" as p_stu_list %}
+{% translate "Ism" as p_th_name %}
+{% translate "Telefon" as p_th_phone %}
+{% translate "Holat" as p_th_status %}
+{% translate "O'quvchi topilmadi" as p_stu_not_found %}
+{% translate "Hozircha vazifa yo'q" as p_no_hw %}
+{% translate "Mavzu" as p_th_topic %}
+{% translate "Berilgan" as p_th_given %}
+{% translate "Tugash" as p_th_due %}
+{% translate "Dars sanasi" as p_th_lesson %}
+{% translate "Muddati o'tgan" as p_overdue %}
+{% translate "O'chirish" as p_delete %}
+{% translate "Mavzuni kiriting" as p_enter_topic %}
+{% translate "Vazifa qo'shildi" as p_hw_added %}
+{% translate "Xatolik yuz berdi" as p_generic_error %}
+{% translate "Ushbu vazifani o'chirasizmi?" as p_confirm_del_hw %}
+{% translate "Vazifa o'chirildi" as p_hw_deleted %}
+{% translate "Davomat ma'lumoti topilmadi" as p_att_not_found %}
+{% translate "O'quvchi" as p_student_fallback %}
 <script>
-const DL={1:'Du',2:'Se',3:'Ch',4:'Pa',5:'Ju',6:'Sh',7:'Ya'};
+const PI18N={
+  groupNotFound:"{{ p_group_not_found|escapejs }}",
+  groupFallback:"{{ p_group_fallback|escapejs }}",
+  lblName:"{{ p_lbl_name|escapejs }}",
+  lblCourse:"{{ p_lbl_course|escapejs }}",
+  lblTeacher:"{{ p_lbl_teacher|escapejs }}",
+  lblStuCount:"{{ p_lbl_stu_count|escapejs }}",
+  taUnit:"{{ p_ta_unit|escapejs }}",
+  lblTime:"{{ p_lbl_time|escapejs }}",
+  lblStart:"{{ p_lbl_start|escapejs }}",
+  lblEnd:"{{ p_lbl_end|escapejs }}",
+  notSet:"{{ p_not_set|escapejs }}",
+  lblDays:"{{ p_lbl_days|escapejs }}",
+  lblStatus:"{{ p_lbl_status|escapejs }}",
+  stuList:"{{ p_stu_list|escapejs }}",
+  thName:"{{ p_th_name|escapejs }}",
+  thPhone:"{{ p_th_phone|escapejs }}",
+  thStatus:"{{ p_th_status|escapejs }}",
+  stuNotFound:"{{ p_stu_not_found|escapejs }}",
+  noHw:"{{ p_no_hw|escapejs }}",
+  thTopic:"{{ p_th_topic|escapejs }}",
+  thGiven:"{{ p_th_given|escapejs }}",
+  thDue:"{{ p_th_due|escapejs }}",
+  thLesson:"{{ p_th_lesson|escapejs }}",
+  overdue:"{{ p_overdue|escapejs }}",
+  delete:"{{ p_delete|escapejs }}",
+  enterTopic:"{{ p_enter_topic|escapejs }}",
+  hwAdded:"{{ p_hw_added|escapejs }}",
+  genericError:"{{ p_generic_error|escapejs }}",
+  confirmDelHw:"{{ p_confirm_del_hw|escapejs }}",
+  hwDeleted:"{{ p_hw_deleted|escapejs }}",
+  attNotFound:"{{ p_att_not_found|escapejs }}",
+  studentFallback:"{{ p_student_fallback|escapejs }}",
+};
 const GID = new URLSearchParams(location.search).get('id');
 let _group=null, _students=[], _hw=[], _att=[];
 let _tabLoaded=[false,false,false];
@@ -237,7 +303,7 @@ async function load(){
     get('/students/?group='+GID+'&page_size=200&status=active'),
     get('/homework/assignments/?group='+GID+'&page_size=100'),
   ]);
-  if(!grp){toast('Guruh topilmadi','err');return;}
+  if(!grp){toast(PI18N.groupNotFound,'err');return;}
 
   _group   = grp;
   _students= stus?.results||stus||[];
@@ -246,15 +312,15 @@ async function load(){
   document.getElementById('heroLoader').style.display='none';
   document.getElementById('groupHero').style.display='';
   document.title = grp.name+" — Qorako'l Ilm Ziyo";
-  document.getElementById('pgTitle').textContent = grp.name||'Guruh';
+  document.getElementById('pgTitle').textContent = grp.name||PI18N.groupFallback;
   document.getElementById('grpName').textContent  = grp.name||'—';
   document.getElementById('grpCourse').textContent= grp.course_name||grp.subject||'—';
-  document.getElementById('grpStatus').innerHTML  = grp.status==='active'?'<span class="bdg bdg-active"><i class="fas fa-circle" style="font-size:.35rem"></i> Faol</span>':'<span class="bdg bdg-inactive">Nofaol</span>';
+  document.getElementById('grpStatus').innerHTML  = bdg(grp.status);
 
   const time = grp.start_time&&grp.end_time ? grp.start_time+' – '+grp.end_time : '—';
   document.getElementById('grpTime').textContent = time;
 
-  const days = (grp.days_of_week||[]).map(d=>DL[d]||d).join(', ');
+  const days = (grp.days_of_week||[]).map(d=>I18N.daysShort[d-1]||d).join(', ');
   document.getElementById('grpDays').textContent = days||'—';
   countUp(document.getElementById('grpStuCnt'), _students.length, 600);
   countUp(document.getElementById('grpHwCnt'),  _hw.length, 600);
@@ -272,18 +338,18 @@ async function load(){
 
 function renderInfo(){
   const g=_group;
-  const days=(g.days_of_week||[]).map(d=>`<span class="day-chip">${DL[d]||d}</span>`).join('');
+  const days=(g.days_of_week||[]).map(d=>`<span class="day-chip">${I18N.daysShort[d-1]||d}</span>`).join('');
   const rows=[
-    ['fa-users','ic-blue','Guruh nomi', g.name||'—'],
-    ['fa-book','ic-orange','Kurs / Yo\'nalish', g.course_name||g.subject||'—'],
-    ['fa-user-tie','ic-purple','O\'qituvchi', g.teacher_name||'—'],
-    ['fa-users','ic-green','O\'quvchilar soni', _students.length+' ta'],
-    ['fa-clock','ic-amber','Dars vaqti', g.start_time&&g.end_time?g.start_time+' – '+g.end_time:'—'],
-    ['fa-calendar','ic-teal','Boshlangan sana', g.start_date?fdate(g.start_date):'—'],
-    ['fa-calendar-xmark','ic-red','Tugash sanasi', g.end_date?fdate(g.end_date):'Belgilanmagan'],
-    ['fa-layer-group','ic-orange','Hafta kunlari',
+    ['fa-users','ic-blue',PI18N.lblName, g.name||'—'],
+    ['fa-book','ic-orange',PI18N.lblCourse, g.course_name||g.subject||'—'],
+    ['fa-user-tie','ic-purple',PI18N.lblTeacher, g.teacher_name||'—'],
+    ['fa-users','ic-green',PI18N.lblStuCount, _students.length+' '+PI18N.taUnit],
+    ['fa-clock','ic-amber',PI18N.lblTime, g.start_time&&g.end_time?g.start_time+' – '+g.end_time:'—'],
+    ['fa-calendar','ic-teal',PI18N.lblStart, g.start_date?fdate(g.start_date):'—'],
+    ['fa-calendar-xmark','ic-red',PI18N.lblEnd, g.end_date?fdate(g.end_date):PI18N.notSet],
+    ['fa-layer-group','ic-orange',PI18N.lblDays,
       `<div class="day-chips">${days||'<span style="color:var(--muted);font-size:.78rem">—</span>'}</div>`],
-    ['fa-info-circle','ic-green','Holati', g.status==='active'?'<span class="bdg bdg-active"><i class="fas fa-circle" style="font-size:.35rem"></i> Faol</span>':'<span class="bdg bdg-inactive">Nofaol</span>'],
+    ['fa-info-circle','ic-green',PI18N.lblStatus, bdg(g.status)],
   ];
   document.getElementById('infoContent').innerHTML=`
     <div class="card-body">
@@ -298,11 +364,11 @@ function renderInfo(){
           </div>`).join('')}
       </div>
       <div style="margin-top:20px">
-        <div style="font-weight:800;font-size:.85rem;color:var(--text);margin-bottom:12px">O'quvchilar ro'yxati</div>
+        <div style="font-weight:800;font-size:.85rem;color:var(--text);margin-bottom:12px">${PI18N.stuList}</div>
         ${_students.length?`
         <div class="card" style="overflow:hidden">
           <table class="etable"><thead><tr>
-            <th>#</th><th>Ism</th><th>Telefon</th><th>Holat</th>
+            <th>#</th><th>${PI18N.thName}</th><th>${PI18N.thPhone}</th><th>${PI18N.thStatus}</th>
           </tr></thead><tbody>
           ${_students.map((s,i)=>`
             <tr style="animation-delay:${i*0.03}s">
@@ -317,7 +383,7 @@ function renderInfo(){
               <td>${bdg(s.status||'active')}</td>
             </tr>`).join('')}
           </tbody></table>
-        </div>`:'<div class="empty"><i class="fas fa-user-graduate"></i><p>O\'quvchi topilmadi</p></div>'}
+        </div>`:`<div class="empty"><i class="fas fa-user-graduate"></i><p>${PI18N.stuNotFound}</p></div>`}
       </div>
     </div>`;
 }
@@ -325,17 +391,17 @@ function renderInfo(){
 function renderHw(){
   document.getElementById('hwTotalLbl').textContent=_hw.length;
   if(!_hw.length){
-    document.getElementById('hwContent').innerHTML='<div class="empty"><i class="fas fa-book-open"></i><p>Hozircha vazifa yo\'q</p></div>';
+    document.getElementById('hwContent').innerHTML=`<div class="empty"><i class="fas fa-book-open"></i><p>${PI18N.noHw}</p></div>`;
     return;
   }
   const today=new Date().toISOString().split('T')[0];
   document.getElementById('hwContent').innerHTML=`
     <table class="etable"><thead><tr>
-      <th>#</th><th>Mavzu</th>
+      <th>#</th><th>${PI18N.thTopic}</th>
       <th><span class="hw-num hw-num-stu"><i class="fas fa-user-graduate"></i></span></th>
       <th><span class="hw-num hw-num-pnd"><i class="fas fa-hourglass-half"></i></span></th>
       <th><span class="hw-num hw-num-done"><i class="fas fa-check-circle"></i></span></th>
-      <th>Berilgan</th><th>Tugash</th><th>Dars sanasi</th><th></th>
+      <th>${PI18N.thGiven}</th><th>${PI18N.thDue}</th><th>${PI18N.thLesson}</th><th></th>
     </tr></thead><tbody>
     ${_hw.map((h,i)=>{
       const overdue=h.due_date&&h.due_date<today&&h.status!=='completed';
@@ -343,7 +409,7 @@ function renderHw(){
         <td style="color:var(--muted);font-size:.73rem">${i+1}</td>
         <td>
           <div style="font-weight:700;font-size:.84rem;color:var(--text)">${h.title||h.description||'—'}</div>
-          ${overdue?'<span class="overdue-chip"><i class="fas fa-exclamation"></i> Muddati o\'tgan</span>':''}
+          ${overdue?`<span class="overdue-chip"><i class="fas fa-exclamation"></i> ${PI18N.overdue}</span>`:''}
         </td>
         <td><span class="hw-num hw-num-stu">${h.students_count||_students.length}</span></td>
         <td><span class="hw-num hw-num-pnd">${h.pending_count||'—'}</span></td>
@@ -353,7 +419,7 @@ function renderHw(){
         <td style="font-size:.78rem;color:var(--muted)">${h.lesson_date?fdate(h.lesson_date):'—'}</td>
         <td>
           <div style="display:flex;gap:4px;justify-content:flex-end">
-            <button class="btn-icon del" onclick="deleteHw('${h.id}',${i})" title="O'chirish"><i class="fas fa-trash"></i></button>
+            <button class="btn-icon del" onclick="deleteHw('${h.id}',${i})" title="${PI18N.delete}"><i class="fas fa-trash"></i></button>
           </div>
         </td>
       </tr>`;
@@ -363,7 +429,7 @@ function renderHw(){
 
 async function saveHw(){
   const title=document.getElementById('hwTitle').value.trim();
-  if(!title){toast("Mavzuni kiriting",'wrn');return;}
+  if(!title){toast(PI18N.enterTopic,'wrn');return;}
   const body={
     group: GID,
     title,
@@ -382,22 +448,22 @@ async function saveHw(){
     closeM('hwModal');
     document.getElementById('hwTitle').value='';
     document.getElementById('hwDesc').value='';
-    toast('Vazifa qo\'shildi');
+    toast(PI18N.hwAdded);
   } else {
-    toast('Xatolik yuz berdi','err');
+    toast(PI18N.genericError,'err');
   }
 }
 
 async function deleteHw(id,idx){
-  if(!confirm('Ushbu vazifani o\'chirasizmi?')) return;
+  if(!confirm(PI18N.confirmDelHw)) return;
   const r=await del('/homework/assignments/'+id+'/');
   if(r?.ok||r?.status===204){
     _hw.splice(idx,1);
     renderHw();
     countUp(document.getElementById('grpHwCnt'), _hw.length, 400);
-    toast('Vazifa o\'chirildi');
+    toast(PI18N.hwDeleted);
   } else {
-    toast('Xatolik yuz berdi','err');
+    toast(PI18N.genericError,'err');
   }
 }
 
@@ -410,7 +476,7 @@ async function loadAtt(){
 
 function renderAtt(){
   if(!_att.length){
-    document.getElementById('attContent').innerHTML='<div class="empty"><i class="fas fa-calendar-check"></i><p>Davomat ma\'lumoti topilmadi</p></div>';
+    document.getElementById('attContent').innerHTML=`<div class="empty"><i class="fas fa-calendar-check"></i><p>${PI18N.attNotFound}</p></div>`;
     return;
   }
 
@@ -449,7 +515,7 @@ function renderAtt(){
       </div>
       <div class="att-student-list">
         ${recs.map(r=>{
-          const sName=r.student_name||(_students.find(s=>s.id===r.student)||{}).full_name||'O\'quvchi';
+          const sName=r.student_name||(_students.find(s=>s.id===r.student)||{}).full_name||PI18N.studentFallback;
           const ic=attStatusIcon[r.status]||'question';
           const col=attStatusColor[r.status]||'var(--muted)';
           return`<div class="att-row">

@@ -1,12 +1,13 @@
 ﻿{% extends "erp/base.html" %}
+{% load i18n %}
 {% block title %}To'lovlar — Qorako'l Ilm Ziyo{% endblock %}
-{% block page_title %}To'lovlar{% endblock %}
+{% block page_title %}{% translate "To'lovlar" %}{% endblock %}
 
 {% block extra_head %}
 <style>
 .pay-kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
 @media(max-width:800px){.pay-kpi{grid-template-columns:1fr}}
-.kpi{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;transition:all .2s}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;transition:all .2s}
 .kpi:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
 .kpi-icon{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
 .kpi-val{font-size:1.3rem;font-weight:900;color:var(--text);letter-spacing:-.5px;line-height:1}
@@ -21,14 +22,14 @@
 {% block content %}
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;animation:fadeUp .35s ease both">
   <div>
-    <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">To'lovlar</h2>
-    <p style="font-size:.75rem;color:var(--muted);margin-top:3px">Oylik to'lovlarni boshqarish</p>
+    <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">{% translate "To'lovlar" %}</h2>
+    <p style="font-size:.75rem;color:var(--muted);margin-top:3px">{% translate "Oylik to'lovlarni boshqarish" %}</p>
   </div>
   <div style="display:flex;gap:8px;flex-wrap:wrap">
-    <button class="btn btn-ghost admin-only" onclick="sendReminders()" title="Eslatma yuborish"><i class="fas fa-bell" style="color:var(--warning)"></i>Eslatma</button>
-    <button class="btn btn-ghost admin-only" onclick="exportPayments()" title="Excel yuklash"><i class="fas fa-file-excel" style="color:#10b981"></i>Excel</button>
-    <button class="btn btn-ghost admin-only" onclick="openM('bulkModal')" title="Guruhga ommaviy to'lov"><i class="fas fa-layer-group" style="color:var(--accent)"></i>Ommaviy</button>
-    <button class="btn btn-primary admin-only" onclick="openM('payModal')"><i class="fas fa-plus"></i>To'lov qabul</button>
+    <button class="btn btn-ghost admin-only" onclick="sendReminders()" title="{% translate "Eslatma yuborish" %}"><i class="fas fa-bell" style="color:var(--warning)"></i>{% translate "Eslatma" %}</button>
+    <button class="btn btn-ghost admin-only" onclick="exportPayments()" title="{% translate "Excel yuklash" %}"><i class="fas fa-file-excel" style="color:#10b981"></i>Excel</button>
+    <button class="btn btn-ghost admin-only" onclick="openM('bulkModal')" title="{% translate "Guruhga ommaviy to'lov" %}"><i class="fas fa-layer-group" style="color:var(--accent)"></i>{% translate "Ommaviy" %}</button>
+    <button class="btn btn-primary admin-only" onclick="openM('payModal')"><i class="fas fa-plus"></i>{% translate "To'lov qabul" %}</button>
   </div>
 </div>
 
@@ -36,15 +37,15 @@
 <div class="pay-kpi">
   <div class="kpi" style="animation:fadeUp .4s ease .04s both">
     <div class="kpi-icon ic-green"><i class="fas fa-check-circle"></i></div>
-    <div><div class="kpi-val" id="kIncome">—</div><div class="kpi-lbl">Bu oy tushum</div></div>
+    <div><div class="kpi-val" id="kIncome">—</div><div class="kpi-lbl">{% translate "Bu oy tushum" %}</div></div>
   </div>
   <div class="kpi" style="animation:fadeUp .4s ease .1s both">
     <div class="kpi-icon ic-red"><i class="fas fa-exclamation-circle"></i></div>
-    <div><div class="kpi-val" id="kDebt">—</div><div class="kpi-lbl">Umumiy qarz</div></div>
+    <div><div class="kpi-val" id="kDebt">—</div><div class="kpi-lbl">{% translate "Umumiy qarz" %}</div></div>
   </div>
   <div class="kpi" style="animation:fadeUp .4s ease .16s both">
     <div class="kpi-icon ic-amber"><i class="fas fa-users"></i></div>
-    <div><div class="kpi-val" id="kUnpaid">—</div><div class="kpi-lbl">To'lamagan o'quvchilar</div></div>
+    <div><div class="kpi-val" id="kUnpaid">—</div><div class="kpi-lbl">{% translate "To'lamagan o'quvchilar" %}</div></div>
   </div>
 </div>
 
@@ -52,17 +53,17 @@
 <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;animation:fadeUp .4s ease .2s both">
   <div class="search-wrap">
     <i class="fas fa-search"></i>
-    <input type="text" id="srch" placeholder="O'quvchi ismi..." oninput="load()">
+    <input type="text" id="srch" placeholder="{% translate "O'quvchi ismi..." %}" oninput="load()">
   </div>
-  <select id="fMonth" onchange="load()" style="border:1.5px solid var(--border);border-radius:9px;padding:8px 32px 8px 12px;font-size:.78rem;background:#fff;outline:none;cursor:pointer">
+  <select id="fMonth" onchange="load()" style="border:1.5px solid var(--border);border-radius:9px;padding:8px 32px 8px 12px;font-size:.78rem;background:var(--card);color:var(--text);outline:none;cursor:pointer">
   </select>
-  <select id="fYear" onchange="load()" style="border:1.5px solid var(--border);border-radius:9px;padding:8px 32px 8px 12px;font-size:.78rem;background:#fff;outline:none;cursor:pointer">
+  <select id="fYear" onchange="load()" style="border:1.5px solid var(--border);border-radius:9px;padding:8px 32px 8px 12px;font-size:.78rem;background:var(--card);color:var(--text);outline:none;cursor:pointer">
   </select>
-  <select id="fStatus" onchange="load()" style="border:1.5px solid var(--border);border-radius:9px;padding:8px 32px 8px 12px;font-size:.78rem;background:#fff;outline:none;cursor:pointer">
-    <option value="">Barcha holat</option>
-    <option value="paid">To'langan</option>
-    <option value="partial">Qisman</option>
-    <option value="unpaid">To'lanmagan</option>
+  <select id="fStatus" onchange="load()" style="border:1.5px solid var(--border);border-radius:9px;padding:8px 32px 8px 12px;font-size:.78rem;background:var(--card);color:var(--text);outline:none;cursor:pointer">
+    <option value="">{% translate "Barcha holat" %}</option>
+    <option value="paid">{% translate "To'langan" %}</option>
+    <option value="partial">{% translate "Qisman" %}</option>
+    <option value="unpaid">{% translate "To'lanmagan" %}</option>
   </select>
   <span style="margin-left:auto;font-size:.75rem;color:var(--muted)" id="cntLbl"></span>
 </div>
@@ -75,31 +76,31 @@
 <div class="overlay" id="payModal">
   <div class="modal">
     <div class="m-head">
-      <h5><i class="fas fa-money-bill-wave" style="color:var(--accent);margin-right:6px"></i>To'lov qabul qilish</h5>
+      <h5><i class="fas fa-money-bill-wave" style="color:var(--accent);margin-right:6px"></i>{% translate "To'lov qabul qilish" %}</h5>
       <button class="m-close" onclick="closeM('payModal')"><i class="fas fa-times"></i></button>
     </div>
     <div class="m-body">
-      <div class="fg"><label>O'quvchi *</label>
-        <select class="fc fc-sel" id="pStudent"><option value="">— O'quvchi tanlang —</option></select>
+      <div class="fg"><label>{% translate "O'quvchi" %} *</label>
+        <select class="fc fc-sel" id="pStudent"><option value="">{% translate "— O'quvchi tanlang —" %}</option></select>
       </div>
       <div class="row2">
-        <div class="fg"><label>Oy *</label>
+        <div class="fg"><label>{% translate "Oy" %} *</label>
           <select class="fc fc-sel" id="pMonth"></select>
         </div>
-        <div class="fg"><label>Yil *</label>
+        <div class="fg"><label>{% translate "Yil" %} *</label>
           <select class="fc fc-sel" id="pYear"></select>
         </div>
       </div>
-      <div class="fg"><label>To'langan summa *</label>
-        <input class="fc" type="number" id="pAmount" placeholder="500000" min="0">
+      <div class="fg"><label>{% translate "To'langan summa" %} *</label>
+        <input class="fc" type="number" id="pAmount" placeholder="500000" min="1">
       </div>
-      <div class="fg"><label>Izoh</label>
-        <input class="fc" id="pNote" placeholder="Qo'shimcha izoh...">
+      <div class="fg"><label>{% translate "Izoh" %}</label>
+        <input class="fc" id="pNote" placeholder="{% translate "Qo'shimcha izoh..." %}">
       </div>
     </div>
     <div class="m-foot">
-      <button class="btn btn-ghost" onclick="closeM('payModal')">Bekor</button>
-      <button class="btn btn-primary" onclick="doPay()"><i class="fas fa-check"></i>Qabul qilish</button>
+      <button class="btn btn-ghost" onclick="closeM('payModal')">{% translate "Bekor" %}</button>
+      <button class="btn btn-primary" onclick="doPay()"><i class="fas fa-check"></i>{% translate "Qabul qilish" %}</button>
     </div>
   </div>
 </div>
@@ -107,45 +108,84 @@
 <div class="overlay" id="bulkModal">
   <div class="modal modal-lg">
     <div class="m-head">
-      <h5><i class="fas fa-layer-group" style="color:var(--accent);margin-right:6px"></i>Ommaviy to'lov qabul</h5>
+      <h5><i class="fas fa-layer-group" style="color:var(--accent);margin-right:6px"></i>{% translate "Ommaviy to'lov qabul" %}</h5>
       <button class="m-close" onclick="closeM('bulkModal')"><i class="fas fa-times"></i></button>
     </div>
     <div class="m-body">
       <div class="row2">
-        <div class="fg"><label>Guruh *</label>
-          <select class="fc fc-sel" id="bGroup" onchange="loadBulkStudents()"><option value="">— Guruh tanlang —</option></select>
+        <div class="fg"><label>{% translate "Guruh" %} *</label>
+          <select class="fc fc-sel" id="bGroup" onchange="loadBulkStudents()"><option value="">{% translate "— Guruh tanlang —" %}</option></select>
         </div>
         <div class="row2" style="gap:8px">
-          <div class="fg"><label>Oy *</label>
+          <div class="fg"><label>{% translate "Oy" %} *</label>
             <select class="fc fc-sel" id="bMonth"></select>
           </div>
-          <div class="fg"><label>Yil *</label>
+          <div class="fg"><label>{% translate "Yil" %} *</label>
             <select class="fc fc-sel" id="bYear"></select>
           </div>
         </div>
       </div>
-      <div class="fg"><label>To'lov summasi (so'm)</label>
-        <input class="fc" type="number" id="bAmount" placeholder="Guruh oylik to'lovi" oninput="updateBulkAmounts()">
+      <div class="fg"><label>{% translate "To'lov summasi (so'm)" %}</label>
+        <input class="fc" type="number" id="bAmount" placeholder="{% translate "Guruh oylik to'lovi" %}" oninput="updateBulkAmounts()">
       </div>
       <div id="bulkStudentList" style="max-height:300px;overflow-y:auto;margin-top:8px">
-        <div style="font-size:.8rem;color:var(--muted);text-align:center;padding:20px">Guruh tanlang</div>
+        <div style="font-size:.8rem;color:var(--muted);text-align:center;padding:20px">{% translate "Guruh tanlang" %}</div>
       </div>
       <div style="display:flex;align-items:center;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
         <label style="display:flex;align-items:center;gap:6px;font-size:.8rem;cursor:pointer">
           <input type="checkbox" id="bSelectAll" onchange="toggleSelectAll(this.checked)">
-          Barchasini tanlash
+          {% translate "Barchasini tanlash" %}
         </label>
-        <span style="margin-left:auto;font-size:.78rem;color:var(--muted)" id="bSelCount">0 ta tanlangan</span>
+        <span style="margin-left:auto;font-size:.78rem;color:var(--muted)" id="bSelCount">0 {% translate "ta tanlangan" %}</span>
       </div>
     </div>
     <div class="m-foot">
-      <button class="btn btn-ghost" onclick="closeM('bulkModal')">Bekor</button>
-      <button class="btn btn-primary" onclick="doBulkPay()"><i class="fas fa-check-double"></i>Tanlanganlarga saqlash</button>
+      <button class="btn btn-ghost" onclick="closeM('bulkModal')">{% translate "Bekor" %}</button>
+      <button class="btn btn-primary" onclick="doBulkPay()"><i class="fas fa-check-double"></i>{% translate "Tanlanganlarga saqlash" %}</button>
     </div>
   </div>
 </div>
 {% endblock %}
 
+{% translate "{year}-yil {month}-oy uchun qarzdorlarga eslatma yuborilsinmi?" as p_reminder_confirm %}
+{% translate "Tarmoq xatoligi" as p_network_error %}
+{% translate "ta eslatma yuborildi" as p_reminders_sent %}
+{% translate "Xatolik" as p_error %}
+{% translate "Eksport xatoligi" as p_export_error %}
+{% translate "Excel yuklandi" as p_excel_downloaded %}
+{% translate "Yuklab bo'lmadi" as p_download_failed %}
+{% translate "ta" as p_ta %}
+{% translate "ta yozuv" as p_ta_record %}
+{% translate "To'lov yozuvi topilmadi" as p_no_payment_records %}
+{% translate "O'quvchi" as p_student_word %}
+{% translate "Guruh" as p_group_word %}
+{% translate "Oy/Yil" as p_month_year %}
+{% translate "Jami summa" as p_total_amount %}
+{% translate "To'langan" as p_paid %}
+{% translate "Qarz" as p_debt %}
+{% translate "Holat" as p_status_word %}
+{% translate "To'lov" as p_payment_word %}
+{% translate "Chek chop etish" as p_print_receipt %}
+{% translate "O'quvchini tanlang" as p_select_student %}
+{% translate "Summani kiriting" as p_enter_amount %}
+{% translate "To'lov qabul qilindi" as p_payment_accepted %}
+{% translate "Server xatoligi" as p_server_error %}
+{% translate "To'lov cheki" as p_receipt_title %}
+{% translate "To'liq to'langan" as p_fully_paid %}
+{% translate "Qisman to'langan" as p_partially_paid %}
+{% translate "To'lanmagan" as p_unpaid %}
+{% translate "To'lov cheki / Payment Receipt" as p_receipt_subtitle %}
+{% translate "Davr" as p_period %}
+{% translate "Ushbu chek rasmiy hisob xisobot hisoblanadi." as p_receipt_footer %}
+{% translate "Ommaviy to'lov" as p_bulk_payment %}
+{% translate "Guruh tanlang" as p_select_group %}
+{% translate "O'quvchi topilmadi" as p_student_not_found %}
+{% translate "ta tanlangan" as p_ta_selected %}
+{% translate "O'quvchi tanlanmagan" as p_no_student_selected %}
+{% translate "ta to'lov saqlandi" as p_payments_saved %}
+{% translate "ta xatolik" as p_ta_error %}
+{% translate "Xatolik yuz berdi" as p_error_occurred %}
+{% translate "Bu to'lov uchun chek mavjud emas" as p_no_receipt_yet %}
 {% block extra_js %}
 <script>
 initAuth();
@@ -153,15 +193,57 @@ const _ME=getUser();
 const _isAdmin=_ME.role==='admin'||_ME.role==='developer';
 if(!_isAdmin) document.querySelectorAll('.admin-only').forEach(el=>el.style.display='none');
 
+const PI18N = {
+  reminderConfirm: "{{ p_reminder_confirm|escapejs }}",
+  networkError: "{{ p_network_error|escapejs }}",
+  remindersSent: "{{ p_reminders_sent|escapejs }}",
+  error: "{{ p_error|escapejs }}",
+  exportError: "{{ p_export_error|escapejs }}",
+  excelDownloaded: "{{ p_excel_downloaded|escapejs }}",
+  downloadFailed: "{{ p_download_failed|escapejs }}",
+  ta: "{{ p_ta|escapejs }}",
+  taRecord: "{{ p_ta_record|escapejs }}",
+  noPaymentRecords: "{{ p_no_payment_records|escapejs }}",
+  studentWord: "{{ p_student_word|escapejs }}",
+  groupWord: "{{ p_group_word|escapejs }}",
+  monthYear: "{{ p_month_year|escapejs }}",
+  totalAmount: "{{ p_total_amount|escapejs }}",
+  paid: "{{ p_paid|escapejs }}",
+  debt: "{{ p_debt|escapejs }}",
+  statusWord: "{{ p_status_word|escapejs }}",
+  paymentWord: "{{ p_payment_word|escapejs }}",
+  printReceipt: "{{ p_print_receipt|escapejs }}",
+  selectStudent: "{{ p_select_student|escapejs }}",
+  enterAmount: "{{ p_enter_amount|escapejs }}",
+  paymentAccepted: "{{ p_payment_accepted|escapejs }}",
+  serverError: "{{ p_server_error|escapejs }}",
+  receiptTitle: "{{ p_receipt_title|escapejs }}",
+  fullyPaid: "{{ p_fully_paid|escapejs }}",
+  partiallyPaid: "{{ p_partially_paid|escapejs }}",
+  unpaid: "{{ p_unpaid|escapejs }}",
+  receiptSubtitle: "{{ p_receipt_subtitle|escapejs }}",
+  period: "{{ p_period|escapejs }}",
+  receiptFooter: "{{ p_receipt_footer|escapejs }}",
+  bulkPayment: "{{ p_bulk_payment|escapejs }}",
+  selectGroup: "{{ p_select_group|escapejs }}",
+  studentNotFound: "{{ p_student_not_found|escapejs }}",
+  taSelected: "{{ p_ta_selected|escapejs }}",
+  noStudentSelected: "{{ p_no_student_selected|escapejs }}",
+  paymentsSaved: "{{ p_payments_saved|escapejs }}",
+  taError: "{{ p_ta_error|escapejs }}",
+  errorOccurred: "{{ p_error_occurred|escapejs }}",
+  noReceiptYet: "{{ p_no_receipt_yet|escapejs }}",
+};
+
 async function sendReminders(){
   const m=document.getElementById('fMonth')?.value||new Date().getMonth()+1;
   const y=document.getElementById('fYear')?.value||new Date().getFullYear();
-  if(!confirm(`${y}-yil ${m}-oy uchun qarzdorlarga eslatma yuborilsinmi?`))return;
+  if(!confirm(PI18N.reminderConfirm.replace('{year}', y).replace('{month}', m)))return;
   const r=await post('/notifications/send-reminders/',{month:parseInt(m),year:parseInt(y)});
-  if(!r){toast('Tarmoq xatoligi','err');return;}
+  if(!r){toast(PI18N.networkError,'err');return;}
   let d;try{d=await r.json();}catch{d=null;}
-  if(r.ok) toast(d?.detail||`${d?.sent||0} ta eslatma yuborildi`,'ok');
-  else toast(d?.detail||'Xatolik','err');
+  if(r.ok) toast(d?.detail||`${d?.sent||0} ${PI18N.remindersSent}`,'ok');
+  else toast(d?.detail||PI18N.error,'err');
 }
 
 function exportPayments(){
@@ -171,22 +253,21 @@ function exportPayments(){
   fetch(`${API}/payments/export/?month=${m}&year=${y}`,{headers:{'Authorization':'Bearer '+t}})
     .then(r=>r.ok?r.blob():null)
     .then(b=>{
-      if(!b){toast('Eksport xatoligi','err');return;}
+      if(!b){toast(PI18N.exportError,'err');return;}
       const u=URL.createObjectURL(b);
       const a=document.createElement('a');
       a.href=u; a.download=`to_lovlar_${y}_${String(m).padStart(2,'0')}.xlsx`; a.click();
       URL.revokeObjectURL(u);
-      toast('Excel yuklandi','ok');
+      toast(PI18N.excelDownloaded,'ok');
     })
-    .catch(()=>toast('Yuklab bo\'lmadi','err'));
+    .catch(()=>toast(PI18N.downloadFailed,'err'));
 }
-const MNS=['Yanvar','Fevral','Mart','Aprel','May','Iyun','Iyul','Avgust','Sentabr','Oktabr','Noyabr','Dekabr'];
 const NOW=new Date();
 let curMonth=NOW.getMonth()+1, curYear=NOW.getFullYear();
 
 function populateMonthYear(){
   const ms=[document.getElementById('fMonth'),document.getElementById('pMonth')];
-  ms.forEach(s=>{s.innerHTML=MNS.map((m,i)=>`<option value="${i+1}" ${i+1===curMonth?'selected':''}>${m}</option>`).join('')});
+  ms.forEach(s=>{s.innerHTML=I18N.months.map((m,i)=>`<option value="${i+1}" ${i+1===curMonth?'selected':''}>${m}</option>`).join('')});
   const ys=[document.getElementById('fYear'),document.getElementById('pYear')];
   for(let y=curYear;y>=curYear-3;y--) ys.forEach(s=>s.innerHTML+=`<option value="${y}" ${y===curYear?'selected':''}>${y}</option>`);
 }
@@ -197,7 +278,7 @@ async function loadKpi(){
   const p=d.payments;
   document.getElementById('kIncome').textContent=fmoney(p.income);
   document.getElementById('kDebt').textContent=fmoney(p.debt);
-  document.getElementById('kUnpaid').textContent=p.unpaid_count+' ta';
+  document.getElementById('kUnpaid').textContent=p.unpaid_count+' '+PI18N.ta;
 }
 
 async function load(){
@@ -211,10 +292,10 @@ async function load(){
   document.getElementById('tbl').innerHTML='<div class="loading"><div class="spinner"></div></div>';
   const d=await get(url);
   const items=d?.results||d||[];
-  document.getElementById('cntLbl').textContent=`${items.length} ta yozuv`;
-  if(!items.length){document.getElementById('tbl').innerHTML='<div class="empty"><i class="fas fa-receipt"></i><p>To\'lov yozuvi topilmadi</p></div>';return;}
+  document.getElementById('cntLbl').textContent=`${items.length} ${PI18N.taRecord}`;
+  if(!items.length){document.getElementById('tbl').innerHTML=`<div class="empty"><i class="fas fa-receipt"></i><p>${PI18N.noPaymentRecords}</p></div>`;return;}
   document.getElementById('tbl').innerHTML=`<table class="etable"><thead><tr>
-    <th>#</th><th>O'quvchi</th><th>Guruh</th><th>Oy/Yil</th><th>Jami summa</th><th>To'langan</th><th>Qarz</th><th>Holat</th><th></th>
+    <th>#</th><th>${PI18N.studentWord}</th><th>${PI18N.groupWord}</th><th>${PI18N.monthYear}</th><th>${PI18N.totalAmount}</th><th>${PI18N.paid}</th><th>${PI18N.debt}</th><th>${PI18N.statusWord}</th><th></th>
   </tr></thead><tbody>
   ${items.map((p,i)=>`<tr>
     <td style="color:var(--muted);font-size:.75rem">${i+1}</td>
@@ -223,7 +304,7 @@ async function load(){
       <span style="font-size:.82rem;font-weight:600">${p.student_name||'—'}</span>
     </div></td>
     <td style="font-size:.8rem;color:var(--muted)">${p.group_name||p.group||'—'}</td>
-    <td style="font-size:.8rem">${MNS[(p.month||1)-1]} ${p.year}</td>
+    <td style="font-size:.8rem">${I18N.months[(p.month||1)-1]} ${p.year}</td>
     <td style="font-size:.82rem;font-weight:600">${fmoney(p.amount||p.total_amount||0)}</td>
     <td style="font-size:.82rem;color:var(--success);font-weight:600">${fmoney(p.paid_amount||0)}</td>
     <td style="font-size:.82rem;color:${(p.debt_amount||0)>0?'var(--danger)':'var(--muted)'};font-weight:600">
@@ -233,9 +314,9 @@ async function load(){
     <td>
       <div style="display:flex;gap:4px">
         <button class="btn btn-primary btn-sm" onclick="openQuickPay('${p.student}','${p.student_name||''}',${p.debt_amount||0})">
-          <i class="fas fa-plus"></i>To'lov
+          <i class="fas fa-plus"></i>${PI18N.paymentWord}
         </button>
-        <button class="btn btn-ghost btn-sm" onclick='printReceipt(${JSON.stringify(p)})' title="Chek chop etish">
+        <button class="btn btn-ghost btn-sm" onclick='printReceipt(${JSON.stringify(p)})' title="${PI18N.printReceipt}">
           <i class="fas fa-print"></i>
         </button>
       </div>
@@ -263,65 +344,43 @@ async function doPay(){
   const month=document.getElementById('pMonth').value;
   const year=document.getElementById('pYear').value;
   const amount=parseFloat(document.getElementById('pAmount').value)||0;
-  if(!sid){toast("O'quvchini tanlang",'wrn');return;}
-  if(!amount){toast("Summani kiriting",'wrn');return;}
-  const r=await post('/payments/',{student:sid,month:parseInt(month),year:parseInt(year),paid_amount:amount,note:document.getElementById('pNote').value});
-  if(!r){toast("Tarmoq xatoligi",'err');return;}
+  if(!sid){toast(PI18N.selectStudent,'wrn');return;}
+  if(!amount){toast(PI18N.enterAmount,'wrn');return;}
+  // Records a new PaymentTransaction (receipt) for the amount being paid NOW —
+  // Payment.paid_amount is derived server-side as the sum of all transactions,
+  // so this always accumulates on top of any prior installments and never
+  // overwrites them (see apps/finance/services + signals).
+  const r=await post('/finance/transactions/record/',{
+    student:sid, month:parseInt(month), year:parseInt(year),
+    amount, payment_type:'cash', note:document.getElementById('pNote').value,
+  });
+  if(!r){toast(PI18N.networkError,'err');return;}
   let body;
   try{body=await r.json();}catch{body=null;}
-  if(r.ok||r.status===201){closeM('payModal');toast("To'lov qabul qilindi",'ok');load();loadKpi();}
-  else{
-    console.error('Payment 400 errors:',body);
-    const errs=body?.errors;
-    const msg=errs?Object.entries(errs).map(([f,v])=>`${f}: ${[].concat(v).join(', ')}`).join(' | '):body?.detail||`Server xatoligi (${r.status})`;
-    toast(msg,'err');
+  if(r.ok||r.status===201){
+    closeM('payModal');
+    toast(PI18N.paymentAccepted,'ok');
+    load(); loadKpi();
+    const txnId=body?.transaction?.id;
+    if(txnId) window.open(`/finance/receipt/${txnId}/`,'_blank');
+  }else{
+    console.error('Payment error:',body);
+    const msg=body&&typeof body==='object'
+      ?Object.entries(body).map(([f,v])=>`${f}: ${[].concat(v).join(', ')}`).join(' | ')
+      :`${PI18N.serverError} (${r.status})`;
+    toast(msg||`${PI18N.serverError} (${r.status})`,'err');
   }
 }
 
-function printReceipt(p){
-  const MNS2=['Yanvar','Fevral','Mart','Aprel','May','Iyun','Iyul','Avgust','Sentabr','Oktabr','Noyabr','Dekabr'];
-  const org=document.querySelector('.logo-text')?.textContent||"Qorako'l Ilm Ziyo";
-  const status=p.status==='paid'?"To'liq to'langan":p.status==='partial'?"Qisman to'langan":"To'lanmagan";
-  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8">
-<title>To'lov cheki</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Segoe UI',sans-serif;background:#fff;padding:20px}
-.receipt{border:2px solid #059669;border-radius:12px;padding:24px;max-width:360px;margin:0 auto}
-.head{text-align:center;border-bottom:2px dashed #059669;padding-bottom:16px;margin-bottom:16px}
-.logo{font-size:1.2rem;font-weight:900;color:#059669}
-.title{font-size:.9rem;color:#666;margin-top:4px}
-table{width:100%;border-collapse:collapse;font-size:.85rem}
-td{padding:7px 0;border-bottom:1px dashed #eee}
-td:first-child{color:#666}
-td:last-child{font-weight:700;text-align:right}
-.total{font-size:1rem;font-weight:900;color:#059669}
-.status{display:inline-block;padding:4px 12px;border-radius:20px;font-size:.78rem;font-weight:700;background:${p.status==='paid'?'#dcfce7':p.status==='partial'?'#fef9c3':'#fee2e2'};color:${p.status==='paid'?'#166534':p.status==='partial'?'#854d0e':'#991b1b'}}
-.footer{text-align:center;margin-top:16px;font-size:.7rem;color:#aaa;border-top:1px dashed #ddd;padding-top:12px}
-@media print{button{display:none}}
-</style></head><body>
-<div class="receipt">
-  <div class="head">
-    <div class="logo">${org}</div>
-    <div class="title">To'lov cheki / Payment Receipt</div>
-    <div style="font-size:.7rem;color:#aaa;margin-top:4px">${new Date().toLocaleString('uz-UZ')}</div>
-  </div>
-  <table>
-    <tr><td>O'quvchi</td><td>${p.student_name||'—'}</td></tr>
-    <tr><td>Guruh</td><td>${p.group_name||p.group||'—'}</td></tr>
-    <tr><td>Davr</td><td>${MNS2[(p.month||1)-1]} ${p.year}</td></tr>
-    <tr><td>Jami summa</td><td>${Number(p.amount||p.total_amount||0).toLocaleString()} so'm</td></tr>
-    <tr><td>To'langan</td><td style="color:#16a34a">${Number(p.paid_amount||0).toLocaleString()} so'm</td></tr>
-    ${(p.debt_amount||0)>0?`<tr><td>Qarz</td><td style="color:#dc2626">${Number(p.debt_amount).toLocaleString()} so'm</td></tr>`:''}
-    <tr><td>Holat</td><td><span class="status">${status}</span></td></tr>
-  </table>
-  <div class="footer">Ushbu chek rasmiy hisob xisobot hisoblanadi.<br>${org} &copy; ${new Date().getFullYear()}</div>
-</div>
-<script>window.onload=()=>window.print();<\/script>
-</body></html>`;
-  const w=window.open('','_blank','width=440,height=620');
-  w.document.write(html);
-  w.document.close();
+async function printReceipt(p){
+  // The authoritative receipt is server-side (PaymentTransaction + receipt_number,
+  // rendered at /finance/receipt/<transaction id>/) — a Payment can have zero or
+  // several transactions, so we look up its most recent one rather than fabricating
+  // a client-only document from the Payment row.
+  const d=await get(`/finance/transactions/?payment=${p.id}`);
+  const items=d?.results||d||[];
+  if(!items.length){toast(PI18N.noReceiptYet,'wrn');return;}
+  window.open(`/finance/receipt/${items[0].id}/`,'_blank');
 }
 
 /* ─── Bulk payment ─── */
@@ -335,13 +394,13 @@ async function initBulkGroups(){
   // Populate month/year for bulk modal
   const ms=document.getElementById('bMonth');
   const ys=document.getElementById('bYear');
-  MNS.forEach((m,i)=>ms.innerHTML+=`<option value="${i+1}" ${i+1===curMonth?'selected':''}>${m}</option>`);
+  I18N.months.forEach((m,i)=>ms.innerHTML+=`<option value="${i+1}" ${i+1===curMonth?'selected':''}>${m}</option>`);
   for(let y=curYear;y>=curYear-3;y--) ys.innerHTML+=`<option value="${y}" ${y===curYear?'selected':''}>${y}</option>`;
 }
 
 async function loadBulkStudents(){
   const gid=document.getElementById('bGroup').value;
-  if(!gid){document.getElementById('bulkStudentList').innerHTML='<div style="font-size:.8rem;color:var(--muted);text-align:center;padding:20px">Guruh tanlang</div>';return;}
+  if(!gid){document.getElementById('bulkStudentList').innerHTML=`<div style="font-size:.8rem;color:var(--muted);text-align:center;padding:20px">${PI18N.selectGroup}</div>`;return;}
   // Auto-fill amount from group fee
   const opt=document.getElementById('bGroup').selectedOptions[0];
   if(opt?.dataset.fee) document.getElementById('bAmount').value=opt.dataset.fee;
@@ -353,7 +412,7 @@ async function loadBulkStudents(){
 function renderBulkList(){
   const amount=parseInt(document.getElementById('bAmount').value)||0;
   if(!bulkStudents.length){
-    document.getElementById('bulkStudentList').innerHTML='<div style="font-size:.8rem;color:var(--muted);text-align:center;padding:20px">O\'quvchi topilmadi</div>';
+    document.getElementById('bulkStudentList').innerHTML=`<div style="font-size:.8rem;color:var(--muted);text-align:center;padding:20px">${PI18N.studentNotFound}</div>`;
     return;
   }
   document.getElementById('bulkStudentList').innerHTML=bulkStudents.map(s=>`
@@ -380,14 +439,14 @@ function toggleSelectAll(checked){
 
 function updateBulkSelCount(){
   const n=document.querySelectorAll('.bulk-st-cb:checked').length;
-  document.getElementById('bSelCount').textContent=`${n} ta tanlangan`;
+  document.getElementById('bSelCount').textContent=`${n} ${PI18N.taSelected}`;
 }
 
 async function doBulkPay(){
   const month=parseInt(document.getElementById('bMonth').value);
   const year=parseInt(document.getElementById('bYear').value);
   const selected=[...document.querySelectorAll('.bulk-st-cb:checked')];
-  if(!selected.length){toast("O'quvchi tanlanmagan",'wrn');return;}
+  if(!selected.length){toast(PI18N.noStudentSelected,'wrn');return;}
 
   const btn=document.querySelector('#bulkModal .btn-primary');
   if(btn) btn.disabled=true;
@@ -396,14 +455,19 @@ async function doBulkPay(){
     const sid=cb.dataset.id;
     const amt=parseInt(document.querySelector(`.bulk-amt[data-id="${sid}"]`)?.value)||0;
     if(!amt)continue;
-    const r=await post('/payments/',{student:sid,month,year,paid_amount:amt,note:'Ommaviy to\'lov'});
+    // Same authoritative endpoint as doPay() — each student gets their own
+    // PaymentTransaction (receipt), and one student's failure here does not
+    // affect transactions already committed for earlier students in the loop.
+    const r=await post('/finance/transactions/record/',{
+      student:sid, month, year, amount:amt, payment_type:'cash', note:PI18N.bulkPayment,
+    });
     if(r&&(r.ok||r.status===201)) ok++;
     else{err++;try{const e=await r?.json();console.error('Bulk pay err',sid,e);}catch{}}
   }
   if(btn) btn.disabled=false;
   closeM('bulkModal');
-  if(ok) toast(`${ok} ta to'lov saqlandi`+(err?`, ${err} ta xatolik`:''),'ok');
-  else toast('Xatolik yuz berdi','err');
+  if(ok) toast(`${ok} ${PI18N.paymentsSaved}`+(err?`, ${err} ${PI18N.taError}`:''),'ok');
+  else toast(PI18N.errorOccurred,'err');
   load(); loadKpi();
 }
 

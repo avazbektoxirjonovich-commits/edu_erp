@@ -1,12 +1,13 @@
 {% extends "erp/base.html" %}
-{% block title %}Markaz buyumlari — Qorako'l Ilm Ziyo{% endblock %}
-{% block page_title %}Markaz buyumlari{% endblock %}
+{% load i18n %}
+{% block title %}{% translate "Markaz buyumlari" %} — Qorako'l Ilm Ziyo{% endblock %}
+{% block page_title %}{% translate "Markaz buyumlari" %}{% endblock %}
 
 {% block extra_head %}
 <style>
 .as-kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
 @media(max-width:800px){.as-kpi{grid-template-columns:1fr}}
-.kpi{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;transition:all .2s}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;transition:all .2s}
 .kpi:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
 .kpi-icon{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
 .kpi-val{font-size:1.3rem;font-weight:900;color:var(--text);letter-spacing:-.5px;line-height:1}
@@ -17,25 +18,25 @@
 {% block content %}
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;animation:fadeUp .35s ease both">
   <div>
-    <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">Markaz buyumlari</h2>
-    <p style="font-size:.75rem;color:var(--muted);margin-top:3px">Mebel, jihoz va boshqa mulklarni hisobga olish</p>
+    <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">{% translate "Markaz buyumlari" %}</h2>
+    <p style="font-size:.75rem;color:var(--muted);margin-top:3px">{% translate "Mebel, jihoz va boshqa mulklarni hisobga olish" %}</p>
   </div>
-  <button class="btn btn-primary" onclick="openAddModal()"><i class="fas fa-plus"></i>Buyum qo'shish</button>
+  <button class="btn btn-primary" onclick="openAddModal()"><i class="fas fa-plus"></i>{% translate "Buyum qo'shish" %}</button>
 </div>
 
 <!-- KPI -->
 <div class="as-kpi">
   <div class="kpi" style="animation:fadeUp .4s ease .04s both">
     <div class="kpi-icon ic-blue"><i class="fas fa-boxes-stacked"></i></div>
-    <div><div class="kpi-val" id="kCount">—</div><div class="kpi-lbl">Jami buyum turlari</div></div>
+    <div><div class="kpi-val" id="kCount">—</div><div class="kpi-lbl">{% translate "Jami buyum turlari" %}</div></div>
   </div>
   <div class="kpi" style="animation:fadeUp .4s ease .1s both">
     <div class="kpi-icon ic-green"><i class="fas fa-sack-dollar"></i></div>
-    <div><div class="kpi-val" id="kValue">—</div><div class="kpi-lbl">Umumiy qiymati</div></div>
+    <div><div class="kpi-val" id="kValue">—</div><div class="kpi-lbl">{% translate "Umumiy qiymati" %}</div></div>
   </div>
   <div class="kpi" style="animation:fadeUp .4s ease .16s both">
     <div class="kpi-icon ic-red"><i class="fas fa-triangle-exclamation"></i></div>
-    <div><div class="kpi-val" id="kBad">—</div><div class="kpi-lbl">Ta'mir/Buzilgan</div></div>
+    <div><div class="kpi-val" id="kBad">—</div><div class="kpi-lbl">{% translate "Ta'mir/Buzilgan" %}</div></div>
   </div>
 </div>
 
@@ -43,15 +44,15 @@
   <div class="fbar">
     <div class="search-wrap">
       <i class="fas fa-search"></i>
-      <input type="text" id="srch" placeholder="Buyum nomi yoki kategoriya..." oninput="load()">
+      <input type="text" id="srch" placeholder="{% translate "Buyum nomi yoki kategoriya..." %}" oninput="load()">
     </div>
-    <select id="fCond" onchange="load()" style="border:1.5px solid var(--border);border-radius:8px;padding:7px 32px 7px 12px;font-size:.78rem;background:#fff;outline:none;cursor:pointer">
-      <option value="">Barcha holatlar</option>
-      <option value="new">Yangi</option>
-      <option value="good">Yaxshi</option>
-      <option value="needs_repair">Ta'mirlash kerak</option>
-      <option value="damaged">Buzilgan</option>
-      <option value="disposed">Hisobdan chiqarilgan</option>
+    <select id="fCond" onchange="load()" style="border:1.5px solid var(--border);border-radius:8px;padding:7px 32px 7px 12px;font-size:.78rem;background:var(--card);color:var(--text);outline:none;cursor:pointer">
+      <option value="">{% translate "Barcha holatlar" %}</option>
+      <option value="new">{% translate "Yangi" %}</option>
+      <option value="good">{% translate "Yaxshi" %}</option>
+      <option value="needs_repair">{% translate "Ta'mirlash kerak" %}</option>
+      <option value="damaged">{% translate "Buzilgan" %}</option>
+      <option value="disposed">{% translate "Hisobdan chiqarilgan" %}</option>
     </select>
     <span style="margin-left:auto;font-size:.75rem;color:var(--muted)" id="cntLbl"></span>
   </div>
@@ -62,56 +63,106 @@
 <div class="overlay" id="asModal">
   <div class="modal">
     <div class="m-head">
-      <h5><i class="fas fa-box" style="color:var(--accent);margin-right:6px"></i><span id="asModalTitle">Buyum qo'shish</span></h5>
+      <h5><i class="fas fa-box" style="color:var(--accent);margin-right:6px"></i><span id="asModalTitle">{% translate "Buyum qo'shish" %}</span></h5>
       <button class="m-close" onclick="closeM('asModal')"><i class="fas fa-times"></i></button>
     </div>
     <div class="m-body">
       <input type="hidden" id="asId">
       <div class="row2">
-        <div class="fg"><label>Buyum nomi *</label><input class="fc" id="asName" placeholder="Masalan: Stul"></div>
-        <div class="fg"><label>Kategoriya</label><input class="fc" id="asCategory" placeholder="Masalan: Mebel"></div>
+        <div class="fg"><label>{% translate "Buyum nomi *" %}</label><input class="fc" id="asName" placeholder="{% translate "Masalan: Stul" %}"></div>
+        <div class="fg"><label>{% translate "Kategoriya" %}</label><input class="fc" id="asCategory" placeholder="{% translate "Masalan: Mebel" %}"></div>
       </div>
       <div class="row2">
-        <div class="fg"><label>Soni *</label><input class="fc" type="number" min="1" step="1" id="asQty" placeholder="1"></div>
-        <div class="fg"><label>1 dona narxi *</label><input class="fc" type="number" min="0" step="1" id="asPrice" placeholder="0"></div>
+        <div class="fg"><label>{% translate "Soni *" %}</label><input class="fc" type="number" min="1" step="1" id="asQty" placeholder="1"></div>
+        <div class="fg"><label>{% translate "1 dona narxi *" %}</label><input class="fc" type="number" min="0" step="1" id="asPrice" placeholder="0"></div>
       </div>
       <div class="fg" id="asTotalRow" style="background:var(--bg);border-radius:8px;padding:10px 12px;font-size:.85rem;font-weight:700;color:var(--accent)">
-        Jami qiymat: <span id="asTotalVal">0</span>
+        {% translate "Jami qiymat:" %} <span id="asTotalVal">0</span>
       </div>
       <div class="row2">
-        <div class="fg"><label>Holati *</label>
+        <div class="fg"><label>{% translate "Holati *" %}</label>
           <select class="fc fc-sel" id="asCondition">
-            <option value="new">Yangi</option>
-            <option value="good">Yaxshi</option>
-            <option value="needs_repair">Ta'mirlash kerak</option>
-            <option value="damaged">Buzilgan</option>
-            <option value="disposed">Hisobdan chiqarilgan</option>
+            <option value="new">{% translate "Yangi" %}</option>
+            <option value="good">{% translate "Yaxshi" %}</option>
+            <option value="needs_repair">{% translate "Ta'mirlash kerak" %}</option>
+            <option value="damaged">{% translate "Buzilgan" %}</option>
+            <option value="disposed">{% translate "Hisobdan chiqarilgan" %}</option>
           </select>
         </div>
-        <div class="fg"><label>Sotib olingan sana</label><input class="fc" type="date" id="asDate"></div>
+        <div class="fg"><label>{% translate "Sotib olingan sana" %}</label><input class="fc" type="date" id="asDate"></div>
       </div>
-      <div class="fg"><label>Izoh</label><input class="fc" id="asNotes" placeholder="Qo'shimcha izoh..."></div>
+      <div class="fg"><label>{% translate "Izoh" %}</label><input class="fc" id="asNotes" placeholder="{% translate "Qo'shimcha izoh..." %}"></div>
     </div>
     <div class="m-foot">
-      <button class="btn btn-ghost" onclick="closeM('asModal')">Bekor</button>
-      <button class="btn btn-primary" onclick="doSaveAsset()"><i class="fas fa-check"></i>Saqlash</button>
+      <button class="btn btn-ghost" onclick="closeM('asModal')">{% translate "Bekor" %}</button>
+      <button class="btn btn-primary" onclick="doSaveAsset()"><i class="fas fa-check"></i>{% translate "Saqlash" %}</button>
     </div>
   </div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
+{% translate "ta" as p_fa_ta %}
+{% translate "ta buyum" as p_fa_ta_buyum %}
+{% translate "Buyum topilmadi" as p_fa_not_found %}
+{% translate "Tahrirlash" as p_fa_edit %}
+{% translate "O'chirish" as p_fa_delete %}
+{% translate "Buyum qo'shish" as p_fa_add_title %}
+{% translate "Buyumni tahrirlash" as p_fa_edit_title %}
+{% translate "{name} ni o'chirishni tasdiqlaysizmi?" as p_fa_confirm_del %}
+{% translate "Buyum nomini kiriting" as p_fa_name_required %}
+{% translate "Soni kamida 1 bo'lishi kerak" as p_fa_qty_min %}
+{% translate "Narx manfiy bo'lishi mumkin emas" as p_fa_price_neg %}
+{% translate "Yangilandi" as p_fa_updated %}
+{% translate "O'chirildi" as p_fa_deleted %}
+{% translate "Xatolik" as p_fa_error %}
+{% translate "Server xatosi" as p_fa_server_error %}
+{% translate "Buyum qo'shildi" as p_fa_added %}
+{% translate "Buyum" as p_fa_th_name %}
+{% translate "Soni" as p_fa_th_qty %}
+{% translate "1 dona narxi" as p_fa_th_price %}
+{% translate "Jami qiymat" as p_fa_th_total %}
+{% translate "Holati" as p_fa_th_condition %}
+{% translate "Yangi" as p_fa_cond_new %}
+{% translate "Yaxshi" as p_fa_cond_good %}
+{% translate "Ta'mirlash kerak" as p_fa_cond_repair %}
+{% translate "Buzilgan" as p_fa_cond_damaged %}
+{% translate "Hisobdan chiqarilgan" as p_fa_cond_disposed %}
 <script>
 initAuth();
 const _ME = getUser();
 const _CAN_DELETE = _ME.role === 'admin' || _ME.role === 'developer';
 
+const FAI18N = {
+  ta: "{{ p_fa_ta|escapejs }}",
+  taBuyum: "{{ p_fa_ta_buyum|escapejs }}",
+  notFound: "{{ p_fa_not_found|escapejs }}",
+  edit: "{{ p_fa_edit|escapejs }}",
+  delete: "{{ p_fa_delete|escapejs }}",
+  addTitle: "{{ p_fa_add_title|escapejs }}",
+  editTitle: "{{ p_fa_edit_title|escapejs }}",
+  confirmDelete: "{{ p_fa_confirm_del|escapejs }}",
+  nameRequired: "{{ p_fa_name_required|escapejs }}",
+  qtyMin: "{{ p_fa_qty_min|escapejs }}",
+  priceNeg: "{{ p_fa_price_neg|escapejs }}",
+  updated: "{{ p_fa_updated|escapejs }}",
+  deleted: "{{ p_fa_deleted|escapejs }}",
+  error: "{{ p_fa_error|escapejs }}",
+  serverError: "{{ p_fa_server_error|escapejs }}",
+  added: "{{ p_fa_added|escapejs }}",
+  thName: "{{ p_fa_th_name|escapejs }}",
+  thQty: "{{ p_fa_th_qty|escapejs }}",
+  thPrice: "{{ p_fa_th_price|escapejs }}",
+  thTotal: "{{ p_fa_th_total|escapejs }}",
+  thCondition: "{{ p_fa_th_condition|escapejs }}",
+};
+
 const COND_MAP = {
-  new:          {label:'Yangi',              cls:'bdg-active'},
-  good:         {label:'Yaxshi',             cls:'bdg-info'},
-  needs_repair: {label:'Ta\'mirlash kerak',  cls:'bdg-warning'},
-  damaged:      {label:'Buzilgan',           cls:'bdg-unpaid'},
-  disposed:     {label:'Hisobdan chiqarilgan', cls:'bdg-inactive'},
+  new:          {label:"{{ p_fa_cond_new|escapejs }}",      cls:'bdg-active'},
+  good:         {label:"{{ p_fa_cond_good|escapejs }}",     cls:'bdg-info'},
+  needs_repair: {label:"{{ p_fa_cond_repair|escapejs }}",   cls:'bdg-warning'},
+  damaged:      {label:"{{ p_fa_cond_damaged|escapejs }}",  cls:'bdg-unpaid'},
+  disposed:     {label:"{{ p_fa_cond_disposed|escapejs }}", cls:'bdg-inactive'},
 };
 
 let allAssets = [];
@@ -154,22 +205,22 @@ async function load(){
 }
 
 function renderKpi(){
-  document.getElementById('kCount').textContent = allAssets.length + ' ta';
+  document.getElementById('kCount').textContent = allAssets.length + ' ' + FAI18N.ta;
   const totalValue = allAssets.reduce((s,a) => s + parseFloat(a.total_value||0), 0);
   document.getElementById('kValue').textContent = fmoney(totalValue);
   const bad = allAssets.filter(a => a.condition === 'needs_repair' || a.condition === 'damaged').length;
-  document.getElementById('kBad').textContent = bad + ' ta';
+  document.getElementById('kBad').textContent = bad + ' ' + FAI18N.ta;
 }
 
 function renderTable(){
-  document.getElementById('cntLbl').textContent = `${allAssets.length} ta buyum`;
+  document.getElementById('cntLbl').textContent = `${allAssets.length} ${FAI18N.taBuyum}`;
   if(!allAssets.length){
-    document.getElementById('tbl').innerHTML = '<div class="empty"><i class="fas fa-boxes-stacked"></i><p>Buyum topilmadi</p></div>';
+    document.getElementById('tbl').innerHTML = `<div class="empty"><i class="fas fa-boxes-stacked"></i><p>${FAI18N.notFound}</p></div>`;
     return;
   }
   document.getElementById('tbl').innerHTML = `
   <table class="etable"><thead><tr>
-    <th>#</th><th>Buyum</th><th>Soni</th><th>1 dona narxi</th><th>Jami qiymat</th><th>Holati</th><th></th>
+    <th>#</th><th>${FAI18N.thName}</th><th>${FAI18N.thQty}</th><th>${FAI18N.thPrice}</th><th>${FAI18N.thTotal}</th><th>${FAI18N.thCondition}</th><th></th>
   </tr></thead><tbody>
   ${allAssets.map((a,i) => {
     const cm = COND_MAP[a.condition] || {label:a.condition_display||a.condition, cls:'bdg-info'};
@@ -185,8 +236,8 @@ function renderTable(){
       <td><span class="bdg ${cm.cls}">${cm.label}</span></td>
       <td>
         <div style="display:flex;gap:4px">
-          <button class="btn-icon edit" onclick="openEditModal('${a.id}')" title="Tahrirlash"><i class="fas fa-pen"></i></button>
-          ${_CAN_DELETE ? `<button class="btn-icon del" onclick="doDeleteAsset('${a.id}','${jsAttrEscape(a.name||'')}')" title="O'chirish"><i class="fas fa-trash"></i></button>` : ''}
+          <button class="btn-icon edit" onclick="openEditModal('${a.id}')" title="${FAI18N.edit}"><i class="fas fa-pen"></i></button>
+          ${_CAN_DELETE ? `<button class="btn-icon del" onclick="doDeleteAsset('${a.id}','${jsAttrEscape(a.name||'')}')" title="${FAI18N.delete}"><i class="fas fa-trash"></i></button>` : ''}
         </div>
       </td>
     </tr>`;
@@ -195,7 +246,7 @@ function renderTable(){
 }
 
 function openAddModal(){
-  document.getElementById('asModalTitle').textContent = "Buyum qo'shish";
+  document.getElementById('asModalTitle').textContent = FAI18N.addTitle;
   document.getElementById('asId').value = '';
   document.getElementById('asName').value = '';
   document.getElementById('asCategory').value = '';
@@ -211,7 +262,7 @@ function openAddModal(){
 function openEditModal(id){
   const a = allAssets.find(x => x.id === id);
   if(!a) return;
-  document.getElementById('asModalTitle').textContent = 'Buyumni tahrirlash';
+  document.getElementById('asModalTitle').textContent = FAI18N.editTitle;
   document.getElementById('asId').value = a.id;
   document.getElementById('asName').value = a.name || '';
   document.getElementById('asCategory').value = a.category || '';
@@ -230,9 +281,9 @@ async function doSaveAsset(){
   const qty = parseInt(document.getElementById('asQty').value);
   const price = parseFloat(document.getElementById('asPrice').value);
 
-  if(!name){toast("Buyum nomini kiriting",'wrn');return;}
-  if(!qty || qty < 1){toast("Soni kamida 1 bo'lishi kerak",'wrn');return;}
-  if(isNaN(price) || price < 0){toast("Narx manfiy bo'lishi mumkin emas",'wrn');return;}
+  if(!name){toast(FAI18N.nameRequired,'wrn');return;}
+  if(!qty || qty < 1){toast(FAI18N.qtyMin,'wrn');return;}
+  if(isNaN(price) || price < 0){toast(FAI18N.priceNeg,'wrn');return;}
 
   const body = {
     name,
@@ -247,19 +298,19 @@ async function doSaveAsset(){
   const r = id ? await put(`/finance/assets/${id}/`, body) : await post('/finance/assets/', body);
   if(r?.ok){
     closeM('asModal');
-    toast(id ? 'Yangilandi' : "Buyum qo'shildi", 'ok');
+    toast(id ? FAI18N.updated : FAI18N.added, 'ok');
     load();
   } else {
-    try{const e = await r?.json(); toast(e?.detail || Object.values(e||{}).flat()[0] || 'Xatolik', 'err');}
-    catch{toast('Server xatosi', 'err');}
+    try{const e = await r?.json(); toast(e?.detail || Object.values(e||{}).flat()[0] || FAI18N.error, 'err');}
+    catch{toast(FAI18N.serverError, 'err');}
   }
 }
 
 async function doDeleteAsset(id, name){
-  if(!confirm(`"${name}" ni o'chirishni tasdiqlaysizmi?`)) return;
+  if(!confirm(FAI18N.confirmDelete.replace('{name}', '"'+name+'"'))) return;
   const r = await del(`/finance/assets/${id}/`);
-  if(r?.ok || r?.status === 204){toast("O'chirildi", 'ok'); load();}
-  else{try{const e = await r?.json(); toast(e?.detail || 'Xatolik', 'err');}catch{toast('Server xatosi', 'err');}}
+  if(r?.ok || r?.status === 204){toast(FAI18N.deleted, 'ok'); load();}
+  else{try{const e = await r?.json(); toast(e?.detail || FAI18N.error, 'err');}catch{toast(FAI18N.serverError, 'err');}}
 }
 
 load();

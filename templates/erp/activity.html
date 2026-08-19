@@ -1,13 +1,14 @@
 ﻿{% extends "erp/base.html" %}
+{% load i18n %}
 {% block title %}Faoliyat jurnali — Qorako'l Ilm Ziyo{% endblock %}
-{% block page_title %}Faoliyat jurnali{% endblock %}
+{% block page_title %}{% translate "Faoliyat jurnali" %}{% endblock %}
 
 {% block extra_head %}
 <style>
 .act-filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}
 .act-filters select,.act-filters input{
   padding:7px 12px;border:1.5px solid var(--border);border-radius:8px;
-  font-size:.8rem;background:#fff;color:var(--text);outline:none;
+  font-size:.8rem;background:var(--card);color:var(--text);outline:none;
   font-family:inherit;transition:border .2s;
 }
 .act-filters select:focus,.act-filters input:focus{border-color:var(--accent)}
@@ -19,11 +20,11 @@
 .act-table td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
 .act-table tr:hover td{background:rgba(5,150,105,.03)}
 .act-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:20px;font-size:.68rem;font-weight:700}
-.act-create{background:#d4f5e2;color:#1a7a46}
-.act-update{background:#fff3cd;color:#856404}
-.act-delete{background:#ffe3e3;color:#c0392b}
-.act-login{background:#d0e9ff;color:#1565c0}
-.act-logout{background:#e8e8e8;color:#555}
+.act-create{background:var(--badge-success-bg);color:var(--badge-success-text)}
+.act-update{background:var(--badge-warning-bg);color:var(--badge-warning-text)}
+.act-delete{background:var(--badge-danger-bg);color:var(--badge-danger-text)}
+.act-login{background:var(--badge-info-bg);color:var(--badge-info-text)}
+.act-logout{background:var(--badge-info-bg);color:var(--badge-info-text)}
 .act-empty{text-align:center;padding:60px 20px;color:var(--muted)}
 .act-empty i{font-size:2.5rem;display:block;margin-bottom:12px;opacity:.3}
 .act-model{font-size:.72rem;color:var(--muted);font-style:italic}
@@ -41,31 +42,31 @@
 {% block content %}
 <div style="margin-bottom:20px;animation:fadeUp .35s ease both;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px">
   <div>
-    <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">Faoliyat jurnali</h2>
-    <p style="font-size:.75rem;color:var(--muted);margin-top:3px">Kim nimani o'zgartirdi — barcha amallar tarixi</p>
+    <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">{% translate "Faoliyat jurnali" %}</h2>
+    <p style="font-size:.75rem;color:var(--muted);margin-top:3px">{% translate "Kim nimani o'zgartirdi — barcha amallar tarixi" %}</p>
   </div>
-  <button class="btn" onclick="loadActivity()"><i class="fas fa-rotate-right"></i> Yangilash</button>
+  <button class="btn" onclick="loadActivity()"><i class="fas fa-rotate-right"></i> {% translate "Yangilash" %}</button>
 </div>
 
 <div class="card" style="animation:fadeUp .4s ease .05s both">
   <!-- Filters -->
   <div class="act-filters">
     <select id="filterAction" onchange="loadActivity()">
-      <option value="">Barcha amallar</option>
-      <option value="create">Yaratildi</option>
-      <option value="update">Yangilandi</option>
-      <option value="delete">O'chirildi</option>
-      <option value="login">Kirdi</option>
-      <option value="logout">Chiqdi</option>
+      <option value="">{% translate "Barcha amallar" %}</option>
+      <option value="create">{% translate "Yaratildi" %}</option>
+      <option value="update">{% translate "Yangilandi" %}</option>
+      <option value="delete">{% translate "O'chirildi" %}</option>
+      <option value="login">{% translate "Kirdi" %}</option>
+      <option value="logout">{% translate "Chiqdi" %}</option>
     </select>
     <select id="filterModel" onchange="loadActivity()">
-      <option value="">Barcha modellar</option>
-      <option value="Student">O'quvchi</option>
-      <option value="Teacher">O'qituvchi</option>
-      <option value="Group">Guruh</option>
-      <option value="Payment">To'lov</option>
-      <option value="Attendance">Davomat</option>
-      <option value="User">Foydalanuvchi</option>
+      <option value="">{% translate "Barcha modellar" %}</option>
+      <option value="Student">{% translate "O'quvchi" %}</option>
+      <option value="Teacher">{% translate "O'qituvchi" %}</option>
+      <option value="Group">{% translate "Guruh" %}</option>
+      <option value="Payment">{% translate "To'lov" %}</option>
+      <option value="Attendance">{% translate "Davomat" %}</option>
+      <option value="User">{% translate "Foydalanuvchi" %}</option>
     </select>
   </div>
 
@@ -73,16 +74,16 @@
     <table class="act-table">
       <thead>
         <tr>
-          <th>Amal</th>
-          <th>Foydalanuvchi</th>
-          <th>Obyekt</th>
-          <th>O'zgarishlar</th>
+          <th>{% translate "Amal" %}</th>
+          <th>{% translate "Foydalanuvchi" %}</th>
+          <th>{% translate "Obyekt" %}</th>
+          <th>{% translate "O'zgarishlar" %}</th>
           <th id="ipTh">IP</th>
-          <th>Vaqt</th>
+          <th>{% translate "Vaqt" %}</th>
         </tr>
       </thead>
       <tbody id="actBody">
-        <tr><td colspan="6" class="act-empty"><i class="fas fa-spinner fa-spin"></i> Yuklanmoqda...</td></tr>
+        <tr><td colspan="6" class="act-empty"><i class="fas fa-spinner fa-spin"></i> {% translate "Yuklanmoqda..." %}</td></tr>
       </tbody>
     </table>
   </div>
@@ -92,7 +93,7 @@
 <div class="overlay" id="changesOverlay">
   <div class="modal" style="max-width:420px">
     <div class="m-head">
-      <h5><i class="fas fa-code-compare" style="margin-right:8px"></i>O'zgarishlar</h5>
+      <h5><i class="fas fa-code-compare" style="margin-right:8px"></i>{% translate "O'zgarishlar" %}</h5>
       <button class="m-close" onclick="closeM('changesOverlay')"><i class="fas fa-times"></i></button>
     </div>
     <div class="m-body" id="changesBody" style="max-height:360px;overflow-y:auto"></div>
@@ -100,15 +101,40 @@
 </div>
 {% endblock %}
 
+{% translate "Yaratildi" as p_created %}
+{% translate "Yangilandi" as p_updated %}
+{% translate "O'chirildi" as p_deleted %}
+{% translate "Kirdi" as p_logged_in %}
+{% translate "Chiqdi" as p_logged_out %}
+{% translate "Yuklanmoqda..." as p_loading %}
+{% translate "Yuklashda xatolik" as p_load_error %}
+{% translate "Faoliyatlar topilmadi" as p_activities_not_found %}
+{% translate "Ko'rish" as p_view %}
+{% translate "Nomalum" as p_unknown %}
+{% translate "O'zgarishlar yo'q" as p_no_changes %}
 {% block extra_js %}
 <script>
+const PI18N = {
+  created: "{{ p_created|escapejs }}",
+  updated: "{{ p_updated|escapejs }}",
+  deleted: "{{ p_deleted|escapejs }}",
+  loggedIn: "{{ p_logged_in|escapejs }}",
+  loggedOut: "{{ p_logged_out|escapejs }}",
+  loading: "{{ p_loading|escapejs }}",
+  loadError: "{{ p_load_error|escapejs }}",
+  activitiesNotFound: "{{ p_activities_not_found|escapejs }}",
+  view: "{{ p_view|escapejs }}",
+  unknown: "{{ p_unknown|escapejs }}",
+  noChanges: "{{ p_no_changes|escapejs }}",
+};
+
 const ACTION_BADGES = {
   create: 'act-create', update: 'act-update', delete: 'act-delete',
   login: 'act-login', logout: 'act-logout',
 };
 const ACTION_LABELS = {
-  create:'Yaratildi', update:'Yangilandi', delete:"O'chirildi",
-  login:'Kirdi', logout:'Chiqdi',
+  create:PI18N.created, update:PI18N.updated, delete:PI18N.deleted,
+  login:PI18N.loggedIn, logout:PI18N.loggedOut,
 };
 const _isDev = (getUser().role||'') === 'developer';
 
@@ -117,7 +143,7 @@ async function loadActivity(){
   const model  = document.getElementById('filterModel').value;
   const body   = document.getElementById('actBody');
   const cols   = _isDev ? 6 : 5;
-  body.innerHTML = `<tr><td colspan="${cols}" class="act-empty"><i class="fas fa-spinner fa-spin"></i> Yuklanmoqda...</td></tr>`;
+  body.innerHTML = `<tr><td colspan="${cols}" class="act-empty"><i class="fas fa-spinner fa-spin"></i> ${PI18N.loading}</td></tr>`;
 
   let url = '/notifications/activity/';
   const params=[];
@@ -126,10 +152,10 @@ async function loadActivity(){
   if(params.length) url+='?'+params.join('&');
 
   const data = await get(url);
-  if(!data){ body.innerHTML=`<tr><td colspan="${cols}" class="act-empty"><i class="fas fa-exclamation-circle"></i> Yuklashda xatolik</td></tr>`; return; }
+  if(!data){ body.innerHTML=`<tr><td colspan="${cols}" class="act-empty"><i class="fas fa-exclamation-circle"></i> ${PI18N.loadError}</td></tr>`; return; }
   const list = Array.isArray(data) ? data : (data.results||[]);
   if(!list.length){
-    body.innerHTML=`<tr><td colspan="${cols}" class="act-empty"><i class="fas fa-list-check"></i><br>Faoliyatlar topilmadi</td></tr>`;
+    body.innerHTML=`<tr><td colspan="${cols}" class="act-empty"><i class="fas fa-list-check"></i><br>${PI18N.activitiesNotFound}</td></tr>`;
     return;
   }
   body.innerHTML = list.map(a=>{
@@ -137,12 +163,12 @@ async function loadActivity(){
     const label  = ACTION_LABELS[a.action]||a.action_display||a.action;
     const hasChg = a.changes && Object.keys(a.changes).length;
     const changeBtn = hasChg
-      ? `<button class="act-changes-btn" onclick="showChanges(${JSON.stringify(JSON.stringify(a.changes))})"><i class="fas fa-diff"></i> Ko'rish</button>`
+      ? `<button class="act-changes-btn" onclick="showChanges(${JSON.stringify(JSON.stringify(a.changes))})"><i class="fas fa-diff"></i> ${PI18N.view}</button>`
       : '<span style="color:var(--muted);font-size:.7rem">—</span>';
     return `<tr>
       <td><span class="act-badge ${bdgCls}">${label}</span></td>
       <td>
-        <div style="font-weight:600;font-size:.8rem">${escHtml(a.user_name||'Nomalum')}</div>
+        <div style="font-weight:600;font-size:.8rem">${escHtml(a.user_name||PI18N.unknown)}</div>
         <div style="font-size:.68rem;color:var(--muted)">${a.user_role||''}</div>
       </td>
       <td>
@@ -161,7 +187,7 @@ function showChanges(jsonStr){
   try{ ch = JSON.parse(jsonStr); } catch{ ch={}; }
   const body = document.getElementById('changesBody');
   const keys = Object.keys(ch);
-  if(!keys.length){ body.innerHTML='<p style="color:var(--muted);font-size:.8rem">O\'zgarishlar yo\'q</p>'; }
+  if(!keys.length){ body.innerHTML=`<p style="color:var(--muted);font-size:.8rem">${PI18N.noChanges}</p>`; }
   else{
     body.innerHTML = keys.map(k=>{
       const val = ch[k];

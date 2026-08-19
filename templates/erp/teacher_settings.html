@@ -1,6 +1,7 @@
 ﻿{% extends "erp/base.html" %}
-{% block title %}Profil — Qorako'l Ilm Ziyo{% endblock %}
-{% block page_title %}Mening profilim{% endblock %}
+{% load i18n %}
+{% block title %}{% translate "Profil — Qorako'l Ilm Ziyo" %}{% endblock %}
+{% block page_title %}{% translate "Mening profilim" %}{% endblock %}
 
 {% block extra_head %}
 <style>
@@ -29,7 +30,7 @@
 @media(max-width:900px){.ts-layout{grid-template-columns:1fr}}
 
 /* ── SECTION CARD ─────────────────────────────────────────── */
-.ts-card{background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;animation:fadeUp .4s ease both}
+.ts-card{background:var(--card);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;animation:fadeUp .4s ease both}
 .ts-card-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
 .ts-card-ic{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:.82rem;flex-shrink:0}
 .ts-card-title{font-size:.88rem;font-weight:800;color:var(--text)}
@@ -38,7 +39,7 @@
 .ts-info-list{padding:4px 0}
 .ts-info-row{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--border);transition:background .15s}
 .ts-info-row:last-child{border-bottom:none}
-.ts-info-row:hover{background:#f8f9fc}
+.ts-info-row:hover{background:var(--bg)}
 .ts-info-key{font-size:.75rem;color:var(--muted);font-weight:600;display:flex;align-items:center;gap:7px}
 .ts-info-key i{width:14px;text-align:center;color:var(--accent)}
 .ts-info-val{font-size:.82rem;font-weight:700;color:var(--text);text-align:right;max-width:55%}
@@ -47,20 +48,20 @@
 .ts-form-body{padding:20px}
 
 /* ── DANGER CARD ──────────────────────────────────────────── */
-.ts-danger-card{background:linear-gradient(135deg,#fef2f2,#fff5f5);border:1px solid #fecaca;border-radius:14px;padding:20px;animation:fadeUp .48s ease .14s both}
+.ts-danger-card{background:var(--badge-danger-bg);border:1px solid var(--danger);border-radius:14px;padding:20px;animation:fadeUp .48s ease .14s both}
 .ts-danger-title{font-size:.88rem;font-weight:800;color:#b91c1c;margin-bottom:4px}
 .ts-danger-sub{font-size:.76rem;color:#ef4444;margin-bottom:16px}
 
 /* ── STAT ROW ─────────────────────────────────────────────── */
 .ts-stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
 @media(max-width:700px){.ts-stat-row{grid-template-columns:1fr 1fr}}
-.ts-stat-mini{background:#f8f9fc;border:1px solid var(--border);border-radius:11px;padding:14px;text-align:center;transition:all .2s;cursor:default}
-.ts-stat-mini:hover{background:#f0f1f5;transform:translateY(-2px)}
+.ts-stat-mini{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:14px;text-align:center;transition:all .2s;cursor:default}
+.ts-stat-mini:hover{background:var(--bg);transform:translateY(-2px)}
 .ts-stat-mini-v{font-size:1.2rem;font-weight:900;color:var(--text);line-height:1.1;letter-spacing:-.3px}
 .ts-stat-mini-l{font-size:.63rem;color:var(--muted);margin-top:3px;font-weight:600}
 
 /* ── PASS STRENGTH ────────────────────────────────────────── */
-.pass-strength{height:4px;border-radius:100px;margin-top:6px;transition:all .3s;background:#e2e8f0}
+.pass-strength{height:4px;border-radius:100px;margin-top:6px;transition:all .3s;background:var(--border)}
 .pass-strength.s1{width:25%;background:#ef4444}
 .pass-strength.s2{width:50%;background:#f59e0b}
 .pass-strength.s3{width:75%;background:#3b82f6}
@@ -100,19 +101,19 @@
   <div class="ts-hero-inner">
     <div class="ts-av-wrap">
       <div class="ts-av" id="tsAv">?</div>
-      <div class="ts-av-edit" title="Face ID o'rnatish" onclick="openFaceModal()"><i class="fas fa-camera"></i></div>
+      <div class="ts-av-edit" title="{% translate "Face ID o'rnatish" %}" onclick="openFaceModal()"><i class="fas fa-camera"></i></div>
     </div>
     <div style="flex:1;min-width:0">
-      <div class="ts-name" id="tsName">Yuklanmoqda...</div>
-      <div class="ts-role"><i class="fas fa-chalkboard-teacher" style="font-size:.6rem"></i><span id="tsSubject">O'qituvchi</span></div>
+      <div class="ts-name" id="tsName">{% translate "Yuklanmoqda..." %}</div>
+      <div class="ts-role"><i class="fas fa-chalkboard-teacher" style="font-size:.6rem"></i><span id="tsSubject">{% translate "O'qituvchi" %}</span></div>
       <div class="ts-pills">
-        <span class="ts-pill ts-pill-o"><i class="fas fa-users" style="font-size:.6rem"></i><span id="tsGrpCnt">0</span> guruh</span>
-        <span class="ts-pill ts-pill-b"><i class="fas fa-user-graduate" style="font-size:.6rem"></i><span id="tsStuCnt">0</span> o'quvchi</span>
-        <span class="ts-pill ts-pill-g" id="tsStatusPill"><i class="fas fa-circle" style="font-size:.45rem"></i> Faol</span>
+        <span class="ts-pill ts-pill-o"><i class="fas fa-users" style="font-size:.6rem"></i><span id="tsGrpCnt">0</span> {% translate "guruh" %}</span>
+        <span class="ts-pill ts-pill-b"><i class="fas fa-user-graduate" style="font-size:.6rem"></i><span id="tsStuCnt">0</span> {% translate "o'quvchi" %}</span>
+        <span class="ts-pill ts-pill-g" id="tsStatusPill"><i class="fas fa-circle" style="font-size:.45rem"></i> {% translate "Faol" %}</span>
       </div>
       <div id="faceIdBadge" class="faceid-badge faceid-off" style="cursor:pointer" onclick="openFaceModal()">
         <i class="fas fa-face-smile" style="font-size:.6rem"></i>
-        <span id="faceIdLabel">Face ID: O'rnatilmagan</span>
+        <span id="faceIdLabel">{% translate "Face ID: O'rnatilmagan" %}</span>
       </div>
     </div>
   </div>
@@ -122,15 +123,15 @@
 <div class="ts-stat-row">
   <div class="ts-stat-mini" style="animation:fadeUp .38s ease .04s both">
     <div class="ts-stat-mini-v" id="stGrp">—</div>
-    <div class="ts-stat-mini-l">Guruhlar</div>
+    <div class="ts-stat-mini-l">{% translate "Guruhlar" %}</div>
   </div>
   <div class="ts-stat-mini" style="animation:fadeUp .38s ease .09s both">
     <div class="ts-stat-mini-v" id="stStu">—</div>
-    <div class="ts-stat-mini-l">O'quvchilar</div>
+    <div class="ts-stat-mini-l">{% translate "O'quvchilar" %}</div>
   </div>
   <div class="ts-stat-mini" style="animation:fadeUp .38s ease .14s both">
     <div class="ts-stat-mini-v" id="stHw">—</div>
-    <div class="ts-stat-mini-l">Faol vazifalar</div>
+    <div class="ts-stat-mini-l">{% translate "Faol vazifalar" %}</div>
   </div>
 </div>
 
@@ -143,10 +144,10 @@
       <div class="ts-card-head" style="justify-content:space-between">
         <div style="display:flex;align-items:center;gap:10px">
           <div class="ts-card-ic ic-blue"><i class="fas fa-user"></i></div>
-          <span class="ts-card-title">Shaxsiy ma'lumotlar</span>
+          <span class="ts-card-title">{% translate "Shaxsiy ma'lumotlar" %}</span>
         </div>
         <button class="btn btn-ghost" style="padding:4px 12px;font-size:.74rem" onclick="toggleEditForm()">
-          <i class="fas fa-pen" style="font-size:.7rem"></i> Tahrirlash
+          <i class="fas fa-pen" style="font-size:.7rem"></i> {% translate "Tahrirlash" %}
         </button>
       </div>
       <div class="ts-info-list" id="infoList">
@@ -157,15 +158,15 @@
         <div style="height:1px;background:var(--border);margin-bottom:14px"></div>
         <div class="ts-form-body">
           <div class="fg">
-            <label>Ism Familiya</label>
-            <input class="fc" type="text" id="editName" placeholder="Ismingizni kiriting">
+            <label>{% translate "Ism Familiya" %}</label>
+            <input class="fc" type="text" id="editName" placeholder="{% translate "Ismingizni kiriting" %}">
           </div>
           <div class="fg">
-            <label>Telefon raqam</label>
+            <label>{% translate "Telefon raqam" %}</label>
             <input class="fc" type="tel" id="editPhone" placeholder="+998901234567">
           </div>
           <div style="display:flex;gap:8px">
-            <button class="btn btn-primary" style="flex:1" onclick="saveProfile()"><i class="fas fa-check"></i> Saqlash</button>
+            <button class="btn btn-primary" style="flex:1" onclick="saveProfile()"><i class="fas fa-check"></i> {% translate "Saqlash" %}</button>
             <button class="btn btn-ghost" onclick="toggleEditForm()"><i class="fas fa-times"></i></button>
           </div>
         </div>
@@ -178,33 +179,33 @@
     <div class="ts-card" style="animation-delay:.16s">
       <div class="ts-card-head">
         <div class="ts-card-ic ic-amber"><i class="fas fa-lock"></i></div>
-        <span class="ts-card-title">Parolni o'zgartirish</span>
+        <span class="ts-card-title">{% translate "Parolni o'zgartirish" %}</span>
       </div>
       <div class="ts-form-body">
         <div class="fg">
-          <label>Joriy parol</label>
+          <label>{% translate "Joriy parol" %}</label>
           <input class="fc" type="password" id="pwOld" placeholder="••••••••" />
         </div>
         <div class="fg">
-          <label>Yangi parol</label>
-          <input class="fc" type="password" id="pwNew" placeholder="Kamida 8 ta belgi" oninput="checkStrength(this.value)" />
+          <label>{% translate "Yangi parol" %}</label>
+          <input class="fc" type="password" id="pwNew" placeholder="{% translate "Kamida 8 ta belgi" %}" oninput="checkStrength(this.value)" />
           <div class="pass-strength" id="passBar"></div>
         </div>
         <div class="fg">
-          <label>Yangi parolni tasdiqlang</label>
+          <label>{% translate "Yangi parolni tasdiqlang" %}</label>
           <input class="fc" type="password" id="pwConf" placeholder="••••••••" />
         </div>
         <button class="btn btn-primary w-100" onclick="changePass()">
-          <i class="fas fa-key"></i> Parolni yangilash
+          <i class="fas fa-key"></i> {% translate "Parolni yangilash" %}
         </button>
       </div>
     </div>
 
     <div class="ts-danger-card">
-      <div class="ts-danger-title"><i class="fas fa-sign-out-alt" style="margin-right:6px"></i>Tizimdan chiqish</div>
-      <div class="ts-danger-sub">Barcha qurilmalardan chiqmoqchimisiz?</div>
+      <div class="ts-danger-title"><i class="fas fa-sign-out-alt" style="margin-right:6px"></i>{% translate "Tizimdan chiqish" %}</div>
+      <div class="ts-danger-sub">{% translate "Barcha qurilmalardan chiqmoqchimisiz?" %}</div>
       <button class="btn btn-danger w-100" onclick="doLogout()">
-        <i class="fas fa-right-from-bracket"></i> Chiqish
+        <i class="fas fa-right-from-bracket"></i> {% translate "Chiqish" %}
       </button>
     </div>
   </div>
@@ -215,7 +216,7 @@
   <div class="fi-modal">
     <button class="fi-close-btn" onclick="closeFaceModal()"><i class="fas fa-times"></i></button>
     <div class="fi-modal-title"><i class="fas fa-face-smile" style="color:#059669;margin-right:7px"></i>Face ID</div>
-    <div class="fi-modal-sub" id="faceModalSub">Yuzingizni ro'yxatga olish uchun kameraga qarang</div>
+    <div class="fi-modal-sub" id="faceModalSub">{% translate "Yuzingizni ro'yxatga olish uchun kameraga qarang" %}</div>
 
     <div class="fi-video-wrap">
       <video id="faceVideo" autoplay playsinline muted></video>
@@ -223,28 +224,86 @@
       <canvas id="faceCanvas" style="display:none"></canvas>
     </div>
 
-    <div class="fi-status-bar checking" id="faceStatusBar">Kamera ishga tushirilmoqda...</div>
+    <div class="fi-status-bar checking" id="faceStatusBar">{% translate "Kamera ishga tushirilmoqda..." %}</div>
 
     <div class="fi-consent-box" id="faceConsentBox">
       <label>
         <input type="checkbox" id="faceConsent">
-        Men biometrik ma'lumotlarim (yuz tasviri) Qorako'l Ilm Ziyo tizimida xavfsiz saqlanishiga roziman.
-        Ma'lumotlar O'zbekiston shaxsiy ma'lumotlar to'g'risidagi qonuniga muvofiq himoyalanadi.
+        {% blocktranslate %}Men biometrik ma'lumotlarim (yuz tasviri) Qorako'l Ilm Ziyo tizimida xavfsiz saqlanishiga roziman.
+        Ma'lumotlar O'zbekiston shaxsiy ma'lumotlar to'g'risidagi qonuniga muvofiq himoyalanadi.{% endblocktranslate %}
       </label>
     </div>
 
     <div class="fi-btns">
       <button class="btn btn-primary" style="flex:1" id="faceEnrollBtn" onclick="doEnroll()" disabled>
-        <i class="fas fa-check"></i> Saqlash
+        <i class="fas fa-check"></i> {% translate "Saqlash" %}
       </button>
-      <button class="btn btn-ghost" onclick="closeFaceModal()">Bekor qilish</button>
+      <button class="btn btn-ghost" onclick="closeFaceModal()">{% translate "Bekor qilish" %}</button>
     </div>
   </div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
+{% translate "Ism va telefon bo'sh bo'lmasligi kerak" as p_name_phone_required %}
+{% translate "Profil muvaffaqiyatli yangilandi" as p_profile_updated %}
+{% translate "Xatolik" as p_error %}
+{% translate "Ism Familiya" as p_lbl_fullname %}
+{% translate "Telefon" as p_lbl_phone %}
+{% translate "Email" as p_lbl_email %}
+{% translate "Fan / Yo'nalish" as p_lbl_subject %}
+{% translate "Guruhlar soni" as p_lbl_grp_count %}
+{% translate "O'quvchilar" as p_lbl_students %}
+{% translate "Qo'shilgan sana" as p_lbl_joined %}
+{% translate "Holat" as p_lbl_status %}
+{% translate "ta" as p_ta_unit %}
+{% translate "Barcha maydonlarni to'ldiring" as p_fill_all_fields %}
+{% translate "Yangi parollar mos kelmadi" as p_pw_mismatch %}
+{% translate "Parol kamida 8 ta belgi bo'lishi kerak" as p_pw_min8 %}
+{% translate "Parol muvaffaqiyatli yangilandi" as p_pw_updated %}
+{% translate "Xatolik yuz berdi" as p_generic_error %}
+{% translate "Face ID: Yoqilgan" as p_faceid_on %}
+{% translate "Face ID: O'rnatilmagan" as p_faceid_off %}
+{% translate "Kamera ishga tushirilmoqda..." as p_cam_starting %}
+{% translate "Yuzingizni doira ichiga joylashtiring" as p_face_position %}
+{% translate "Kamera ochilmadi: " as p_cam_failed %}
+{% translate "Tasvir sifati yaxshi. Rozilikni belgilab \"Saqlash\"ni bosing." as p_face_quality_ok %}
+{% translate "Rozilikni belgilang" as p_check_consent %}
+{% translate "Tekshirilmoqda..." as p_checking %}
+{% translate "Face ID muvaffaqiyatli o'rnatildi ✓" as p_face_enrolled_check %}
+{% translate "Face ID muvaffaqiyatli o'rnatildi" as p_face_enrolled %}
+{% translate "Server bilan bog'lanishda xatolik" as p_server_error %}
 <script>
+const PI18N={
+  namePhoneRequired:"{{ p_name_phone_required|escapejs }}",
+  profileUpdated:"{{ p_profile_updated|escapejs }}",
+  error:"{{ p_error|escapejs }}",
+  lblFullname:"{{ p_lbl_fullname|escapejs }}",
+  lblPhone:"{{ p_lbl_phone|escapejs }}",
+  lblEmail:"{{ p_lbl_email|escapejs }}",
+  lblSubject:"{{ p_lbl_subject|escapejs }}",
+  lblGrpCount:"{{ p_lbl_grp_count|escapejs }}",
+  lblStudents:"{{ p_lbl_students|escapejs }}",
+  lblJoined:"{{ p_lbl_joined|escapejs }}",
+  lblStatus:"{{ p_lbl_status|escapejs }}",
+  taUnit:"{{ p_ta_unit|escapejs }}",
+  fillAllFields:"{{ p_fill_all_fields|escapejs }}",
+  pwMismatch:"{{ p_pw_mismatch|escapejs }}",
+  pwMin8:"{{ p_pw_min8|escapejs }}",
+  pwUpdated:"{{ p_pw_updated|escapejs }}",
+  genericError:"{{ p_generic_error|escapejs }}",
+  faceIdOn:"{{ p_faceid_on|escapejs }}",
+  faceIdOff:"{{ p_faceid_off|escapejs }}",
+  camStarting:"{{ p_cam_starting|escapejs }}",
+  facePosition:"{{ p_face_position|escapejs }}",
+  camFailed:"{{ p_cam_failed|escapejs }}",
+  faceQualityOk:"{{ p_face_quality_ok|escapejs }}",
+  checkConsent:"{{ p_check_consent|escapejs }}",
+  checking:"{{ p_checking|escapejs }}",
+  faceEnrolledCheck:"{{ p_face_enrolled_check|escapejs }}",
+  faceEnrolled:"{{ p_face_enrolled|escapejs }}",
+  serverError:"{{ p_server_error|escapejs }}",
+};
 function toggleEditForm(){
   const wrap=document.getElementById('editFormWrap');
   wrap.style.display=wrap.style.display==='none'?'block':'none';
@@ -253,7 +312,7 @@ function toggleEditForm(){
 async function saveProfile(){
   const full_name=document.getElementById('editName').value.trim();
   const phone=document.getElementById('editPhone').value.trim();
-  if(!full_name||!phone){toast("Ism va telefon bo'sh bo'lmasligi kerak",'wrn');return;}
+  if(!full_name||!phone){toast(PI18N.namePhoneRequired,'wrn');return;}
   const r=await req('/auth/me/',{method:'PATCH',body:JSON.stringify({full_name,phone})});
   if(r?.ok){
     const u=getUser();
@@ -262,12 +321,12 @@ async function saveProfile(){
     document.getElementById('tsName').textContent=full_name;
     document.getElementById('tsAv').textContent=initials(full_name);
     document.getElementById('sbName').textContent=full_name;
-    toast("Profil muvaffaqiyatli yangilandi",'ok');
+    toast(PI18N.profileUpdated,'ok');
     toggleEditForm();
     load();
   } else {
     const e=await r?.json();
-    toast(e?.full_name?.[0]||e?.phone?.[0]||e?.detail||"Xatolik",'err');
+    toast(e?.full_name?.[0]||e?.phone?.[0]||e?.detail||PI18N.error,'err');
   }
 }
 
@@ -309,14 +368,14 @@ async function load(){
 
   // Info rows
   const rows=[
-    ['fa-user','Ism Familiya', u.full_name||'—'],
-    ['fa-phone','Telefon', teacher.phone||u.phone||'—'],
-    ['fa-envelope','Email', teacher.email||u.email||u.username||'—'],
-    ['fa-book','Fan / Yo\'nalish', teacher.subject||'—'],
-    ['fa-users','Guruhlar soni', grps.length+' ta'],
-    ['fa-user-graduate','O\'quvchilar', stus.length+' ta'],
-    ['fa-calendar','Qo\'shilgan sana', teacher.created_at?fdate(teacher.created_at):'—'],
-    ['fa-circle','Holat', teacher.is_active===false?'<span class="bdg bdg-inactive">Nofaol</span>':'<span class="bdg bdg-active"><i class="fas fa-circle" style="font-size:.35rem"></i> Faol</span>'],
+    ['fa-user',PI18N.lblFullname, u.full_name||'—'],
+    ['fa-phone',PI18N.lblPhone, teacher.phone||u.phone||'—'],
+    ['fa-envelope',PI18N.lblEmail, teacher.email||u.email||u.username||'—'],
+    ['fa-book',PI18N.lblSubject, teacher.subject||'—'],
+    ['fa-users',PI18N.lblGrpCount, grps.length+' '+PI18N.taUnit],
+    ['fa-user-graduate',PI18N.lblStudents, stus.length+' '+PI18N.taUnit],
+    ['fa-calendar',PI18N.lblJoined, teacher.created_at?fdate(teacher.created_at):'—'],
+    ['fa-circle',PI18N.lblStatus, bdg(teacher.is_active===false?'inactive':'active')],
   ];
 
   document.getElementById('infoList').innerHTML=rows.map(([ic,key,val])=>`
@@ -340,19 +399,19 @@ async function changePass(){
   const old=document.getElementById('pwOld').value;
   const nw =document.getElementById('pwNew').value;
   const cf =document.getElementById('pwConf').value;
-  if(!old||!nw){toast('Barcha maydonlarni to\'ldiring','wrn');return;}
-  if(nw!==cf){toast('Yangi parollar mos kelmadi','wrn');return;}
-  if(nw.length<8){toast('Parol kamida 8 ta belgi bo\'lishi kerak','wrn');return;}
+  if(!old||!nw){toast(PI18N.fillAllFields,'wrn');return;}
+  if(nw!==cf){toast(PI18N.pwMismatch,'wrn');return;}
+  if(nw.length<8){toast(PI18N.pwMin8,'wrn');return;}
   const r=await post('/auth/change-password/',{old_password:old,new_password:nw});
   if(r?.ok){
-    toast('Parol muvaffaqiyatli yangilandi');
+    toast(PI18N.pwUpdated);
     document.getElementById('pwOld').value='';
     document.getElementById('pwNew').value='';
     document.getElementById('pwConf').value='';
     document.getElementById('passBar').className='pass-strength';
   } else {
     const d=await r?.json().catch(()=>({}));
-    toast(d?.detail||d?.old_password?.[0]||'Xatolik yuz berdi','err');
+    toast(d?.detail||d?.old_password?.[0]||PI18N.genericError,'err');
   }
 }
 
@@ -370,10 +429,10 @@ async function loadFaceStatus() {
       const lbl   = document.getElementById('faceIdLabel');
       if (d.enrolled) {
         badge.className = 'faceid-badge faceid-on';
-        lbl.textContent = 'Face ID: Yoqilgan';
+        lbl.textContent = PI18N.faceIdOn;
       } else {
         badge.className = 'faceid-badge faceid-off';
-        lbl.textContent = "Face ID: O'rnatilmagan";
+        lbl.textContent = PI18N.faceIdOff;
       }
     }
   } catch(e) {}
@@ -383,7 +442,7 @@ async function openFaceModal() {
   document.getElementById('faceModal').classList.add('open');
   document.getElementById('faceEnrollBtn').disabled = true;
   document.getElementById('faceConsent').checked = false;
-  setFaceStatus('Kamera ishga tushirilmoqda...', 'checking');
+  setFaceStatus(PI18N.camStarting, 'checking');
   await startFaceCamera();
 }
 
@@ -407,10 +466,10 @@ async function startFaceCamera() {
     const video = document.getElementById('faceVideo');
     video.srcObject = _faceStream;
     await video.play();
-    setFaceStatus('Yuzingizni doira ichiga joylashtiring', 'checking');
+    setFaceStatus(PI18N.facePosition, 'checking');
     runQualityPreview();
   } catch(e) {
-    setFaceStatus("Kamera ochilmadi: " + e.message, 'err');
+    setFaceStatus(PI18N.camFailed + e.message, 'err');
   }
 }
 
@@ -428,7 +487,7 @@ function runQualityPreview() {
     if (!video.srcObject) { clearInterval(_qualityTimer); return; }
     // Simple client-side hint: green ring if stream is live
     document.getElementById('faceRing').style.borderColor = 'rgba(5,150,105,.8)';
-    setFaceStatus('Tasvir sifati yaxshi. Rozilikni belgilab "Saqlash"ni bosing.', 'ok');
+    setFaceStatus(PI18N.faceQualityOk, 'ok');
     document.getElementById('faceEnrollBtn').disabled =
       !document.getElementById('faceConsent').checked;
   }, 1500);
@@ -440,12 +499,12 @@ document.getElementById('faceConsent').addEventListener('change', function() {
 
 async function doEnroll() {
   if (!document.getElementById('faceConsent').checked) {
-    setFaceStatus("Rozilikni belgilang", 'err');
+    setFaceStatus(PI18N.checkConsent, 'err');
     return;
   }
   const btn = document.getElementById('faceEnrollBtn');
   btn.disabled = true;
-  setFaceStatus("Tekshirilmoqda...", 'checking');
+  setFaceStatus(PI18N.checking, 'checking');
 
   // Capture frame from video
   const video  = document.getElementById('faceVideo');
@@ -465,16 +524,16 @@ async function doEnroll() {
     });
     const d = await r.json();
     if (r.ok) {
-      setFaceStatus("Face ID muvaffaqiyatli o'rnatildi ✓", 'ok');
-      toast("Face ID muvaffaqiyatli o'rnatildi", 'ok');
+      setFaceStatus(PI18N.faceEnrolledCheck, 'ok');
+      toast(PI18N.faceEnrolled, 'ok');
       setTimeout(() => { closeFaceModal(); loadFaceStatus(); }, 1500);
     } else {
-      setFaceStatus(d.detail || 'Xatolik yuz berdi', 'err');
+      setFaceStatus(d.detail || PI18N.genericError, 'err');
       btn.disabled = false;
       startFaceCamera();
     }
   } catch(e) {
-    setFaceStatus("Server bilan bog'lanishda xatolik", 'err');
+    setFaceStatus(PI18N.serverError, 'err');
     btn.disabled = false;
   }
 }

@@ -1,4 +1,5 @@
 {% extends "erp/base.html" %}
+{% load i18n %}
 {% block title %}ZUKKO Focus Mode — Qorako'l Ilm Ziyo{% endblock %}
 {% block page_title %}ZUKKO Focus{% endblock %}
 
@@ -40,18 +41,18 @@
 <!-- ── Top bar ── -->
 <div class="card zk-bar" id="zkBar">
   <div>
-    <div style="font-size:.75rem;color:var(--muted);margin-bottom:2px">Sessiya</div>
-    <div style="font-weight:700;font-size:.9rem;color:var(--text)" id="zkSessionTitle">Yuklanmoqda...</div>
+    <div style="font-size:.75rem;color:var(--muted);margin-bottom:2px">{% translate "Sessiya" %}</div>
+    <div style="font-weight:700;font-size:.9rem;color:var(--text)" id="zkSessionTitle">{% translate "Yuklanmoqda..." %}</div>
     <span class="bdg" id="zkProgress" style="margin-top:4px;display:inline-block">—</span>
   </div>
   <div class="zk-bar-center">
-    <div style="font-size:.68rem;color:var(--muted);margin-bottom:2px">Qolgan vaqt</div>
+    <div style="font-size:.68rem;color:var(--muted);margin-bottom:2px">{% translate "Qolgan vaqt" %}</div>
     <div class="zk-timer" id="zkTimer">--:--</div>
   </div>
   <div style="display:flex;align-items:center;gap:10px">
-    <span class="bdg bdg-active" id="zkTotalPts" style="font-size:.9rem">0 ball</span>
+    <span class="bdg bdg-active" id="zkTotalPts" style="font-size:.9rem">0 {% translate "ball" %}</span>
     <button class="btn btn-primary" id="zkSubmitBtn" onclick="submitCurrent()" disabled>
-      <i class="fas fa-paper-plane"></i> Yuborish
+      <i class="fas fa-paper-plane"></i> {% translate "Yuborish" %}
     </button>
   </div>
 </div>
@@ -63,11 +64,11 @@
 <div class="zk-grid" id="zkGrid">
   <!-- Left: description -->
   <div class="card zk-left" id="zkLeft">
-    <div class="loading"><div class="spinner"></div><p>Yuklanmoqda...</p></div>
+    <div class="loading"><div class="spinner"></div><p>{% translate "Yuklanmoqda..." %}</p></div>
   </div>
   <!-- Right: code editor -->
   <div class="card" id="zkRight">
-    <div class="loading"><div class="spinner"></div><p>Yuklanmoqda...</p></div>
+    <div class="loading"><div class="spinner"></div><p>{% translate "Yuklanmoqda..." %}</p></div>
   </div>
 </div>
 
@@ -80,16 +81,91 @@
 <div class="card" id="zkError" style="display:none">
   <div class="zk-empty-focus">
     <i class="fas fa-exclamation-circle" style="color:var(--danger)"></i>
-    <p id="zkErrorMsg">Xatolik yuz berdi</p>
+    <p id="zkErrorMsg">{% translate "Xatolik yuz berdi" %}</p>
     <a href="/zukko/student/" class="btn btn-outline btn-sm" style="margin-top:16px">
-      <i class="fas fa-arrow-left"></i> Boshqaruv paneliga qaytish
+      <i class="fas fa-arrow-left"></i> {% translate "Boshqaruv paneliga qaytish" %}
     </a>
   </div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
+{% translate "URL noto'g'ri. Share link topilmadi." as p_bad_url %}
+{% translate "Sessiya topilmadi yoki hali aktivlashtirilmagan. Ustozingizdan sessiya havolasini so'rang." as p_session_not_found %}
+{% translate "Bu sessiyada hali topshiriqlar yo'q. Ustoz avval Bug-find yoki Coding topshiriqlar yaratishi kerak." as p_no_challenges_yet %}
+{% translate "topshiriq" as p_challenge_word %}
+{% translate "Yuborish" as p_submit %}
+{% translate "Oson" as p_diff_easy %}
+{% translate "O'rta" as p_diff_medium %}
+{% translate "Qiyin" as p_diff_hard %}
+{% translate "Bug-find" as p_kind_bugfind %}
+{% translate "Coding" as p_kind_coding %}
+{% translate "ball" as p_points_word %}
+{% translate "Cheklovlar" as p_constraints %}
+{% translate "Namuna kirish" as p_sample_input %}
+{% translate "Namuna chiqish" as p_sample_output %}
+{% translate "Xato qatorni kiriting yoki o'ngdagi koddan bosib tanlang:" as p_enter_error_line %}
+{% translate "Qator raqami" as p_line_number %}
+{% translate "Maslahat ko'rish (-2 ball)" as p_show_hint %}
+{% translate "Maslahat olsangiz ball -2 ga kamayadi. Davom etasizmi?" as p_hint_confirm %}
+{% translate "Xatoli kod — qatorni bosing" as p_buggy_code_title %}
+{% translate "Tuzatilgan kodni yozing" as p_write_fixed_code %}
+{% translate "Xatoni tuzatib, to'g'ri kodni shu yerga yozing..." as p_fixed_code_placeholder %}
+{% translate "Kod yozish" as p_write_code %}
+{% translate "# Yechimingizni shu yerga yozing..." as p_solution_placeholder %}
+{% translate "Yuborilmoqda..." as p_submitting %}
+{% translate "To'g'ri" as p_status_correct %}
+{% translate "Qisman" as p_status_partial %}
+{% translate "Noto'g'ri" as p_status_wrong %}
+{% translate "Shubhali" as p_status_cheating %}
+{% translate "Keyingi topshiriq..." as p_next_challenge %}
+{% translate "To'g'ri qator:" as p_correct_line %}
+{% translate "test o'tdi" as p_tests_passed %}
+{% translate "Bu topshiriq allaqachon yuborilgan" as p_already_submitted %}
+{% translate "Vaqt tugagan yoki xato so'rov" as p_time_up_or_bad_request %}
+{% translate "Yuborishda xatolik. Qayta urinib ko'ring." as p_submit_error %}
+{% translate "Tab almashtirishlar chegarasiga yetdingiz ({limit} ta). Sessiya yakunlanadi." as p_tab_limit_tpl %}
+{% translate "Xatolik" as p_error_title %}
 <script>
+const ZFI18N = {
+  badUrl: "{{ p_bad_url|escapejs }}",
+  sessionNotFound: "{{ p_session_not_found|escapejs }}",
+  noChallengesYet: "{{ p_no_challenges_yet|escapejs }}",
+  challengeWord: "{{ p_challenge_word|escapejs }}",
+  submit: "{{ p_submit|escapejs }}",
+  diffEasy: "{{ p_diff_easy|escapejs }}",
+  diffMedium: "{{ p_diff_medium|escapejs }}",
+  diffHard: "{{ p_diff_hard|escapejs }}",
+  kindBugfind: "{{ p_kind_bugfind|escapejs }}",
+  kindCoding: "{{ p_kind_coding|escapejs }}",
+  pointsWord: "{{ p_points_word|escapejs }}",
+  constraints: "{{ p_constraints|escapejs }}",
+  sampleInput: "{{ p_sample_input|escapejs }}",
+  sampleOutput: "{{ p_sample_output|escapejs }}",
+  enterErrorLine: "{{ p_enter_error_line|escapejs }}",
+  lineNumber: "{{ p_line_number|escapejs }}",
+  showHint: "{{ p_show_hint|escapejs }}",
+  hintConfirm: "{{ p_hint_confirm|escapejs }}",
+  buggyCodeTitle: "{{ p_buggy_code_title|escapejs }}",
+  writeFixedCode: "{{ p_write_fixed_code|escapejs }}",
+  fixedCodePlaceholder: "{{ p_fixed_code_placeholder|escapejs }}",
+  writeCode: "{{ p_write_code|escapejs }}",
+  solutionPlaceholder: "{{ p_solution_placeholder|escapejs }}",
+  submitting: "{{ p_submitting|escapejs }}",
+  statusCorrect: "{{ p_status_correct|escapejs }}",
+  statusPartial: "{{ p_status_partial|escapejs }}",
+  statusWrong: "{{ p_status_wrong|escapejs }}",
+  statusCheating: "{{ p_status_cheating|escapejs }}",
+  nextChallenge: "{{ p_next_challenge|escapejs }}",
+  correctLine: "{{ p_correct_line|escapejs }}",
+  testsPassed: "{{ p_tests_passed|escapejs }}",
+  alreadySubmitted: "{{ p_already_submitted|escapejs }}",
+  timeUpOrBadRequest: "{{ p_time_up_or_bad_request|escapejs }}",
+  submitError: "{{ p_submit_error|escapejs }}",
+  tabLimitTpl: "{{ p_tab_limit_tpl|escapejs }}",
+  errorTitle: "{{ p_error_title|escapejs }}",
+};
+
 const SHARE_LINK = window.location.pathname.match(/\/zukko\/focus\/([^\/]+)/)?.[1];
 
 let state = {
@@ -132,12 +208,12 @@ async function autoSubmit() {
 
 // ── Load session ───────────────────────────────────────────────────────
 async function loadSession() {
-  if (!SHARE_LINK) { showError("URL noto'g'ri. Share link topilmadi."); return; }
+  if (!SHARE_LINK) { showError(ZFI18N.badUrl); return; }
 
   // get() xato bo'lsa null qaytaradi — throw qilmaydi
   const data = await get(`/challenges/start/${SHARE_LINK}/`);
   if (!data) {
-    showError("Sessiya topilmadi yoki hali aktivlashtirilmagan. Ustozingizdan sessiya havolasini so'rang.");
+    showError(ZFI18N.sessionNotFound);
     return;
   }
 
@@ -151,7 +227,7 @@ async function loadSession() {
   state.challenges = [...bf, ...cd];
 
   if (!state.challenges.length) {
-    showError("Bu sessiyada hali topshiriqlar yo'q. Ustoz avval Bug-find yoki Coding topshiriqlar yaratishi kerak.");
+    showError(ZFI18N.noChallengesYet);
     return;
   }
 
@@ -188,15 +264,15 @@ function renderChallenge() {
   state.selectedLine = null;
 
   const n = state.currentIdx + 1, tot = state.challenges.length;
-  document.getElementById('zkProgress').textContent = `${n} / ${tot} topshiriq`;
+  document.getElementById('zkProgress').textContent = `${n} / ${tot} ${ZFI18N.challengeWord}`;
   updateDots();
   document.getElementById('zkConsole').style.display = 'none';
   document.getElementById('zkSubmitBtn').disabled = false;
-  document.getElementById('zkSubmitBtn').innerHTML = '<i class="fas fa-paper-plane"></i> Yuborish';
+  document.getElementById('zkSubmitBtn').innerHTML = `<i class="fas fa-paper-plane"></i> ${ZFI18N.submit}`;
 
   const diffCls = {easy:'bdg-active', medium:'bdg-warning', hard:'bdg-danger'}[c.difficulty] || 'bdg';
-  const diffLbl = {easy:'Oson', medium:"O'rta", hard:'Qiyin'}[c.difficulty] || c.difficulty;
-  const kindLbl = c.kind === 'bugfind' ? '<i class="fas fa-bug"></i> Bug-find' : '<i class="fas fa-code"></i> Coding';
+  const diffLbl = {easy:ZFI18N.diffEasy, medium:ZFI18N.diffMedium, hard:ZFI18N.diffHard}[c.difficulty] || c.difficulty;
+  const kindLbl = c.kind === 'bugfind' ? `<i class="fas fa-bug"></i> ${ZFI18N.kindBugfind}` : `<i class="fas fa-code"></i> ${ZFI18N.kindCoding}`;
 
   // ── Left panel ──
   let leftHtml = `
@@ -206,26 +282,26 @@ function renderChallenge() {
     </div>
     <div class="card-body" style="flex:1;overflow-y:auto">
       <div style="font-size:.75rem;color:var(--muted);margin-bottom:10px">
-        ${kindLbl} &nbsp;·&nbsp; <b style="color:var(--text)">${c.points}</b> ball
+        ${kindLbl} &nbsp;·&nbsp; <b style="color:var(--text)">${c.points}</b> ${ZFI18N.pointsWord}
       </div>
       <p style="font-size:.84rem;line-height:1.65;white-space:pre-wrap;color:var(--text)">${escHtml(c.description || '')}</p>`;
 
   if (c.kind === 'coding') {
-    if (c.constraints) leftHtml += `<div style="margin-top:14px"><div style="font-size:.72rem;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Cheklovlar</div><p style="font-size:.8rem;color:var(--text)">${escHtml(c.constraints)}</p></div>`;
-    if (c.sample_input)  leftHtml += `<div style="margin-top:12px"><div style="font-size:.72rem;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Namuna kirish</div><pre class="zk-sample">${escHtml(c.sample_input)}</pre></div>`;
-    if (c.sample_output) leftHtml += `<div style="margin-top:10px"><div style="font-size:.72rem;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Namuna chiqish</div><pre class="zk-sample">${escHtml(c.sample_output)}</pre></div>`;
+    if (c.constraints) leftHtml += `<div style="margin-top:14px"><div style="font-size:.72rem;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">${ZFI18N.constraints}</div><p style="font-size:.8rem;color:var(--text)">${escHtml(c.constraints)}</p></div>`;
+    if (c.sample_input)  leftHtml += `<div style="margin-top:12px"><div style="font-size:.72rem;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">${ZFI18N.sampleInput}</div><pre class="zk-sample">${escHtml(c.sample_input)}</pre></div>`;
+    if (c.sample_output) leftHtml += `<div style="margin-top:10px"><div style="font-size:.72rem;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">${ZFI18N.sampleOutput}</div><pre class="zk-sample">${escHtml(c.sample_output)}</pre></div>`;
   } else {
     leftHtml += `
       <div style="margin-top:14px">
-        <label style="display:block;font-size:.78rem;color:var(--muted);margin-bottom:6px">Xato qatorni kiriting yoki o'ngdagi koddan bosib tanlang:</label>
-        <input type="number" id="zkLineInput" min="1" placeholder="Qator raqami"
+        <label style="display:block;font-size:.78rem;color:var(--muted);margin-bottom:6px">${ZFI18N.enterErrorLine}</label>
+        <input type="number" id="zkLineInput" min="1" placeholder="${ZFI18N.lineNumber}"
           style="width:120px;padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:.85rem;background:var(--card);color:var(--text);outline:none"
           oninput="selectLine(parseInt(this.value)||null)">
       </div>`;
     if (c.hint) leftHtml += `
       <div style="margin-top:14px">
         <button class="btn btn-ghost btn-sm" onclick="revealHint(${JSON.stringify(escHtml(c.hint))})">
-          <i class="fas fa-lightbulb" style="color:var(--warning)"></i> Maslahat ko'rish (-2 ball)
+          <i class="fas fa-lightbulb" style="color:var(--warning)"></i> ${ZFI18N.showHint}
         </button>
         <div class="zk-hint-box" id="zkHintBox"></div>
       </div>`;
@@ -241,7 +317,7 @@ function renderChallenge() {
 
 function revealHint(hintText) {
   if (state.usedHint) return;
-  if (!confirm('Maslahat olsangiz ball -2 ga kamayadi. Davom etasizmi?')) return;
+  if (!confirm(ZFI18N.hintConfirm)) return;
   state.usedHint = true;
   const box = document.getElementById('zkHintBox');
   if (box) { box.style.display = 'block'; box.textContent = hintText; }
@@ -255,7 +331,7 @@ function renderBugfindEditor(c) {
 
   document.getElementById('zkRight').innerHTML = `
     <div class="card-header">
-      <span class="card-title">Xatoli kod — qatorni bosing</span>
+      <span class="card-title">${ZFI18N.buggyCodeTitle}</span>
     </div>
     <div class="card-body" style="padding:0">
       <div class="zk-code-display">
@@ -264,11 +340,11 @@ function renderBugfindEditor(c) {
       </div>
     </div>
     <div class="card-header" style="border-top:1px solid var(--border);padding-top:12px">
-      <span class="card-title">Tuzatilgan kodni yozing</span>
+      <span class="card-title">${ZFI18N.writeFixedCode}</span>
     </div>
     <div class="card-body" style="padding:8px">
       <textarea id="zkFixedCode" class="zk-editor" rows="8"
-        placeholder="Xatoni tuzatib, to'g'ri kodni shu yerga yozing...">${escHtml(c.buggy_code || '')}</textarea>
+        placeholder="${ZFI18N.fixedCodePlaceholder}">${escHtml(c.buggy_code || '')}</textarea>
     </div>`;
 }
 
@@ -286,12 +362,12 @@ function selectLine(n) {
 function renderCodingEditor(c) {
   document.getElementById('zkRight').innerHTML = `
     <div class="card-header">
-      <span class="card-title">Kod yozish</span>
+      <span class="card-title">${ZFI18N.writeCode}</span>
       <span style="font-size:.72rem;color:var(--muted)">${escHtml(c.programming_language || 'python')}</span>
     </div>
     <div class="card-body" style="padding:8px">
       <textarea id="zkCodingCode" class="zk-editor" rows="20"
-        placeholder="# Yechimingizni shu yerga yozing..."
+        placeholder="${ZFI18N.solutionPlaceholder}"
         onkeydown="handleTab(event)">${escHtml(c.starter_code || '')}</textarea>
     </div>`;
 }
@@ -312,7 +388,7 @@ async function submitCurrent(force = false) {
 
   state.submitting = true;
   const btn = document.getElementById('zkSubmitBtn');
-  if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Yuborilmoqda...'; }
+  if (btn) { btn.disabled = true; btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${ZFI18N.submitting}`; }
 
   const timeSpent = Math.round((Date.now() - state.challengeStartedAt) / 1000);
 
@@ -341,7 +417,7 @@ async function submitCurrent(force = false) {
 
     const pts = result?.points_earned || 0;
     state.totalPoints += pts;
-    document.getElementById('zkTotalPts').textContent = state.totalPoints + ' ball';
+    document.getElementById('zkTotalPts').textContent = state.totalPoints + ' ' + ZFI18N.pointsWord;
 
     state.submittedResults.push({ challenge: c, result });
     showConsoleResult(c.kind, result);
@@ -350,14 +426,14 @@ async function submitCurrent(force = false) {
 
   } catch (err) {
     if (err?.status === 409) {
-      toast("Bu topshiriq allaqachon yuborilgan", 'warning', 3000);
+      toast(ZFI18N.alreadySubmitted, 'warning', 3000);
       if (!force) setTimeout(nextChallenge, 1000);
     } else if (err?.status === 400) {
-      toast(err?.data?.error || "Vaqt tugagan yoki xato so'rov", 'error', 4000);
+      toast(err?.data?.error || ZFI18N.timeUpOrBadRequest, 'error', 4000);
       if (!force) setTimeout(nextChallenge, 1500);
     } else {
-      toast("Yuborishda xatolik. Qayta urinib ko'ring.", 'error', 4000);
-      if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane"></i> Yuborish'; }
+      toast(ZFI18N.submitError, 'error', 4000);
+      if (btn) { btn.disabled = false; btn.innerHTML = `<i class="fas fa-paper-plane"></i> ${ZFI18N.submit}`; }
     }
   } finally {
     state.submitting = false;
@@ -369,26 +445,26 @@ function showConsoleResult(kind, result) {
   const content = document.getElementById('zkConsoleContent');
   if (!panel || !content) return;
 
-  const statusMap = { correct:'✅ To\'g\'ri', partial:'⚡ Qisman', wrong:'❌ Noto\'g\'ri', cheating:'🚨 Shubhali' };
+  const statusMap = { correct:`✅ ${ZFI18N.statusCorrect}`, partial:`⚡ ${ZFI18N.statusPartial}`, wrong:`❌ ${ZFI18N.statusWrong}`, cheating:`🚨 ${ZFI18N.statusCheating}` };
   const sub = result?.submission || {};
   const pts = result?.points_earned ?? 0;
   const statusLbl = statusMap[sub.status] || sub.status || '—';
 
   let html = `<div class="zk-result-row">
     <span style="font-size:1rem;font-weight:700">${statusLbl}</span>
-    <span class="bdg bdg-active" style="font-size:.9rem">+${pts} ball</span>
-    <span style="margin-left:auto;font-size:.75rem;color:var(--muted)"><i class="fas fa-arrow-right"></i> Keyingi topshiriq...</span>
+    <span class="bdg bdg-active" style="font-size:.9rem">+${pts} ${ZFI18N.pointsWord}</span>
+    <span style="margin-left:auto;font-size:.75rem;color:var(--muted)"><i class="fas fa-arrow-right"></i> ${ZFI18N.nextChallenge}</span>
   </div>`;
 
   if (kind === 'bugfind') {
     html += `<div style="padding:0 16px 14px;font-size:.82rem;color:var(--muted)">
-      To'g'ri qator: <b style="color:var(--text)">${result?.correct_line ?? '—'}</b>
+      ${ZFI18N.correctLine} <b style="color:var(--text)">${result?.correct_line ?? '—'}</b>
       ${result?.bug_explanation ? `<br><span style="color:var(--text)">${escHtml(result.bug_explanation)}</span>` : ''}
     </div>`;
   } else if (kind === 'coding' && result?.test_results) {
     const p = result.passed || 0, t = result.total || 0;
     html += `<div style="padding:0 16px 14px;font-size:.82rem">
-      <b>${p}/${t}</b> <span style="color:var(--muted)">test o'tdi</span>
+      <b>${p}/${t}</b> <span style="color:var(--muted)">${ZFI18N.testsPassed}</span>
       <div class="zk-test-pills">
         ${result.test_results.map((tc, i) => `<span class="bdg ${tc.passed ? 'bdg-active' : 'bdg-danger'}">T${i+1}</span>`).join('')}
       </div>
@@ -430,7 +506,7 @@ function showError(msg) {
   errEl.style.display = 'block';
   document.getElementById('zkErrorMsg').textContent = msg;
   document.getElementById('zkSubmitBtn').disabled = true;
-  document.getElementById('zkSessionTitle').textContent = 'Xatolik';
+  document.getElementById('zkSessionTitle').textContent = ZFI18N.errorTitle;
 }
 
 // ── Anti-cheat ─────────────────────────────────────────────────────────
@@ -450,7 +526,7 @@ function setupAntiCheat() {
     state.tabSwitches++;
     logEvent('tab_switch', 0.3);
     if (state.tabSwitchLimit && state.tabSwitches >= state.tabSwitchLimit) {
-      toast(`Tab almashtirishlar chegarasiga yetdingiz (${state.tabSwitchLimit} ta). Sessiya yakunlanadi.`, 'error', 3000);
+      toast(ZFI18N.tabLimitTpl.replace('{limit}', state.tabSwitchLimit), 'error', 3000);
       setTimeout(complete, 3000);
     }
   });

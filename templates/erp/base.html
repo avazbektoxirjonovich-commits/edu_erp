@@ -1,5 +1,8 @@
-﻿<!DOCTYPE html>
-<html lang="uz">
+﻿{% load i18n %}
+{% load static %}
+{% get_current_language as LANGUAGE_CODE %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +10,6 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="google-site-verification" content="TydEJ49uoK96uDCiLvxMVtBrPCU48J4r2abwih0qa7o" />
 <!-- PWA -->
-{% load static %}
 <link rel="manifest" href="{% static 'manifest.json' %}">
 <meta name="theme-color" content="#059669">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -39,6 +41,17 @@
   --danger:#ef4444;
   --warning:#f59e0b;
   --info:#3b82f6;
+  /* Semantic badge tints — shared source of truth for page-local status
+     pills (payment/order/asset status, etc.) so they don't each hardcode
+     their own pastel pair. Values match the existing .bdg-* palette. */
+  --badge-success-bg:#ecfdf5;
+  --badge-success-text:#059669;
+  --badge-warning-bg:#fffbeb;
+  --badge-warning-text:#b45309;
+  --badge-danger-bg:#fef2f2;
+  --badge-danger-text:#b91c1c;
+  --badge-info-bg:#eff6ff;
+  --badge-info-text:#1d4ed8;
   --radius:12px;
   --shadow:0 1px 8px rgba(13,27,42,.06),0 0 1px rgba(13,27,42,.04);
   --shadow-md:0 4px 20px rgba(13,27,42,.09);
@@ -57,6 +70,14 @@ body.dark{
   --shadow-md:0 4px 20px rgba(0,0,0,.4);
   --accent-light:rgba(5,150,105,.15);
   --accent-hover:rgba(5,150,105,.10);
+  --badge-success-bg:rgba(5,150,105,.15);
+  --badge-success-text:#34d399;
+  --badge-warning-bg:rgba(180,83,9,.15);
+  --badge-warning-text:#fbbf24;
+  --badge-danger-bg:rgba(185,28,28,.15);
+  --badge-danger-text:#f87171;
+  --badge-info-bg:rgba(59,130,246,.15);
+  --badge-info-text:#93c5fd;
 }
 body.dark .card{background:var(--card)}
 body.dark .topbar{background:var(--card);border-bottom-color:var(--border)}
@@ -68,6 +89,7 @@ body.dark .overlay{background:rgba(0,0,0,.6)}
 body.dark input,body.dark select,body.dark textarea{background:#0f172a;color:var(--text);border-color:var(--border)}
 body.dark input::placeholder,body.dark textarea::placeholder{color:var(--muted)}
 body.dark .fc{background:#0f172a;color:var(--text);border-color:var(--border)}
+body.dark .fc:hover:not(:focus){border-color:#475569}
 body.dark .notif-panel{background:var(--card);border-color:var(--border)}
 body.dark .notif-item{border-bottom-color:var(--border)}
 body.dark .notif-item.unread{background:rgba(5,150,105,.08)}
@@ -121,7 +143,8 @@ body.dark .bdg-blue{background:rgba(59,130,246,.15);color:#93c5fd}
 body.dark .bdg-purple{background:rgba(139,92,246,.15);color:#c4b5fd}
 body.dark .bdg-info{background:rgba(59,130,246,.15);color:#93c5fd}
 body.dark .bdg-warning{background:rgba(245,158,11,.15);color:#fcd34d}
-body.dark .bdg-active{background:rgba(5,150,105,.15);color:#34d399}
+body.dark .bdg-active,body.dark .bdg-paid,body.dark .bdg-present{background:rgba(5,150,105,.15);color:#34d399}
+body.dark .bdg-frozen,body.dark .bdg-excused{background:rgba(59,130,246,.15);color:#93c5fd}
 
 /* ── DARK: Buttons ── */
 body.dark .btn-ghost{background:transparent;border-color:var(--border);color:var(--text)}
@@ -314,6 +337,18 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
   font-size:1rem;transition:all .2s;position:relative;
 }
 .tb-btn:hover{background:var(--bg);color:var(--text)}
+.lang-switch-form{display:inline-flex}
+.lang-select{
+  background:none;border:1.5px solid var(--border);cursor:pointer;color:var(--text);
+  height:38px;border-radius:10px;padding:0 8px;
+  font-size:.8rem;font-weight:600;transition:all .2s;
+  font-family:inherit;
+}
+.lang-select:hover{background:var(--bg)}
+.lang-select:focus{outline:none;border-color:var(--accent)}
+body.dark .lang-select{background:rgba(255,255,255,.06);border-color:var(--border);color:var(--text)}
+body.dark .lang-select:hover{background:rgba(255,255,255,.1)}
+@media(max-width:768px){.lang-select{font-size:.72rem;padding:0 4px}}
 .notif-dot{
   position:absolute;top:5px;right:5px;
   width:16px;height:16px;border-radius:50%;
@@ -440,6 +475,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 .btn-primary:active{transform:translateY(0);box-shadow:0 2px 8px rgba(5,150,105,.2)}
 .btn-outline{background:#fff;color:var(--text);border:1.5px solid var(--border)}
 .btn-outline:hover{background:var(--bg);border-color:#cbd5e1}
+body.dark .btn-outline:hover{border-color:#475569}
 .btn-danger{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;box-shadow:0 3px 12px rgba(239,68,68,.28)}
 .btn-danger:hover{box-shadow:0 6px 18px rgba(239,68,68,.38);transform:translateY(-1px)}
 .btn-ghost{background:none;color:var(--muted);border:1.5px solid var(--border)}
@@ -530,7 +566,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 .toast.wrn{border-left-color:var(--warning)}
 
 /* ══ PROGRESS ════════════════════════════════════════════════ */
-.prog-wrap{background:#e2e8f0;border-radius:100px;height:6px;overflow:hidden}
+.prog-wrap{background:var(--border);border-radius:100px;height:6px;overflow:hidden}
 .prog-fill{height:100%;border-radius:100px;background:var(--grad);transition:width .6s cubic-bezier(.4,0,.2,1)}
 
 /* ══ AVATAR ══════════════════════════════════════════════════ */
@@ -802,7 +838,7 @@ body.dark .vltai-messages::-webkit-scrollbar-thumb{background:#334155}
   display:flex;flex-direction:column;gap:8px;
 }
 .chat-area:empty::before{
-  content:"Muammo yoki savollaringizni yuboring — Avazbek tez javob beradi!";
+  content:attr(data-empty-hint);
   color:var(--muted);font-size:.78rem;text-align:center;margin:auto;display:block;padding:16px 0;
 }
 .chat-msg{padding:9px 13px;border-radius:10px;font-size:.8rem;line-height:1.5;max-width:85%;word-break:break-word}
@@ -838,6 +874,7 @@ body.dark .vltai-messages::-webkit-scrollbar-thumb{background:#334155}
 {% block extra_head %}{% endblock %}
 </head>
 <body>
+<script>if(localStorage.getItem('erp_dark')==='1')document.body.classList.add('dark');</script>
 
 <!-- SIDEBAR -->
 <nav class="sidebar" id="sb">
@@ -857,10 +894,10 @@ body.dark .vltai-messages::-webkit-scrollbar-thumb{background:#334155}
     <div class="sb-user">
       <div class="sb-avatar" id="sbAv">?</div>
       <div class="sb-user-info">
-        <div class="sb-user-name" id="sbName">Yuklanmoqda...</div>
+        <div class="sb-user-name" id="sbName">{% translate "Yuklanmoqda..." %}</div>
         <div class="sb-user-role" id="sbPhone"></div>
       </div>
-      <button class="sb-logout" onclick="doLogout()" title="Chiqish"><i class="fas fa-sign-out-alt"></i></button>
+      <button class="sb-logout" onclick="doLogout()" title="{% translate 'Chiqish' %}"><i class="fas fa-sign-out-alt"></i></button>
     </div>
   </div>
 </nav>
@@ -871,26 +908,35 @@ body.dark .vltai-messages::-webkit-scrollbar-thumb{background:#334155}
     <button class="menu-btn" onclick="toggleSb()"><i class="fas fa-bars"></i></button>
     <span class="page-title" id="pageH">{% block page_title %}Qorako'l Ilm Ziyo{% endblock %}</span>
     <div class="topbar-right">
+      <form id="langForm" action="{% url 'set_language' %}" method="post" class="lang-switch-form">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.path }}">
+        <select name="language" id="langSelect" class="lang-select" onchange="document.getElementById('langForm').submit()" title="{% translate 'Tilni tanlang' %}">
+          <option value="uz" {% if LANGUAGE_CODE == 'uz' %}selected{% endif %}>🇺🇿 O'zbekcha</option>
+          <option value="ru" {% if LANGUAGE_CODE == 'ru' %}selected{% endif %}>🇷🇺 Русский</option>
+          <option value="en" {% if LANGUAGE_CODE == 'en' %}selected{% endif %}>🇬🇧 English</option>
+        </select>
+      </form>
       <div style="position:relative" id="notifWrap">
-        <button class="tb-btn" onclick="toggleNotifPanel()" title="Bildirishnomalar">
+        <button class="tb-btn" onclick="toggleNotifPanel()" title="{% translate 'Bildirishnomalar' %}">
           <i class="fas fa-bell"></i>
           <span class="notif-dot" id="notifDot">0</span>
         </button>
         <div class="notif-panel" id="notifPanel">
           <div class="notif-panel-head">
-            <h6><i class="fas fa-bell" style="color:#059669;margin-right:6px"></i>Bildirishnomalar</h6>
-            <button class="notif-mark-btn" onclick="markAllRead()">Hammasini o'qildi</button>
+            <h6><i class="fas fa-bell" style="color:#059669;margin-right:6px"></i>{% translate "Bildirishnomalar" %}</h6>
+            <button class="notif-mark-btn" onclick="markAllRead()">{% translate "Hammasini o'qildi" %}</button>
           </div>
           <div class="notif-list" id="notifList">
-            <div class="notif-empty">Yuklanmoqda...</div>
+            <div class="notif-empty">{% translate "Yuklanmoqda..." %}</div>
           </div>
         </div>
       </div>
-      <button class="tb-btn" id="darkToggle" onclick="toggleDark()" title="Tungi rejim"></button>
-      <button class="tb-btn" id="pwaInstallBtn" onclick="installPwa()" title="Telefoningizga o'rnating" style="display:none;gap:5px;font-size:.72rem;padding:6px 12px;width:auto">
-        <i class="fas fa-mobile-screen"></i><span style="display:none" class="pwa-lbl">O'rnatish</span>
+      <button class="tb-btn" id="darkToggle" onclick="toggleDark()" title="{% translate 'Tungi rejim' %}"></button>
+      <button class="tb-btn" id="pwaInstallBtn" onclick="installPwa()" title="{% translate "Telefoningizga o'rnating" %}" style="display:none;gap:5px;font-size:.72rem;padding:6px 12px;width:auto">
+        <i class="fas fa-mobile-screen"></i><span style="display:none" class="pwa-lbl">{% translate "O'rnatish" %}</span>
       </button>
-      <button class="tb-btn" onclick="doLogout()" title="Chiqish"><i class="fas fa-right-from-bracket"></i></button>
+      <button class="tb-btn" onclick="doLogout()" title="{% translate 'Chiqish' %}"><i class="fas fa-right-from-bracket"></i></button>
     </div>
   </div>
 
@@ -901,15 +947,15 @@ body.dark .vltai-messages::-webkit-scrollbar-thumb{background:#334155}
 <div class="toasts" id="toasts"></div>
 
 <!-- Ziyo AI FAB (yordam bo'limi ustida) -->
-<button class="vltai-fab" id="vltaiFab" onclick="toggleVltAI()" title="Ziyo AI Yordamchi">
+<button class="vltai-fab" id="vltaiFab" onclick="toggleVltAI()" title="{% translate "Ziyo AI Yordamchi" %}">
   <i class="fas fa-robot"></i>
   <span class="fab-tooltip">Ziyo AI</span>
 </button>
 
 <!-- YORDAM FAB -->
-<button class="help-fab" onclick="openHelpModal()" title="Yordam bo'limi">
+<button class="help-fab" onclick="openHelpModal()" title="{% translate "Yordam bo'limi" %}">
   <i class="fas fa-headset"></i>
-  <span class="fab-tooltip">Yordam bo'limi</span>
+  <span class="fab-tooltip">{% translate "Yordam bo'limi" %}</span>
 </button>
 
 <!-- ══ Ziyo AI CHAT PANEL ══════════════════════════════════════ -->
@@ -920,35 +966,35 @@ body.dark .vltai-messages::-webkit-scrollbar-thumb{background:#334155}
       <div class="vltai-head-icon"><i class="fas fa-robot"></i></div>
       <div>
         <div class="vltai-head-title">Ziyo AI</div>
-        <div class="vltai-head-sub" id="vltaiStatus">Tayyor</div>
+        <div class="vltai-head-sub" id="vltaiStatus">{% translate "Tayyor" %}</div>
       </div>
     </div>
     <div style="display:flex;gap:6px;align-items:center">
-      <button class="vltai-head-btn" onclick="vltaiNewChat()" title="Yangi suhbat"><i class="fas fa-plus"></i></button>
-      <button class="vltai-head-btn" onclick="toggleVltAI()" title="Yopish"><i class="fas fa-times"></i></button>
+      <button class="vltai-head-btn" onclick="vltaiNewChat()" title="{% translate "Yangi suhbat" %}"><i class="fas fa-plus"></i></button>
+      <button class="vltai-head-btn" onclick="toggleVltAI()" title="{% translate "Yopish" %}"><i class="fas fa-times"></i></button>
     </div>
   </div>
   <!-- Messages -->
   <div class="vltai-messages" id="vltaiMessages">
     <div class="vltai-welcome">
       <div class="vltai-welcome-icon"><i class="fas fa-robot"></i></div>
-      <p>Salom! Men <strong>Ziyo AI</strong> — ta'lim markazi yordamchisiman.</p>
-      <p style="margin-top:6px;font-size:.78rem;color:var(--muted)">Davomat, o'quvchilar, to'lovlar haqida so'rang.</p>
+      <p>{% blocktranslate %}Salom! Men <strong>Ziyo AI</strong> — ta'lim markazi yordamchisiman.{% endblocktranslate %}</p>
+      <p style="margin-top:6px;font-size:.78rem;color:var(--muted)">{% translate "Davomat, o'quvchilar, to'lovlar haqida so'rang." %}</p>
     </div>
   </div>
   <!-- Input -->
   <div class="vltai-input-wrap">
     <div class="vltai-input-row">
       <textarea id="vltaiInput" class="vltai-textarea" rows="1"
-        placeholder="Savol bering..."
+        placeholder="{% translate "Savol bering..." %}"
         onkeydown="vltaiEnter(event)"
         oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'"></textarea>
       <button class="vltai-send" id="vltaiSendBtn" onclick="vltaiSend()">
         <i class="fas fa-paper-plane"></i>
       </button>
     </div>
-    <p class="vltai-footer-hint"><i class="fas fa-shield-halved" style="color:var(--accent)"></i> Faqat sizga ruxsat berilgan ma'lumotlar ko'rsatiladi</p>
-    <p class="vltai-footer-hint">AI ham xato qilishi mumkin.</p>
+    <p class="vltai-footer-hint"><i class="fas fa-shield-halved" style="color:var(--accent)"></i> {% translate "Faqat sizga ruxsat berilgan ma'lumotlar ko'rsatiladi" %}</p>
+    <p class="vltai-footer-hint">{% translate "AI ham xato qilishi mumkin." %}</p>
   </div>
 </div>
 
@@ -956,7 +1002,7 @@ body.dark .vltai-messages::-webkit-scrollbar-thumb{background:#334155}
 <div class="overlay" id="helpOverlay">
   <div class="modal help-modal" style="max-width:440px">
     <div class="m-head">
-      <h5><i class="fas fa-headset" style="margin-right:8px"></i>Yordam bo'limi</h5>
+      <h5><i class="fas fa-headset" style="margin-right:8px"></i>{% translate "Yordam bo'limi" %}</h5>
       <button class="m-close" onclick="closeM('helpOverlay')"><i class="fas fa-times"></i></button>
     </div>
     <div class="m-body">
@@ -965,23 +1011,23 @@ body.dark .vltai-messages::-webkit-scrollbar-thumb{background:#334155}
       <div class="help-contact" id="helpContact"></div>
 
       <!-- Ajratuvchi chiziq -->
-      <div class="help-divider">yoki xabar yuboring</div>
+      <div class="help-divider">{% translate "yoki xabar yuboring" %}</div>
 
       <!-- Chat -->
-      <div class="chat-area" id="helpChatArea"></div>
+      <div class="chat-area" id="helpChatArea" data-empty-hint="{% translate "Muammo yoki savollaringizni yuboring — Avazbek tez javob beradi!" %}"></div>
 
       <!-- Reply bar -->
       <div id="replyBar" style="display:none;align-items:center;gap:6px;padding:4px 8px;background:var(--surface2,#f0f0f0);border-radius:6px;font-size:.72rem;color:var(--muted);margin-bottom:4px"></div>
 
       <div class="chat-input-row">
-        <textarea id="helpMsgInput" placeholder="Muammo yoki savolingizni yozing..." onkeydown="helpEnter(event)"></textarea>
+        <textarea id="helpMsgInput" placeholder="{% translate "Muammo yoki savolingizni yozing..." %}" onkeydown="helpEnter(event)"></textarea>
         <button class="chat-send-btn" id="helpSendBtn" onclick="sendHelpMsg()">
           <i class="fas fa-paper-plane"></i>
         </button>
       </div>
       <p style="font-size:.68rem;color:var(--muted);margin-top:6px;text-align:center">
         <i class="fas fa-shield-halved" style="color:var(--accent)"></i>
-        <span id="helpHint">Xabar yuboriladi</span>
+        <span id="helpHint">{% translate "Xabar yuboriladi" %}</span>
       </p>
 
     </div>
@@ -991,6 +1037,189 @@ body.dark .vltai-messages::-webkit-scrollbar-thumb{background:#334155}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
 const API='/api/v1';
+const CURRENT_LANG = "{{ LANGUAGE_CODE }}";
+const JS_LOCALE = {uz:'uz-UZ', ru:'ru-RU', en:'en-US'}[CURRENT_LANG] || 'uz-UZ';
+
+{% translate "Asosiy" as vsb_sec_main %}
+{% translate "Boshqaruv" as vsb_sec_mgmt %}
+{% translate "Kunlik" as vsb_sec_daily %}
+{% translate "Do'kon" as vsb_sec_store %}
+{% translate "O'quv" as vsb_sec_study %}
+{% translate "Tahlil" as vsb_sec_analytics %}
+{% translate "Tizim" as vsb_sec_system %}
+{% translate "Guruhlarim" as vsb_sec_my_groups %}
+{% translate "Profil" as vsb_sec_profile %}
+{% translate "Farzandlarim" as vsb_sec_my_children %}
+{% translate "Moliya" as vsb_sec_finance %}
+{% translate "Mening sahifam" as vsb_sec_my_page %}
+{% translate "Sozlamalar" as vsb_sec_settings %}
+{% translate "Dashboard" as vsb_dashboard %}
+{% translate "O'quvchilar" as vsb_students %}
+{% translate "O'qituvchilar" as vsb_teachers %}
+{% translate "Guruhlar" as vsb_groups %}
+{% translate "Davomat" as vsb_attendance %}
+{% translate "To'lovlar" as vsb_payments %}
+{% translate "Ish haqi" as vsb_salary %}
+{% translate "Markaz buyumlari" as vsb_assets %}
+{% translate "Do'kon" as vsb_store %}
+{% translate "Do'kon boshqaruvi" as vsb_store_manage %}
+{% translate "Uyga vazifalar" as vsb_homework %}
+{% translate "Hisobotlar" as vsb_reports %}
+{% translate "Reyting" as vsb_leaderboard %}
+{% translate "Faoliyat jurnali" as vsb_activity %}
+{% translate "Foydalanuvchilar" as vsb_users %}
+{% translate "Xatoliklar monitoringi" as vsb_error_monitor %}
+{% translate "Bosh sahifa" as vsb_home %}
+{% translate "ZUKKO Challenges" as vsb_zukko %}
+{% translate "Profilim" as vsb_my_profile %}
+{% translate "To'lovlarim" as vsb_my_payments %}
+{% translate "Ko'rsatgichlarim" as vsb_my_stats %}
+
+{% translate "Faol" as vst_active %}
+{% translate "Nofaol" as vst_inactive %}
+{% translate "To'xtatilgan" as vst_frozen %}
+{% translate "To'langan" as vst_paid %}
+{% translate "Qisman" as vst_partial %}
+{% translate "To'lanmagan" as vst_unpaid %}
+{% translate "Keldi" as vst_present %}
+{% translate "Kelmadi" as vst_absent %}
+{% translate "Kech keldi" as vst_late %}
+{% translate "Sababli" as vst_excused %}
+
+{% translate "so'm" as vcur_som %}
+{% translate "Bekor qilish" as vbtn_cancel %}
+{% translate "Saqlash" as vbtn_save %}
+{% translate "Tahrirlash" as vbtn_edit %}
+{% translate "O'chirish" as vbtn_delete %}
+{% translate "Yopish" as vbtn_close %}
+{% translate "Yuklanmoqda..." as vt_loading %}
+{% translate "Xatolik yuz berdi" as vt_generic_error %}
+{% translate "Server xatosi" as vt_server_error %}
+{% translate "Yuklab bo'lmadi" as vt_load_failed %}
+{% translate "Ma'lumot topilmadi" as vt_not_found %}
+{% translate "Xabar" as vt_message %}
+{% translate "Kunduzgi rejim" as vt_dark_day %}
+{% translate "Tungi rejim" as vt_dark_night %}
+{% translate "Qorako'l Ilm Ziyo telefoningizga o'rnatildi!" as vt_pwa_installed %}
+{% translate "Tizimga kiring" as vt_login_required %}
+{% translate "Iltimos, qayta urinib ko'ring" as vt_retry %}
+{% translate "Xabar yuborildi!" as vt_msg_sent %}
+{% translate "Xabar yuborishda xatolik" as vt_msg_send_fail %}
+{% translate "Hali xabarlar yo'q" as vt_no_messages %}
+{% translate "Javob" as vt_reply %}
+{% translate "Men" as vt_me %}
+{% translate "Administrator" as vt_administrator %}
+{% translate "Tizim administratori" as vt_admin_of_system %}
+{% translate "Dasturchi — Avazbek" as vt_developer_contact %}
+{% translate "Qo'ng'iroq" as vt_call %}
+{% translate "Xabar administratorga yuboriladi" as vt_hint_to_admin %}
+{% translate "Xabar dasturchiga yuboriladi" as vt_hint_to_dev %}
+{% translate "Siz faqat xabarlarni o'qiy olasiz" as vt_hint_readonly %}
+{% translate "Tarmoq xatosi yuz berdi. Iltimos, qayta urinib ko'ring." as vt_network_error %}
+{% translate "Ma'lumot olinmoqda..." as vt_ai_fetching %}
+{% translate "Javob yozilmoqda..." as vt_ai_writing %}
+{% translate "Tayyor" as vt_ai_ready %}
+{% blocktranslate asvar vt_ai_welcome %}Salom! Men <strong>Ziyo AI</strong> — ta'lim markazi yordamchisiman.{% endblocktranslate %}
+{% translate "Davomat, o'quvchilar, to'lovlar haqida so'rang." as vt_ai_welcome_sub %}
+
+{% translate "Yanvar" as vmn1 %}{% translate "Fevral" as vmn2 %}{% translate "Mart" as vmn3 %}
+{% translate "Aprel" as vmn4 %}{% translate "May" as vmn5 %}{% translate "Iyun" as vmn6 %}
+{% translate "Iyul" as vmn7 %}{% translate "Avgust" as vmn8 %}{% translate "Sentabr" as vmn9 %}
+{% translate "Oktabr" as vmn10 %}{% translate "Noyabr" as vmn11 %}{% translate "Dekabr" as vmn12 %}
+{% translate "Dushanba" as vdy1 %}{% translate "Seshanba" as vdy2 %}{% translate "Chorshanba" as vdy3 %}
+{% translate "Payshanba" as vdy4 %}{% translate "Juma" as vdy5 %}{% translate "Shanba" as vdy6 %}
+{% translate "Yakshanba" as vdy7 %}
+{% translate "Du" as vds1 %}{% translate "Se" as vds2 %}{% translate "Ch" as vds3 %}
+{% translate "Pa" as vds4 %}{% translate "Ju" as vds5 %}{% translate "Sh" as vds6 %}
+{% translate "Ya" as vds7 %}
+
+window.I18N = {
+  sbSecMain: "{{ vsb_sec_main|escapejs }}",
+  sbSecMgmt: "{{ vsb_sec_mgmt|escapejs }}",
+  sbSecDaily: "{{ vsb_sec_daily|escapejs }}",
+  sbSecStore: "{{ vsb_sec_store|escapejs }}",
+  sbSecStudy: "{{ vsb_sec_study|escapejs }}",
+  sbSecAnalytics: "{{ vsb_sec_analytics|escapejs }}",
+  sbSecSystem: "{{ vsb_sec_system|escapejs }}",
+  sbSecMyGroups: "{{ vsb_sec_my_groups|escapejs }}",
+  sbSecProfile: "{{ vsb_sec_profile|escapejs }}",
+  sbSecMyChildren: "{{ vsb_sec_my_children|escapejs }}",
+  sbSecFinance: "{{ vsb_sec_finance|escapejs }}",
+  sbSecMyPage: "{{ vsb_sec_my_page|escapejs }}",
+  sbSecSettings: "{{ vsb_sec_settings|escapejs }}",
+  dashboard: "{{ vsb_dashboard|escapejs }}",
+  students: "{{ vsb_students|escapejs }}",
+  teachers: "{{ vsb_teachers|escapejs }}",
+  groups: "{{ vsb_groups|escapejs }}",
+  attendance: "{{ vsb_attendance|escapejs }}",
+  payments: "{{ vsb_payments|escapejs }}",
+  salary: "{{ vsb_salary|escapejs }}",
+  assets: "{{ vsb_assets|escapejs }}",
+  store: "{{ vsb_store|escapejs }}",
+  storeManage: "{{ vsb_store_manage|escapejs }}",
+  homework: "{{ vsb_homework|escapejs }}",
+  reports: "{{ vsb_reports|escapejs }}",
+  leaderboard: "{{ vsb_leaderboard|escapejs }}",
+  activity: "{{ vsb_activity|escapejs }}",
+  users: "{{ vsb_users|escapejs }}",
+  errorMonitor: "{{ vsb_error_monitor|escapejs }}",
+  home: "{{ vsb_home|escapejs }}",
+  zukko: "{{ vsb_zukko|escapejs }}",
+  myProfile: "{{ vsb_my_profile|escapejs }}",
+  myPayments: "{{ vsb_my_payments|escapejs }}",
+  myStats: "{{ vsb_my_stats|escapejs }}",
+
+  stActive: "{{ vst_active|escapejs }}",
+  stInactive: "{{ vst_inactive|escapejs }}",
+  stFrozen: "{{ vst_frozen|escapejs }}",
+  stPaid: "{{ vst_paid|escapejs }}",
+  stPartial: "{{ vst_partial|escapejs }}",
+  stUnpaid: "{{ vst_unpaid|escapejs }}",
+  stPresent: "{{ vst_present|escapejs }}",
+  stAbsent: "{{ vst_absent|escapejs }}",
+  stLate: "{{ vst_late|escapejs }}",
+  stExcused: "{{ vst_excused|escapejs }}",
+
+  currencySom: "{{ vcur_som|escapejs }}",
+  btnCancel: "{{ vbtn_cancel|escapejs }}",
+  btnSave: "{{ vbtn_save|escapejs }}",
+  btnEdit: "{{ vbtn_edit|escapejs }}",
+  btnDelete: "{{ vbtn_delete|escapejs }}",
+  btnClose: "{{ vbtn_close|escapejs }}",
+  loading: "{{ vt_loading|escapejs }}",
+  genericError: "{{ vt_generic_error|escapejs }}",
+  serverError: "{{ vt_server_error|escapejs }}",
+  loadFailed: "{{ vt_load_failed|escapejs }}",
+  notFound: "{{ vt_not_found|escapejs }}",
+  message: "{{ vt_message|escapejs }}",
+  darkModeDay: "{{ vt_dark_day|escapejs }}",
+  darkModeNight: "{{ vt_dark_night|escapejs }}",
+  pwaInstalled: "{{ vt_pwa_installed|escapejs }}",
+  loginRequired: "{{ vt_login_required|escapejs }}",
+  retry: "{{ vt_retry|escapejs }}",
+  msgSent: "{{ vt_msg_sent|escapejs }}",
+  msgSendFail: "{{ vt_msg_send_fail|escapejs }}",
+  noMessages: "{{ vt_no_messages|escapejs }}",
+  reply: "{{ vt_reply|escapejs }}",
+  me: "{{ vt_me|escapejs }}",
+  administrator: "{{ vt_administrator|escapejs }}",
+  adminOfSystem: "{{ vt_admin_of_system|escapejs }}",
+  developerContact: "{{ vt_developer_contact|escapejs }}",
+  call: "{{ vt_call|escapejs }}",
+  hintToAdmin: "{{ vt_hint_to_admin|escapejs }}",
+  hintToDev: "{{ vt_hint_to_dev|escapejs }}",
+  hintReadonly: "{{ vt_hint_readonly|escapejs }}",
+  networkError: "{{ vt_network_error|escapejs }}",
+  aiFetching: "{{ vt_ai_fetching|escapejs }}",
+  aiWriting: "{{ vt_ai_writing|escapejs }}",
+  aiReady: "{{ vt_ai_ready|escapejs }}",
+  aiWelcome: "{{ vt_ai_welcome|escapejs }}",
+  aiWelcomeSub: "{{ vt_ai_welcome_sub|escapejs }}",
+
+  months: ["{{ vmn1|escapejs }}","{{ vmn2|escapejs }}","{{ vmn3|escapejs }}","{{ vmn4|escapejs }}","{{ vmn5|escapejs }}","{{ vmn6|escapejs }}","{{ vmn7|escapejs }}","{{ vmn8|escapejs }}","{{ vmn9|escapejs }}","{{ vmn10|escapejs }}","{{ vmn11|escapejs }}","{{ vmn12|escapejs }}"],
+  daysFull: ["{{ vdy1|escapejs }}","{{ vdy2|escapejs }}","{{ vdy3|escapejs }}","{{ vdy4|escapejs }}","{{ vdy5|escapejs }}","{{ vdy6|escapejs }}","{{ vdy7|escapejs }}"],
+  daysShort: ["{{ vds1|escapejs }}","{{ vds2|escapejs }}","{{ vds3|escapejs }}","{{ vds4|escapejs }}","{{ vds5|escapejs }}","{{ vds6|escapejs }}","{{ vds7|escapejs }}"],
+};
 
 // ── Auth helpers ──────────────────────────────────────────────
 const getAccess  = ()=>localStorage.getItem('erp_access');
@@ -1043,77 +1272,78 @@ function buildSidebar(role){
     `<a class="sb-item" href="${href}" data-href="${href}" ${p?`data-p="${p}"`:''}><span class="sb-icon"><i class="fas fa-${icon}"></i></span>${label}</a>`;
 
   let html='';
+  const I=window.I18N;
 
   if(role==='developer'||role==='admin'){
-    html+=sec('Asosiy');
-    html+=item('/','chart-pie','Dashboard','dashboard');
-    html+=sec('Boshqaruv');
-    html+=item('/students/','user-graduate',"O'quvchilar",'students');
-    html+=item('/teachers/','chalkboard-teacher',"O'qituvchilar",'teachers');
-    html+=item('/groups/','users','Guruhlar','groups');
-    html+=sec('Kunlik');
-    html+=item('/attendance/','calendar-check','Davomat','attendance');
-    html+=item('/payments/','credit-card',"To'lovlar",'payments');
-    html+=item('/salary/','money-bill-wave',"Ish haqi",'salary');
-    html+=item('/finance/assets/','boxes-stacked',"Markaz buyumlari",'finance_assets');
-    html+=sec("Do'kon");
-    html+=item('/store/','store','Do\'kon','store');
-    html+=item('/store/manage/','gifts',"Do'kon boshqaruvi",'store_manage');
-    html+=sec("O'quv");
-    html+=item('/homework/','book-open','Uyga vazifalar','homework');
-    html+=sec('Tahlil');
-    html+=item('/reports/','chart-bar','Hisobotlar','reports');
-    html+=item('/leaderboard/','ranking-star','Reyting','leaderboard');
-    html+=sec('Tizim');
-    html+=item('/activity/','clock-rotate-left','Faoliyat jurnali','activity');
+    html+=sec(I.sbSecMain);
+    html+=item('/','chart-pie',I.dashboard,'dashboard');
+    html+=sec(I.sbSecMgmt);
+    html+=item('/students/','user-graduate',I.students,'students');
+    html+=item('/teachers/','chalkboard-teacher',I.teachers,'teachers');
+    html+=item('/groups/','users',I.groups,'groups');
+    html+=sec(I.sbSecDaily);
+    html+=item('/attendance/','calendar-check',I.attendance,'attendance');
+    html+=item('/payments/','credit-card',I.payments,'payments');
+    html+=item('/salary/','money-bill-wave',I.salary,'salary');
+    html+=item('/finance/assets/','boxes-stacked',I.assets,'finance_assets');
+    html+=sec(I.sbSecStore);
+    html+=item('/store/','store',I.store,'store');
+    html+=item('/store/manage/','gifts',I.storeManage,'store_manage');
+    html+=sec(I.sbSecStudy);
+    html+=item('/homework/','book-open',I.homework,'homework');
+    html+=sec(I.sbSecAnalytics);
+    html+=item('/reports/','chart-bar',I.reports,'reports');
+    html+=item('/leaderboard/','ranking-star',I.leaderboard,'leaderboard');
+    html+=sec(I.sbSecSystem);
+    html+=item('/activity/','clock-rotate-left',I.activity,'activity');
     if(role==='developer'||role==='admin'){
-      html+=sec('Boshqaruv');
-      html+=item('/users/','users-cog','Foydalanuvchilar','users');
+      html+=sec(I.sbSecMgmt);
+      html+=item('/users/','users-cog',I.users,'users');
     }
     if(role==='developer'){
-      html+=item('/error-monitor/','bug',"Xatoliklar monitoringi",'error_monitor');
+      html+=item('/error-monitor/','bug',I.errorMonitor,'error_monitor');
       html+=`<a class="sb-item" href="/admin/" target="_blank"><span class="sb-icon"><i class="fas fa-shield-halved"></i></span>Django Admin</a>`;
       html+=`<a class="sb-item" href="/api/v1/" target="_blank"><span class="sb-icon"><i class="fas fa-code"></i></span>API Explorer</a>`;
     }
   }
 
   if(role==='teacher'){
-    html+=sec('Guruhlarim');
-    html+=item('/teacher/','house','Bosh sahifa');
-    html+=item('/attendance/','calendar-check','Davomat');
-    html+=item('/homework/','book-open','Uyga vazifalar');
-    html+=item('/zukko/teacher/','code','ZUKKO Challenges');
-    html+=item('/leaderboard/','ranking-star','Reyting');
-    html+=item('/store/','store',"Do'kon",'store');
-    html+=sec('Profil');
-    html+=item('/teacher/profile/','user','Profilim');
+    html+=sec(I.sbSecMyGroups);
+    html+=item('/teacher/','house',I.home);
+    html+=item('/attendance/','calendar-check',I.attendance);
+    html+=item('/homework/','book-open',I.homework);
+    html+=item('/zukko/teacher/','code',I.zukko);
+    html+=item('/leaderboard/','ranking-star',I.leaderboard);
+    html+=item('/store/','store',I.store,'store');
+    html+=sec(I.sbSecProfile);
+    html+=item('/teacher/profile/','user',I.myProfile);
   }
 
   if(role==='parent'){
-    html+=sec('Farzandlarim');
-    html+=item('/parent/','child','Farzandlarim','parent');
+    html+=sec(I.sbSecMyChildren);
+    html+=item('/parent/','child',I.sbSecMyChildren,'parent');
   }
 
   if(role==='finance'){
-    html+=sec('Moliya');
-    html+=item('/finance/','chart-pie','Bosh sahifa','finance');
-    html+=item('/payments/','credit-card',"To'lovlar",'payments');
-    html+=item('/salary/','money-bill-wave',"Ish haqi",'salary');
-    html+=item('/finance/assets/','boxes-stacked',"Markaz buyumlari",'finance_assets');
+    html+=sec(I.sbSecFinance);
+    html+=item('/finance/','chart-pie',I.home,'finance');
+    html+=item('/payments/','credit-card',I.payments,'payments');
+    html+=item('/salary/','money-bill-wave',I.salary,'salary');
+    html+=item('/finance/assets/','boxes-stacked',I.assets,'finance_assets');
   }
 
   if(role==='student'){
-    html+=sec('Mening sahifam');
-    html+=item('/student/','house','Bosh sahifa');
-    html+=item('/student/payments/','credit-card',"To'lovlarim");
-    html+=item('/student/groups/','users','Guruhlarim');
-    html+=item('/student/stats/','chart-bar',"Ko'rsatgichlarim");
-    html+=item('/leaderboard/','ranking-star','Reyting');
-    html+=item('/homework/','book-open',"Uyga vazifalar");
-    html+=item('/zukko/student/','code','ZUKKO Challenges');
-    html+=item('/store/','store',"Do'kon",'store');
-    html+=sec('Sozlamalar');
-    html+=item('/student/settings/','gear','Sozlamalar');
+    html+=sec(I.sbSecMyPage);
+    html+=item('/student/','house',I.home);
+    html+=item('/student/payments/','credit-card',I.myPayments);
+    html+=item('/student/groups/','users',I.sbSecMyGroups);
+    html+=item('/student/stats/','chart-bar',I.myStats);
+    html+=item('/leaderboard/','ranking-star',I.leaderboard);
+    html+=item('/homework/','book-open',I.homework);
+    html+=item('/zukko/student/','code',I.zukko);
+    html+=item('/store/','store',I.store,'store');
+    html+=sec(I.sbSecSettings);
+    html+=item('/student/settings/','gear',I.sbSecSettings);
   }
 
   document.getElementById('sbNav').innerHTML=html;
@@ -1203,13 +1433,13 @@ async function toggleNotifPanel(){
 
 async function loadNotifList(){
   const list=document.getElementById('notifList');
-  list.innerHTML='<div class="notif-empty"><i class="fas fa-spinner fa-spin"></i> Yuklanmoqda...</div>';
+  list.innerHTML=`<div class="notif-empty"><i class="fas fa-spinner fa-spin"></i> ${I18N.loading}</div>`;
   const data=await get('/notifications/');
   const items=data?.results||data||[];
-  if(!items.length){list.innerHTML='<div class="notif-empty"><i class="fas fa-bell-slash" style="font-size:1.4rem;display:block;margin-bottom:8px"></i>Bildirishnomalar yo\'q</div>';return;}
+  if(!items.length){list.innerHTML=`<div class="notif-empty"><i class="fas fa-bell-slash" style="font-size:1.4rem;display:block;margin-bottom:8px"></i>${I18N.notFound}</div>`;return;}
   list.innerHTML=items.map(n=>`
     <div class="notif-item ${n.is_read?'':'unread'}">
-      <div class="notif-item-title">${n.title||'Xabar'}</div>
+      <div class="notif-item-title">${n.title||I18N.message}</div>
       <div class="notif-item-msg">${n.message||''}</div>
       <div class="notif-item-time"><i class="fas fa-clock" style="margin-right:3px"></i>${fmtDate(n.created_at)}</div>
     </div>`).join('');
@@ -1224,7 +1454,7 @@ async function markAllRead(){
 function fmtDate(s){
   if(!s)return'';
   const d=new Date(s);
-  return d.toLocaleString('uz-UZ',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  return d.toLocaleString(JS_LOCALE,{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
 }
 
 // Panel tashqarisiga bosilsa yopilsin
@@ -1265,8 +1495,8 @@ document.addEventListener('click',e=>{
 
 // ── Helpers ───────────────────────────────────────────────────
 function initials(n){if(!n)return'?';return n.trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase()}
-function fmoney(v){return Number(v||0).toLocaleString('uz-UZ')+" so'm"}
-function fdate(d){if(!d)return'—';return new Date(d).toLocaleDateString('uz-UZ')}
+function fmoney(v){return Number(v||0).toLocaleString(JS_LOCALE)+" "+I18N.currencySom}
+function fdate(d){if(!d)return'—';return new Date(d).toLocaleDateString(JS_LOCALE)}
 function prog(pct,color=''){
   return`<div style="display:flex;align-items:center;gap:8px">
     <div class="prog-wrap" style="flex:1"><div class="prog-fill" style="width:${pct}%;${color?'background:'+color:''}"></div></div>
@@ -1275,16 +1505,16 @@ function prog(pct,color=''){
 }
 function bdg(status){
   const m={
-    active:`<span class="bdg bdg-active"><i class="fas fa-circle" style="font-size:.35rem"></i> Faol</span>`,
-    inactive:`<span class="bdg bdg-inactive">Nofaol</span>`,
-    frozen:`<span class="bdg bdg-frozen"><i class="fas fa-snowflake" style="font-size:.6rem"></i> Toxtatilgan</span>`,
-    paid:`<span class="bdg bdg-paid"><i class="fas fa-check" style="font-size:.6rem"></i> To'langan</span>`,
-    partial:`<span class="bdg bdg-partial">Qisman</span>`,
-    unpaid:`<span class="bdg bdg-unpaid">To'lanmagan</span>`,
-    present:`<span class="bdg bdg-present"><i class="fas fa-check" style="font-size:.6rem"></i> Keldi</span>`,
-    absent:`<span class="bdg bdg-absent">Kelmadi</span>`,
-    late:`<span class="bdg bdg-late">Kech keldi</span>`,
-    excused:`<span class="bdg bdg-excused">Sababli</span>`,
+    active:`<span class="bdg bdg-active"><i class="fas fa-circle" style="font-size:.35rem"></i> ${I18N.stActive}</span>`,
+    inactive:`<span class="bdg bdg-inactive">${I18N.stInactive}</span>`,
+    frozen:`<span class="bdg bdg-frozen"><i class="fas fa-snowflake" style="font-size:.6rem"></i> ${I18N.stFrozen}</span>`,
+    paid:`<span class="bdg bdg-paid"><i class="fas fa-check" style="font-size:.6rem"></i> ${I18N.stPaid}</span>`,
+    partial:`<span class="bdg bdg-partial">${I18N.stPartial}</span>`,
+    unpaid:`<span class="bdg bdg-unpaid">${I18N.stUnpaid}</span>`,
+    present:`<span class="bdg bdg-present"><i class="fas fa-check" style="font-size:.6rem"></i> ${I18N.stPresent}</span>`,
+    absent:`<span class="bdg bdg-absent">${I18N.stAbsent}</span>`,
+    late:`<span class="bdg bdg-late">${I18N.stLate}</span>`,
+    excused:`<span class="bdg bdg-excused">${I18N.stExcused}</span>`,
   };
   return m[status]||`<span class="bdg bdg-inactive">${status}</span>`;
 }
@@ -1297,7 +1527,7 @@ function countUp(el,target,duration=1200,suffix=''){
     const p=Math.min((now-start)/duration,1);
     const ease=1-Math.pow(1-p,3);
     const val=ease*target;
-    el.textContent=(isDecimal?val.toFixed(1):Math.round(val)).toLocaleString('uz-UZ')+suffix;
+    el.textContent=(isDecimal?val.toFixed(1):Math.round(val)).toLocaleString(JS_LOCALE)+suffix;
     if(p<1)requestAnimationFrame(fn);
   };
   requestAnimationFrame(fn);
@@ -1319,11 +1549,10 @@ document.querySelectorAll('.stat-card').forEach(el=>{el.style.opacity='0';observ
 {% block extra_js %}{% endblock %}
 <script>
 // ── Dark Mode ─────────────────────────────────────────────────
-(function(){
-  const dark = localStorage.getItem('erp_dark')==='1';
-  if(dark) document.body.classList.add('dark');
-})();
-
+// (theme class itself is applied as early as possible, right after <body>
+// opens — see the inline script there — to avoid a flash of light theme;
+// this block only defines the toggle/chart-sync behavior, it must not
+// re-apply the class itself or it would run the same init twice)
 function _applyChartDark(isDark){
   if(typeof Chart === 'undefined') return;
   const grid = isDark ? 'rgba(255,255,255,.07)' : 'rgba(0,0,0,.04)';
@@ -1357,7 +1586,7 @@ function updateDarkBtn(){
   btn.innerHTML = isDark
     ? '<i class="fas fa-sun" style="color:#f59e0b"></i>'
     : '<i class="fas fa-moon" style="color:#6366f1"></i>';
-  btn.title = isDark ? 'Kunduzgi rejim' : 'Tungi rejim';
+  btn.title = isDark ? I18N.darkModeDay : I18N.darkModeNight;
 }
 document.addEventListener('DOMContentLoaded', ()=>{
   updateDarkBtn();
@@ -1385,7 +1614,7 @@ function installPwa(){
   _deferredPrompt.prompt();
   _deferredPrompt.userChoice.then(()=>{ _deferredPrompt=null; const b=document.getElementById('pwaInstallBtn'); if(b) b.style.display='none'; });
 }
-window.addEventListener('appinstalled',()=>{ const b=document.getElementById('pwaInstallBtn'); if(b) b.style.display='none'; toast("Qorako'l Ilm Ziyo telefoningizga o'rnatildi!",'ok'); });
+window.addEventListener('appinstalled',()=>{ const b=document.getElementById('pwaInstallBtn'); if(b) b.style.display='none'; toast(I18N.pwaInstalled,'ok'); });
 </script>
 <script>
 // ── Yordam bo'limi (ikki tomonlama chat) ─────────────────────
@@ -1407,30 +1636,30 @@ function updateHelpHint(){
   if(!hint) return;
 
   if(role==='student'||role==='teacher'||role==='parent'){
-    hint.textContent = 'Xabar administratorga yuboriladi';
+    hint.textContent = I18N.hintToAdmin;
     if(inputRow) inputRow.style.display='';
     if(divider)  divider.style.display='';
     if(contact)  contact.innerHTML=`
       <div class="hc-icon"><i class="fas fa-user-shield"></i></div>
       <div class="hc-info">
-        <div class="hc-label">Administrator</div>
-        <div class="hc-phone" style="font-size:.88rem;font-weight:600">Tizim administratori</div>
+        <div class="hc-label">${I18N.administrator}</div>
+        <div class="hc-phone" style="font-size:.88rem;font-weight:600">${I18N.adminOfSystem}</div>
       </div>`;
   } else if(role==='admin'){
-    hint.textContent = 'Xabar dasturchiga yuboriladi';
+    hint.textContent = I18N.hintToDev;
     if(inputRow) inputRow.style.display='';
     if(divider)  divider.style.display='';
     if(contact)  contact.innerHTML=`
       <div class="hc-icon"><i class="fas fa-code"></i></div>
       <div class="hc-info">
-        <div class="hc-label">Dasturchi — Avazbek</div>
+        <div class="hc-label">${I18N.developerContact}</div>
         <div class="hc-phone">+998 94 583 33 31</div>
       </div>
       <a href="tel:+998945833331" class="hc-call">
-        <i class="fas fa-phone-volume"></i> Qo'ng'iroq
+        <i class="fas fa-phone-volume"></i> ${I18N.call}
       </a>`;
   } else {
-    hint.textContent = "Siz faqat xabarlarni o'qiy olasiz";
+    hint.textContent = I18N.hintReadonly;
     if(inputRow) inputRow.style.display='none';
     if(divider)  divider.style.display='none';
     if(contact)  contact.style.display='none';
@@ -1441,7 +1670,7 @@ async function loadHelpChat(){
   const area = document.getElementById('helpChatArea');
   area.innerHTML = '<div style="text-align:center;padding:16px;color:var(--muted)"><i class="fas fa-spinner fa-spin"></i></div>';
   const data = await get('/notifications/support/');
-  if(!data){ area.innerHTML='<div style="text-align:center;padding:16px;color:var(--muted)">Yuklab bo\'lmadi</div>'; return; }
+  if(!data){ area.innerHTML=`<div style="text-align:center;padding:16px;color:var(--muted)">${I18N.loadFailed}</div>`; return; }
   const msgs = Array.isArray(data) ? data : (data.results||[]);
   renderHelpMessages(msgs);
 }
@@ -1450,20 +1679,20 @@ function renderHelpMessages(msgs){
   const area = document.getElementById('helpChatArea');
   const myId = getUser()?.id || getUser()?.pk || null;
   if(!msgs.length){
-    area.innerHTML='<div style="text-align:center;padding:24px;color:var(--muted)"><i class="fas fa-comments" style="font-size:2rem;display:block;margin-bottom:8px;opacity:.4"></i>Hali xabarlar yo\'q</div>';
+    area.innerHTML=`<div style="text-align:center;padding:24px;color:var(--muted)"><i class="fas fa-comments" style="font-size:2rem;display:block;margin-bottom:8px;opacity:.4"></i>${I18N.noMessages}</div>`;
     return;
   }
   area.innerHTML = msgs.map(m=>{
     const isSent = m.sender_id && String(m.sender_id)===String(myId);
     const cls    = isSent ? 'sent' : 'recv';
-    const who    = isSent ? 'Men' : (m.sender_name||'Admin');
+    const who    = isSent ? I18N.me : (m.sender_name||I18N.administrator);
     const isReply= m.notif_type==='support_reply';
     const replyBtn= !isSent && m.notif_type==='support_message'
       ? `<button class="chat-reply-btn" onclick="setReplyTarget('${m.id}','${escHtml(m.message.slice(0,40))}')">
-           <i class="fas fa-reply"></i> Javob
+           <i class="fas fa-reply"></i> ${I18N.reply}
          </button>` : '';
     return `<div class="chat-msg ${cls}${isReply?' reply-msg':''}">
-      ${isReply?'<span class="reply-label"><i class="fas fa-reply" style="font-size:.6rem"></i> Javob</span>':''}
+      ${isReply?`<span class="reply-label"><i class="fas fa-reply" style="font-size:.6rem"></i> ${I18N.reply}</span>`:''}
       <div class="msg-who">${who}</div>
       ${escHtml(m.message)}
       <div class="msg-time">${fmtDate(m.created_at)} ${!m.is_read&&!isSent?'<span class="unread-dot"></span>':''}</div>
@@ -1476,7 +1705,7 @@ function renderHelpMessages(msgs){
 function setReplyTarget(id, preview){
   _helpReplyTarget = id;
   const bar = document.getElementById('replyBar');
-  if(bar){ bar.innerHTML=`<i class="fas fa-reply"></i> Javob: "${escHtml(preview)}" <button onclick="clearReply()" style="border:none;background:none;cursor:pointer;color:var(--muted)"><i class="fas fa-times"></i></button>`; bar.style.display='flex'; }
+  if(bar){ bar.innerHTML=`<i class="fas fa-reply"></i> ${I18N.reply}: "${escHtml(preview)}" <button onclick="clearReply()" style="border:none;background:none;cursor:pointer;color:var(--muted)"><i class="fas fa-times"></i></button>`; bar.style.display='flex'; }
   document.getElementById('helpMsgInput').focus();
 }
 
@@ -1511,13 +1740,13 @@ async function sendHelpMsg(){
     if(res && res.ok){
       inp.value='';
       clearReply();
-      toast("Xabar yuborildi!", 'ok');
+      toast(I18N.msgSent, 'ok');
       await loadHelpChat();
     } else {
-      toast(data?.detail||'Xatolik yuz berdi', 'err');
+      toast(data?.detail||I18N.genericError, 'err');
     }
   } catch(e){
-    toast("Xabar yuborishda xatolik", 'err');
+    toast(I18N.msgSendFail, 'err');
   }
 
   inp.disabled=false; btn.disabled=false;
@@ -1556,10 +1785,10 @@ function escHtml(t){
     m.innerHTML = `
       <div class="vltai-welcome">
         <div class="vltai-welcome-icon"><i class="fas fa-robot"></i></div>
-        <p>Salom! Men <strong>Ziyo AI</strong> — ta'lim markazi yordamchisiman.</p>
-        <p style="margin-top:6px;font-size:.78rem;color:var(--muted)">Davomat, o'quvchilar, to'lovlar haqida so'rang.</p>
+        <p>${I18N.aiWelcome}</p>
+        <p style="margin-top:6px;font-size:.78rem;color:var(--muted)">${I18N.aiWelcomeSub}</p>
       </div>`;
-    setStatus('Tayyor');
+    setStatus(I18N.aiReady);
     INPUT().value = '';
     INPUT().style.height = 'auto';
   };
@@ -1576,17 +1805,17 @@ function escHtml(t){
     if(!text || _streaming) return;
 
     const token = getAccess();
-    if(!token){ toast("Tizimga kiring", 'err'); return; }
+    if(!token){ toast(I18N.loginRequired, 'err'); return; }
 
     appendMsg('user', text);
     inp.value = ''; inp.style.height = 'auto';
 
     _streaming = true;
     SEND_BTN().disabled = true;
-    setStatus('Javob yozilmoqda...');
+    setStatus(I18N.aiWriting);
 
     // Start typing indicator
-    _progressEl = appendProgress('Javob yozilmoqda');
+    _progressEl = appendProgress(I18N.aiWriting);
 
     try{
       const body = { message: text };
@@ -1599,8 +1828,8 @@ function escHtml(t){
       });
 
       if(!res.ok){
-        if(res.status === 401){ await refreshAccess(); toast("Iltimos, qayta urinib ko'ring","err"); }
-        else { toast("Xatolik: " + res.status, 'err'); }
+        if(res.status === 401){ await refreshAccess(); toast(I18N.retry,"err"); }
+        else { toast(I18N.genericError + " (" + res.status + ")", 'err'); }
         removeProgress();
         resetSend();
         return;
@@ -1628,7 +1857,7 @@ function escHtml(t){
             if(evt.type === 'conversation_id'){
               _convId = evt.id;
             } else if(evt.type === 'tool_progress'){
-              updateProgress(evt.text || 'Ma\'lumot olinmoqda...');
+              updateProgress(evt.text || I18N.aiFetching);
             } else if(evt.type === 'text'){
               if(!aiMsgEl){
                 removeProgress();
@@ -1640,14 +1869,14 @@ function escHtml(t){
               scrollBottom();
             } else if(evt.type === 'error'){
               removeProgress();
-              appendMsg('ai', evt.text || 'Xatolik yuz berdi');
+              appendMsg('ai', evt.text || I18N.genericError);
             }
           }catch(e){ /* skip malformed */ }
         }
       }
     }catch(e){
       removeProgress();
-      appendMsg('ai', 'Tarmoq xatosi yuz berdi. Iltimos, qayta urinib ko\'ring.');
+      appendMsg('ai', I18N.networkError);
     }
 
     resetSend();
@@ -1656,7 +1885,7 @@ function escHtml(t){
   // ── Helpers ───────────────────────────────────────────────
   function appendMsg(role, text){
     removeProgress();
-    const now = new Date().toLocaleTimeString('uz',{hour:'2-digit',minute:'2-digit'});
+    const now = new Date().toLocaleTimeString(JS_LOCALE,{hour:'2-digit',minute:'2-digit'});
     const div = document.createElement('div');
     div.className = `vltai-msg ${role}`;
     div.innerHTML = `
@@ -1702,7 +1931,7 @@ function escHtml(t){
   function resetSend(){
     _streaming = false;
     SEND_BTN().disabled = false;
-    setStatus('Tayyor');
+    setStatus(I18N.aiReady);
     INPUT().focus();
   }
 

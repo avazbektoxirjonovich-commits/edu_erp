@@ -1,6 +1,7 @@
 ﻿{% extends "erp/base.html" %}
-{% block title %}Sozlamalar — Qorako'l Ilm Ziyo{% endblock %}
-{% block page_title %}Sozlamalar{% endblock %}
+{% load i18n %}
+{% block title %}{% translate "Sozlamalar" %} — Qorako'l Ilm Ziyo{% endblock %}
+{% block page_title %}{% translate "Sozlamalar" %}{% endblock %}
 
 {% block extra_head %}
 <style>
@@ -15,7 +16,7 @@
 .info-row:last-child{border-bottom:none}
 .info-lbl{color:var(--muted);font-weight:500}
 .info-val{font-weight:600;color:var(--text)}
-.fc{display:block;width:100%;border:1.5px solid var(--border);border-radius:9px;padding:10px 13px;font-size:.82rem;outline:none;transition:all .2s;font-family:inherit;background:#fff;color:var(--text)}
+.fc{display:block;width:100%;border:1.5px solid var(--border);border-radius:9px;padding:10px 13px;font-size:.82rem;outline:none;transition:all .2s;font-family:inherit;background:var(--card);color:var(--text)}
 .fc:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(5,150,105,.12)}
 .fg{margin-bottom:12px}
 .fg label{display:block;font-size:.76rem;font-weight:600;color:var(--muted);margin-bottom:5px}
@@ -54,32 +55,32 @@
 <!-- Profile Hero -->
 <div class="sett-hero">
   <div class="sett-hero-bg"></div><div class="sett-hero-glow"></div>
-  <div class="sett-av" id="settAv" style="cursor:pointer" onclick="openFaceModal()" title="Face ID o'rnatish">?</div>
+  <div class="sett-av" id="settAv" style="cursor:pointer" onclick="openFaceModal()" title="{% translate "Face ID o'rnatish" %}">?</div>
   <div>
-    <div class="sett-name" id="settName">Yuklanmoqda...</div>
+    <div class="sett-name" id="settName">{% translate "Yuklanmoqda..." %}</div>
     <div class="sett-phone" id="settPhone">—</div>
     <div>
       <span class="sett-id"><i class="fas fa-id-card" style="font-size:.62rem"></i> ID: <span id="settId">—</span></span>
     </div>
     <div id="faceIdBadge" class="faceid-badge faceid-off" onclick="openFaceModal()">
       <i class="fas fa-face-smile" style="font-size:.6rem"></i>
-      <span id="faceIdLabel">Face ID: O'rnatilmagan</span>
+      <span id="faceIdLabel">{% translate "Face ID: O'rnatilmagan" %}</span>
     </div>
   </div>
 </div>
 
 <!-- Tabs -->
 <div class="tab-btns">
-  <button class="tab-btn active" onclick="switchTab('info')"><i class="fas fa-user" style="margin-right:5px"></i>Ma'lumotlar</button>
-  <button class="tab-btn" onclick="switchTab('edit')"><i class="fas fa-pen" style="margin-right:5px"></i>Tahrirlash</button>
-  <button class="tab-btn" onclick="switchTab('pass')"><i class="fas fa-lock" style="margin-right:5px"></i>Parol</button>
+  <button class="tab-btn active" onclick="switchTab('info')"><i class="fas fa-user" style="margin-right:5px"></i>{% translate "Ma'lumotlar" %}</button>
+  <button class="tab-btn" onclick="switchTab('edit')"><i class="fas fa-pen" style="margin-right:5px"></i>{% translate "Tahrirlash" %}</button>
+  <button class="tab-btn" onclick="switchTab('pass')"><i class="fas fa-lock" style="margin-right:5px"></i>{% translate "Parol" %}</button>
 </div>
 
 <!-- Tab: Info -->
 <div class="tab-pane active" id="tabInfo">
   <div class="card" style="animation:fadeUp .4s ease .08s both">
     <div style="padding:18px 20px">
-      <div style="font-weight:800;font-size:.88rem;margin-bottom:14px;color:var(--text)">Shaxsiy ma'lumotlar</div>
+      <div style="font-weight:800;font-size:.88rem;margin-bottom:14px;color:var(--text)">{% translate "Shaxsiy ma'lumotlar" %}</div>
       <div id="infoRows"><div class="loading"><div class="spinner"></div></div></div>
     </div>
   </div>
@@ -90,18 +91,18 @@
   <div class="card" style="animation:fadeUp .4s ease .08s both">
     <div style="padding:18px 20px">
       <div style="font-weight:800;font-size:.88rem;margin-bottom:16px;color:var(--text)">
-        <i class="fas fa-pen" style="color:var(--accent);margin-right:6px;font-size:.82rem"></i>Profilni tahrirlash
+        <i class="fas fa-pen" style="color:var(--accent);margin-right:6px;font-size:.82rem"></i>{% translate "Profilni tahrirlash" %}
       </div>
       <div class="fg">
-        <label>Ism Familiya</label>
-        <input class="fc" type="text" id="editName" placeholder="Ismingizni kiriting">
+        <label>{% translate "Ism Familiya" %}</label>
+        <input class="fc" type="text" id="editName" placeholder="{% translate "Ismingizni kiriting" %}">
       </div>
       <div class="fg">
-        <label>Telefon raqam</label>
+        <label>{% translate "Telefon raqam" %}</label>
         <input class="fc" type="tel" id="editPhone" placeholder="+998901234567">
       </div>
       <button class="btn btn-primary" onclick="saveProfile()" style="width:100%;margin-top:4px">
-        <i class="fas fa-check"></i>Saqlash
+        <i class="fas fa-check"></i>{% translate "Saqlash" %}
       </button>
     </div>
   </div>
@@ -112,22 +113,22 @@
   <div class="card" style="animation:fadeUp .4s ease .08s both">
     <div style="padding:18px 20px">
       <div style="font-weight:800;font-size:.88rem;margin-bottom:16px;color:var(--text)">
-        <i class="fas fa-lock" style="color:var(--accent);margin-right:6px;font-size:.82rem"></i>Parolni o'zgartirish
+        <i class="fas fa-lock" style="color:var(--accent);margin-right:6px;font-size:.82rem"></i>{% translate "Parolni o'zgartirish" %}
       </div>
       <div class="fg">
-        <label>Joriy parol</label>
-        <input class="fc" type="password" id="oldPwd" placeholder="Joriy parolingiz">
+        <label>{% translate "Joriy parol" %}</label>
+        <input class="fc" type="password" id="oldPwd" placeholder="{% translate "Joriy parolingiz" %}">
       </div>
       <div class="fg">
-        <label>Yangi parol</label>
-        <input class="fc" type="password" id="newPwd" placeholder="Yangi parol (minimal 8 ta belgi)">
+        <label>{% translate "Yangi parol" %}</label>
+        <input class="fc" type="password" id="newPwd" placeholder="{% translate "Yangi parol (minimal 8 ta belgi)" %}">
       </div>
       <div class="fg">
-        <label>Yangi parolni tasdiqlang</label>
-        <input class="fc" type="password" id="cfmPwd" placeholder="Parolni qaytaring">
+        <label>{% translate "Yangi parolni tasdiqlang" %}</label>
+        <input class="fc" type="password" id="cfmPwd" placeholder="{% translate "Parolni qaytaring" %}">
       </div>
       <button class="btn btn-primary" onclick="changePwd()" style="width:100%;margin-top:4px">
-        <i class="fas fa-shield-halved"></i>Parolni yangilash
+        <i class="fas fa-shield-halved"></i>{% translate "Parolni yangilash" %}
       </button>
     </div>
   </div>
@@ -138,29 +139,29 @@
   <div class="fi-modal">
     <button class="fi-close-btn" onclick="closeFaceModal()"><i class="fas fa-times"></i></button>
     <div class="fi-modal-title"><i class="fas fa-face-smile" style="color:#059669;margin-right:7px"></i>Face ID</div>
-    <div class="fi-modal-sub">Yuzingizni ro'yxatga olish uchun kameraga qarang</div>
+    <div class="fi-modal-sub">{% translate "Yuzingizni ro'yxatga olish uchun kameraga qarang" %}</div>
     <div class="fi-video-wrap">
       <video id="faceVideo" autoplay playsinline muted></video>
       <div class="fi-video-overlay"><div class="fi-face-ring" id="faceRing"></div></div>
       <canvas id="faceCanvas" style="display:none"></canvas>
     </div>
-    <div class="fi-status-bar checking" id="faceStatusBar">Kamera ishga tushirilmoqda...</div>
+    <div class="fi-status-bar checking" id="faceStatusBar">{% translate "Kamera ishga tushirilmoqda..." %}</div>
     <input type="file" id="facePhotoInput" accept="image/*" style="display:none" onchange="onFacePhotoChosen(event)">
     <button class="btn btn-ghost" type="button" style="width:100%;margin-top:8px;font-size:.76rem" onclick="document.getElementById('facePhotoInput').click()">
-      <i class="fas fa-mobile-screen-button"></i> Telefon/rasm orqali tanlash (kamera xira bo'lsa)
+      <i class="fas fa-mobile-screen-button"></i> {% translate "Telefon/rasm orqali tanlash (kamera xira bo'lsa)" %}
     </button>
     <div class="fi-consent-box">
       <label>
         <input type="checkbox" id="faceConsent">
-        Men biometrik ma'lumotlarim (yuz tasviri) Qorako'l Ilm Ziyo tizimida xavfsiz saqlanishiga roziman.
-        Ma'lumotlar O'zbekiston shaxsiy ma'lumotlar to'g'risidagi qonuniga muvofiq himoyalanadi.
+        {% blocktranslate %}Men biometrik ma'lumotlarim (yuz tasviri) Qorako'l Ilm Ziyo tizimida xavfsiz saqlanishiga roziman.
+        Ma'lumotlar O'zbekiston shaxsiy ma'lumotlar to'g'risidagi qonuniga muvofiq himoyalanadi.{% endblocktranslate %}
       </label>
     </div>
     <div class="fi-btns">
       <button class="btn btn-primary" style="flex:1" id="faceEnrollBtn" onclick="doEnroll()">
-        <i class="fas fa-check"></i> Saqlash
+        <i class="fas fa-check"></i> {% translate "Saqlash" %}
       </button>
-      <button class="btn btn-ghost" onclick="closeFaceModal()">Bekor qilish</button>
+      <button class="btn btn-ghost" onclick="closeFaceModal()">{% translate "Bekor qilish" %}</button>
     </div>
   </div>
 </div>
@@ -169,18 +170,88 @@
 <div class="card" style="margin-top:14px;animation:fadeUp .45s ease .2s both">
   <div style="padding:14px 20px;display:flex;align-items:center;justify-content:space-between">
     <div>
-      <div style="font-size:.84rem;font-weight:700;color:var(--text)">Hisobdan chiqish</div>
-      <div style="font-size:.72rem;color:var(--muted);margin-top:2px">Barcha qurilmalardan chiqish</div>
+      <div style="font-size:.84rem;font-weight:700;color:var(--text)">{% translate "Hisobdan chiqish" %}</div>
+      <div style="font-size:.72rem;color:var(--muted);margin-top:2px">{% translate "Barcha qurilmalardan chiqish" %}</div>
     </div>
     <button class="btn btn-ghost" onclick="doLogout()" style="color:var(--danger);border-color:var(--danger)">
-      <i class="fas fa-right-from-bracket"></i>Chiqish
+      <i class="fas fa-right-from-bracket"></i>{% translate "Chiqish" %}
     </button>
   </div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
+{% translate "Ism Familiya" as p_lbl_ism_familiya %}
+{% translate "Telefon" as p_lbl_telefon %}
+{% translate "Guruh" as p_lbl_guruh %}
+{% translate "Qo'shilgan sana" as p_lbl_joined %}
+{% translate "Ota-ona ismi" as p_lbl_parent_name %}
+{% translate "Ota-ona telefoni" as p_lbl_parent_phone %}
+{% translate "Holat" as p_lbl_holat %}
+{% translate "Faol" as p_val_faol %}
+{% translate "Nofaol" as p_val_nofaol %}
+{% translate "Daraja" as p_lbl_daraja %}
+{% translate "Bosqich" as p_word_bosqich %}
+{% translate "Kumushlar" as p_lbl_kumushlar %}
+{% translate "Ism va telefon bo'sh bo'lmasligi kerak" as p_err_name_phone_required %}
+{% translate "Profil muvaffaqiyatli yangilandi" as p_ok_profile_updated %}
+{% translate "Xatolik" as p_err_generic %}
+{% translate "Barcha maydonlarni to'ldiring" as p_err_fill_all %}
+{% translate "Yangi parollar mos kelmadi" as p_err_pwd_mismatch %}
+{% translate "Parol kamida 8 ta belgi bo'lishi kerak" as p_err_pwd_too_short %}
+{% translate "Parol muvaffaqiyatli yangilandi" as p_ok_pwd_updated %}
+{% translate 'Rasm tanlandi. Rozilikni belgilab "Saqlash"ni bosing.' as p_photo_chosen %}
+{% translate "Rasmni o'qib bo'lmadi, boshqa fayl tanlang" as p_photo_read_fail %}
+{% translate "Face ID: Yoqilgan" as p_faceid_on %}
+{% translate "Face ID: O'rnatilmagan" as p_faceid_off %}
+{% translate "Kamera ishga tushirilmoqda..." as p_cam_starting %}
+{% translate 'Yuzingizni doira ichiga joylashtiring. Rozilikni belgilab "Saqlash"ni bosing.' as p_cam_ready %}
+{% translate "Kamera ochilmadi: " as p_cam_failed %}
+{% translate "Rozilikni belgilang" as p_err_consent_required %}
+{% translate "Kamera ishlamayapti — avval kameraga ruxsat bering" as p_err_camera_not_working %}
+{% translate "Tekshirilmoqda... (rasm yuborilmoqda, biroz kutib turing)" as p_checking_uploading %}
+{% translate "Server javob bermadi (req null qaytardi)" as p_err_no_response %}
+{% translate "Face ID muvaffaqiyatli o'rnatildi ✓" as p_faceid_enrolled_ok %}
+{% translate "Face ID muvaffaqiyatli o'rnatildi" as p_faceid_enrolled_ok_toast %}
+{% translate "Server bilan bog'lanishda xatolik: " as p_err_server_conn %}
+{% translate "Ichki xatolik: " as p_err_internal %}
 <script>
+const PI18N = {
+  lblIsmFamiliya: "{{ p_lbl_ism_familiya|escapejs }}",
+  lblTelefon: "{{ p_lbl_telefon|escapejs }}",
+  lblGuruh: "{{ p_lbl_guruh|escapejs }}",
+  lblJoined: "{{ p_lbl_joined|escapejs }}",
+  lblParentName: "{{ p_lbl_parent_name|escapejs }}",
+  lblParentPhone: "{{ p_lbl_parent_phone|escapejs }}",
+  lblHolat: "{{ p_lbl_holat|escapejs }}",
+  valFaol: "{{ p_val_faol|escapejs }}",
+  valNofaol: "{{ p_val_nofaol|escapejs }}",
+  lblDaraja: "{{ p_lbl_daraja|escapejs }}",
+  wordBosqich: "{{ p_word_bosqich|escapejs }}",
+  lblKumushlar: "{{ p_lbl_kumushlar|escapejs }}",
+  errNamePhoneRequired: "{{ p_err_name_phone_required|escapejs }}",
+  okProfileUpdated: "{{ p_ok_profile_updated|escapejs }}",
+  errGeneric: "{{ p_err_generic|escapejs }}",
+  errFillAll: "{{ p_err_fill_all|escapejs }}",
+  errPwdMismatch: "{{ p_err_pwd_mismatch|escapejs }}",
+  errPwdTooShort: "{{ p_err_pwd_too_short|escapejs }}",
+  okPwdUpdated: "{{ p_ok_pwd_updated|escapejs }}",
+  photoChosen: "{{ p_photo_chosen|escapejs }}",
+  photoReadFail: "{{ p_photo_read_fail|escapejs }}",
+  faceIdOn: "{{ p_faceid_on|escapejs }}",
+  faceIdOff: "{{ p_faceid_off|escapejs }}",
+  camStarting: "{{ p_cam_starting|escapejs }}",
+  camReady: "{{ p_cam_ready|escapejs }}",
+  camFailed: "{{ p_cam_failed|escapejs }}",
+  errConsentRequired: "{{ p_err_consent_required|escapejs }}",
+  errCameraNotWorking: "{{ p_err_camera_not_working|escapejs }}",
+  checkingUploading: "{{ p_checking_uploading|escapejs }}",
+  errNoResponse: "{{ p_err_no_response|escapejs }}",
+  faceIdEnrolledOk: "{{ p_faceid_enrolled_ok|escapejs }}",
+  faceIdEnrolledOkToast: "{{ p_faceid_enrolled_ok_toast|escapejs }}",
+  errServerConn: "{{ p_err_server_conn|escapejs }}",
+  errInternal: "{{ p_err_internal|escapejs }}",
+};
 let _profileData = null;
 
 function switchTab(name){
@@ -210,16 +281,16 @@ async function load(){
   document.getElementById('editPhone').value=p.phone||'';
 
   const rows=[
-    {lbl:"Ism Familiya",val:p.full_name||'—'},
-    {lbl:'Telefon',val:p.phone||'—'},
-    {lbl:'Guruh',val:p.group_name||p.group_data?.name||'—'},
-    {lbl:"Qo'shilgan sana",val:p.joined_date?fdate(p.joined_date):'—'},
-    {lbl:'Ota-ona ismi',val:p.parent_name||'—'},
-    {lbl:'Ota-ona telefoni',val:p.parent_phone||'—'},
-    {lbl:'Holat',val:p.status==='active'?'<span class="bdg bdg-active"><i class="fas fa-circle" style="font-size:.35rem"></i> Faol</span>':'<span class="bdg bdg-inactive">Nofaol</span>'},
-    {lbl:'Daraja',val:`<span class="bdg bdg-paid"><i class="fas fa-star" style="font-size:.62rem"></i> Bosqich ${p.level||1}</span>`},
-    {lbl:'XP',val:`<span style="font-weight:700;color:var(--accent)">${(p.xp_points||0).toLocaleString('uz-UZ')} XP</span>`},
-    {lbl:'Kumushlar',val:`<span style="font-weight:700;color:#8b5cf6"><i class="fas fa-gem" style="font-size:.68rem;margin-right:3px"></i>${(p.coins||0).toLocaleString('uz-UZ')}</span>`},
+    {lbl:PI18N.lblIsmFamiliya,val:p.full_name||'—'},
+    {lbl:PI18N.lblTelefon,val:p.phone||'—'},
+    {lbl:PI18N.lblGuruh,val:p.group_name||p.group_data?.name||'—'},
+    {lbl:PI18N.lblJoined,val:p.joined_date?fdate(p.joined_date):'—'},
+    {lbl:PI18N.lblParentName,val:p.parent_name||'—'},
+    {lbl:PI18N.lblParentPhone,val:p.parent_phone||'—'},
+    {lbl:PI18N.lblHolat,val:p.status==='active'?`<span class="bdg bdg-active"><i class="fas fa-circle" style="font-size:.35rem"></i> ${PI18N.valFaol}</span>`:`<span class="bdg bdg-inactive">${PI18N.valNofaol}</span>`},
+    {lbl:PI18N.lblDaraja,val:`<span class="bdg bdg-paid"><i class="fas fa-star" style="font-size:.62rem"></i> ${PI18N.wordBosqich} ${p.level||1}</span>`},
+    {lbl:'XP',val:`<span style="font-weight:700;color:var(--accent)">${(p.xp_points||0).toLocaleString(JS_LOCALE)} XP</span>`},
+    {lbl:PI18N.lblKumushlar,val:`<span style="font-weight:700;color:#8b5cf6"><i class="fas fa-gem" style="font-size:.68rem;margin-right:3px"></i>${(p.coins||0).toLocaleString(JS_LOCALE)}</span>`},
   ];
   document.getElementById('infoRows').innerHTML=rows.map(r=>`
     <div class="info-row">
@@ -231,7 +302,7 @@ async function load(){
 async function saveProfile(){
   const full_name=document.getElementById('editName').value.trim();
   const phone=document.getElementById('editPhone').value.trim();
-  if(!full_name||!phone){toast("Ism va telefon bo'sh bo'lmasligi kerak",'wrn');return;}
+  if(!full_name||!phone){toast(PI18N.errNamePhoneRequired,'wrn');return;}
   const r=await req('/auth/me/',{method:'PATCH',body:JSON.stringify({full_name,phone})});
   if(r?.ok){
     const d=await r.json();
@@ -244,12 +315,12 @@ async function saveProfile(){
     document.getElementById('settPhone').textContent=phone;
     document.getElementById('sbName').textContent=full_name;
     document.getElementById('settAv').textContent=initials(full_name);
-    toast("Profil muvaffaqiyatli yangilandi",'ok');
+    toast(PI18N.okProfileUpdated,'ok');
     switchTab('info');
     load();
   } else {
     const e=await r?.json();
-    toast(e?.full_name?.[0]||e?.phone?.[0]||e?.detail||"Xatolik",'err');
+    toast(e?.full_name?.[0]||e?.phone?.[0]||e?.detail||PI18N.errGeneric,'err');
   }
 }
 
@@ -257,15 +328,15 @@ async function changePwd(){
   const oldP=document.getElementById('oldPwd').value;
   const newP=document.getElementById('newPwd').value;
   const cfm=document.getElementById('cfmPwd').value;
-  if(!oldP||!newP){toast("Barcha maydonlarni to'ldiring",'wrn');return;}
-  if(newP!==cfm){toast("Yangi parollar mos kelmadi",'wrn');return;}
-  if(newP.length<8){toast("Parol kamida 8 ta belgi bo'lishi kerak",'wrn');return;}
+  if(!oldP||!newP){toast(PI18N.errFillAll,'wrn');return;}
+  if(newP!==cfm){toast(PI18N.errPwdMismatch,'wrn');return;}
+  if(newP.length<8){toast(PI18N.errPwdTooShort,'wrn');return;}
   const r=await post('/auth/change-password/',{old_password:oldP,new_password:newP});
   if(r?.ok){
-    toast("Parol muvaffaqiyatli yangilandi",'ok');
+    toast(PI18N.okPwdUpdated,'ok');
     ['oldPwd','newPwd','cfmPwd'].forEach(id=>document.getElementById(id).value='');
   } else {
-    const e=await r?.json();toast(e?.detail||e?.old_password?.[0]||"Xatolik",'err');
+    const e=await r?.json();toast(e?.detail||e?.old_password?.[0]||PI18N.errGeneric,'err');
   }
 }
 
@@ -295,10 +366,10 @@ function onFacePhotoChosen(event) {
     canvas.style.height      = '100%';
     canvas.style.objectFit   = 'contain';
     canvas.style.background  = '#000';
-    setFaceStatus("Rasm tanlandi. Rozilikni belgilab \"Saqlash\"ni bosing.", 'ok');
+    setFaceStatus(PI18N.photoChosen, 'ok');
   };
   img.onerror = function() {
-    setFaceStatus("Rasmni o'qib bo'lmadi, boshqa fayl tanlang", 'err');
+    setFaceStatus(PI18N.photoReadFail, 'err');
   };
   img.src = URL.createObjectURL(file);
 }
@@ -312,10 +383,10 @@ async function loadFaceStatus() {
       const lbl   = document.getElementById('faceIdLabel');
       if (d.enrolled) {
         badge.className = 'faceid-badge faceid-on';
-        lbl.textContent = 'Face ID: Yoqilgan';
+        lbl.textContent = PI18N.faceIdOn;
       } else {
         badge.className = 'faceid-badge faceid-off';
-        lbl.textContent = "Face ID: O'rnatilmagan";
+        lbl.textContent = PI18N.faceIdOff;
       }
     }
   } catch(e) {}
@@ -329,7 +400,7 @@ async function openFaceModal() {
   document.getElementById('faceCanvas').style.display = 'none';
   document.querySelector('.fi-video-overlay').style.display = '';
   document.getElementById('facePhotoInput').value = '';
-  setFaceStatus('Kamera ishga tushirilmoqda...', 'checking');
+  setFaceStatus(PI18N.camStarting, 'checking');
   await startFaceCamera();
 }
 
@@ -352,9 +423,9 @@ async function startFaceCamera() {
     });
     document.getElementById('faceVideo').srcObject = _faceStream;
     await document.getElementById('faceVideo').play();
-    setFaceStatus('Yuzingizni doira ichiga joylashtiring. Rozilikni belgilab "Saqlash"ni bosing.', 'ok');
+    setFaceStatus(PI18N.camReady, 'ok');
   } catch(e) {
-    setFaceStatus("Kamera ochilmadi: " + e.message, 'err');
+    setFaceStatus(PI18N.camFailed + e.message, 'err');
   }
 }
 
@@ -365,7 +436,7 @@ function stopFaceCamera() {
 async function doEnroll() {
  try {
   if (!document.getElementById('faceConsent').checked) {
-    setFaceStatus("Rozilikni belgilang", 'err'); return;
+    setFaceStatus(PI18N.errConsentRequired, 'err'); return;
   }
 
   let frameB64;
@@ -373,7 +444,7 @@ async function doEnroll() {
     frameB64 = _uploadedFrameB64;
   } else {
     if (!_faceStream) {
-      setFaceStatus("Kamera ishlamayapti — avval kameraga ruxsat bering", 'err'); return;
+      setFaceStatus(PI18N.errCameraNotWorking, 'err'); return;
     }
     const video  = document.getElementById('faceVideo');
     const canvas = document.getElementById('faceCanvas');
@@ -384,7 +455,7 @@ async function doEnroll() {
   }
 
   document.getElementById('faceEnrollBtn').disabled = true;
-  setFaceStatus("Tekshirilmoqda... (rasm yuborilmoqda, biroz kutib turing)", 'checking');
+  setFaceStatus(PI18N.checkingUploading, 'checking');
   stopFaceCamera();
 
   console.log('[FaceID] yuborilayotgan rasm hajmi (KB):', Math.round(frameB64.length / 1024));
@@ -393,25 +464,25 @@ async function doEnroll() {
     const r = await req('/face-auth/enroll/', {
       method: 'POST', body: JSON.stringify({ frame: frameB64, consent: true }),
     });
-    if (!r) { setFaceStatus("Server javob bermadi (req null qaytardi)", 'err'); document.getElementById('faceEnrollBtn').disabled = false; return; }
+    if (!r) { setFaceStatus(PI18N.errNoResponse, 'err'); document.getElementById('faceEnrollBtn').disabled = false; return; }
     const d = await r.json();
     if (r.ok) {
-      setFaceStatus("Face ID muvaffaqiyatli o'rnatildi ✓", 'ok');
-      toast("Face ID muvaffaqiyatli o'rnatildi", 'ok');
+      setFaceStatus(PI18N.faceIdEnrolledOk, 'ok');
+      toast(PI18N.faceIdEnrolledOkToast, 'ok');
       setTimeout(() => { closeFaceModal(); loadFaceStatus(); }, 1500);
     } else {
-      setFaceStatus(d.detail || 'Xatolik', 'err');
+      setFaceStatus(d.detail || PI18N.errGeneric, 'err');
       document.getElementById('faceEnrollBtn').disabled = false;
       startFaceCamera();
     }
   } catch(e) {
     console.error('[FaceID] so\'rov xatosi:', e);
-    setFaceStatus("Server bilan bog'lanishda xatolik: " + e.message, 'err');
+    setFaceStatus(PI18N.errServerConn + e.message, 'err');
     document.getElementById('faceEnrollBtn').disabled = false;
   }
  } catch (outerErr) {
    console.error('[FaceID] doEnroll ichki xatosi:', outerErr);
-   setFaceStatus("Ichki xatolik: " + outerErr.message, 'err');
+   setFaceStatus(PI18N.errInternal + outerErr.message, 'err');
    document.getElementById('faceEnrollBtn').disabled = false;
  }
 }

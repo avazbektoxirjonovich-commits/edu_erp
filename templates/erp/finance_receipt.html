@@ -1,9 +1,11 @@
+{% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
 <!DOCTYPE html>
-<html lang="uz">
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>To'lov cheki — Qorako'l Ilm Ziyo</title>
+<title>{% translate "To'lov cheki" %} — Qorako'l Ilm Ziyo</title>
 <style>
 :root{
   --accent:#059669; --accent2:#10b981;
@@ -54,39 +56,47 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
   <div class="r-head">
     <div class="logo">🎓</div>
     <h1>Qorako'l Ilm Ziyo</h1>
-    <p>To'lov cheki</p>
+    <p>{% translate "To'lov cheki" %}</p>
   </div>
   <div class="r-body">
     <div class="r-meta">
       <span id="fReceiptNo">—</span>
       <span id="fDate">—</span>
     </div>
-    <div class="r-row"><span class="label">O'quvchi</span><span class="value" id="fStudent">—</span></div>
-    <div class="r-row"><span class="label">Guruh</span><span class="value" id="fGroup">—</span></div>
-    <div class="r-row"><span class="label">To'lov summasi</span><span class="value" id="fAmount">—</span></div>
-    <div class="r-row"><span class="label">To'lov turi</span><span class="value" id="fType">—</span></div>
-    <div class="r-row"><span class="label">Qabul qildi</span><span class="value" id="fReceivedBy">—</span></div>
+    <div class="r-row"><span class="label">{% translate "O'quvchi" %}</span><span class="value" id="fStudent">—</span></div>
+    <div class="r-row"><span class="label">{% translate "Guruh" %}</span><span class="value" id="fGroup">—</span></div>
+    <div class="r-row"><span class="label">{% translate "To'lov summasi" %}</span><span class="value" id="fAmount">—</span></div>
+    <div class="r-row"><span class="label">{% translate "To'lov turi" %}</span><span class="value" id="fType">—</span></div>
+    <div class="r-row"><span class="label">{% translate "Qabul qildi" %}</span><span class="value" id="fReceivedBy">—</span></div>
     <div class="r-debt" id="fDebtBox">
-      <span class="label">Qolgan qarz</span>
+      <span class="label">{% translate "Qolgan qarz" %}</span>
       <span class="value" id="fDebt">—</span>
     </div>
   </div>
   <div class="r-actions">
-    <button class="btn btn-secondary" onclick="window.print()">🖨️ Chop etish</button>
-    <button class="btn btn-primary" id="pdfBtn">⬇ PDF yuklab olish</button>
+    <button class="btn btn-secondary" onclick="window.print()">🖨️ {% translate "Chop etish" %}</button>
+    <button class="btn btn-primary" id="pdfBtn">⬇ {% translate "PDF yuklab olish" %}</button>
   </div>
-  <div class="r-foot">Qorako'l Ilm Ziyo | Bu hujjat avtomatik yaratildi</div>
+  <div class="r-foot">Qorako'l Ilm Ziyo | {% translate "Bu hujjat avtomatik yaratildi" %}</div>
 </div>
 
-<div class="state" id="loadingState">Yuklanmoqda...</div>
-<div class="state" id="errorState" style="display:none">Chek topilmadi yoki ko'rish huquqingiz yo'q.</div>
+<div class="state" id="loadingState">{% translate "Yuklanmoqda..." %}</div>
+<div class="state" id="errorState" style="display:none">{% translate "Chek topilmadi yoki ko'rish huquqingiz yo'q." %}</div>
 
+{% translate "so'm" as p_fr_som %}
+{% translate "Tizimga kirish talab qilinadi." as p_fr_login_req %}
+{% translate "Yo'q (to'liq to'langan)" as p_fr_no_debt %}
 <script>
+const FRI18N = {
+  som: "{{ p_fr_som|escapejs }}",
+  loginRequired: "{{ p_fr_login_req|escapejs }}",
+  noDebt: "{{ p_fr_no_debt|escapejs }}",
+};
 const txnId = location.pathname.split('/').filter(Boolean).pop();
 const token = localStorage.getItem('erp_access');
 
 function fmtMoney(n){
-  return Math.round(Number(n)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + " so'm";
+  return Math.round(Number(n)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + " " + FRI18N.som;
 }
 function fmtDate(iso){
   const d = new Date(iso);
@@ -98,7 +108,7 @@ async function load(){
   if(!token){
     document.getElementById('loadingState').style.display='none';
     document.getElementById('errorState').style.display='block';
-    document.getElementById('errorState').textContent = 'Tizimga kirish talab qilinadi.';
+    document.getElementById('errorState').textContent = FRI18N.loginRequired;
     return;
   }
   try{
@@ -122,7 +132,7 @@ async function load(){
       debtBox.classList.add('has-debt');
       document.getElementById('fDebt').textContent = fmtMoney(debt);
     } else {
-      document.getElementById('fDebt').textContent = "Yo'q (to'liq to'langan)";
+      document.getElementById('fDebt').textContent = FRI18N.noDebt;
     }
 
     document.getElementById('loadingState').style.display = 'none';

@@ -1,12 +1,13 @@
 {% extends "erp/base.html" %}
-{% block title %}Do'kon boshqaruvi — Qorako'l Ilm Ziyo{% endblock %}
-{% block page_title %}Do'kon boshqaruvi{% endblock %}
+{% load i18n %}
+{% block title %}{% translate "Do'kon boshqaruvi" %} — Qorako'l Ilm Ziyo{% endblock %}
+{% block page_title %}{% translate "Do'kon boshqaruvi" %}{% endblock %}
 
 {% block extra_head %}
 <style>
 .sm-kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
 @media(max-width:900px){.sm-kpi{grid-template-columns:repeat(2,1fr)}}
-.kpi{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px}
 .kpi-icon{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.05rem;flex-shrink:0}
 .kpi-val{font-size:1.15rem;font-weight:900;color:var(--text);letter-spacing:-.4px;line-height:1.1}
 .kpi-lbl{font-size:.68rem;color:var(--muted);margin-top:3px}
@@ -24,34 +25,34 @@
 {% block content %}
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;animation:fadeUp .35s ease both">
   <div>
-    <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">Do'kon boshqaruvi</h2>
-    <p style="font-size:.75rem;color:var(--muted);margin-top:3px">Mukofotlar va xarid so'rovlarini boshqarish</p>
+    <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">{% translate "Do'kon boshqaruvi" %}</h2>
+    <p style="font-size:.75rem;color:var(--muted);margin-top:3px">{% translate "Mukofotlar va xarid so'rovlarini boshqarish" %}</p>
   </div>
-  <button class="btn btn-primary" id="btnAddItem" onclick="openAddItemModal()"><i class="fas fa-plus"></i>Buyum qo'shish</button>
+  <button class="btn btn-primary" id="btnAddItem" onclick="openAddItemModal()"><i class="fas fa-plus"></i>{% translate "Buyum qo'shish" %}</button>
 </div>
 
 <div class="sm-kpi">
   <div class="kpi" style="animation:fadeUp .4s ease .02s both">
     <div class="kpi-icon ic-blue"><i class="fas fa-boxes-stacked"></i></div>
-    <div><div class="kpi-val" id="kItems">—</div><div class="kpi-lbl">Jami buyumlar</div></div>
+    <div><div class="kpi-val" id="kItems">—</div><div class="kpi-lbl">{% translate "Jami buyumlar" %}</div></div>
   </div>
   <div class="kpi" style="animation:fadeUp .4s ease .06s both">
     <div class="kpi-icon ic-red"><i class="fas fa-triangle-exclamation"></i></div>
-    <div><div class="kpi-val" id="kOutOfStock">—</div><div class="kpi-lbl">Tugagan buyumlar</div></div>
+    <div><div class="kpi-val" id="kOutOfStock">—</div><div class="kpi-lbl">{% translate "Tugagan buyumlar" %}</div></div>
   </div>
   <div class="kpi" style="animation:fadeUp .4s ease .1s both">
     <div class="kpi-icon ic-amber"><i class="fas fa-clock"></i></div>
-    <div><div class="kpi-val" id="kPending">—</div><div class="kpi-lbl">Kutilayotgan so'rovlar</div></div>
+    <div><div class="kpi-val" id="kPending">—</div><div class="kpi-lbl">{% translate "Kutilayotgan so'rovlar" %}</div></div>
   </div>
   <div class="kpi" style="animation:fadeUp .4s ease .14s both">
     <div class="kpi-icon ic-purple"><i class="fas fa-gem"></i></div>
-    <div><div class="kpi-val" id="kRedeemed">—</div><div class="kpi-lbl">Jami sarflangan Kumush</div></div>
+    <div><div class="kpi-val" id="kRedeemed">—</div><div class="kpi-lbl">{% translate "Jami sarflangan Kumush" %}</div></div>
   </div>
 </div>
 
 <div class="sm-tabs">
-  <button class="btn btn-primary btn-sm" id="tabBtnItems" onclick="switchTab('items')"><i class="fas fa-store"></i> Buyumlar</button>
-  <button class="btn btn-ghost btn-sm" id="tabBtnOrders" onclick="switchTab('orders')"><i class="fas fa-receipt"></i> Buyurtmalar</button>
+  <button class="btn btn-primary btn-sm" id="tabBtnItems" onclick="switchTab('items')"><i class="fas fa-store"></i> {% translate "Buyumlar" %}</button>
+  <button class="btn btn-ghost btn-sm" id="tabBtnOrders" onclick="switchTab('orders')"><i class="fas fa-receipt"></i> {% translate "Buyurtmalar" %}</button>
 </div>
 
 <div class="card" id="itemsPanel" style="overflow:hidden">
@@ -60,11 +61,11 @@
 
 <div class="card" id="ordersPanel" style="overflow:hidden;display:none">
   <div class="fbar">
-    <select id="fOrderStatus" onchange="loadOrders()" style="border:1.5px solid var(--border);border-radius:8px;padding:7px 32px 7px 12px;font-size:.78rem;background:#fff;outline:none;cursor:pointer">
-      <option value="">Barcha statuslar</option>
-      <option value="pending">Kutilmoqda</option>
-      <option value="approved">Tasdiqlangan / Berildi</option>
-      <option value="rejected">Rad etildi</option>
+    <select id="fOrderStatus" onchange="loadOrders()" style="border:1.5px solid var(--border);border-radius:8px;padding:7px 32px 7px 12px;font-size:.78rem;background:var(--card);color:var(--text);outline:none;cursor:pointer">
+      <option value="">{% translate "Barcha statuslar" %}</option>
+      <option value="pending">{% translate "Kutilmoqda" %}</option>
+      <option value="approved">{% translate "Tasdiqlangan / Berildi" %}</option>
+      <option value="rejected">{% translate "Rad etildi" %}</option>
     </select>
   </div>
   <div id="ordersTbl"><div class="loading"><div class="spinner"></div></div></div>
@@ -74,42 +75,121 @@
 <div class="overlay" id="itemModal">
   <div class="modal">
     <div class="m-head">
-      <h5><i class="fas fa-gift" style="color:var(--accent);margin-right:6px"></i><span id="itemModalTitle">Buyum qo'shish</span></h5>
+      <h5><i class="fas fa-gift" style="color:var(--accent);margin-right:6px"></i><span id="itemModalTitle">{% translate "Buyum qo'shish" %}</span></h5>
       <button class="m-close" onclick="closeM('itemModal')"><i class="fas fa-times"></i></button>
     </div>
     <div class="m-body">
       <input type="hidden" id="itId">
       <div class="fg">
-        <label>Rasm</label>
+        <label>{% translate "Rasm" %}</label>
         <div class="sm-img-preview" id="itImgPreview"><i class="fas fa-image"></i></div>
         <input class="fc" type="file" id="itImageFile" accept="image/*" onchange="previewItemImage()">
         <button type="button" class="btn btn-ghost btn-sm" id="btnRemoveImg" style="display:none;margin-top:6px" onclick="removeItemImage()">
-          <i class="fas fa-trash"></i> Rasmni olib tashlash
+          <i class="fas fa-trash"></i> {% translate "Rasmni olib tashlash" %}
         </button>
       </div>
-      <div class="fg"><label>Buyum nomi *</label><input class="fc" id="itName" placeholder="Masalan: Quloqchin"></div>
-      <div class="fg"><label>Tavsif</label><input class="fc" id="itDesc" placeholder="Qisqacha tavsif..."></div>
+      <div class="fg"><label>{% translate "Buyum nomi *" %}</label><input class="fc" id="itName" placeholder="{% translate "Masalan: Quloqchin" %}"></div>
+      <div class="fg"><label>{% translate "Tavsif" %}</label><input class="fc" id="itDesc" placeholder="{% translate "Qisqacha tavsif..." %}"></div>
       <div class="row2">
-        <div class="fg"><label>Narxi (KUMUSH) *</label><input class="fc" type="number" min="1" step="1" id="itPrice" placeholder="250"></div>
-        <div class="fg"><label>Qoldiq (stock) *</label><input class="fc" type="number" min="0" step="1" id="itStock" placeholder="0"></div>
+        <div class="fg"><label>{% translate "Narxi (KUMUSH) *" %}</label><input class="fc" type="number" min="1" step="1" id="itPrice" placeholder="250"></div>
+        <div class="fg"><label>{% translate "Qoldiq (stock) *" %}</label><input class="fc" type="number" min="0" step="1" id="itStock" placeholder="0"></div>
       </div>
       <div class="fg">
         <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
-          <input type="checkbox" id="itActive" checked> Faol (do'konda ko'rinadi)
+          <input type="checkbox" id="itActive" checked> {% translate "Faol (do'konda ko'rinadi)" %}
         </label>
       </div>
     </div>
     <div class="m-foot">
-      <button class="btn btn-ghost" onclick="closeM('itemModal')">Bekor</button>
-      <button class="btn btn-primary" onclick="doSaveItem()"><i class="fas fa-check"></i>Saqlash</button>
+      <button class="btn btn-ghost" onclick="closeM('itemModal')">{% translate "Bekor" %}</button>
+      <button class="btn btn-primary" onclick="doSaveItem()"><i class="fas fa-check"></i>{% translate "Saqlash" %}</button>
     </div>
   </div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
+{% translate "ta" as p_sm_ta %}
+{% translate "Hali buyum qo'shilmagan" as p_sm_no_items %}
+{% translate "Buyum" as p_sm_th_item %}
+{% translate "Narxi" as p_sm_th_price %}
+{% translate "Qoldiq" as p_sm_th_stock %}
+{% translate "Sotilgan" as p_sm_th_sold %}
+{% translate "Status" as p_sm_th_status %}
+{% translate "Faol" as p_sm_active %}
+{% translate "Nofaol" as p_sm_inactive %}
+{% translate "Mavjud emas" as p_sm_unavailable %}
+{% translate "Tahrirlash" as p_sm_edit %}
+{% translate "Nofaol qilish" as p_sm_deactivate %}
+{% translate "Faollashtirish" as p_sm_activate %}
+{% translate "Buyum qo'shish" as p_sm_add_title %}
+{% translate "Buyumni tahrirlash" as p_sm_edit_title %}
+{% translate "Rasmni olib tashlaysizmi?" as p_sm_confirm_remove_img %}
+{% translate "Rasm olib tashlandi" as p_sm_img_removed %}
+{% translate "Xatolik" as p_sm_error %}
+{% translate "Server xatosi" as p_sm_server_error %}
+{% translate "Buyum nomini kiriting" as p_sm_name_required %}
+{% translate "Narx kamida 1 KUMUSH bo'lishi kerak" as p_sm_price_min %}
+{% translate "Qoldiq manfiy bo'lishi mumkin emas" as p_sm_stock_neg %}
+{% translate "Yangilandi" as p_sm_updated %}
+{% translate "Buyum qo'shildi" as p_sm_added %}
+{% translate "Nofaol qilindi" as p_sm_deactivated %}
+{% translate "Faollashtirildi" as p_sm_activated %}
+{% translate "Kutilmoqda" as p_sm_status_pending %}
+{% translate "Tasdiqlangan / Berildi" as p_sm_status_approved %}
+{% translate "Rad etildi" as p_sm_status_rejected %}
+{% translate "So'rovlar yo'q" as p_sm_no_orders %}
+{% translate "O'quvchi" as p_sm_th_student %}
+{% translate "Kumush" as p_sm_th_kumush %}
+{% translate "Sana" as p_sm_th_date %}
+{% translate "Tasdiqlash" as p_sm_approve %}
+{% translate "Rad etish" as p_sm_reject %}
+{% translate "Bu so'rovni tasdiqlaysizmi? Kumush va qoldiq darhol yangilanadi." as p_sm_confirm_approve %}
+{% translate "Tasdiqlandi" as p_sm_approved_ok %}
+{% translate "Rad etish sababi (ixtiyoriy):" as p_sm_reject_prompt %}
+{% translate "Bu so'rovni rad etasizmi?" as p_sm_confirm_reject %}
 <script>
 initAuth();
+
+const SMI18N = {
+  ta: "{{ p_sm_ta|escapejs }}",
+  noItems: "{{ p_sm_no_items|escapejs }}",
+  thItem: "{{ p_sm_th_item|escapejs }}",
+  thPrice: "{{ p_sm_th_price|escapejs }}",
+  thStock: "{{ p_sm_th_stock|escapejs }}",
+  thSold: "{{ p_sm_th_sold|escapejs }}",
+  thStatus: "{{ p_sm_th_status|escapejs }}",
+  active: "{{ p_sm_active|escapejs }}",
+  inactive: "{{ p_sm_inactive|escapejs }}",
+  unavailable: "{{ p_sm_unavailable|escapejs }}",
+  edit: "{{ p_sm_edit|escapejs }}",
+  deactivate: "{{ p_sm_deactivate|escapejs }}",
+  activate: "{{ p_sm_activate|escapejs }}",
+  addTitle: "{{ p_sm_add_title|escapejs }}",
+  editTitle: "{{ p_sm_edit_title|escapejs }}",
+  confirmRemoveImg: "{{ p_sm_confirm_remove_img|escapejs }}",
+  imgRemoved: "{{ p_sm_img_removed|escapejs }}",
+  error: "{{ p_sm_error|escapejs }}",
+  serverError: "{{ p_sm_server_error|escapejs }}",
+  nameRequired: "{{ p_sm_name_required|escapejs }}",
+  priceMin: "{{ p_sm_price_min|escapejs }}",
+  stockNeg: "{{ p_sm_stock_neg|escapejs }}",
+  updated: "{{ p_sm_updated|escapejs }}",
+  added: "{{ p_sm_added|escapejs }}",
+  deactivated: "{{ p_sm_deactivated|escapejs }}",
+  activated: "{{ p_sm_activated|escapejs }}",
+  noOrders: "{{ p_sm_no_orders|escapejs }}",
+  thStudent: "{{ p_sm_th_student|escapejs }}",
+  thKumush: "{{ p_sm_th_kumush|escapejs }}",
+  thDate: "{{ p_sm_th_date|escapejs }}",
+  approve: "{{ p_sm_approve|escapejs }}",
+  reject: "{{ p_sm_reject|escapejs }}",
+  confirmApprove: "{{ p_sm_confirm_approve|escapejs }}",
+  approvedOk: "{{ p_sm_approved_ok|escapejs }}",
+  rejectPrompt: "{{ p_sm_reject_prompt|escapejs }}",
+  confirmReject: "{{ p_sm_confirm_reject|escapejs }}",
+  rejectedLabel: "{{ p_sm_status_rejected|escapejs }}",
+};
 
 function jsAttrEscape(s){
   return String(s)
@@ -137,10 +217,10 @@ function switchTab(tab){
 async function loadSummary(){
   const d = await get('/store/summary/');
   if(!d) return;
-  document.getElementById('kItems').textContent       = d.total_items + ' ta';
-  document.getElementById('kOutOfStock').textContent  = d.out_of_stock_items + ' ta';
-  document.getElementById('kPending').textContent     = d.pending_requests + ' ta';
-  document.getElementById('kRedeemed').textContent    = (d.total_kumush_redeemed||0).toLocaleString('uz-UZ');
+  document.getElementById('kItems').textContent       = d.total_items + ' ' + SMI18N.ta;
+  document.getElementById('kOutOfStock').textContent  = d.out_of_stock_items + ' ' + SMI18N.ta;
+  document.getElementById('kPending').textContent     = d.pending_requests + ' ' + SMI18N.ta;
+  document.getElementById('kRedeemed').textContent    = (d.total_kumush_redeemed||0).toLocaleString(JS_LOCALE);
 }
 
 async function loadItems(){
@@ -148,11 +228,11 @@ async function loadItems(){
   allItems = d?.results || d || [];
   const box = document.getElementById('itemsTbl');
   if(!allItems.length){
-    box.innerHTML = '<div class="empty"><i class="fas fa-store"></i><p>Hali buyum qo\'shilmagan</p></div>';
+    box.innerHTML = `<div class="empty"><i class="fas fa-store"></i><p>${SMI18N.noItems}</p></div>`;
     return;
   }
   box.innerHTML = `<table class="etable"><thead><tr>
-    <th></th><th>Buyum</th><th>Narxi</th><th>Qoldiq</th><th>Sotilgan</th><th>Status</th><th></th>
+    <th></th><th>${SMI18N.thItem}</th><th>${SMI18N.thPrice}</th><th>${SMI18N.thStock}</th><th>${SMI18N.thSold}</th><th>${SMI18N.thStatus}</th><th></th>
   </tr></thead><tbody>
   ${allItems.map(it => `<tr>
     <td><div class="sm-thumb">${it.image ? `<img src="${it.image}">` : '<i class="fas fa-gift"></i>'}</div></td>
@@ -164,14 +244,14 @@ async function loadItems(){
     <td style="font-size:.82rem">${it.stock}</td>
     <td style="font-size:.82rem">${it.sold_count}</td>
     <td>${it.is_active
-      ? '<span class="bdg bdg-active">Faol</span>'
-      : '<span class="bdg bdg-inactive">Nofaol</span>'}
-      ${it.stock <= 0 ? '<div style="margin-top:3px"><span class="bdg bdg-unpaid">Mavjud emas</span></div>' : ''}
+      ? `<span class="bdg bdg-active">${SMI18N.active}</span>`
+      : `<span class="bdg bdg-inactive">${SMI18N.inactive}</span>`}
+      ${it.stock <= 0 ? `<div style="margin-top:3px"><span class="bdg bdg-unpaid">${SMI18N.unavailable}</span></div>` : ''}
     </td>
     <td>
       <div style="display:flex;gap:4px">
-        <button class="btn-icon edit" title="Tahrirlash" onclick="openEditItemModal('${it.id}')"><i class="fas fa-pen"></i></button>
-        <button class="btn-icon ${it.is_active?'del':'edit'}" title="${it.is_active?'Nofaol qilish':'Faollashtirish'}"
+        <button class="btn-icon edit" title="${SMI18N.edit}" onclick="openEditItemModal('${it.id}')"><i class="fas fa-pen"></i></button>
+        <button class="btn-icon ${it.is_active?'del':'edit'}" title="${it.is_active?SMI18N.deactivate:SMI18N.activate}"
           onclick="toggleItemActive('${it.id}',${it.is_active})">
           <i class="fas fa-${it.is_active?'eye-slash':'eye'}"></i>
         </button>
@@ -192,7 +272,7 @@ function previewItemImage(){
 }
 
 function openAddItemModal(){
-  document.getElementById('itemModalTitle').textContent = "Buyum qo'shish";
+  document.getElementById('itemModalTitle').textContent = SMI18N.addTitle;
   document.getElementById('itId').value = '';
   document.getElementById('itName').value = '';
   document.getElementById('itDesc').value = '';
@@ -208,7 +288,7 @@ function openAddItemModal(){
 function openEditItemModal(id){
   const it = allItems.find(x => x.id === id);
   if(!it) return;
-  document.getElementById('itemModalTitle').textContent = 'Buyumni tahrirlash';
+  document.getElementById('itemModalTitle').textContent = SMI18N.editTitle;
   document.getElementById('itId').value = it.id;
   document.getElementById('itName').value = it.name;
   document.getElementById('itDesc').value = it.description || '';
@@ -224,14 +304,14 @@ function openEditItemModal(id){
 async function removeItemImage(){
   const id = document.getElementById('itId').value;
   if(!id) return;
-  if(!confirm("Rasmni olib tashlaysizmi?")) return;
+  if(!confirm(SMI18N.confirmRemoveImg)) return;
   const r = await patch(`/store/items/${id}/`, {image: null});
   if(r?.ok){
-    toast('Rasm olib tashlandi', 'ok');
+    toast(SMI18N.imgRemoved, 'ok');
     document.getElementById('itImgPreview').innerHTML = '<i class="fas fa-image"></i>';
     document.getElementById('btnRemoveImg').style.display = 'none';
     loadItems();
-  } else toast('Xatolik', 'err');
+  } else toast(SMI18N.error, 'err');
 }
 
 async function doSaveItem(){
@@ -242,45 +322,57 @@ async function doSaveItem(){
   const isActive = document.getElementById('itActive').checked;
   const file = document.getElementById('itImageFile').files[0];
 
-  if(!name){ toast("Buyum nomini kiriting", 'wrn'); return; }
-  if(!price || price < 1){ toast("Narx kamida 1 KUMUSH bo'lishi kerak", 'wrn'); return; }
-  if(isNaN(stock) || stock < 0){ toast("Qoldiq manfiy bo'lishi mumkin emas", 'wrn'); return; }
+  if(!name){ toast(SMI18N.nameRequired, 'wrn'); return; }
+  if(!price || price < 1){ toast(SMI18N.priceMin, 'wrn'); return; }
+  if(isNaN(stock) || stock < 0){ toast(SMI18N.stockNeg, 'wrn'); return; }
 
   const fields = {
     name, description: document.getElementById('itDesc').value.trim(),
     price, stock, is_active: isActive,
   };
 
-  let r;
-  if(file){
-    const fd = new FormData();
-    Object.entries(fields).forEach(([k, v]) => fd.append(k, v));
-    fd.append('image', file);
-    r = id ? await reqForm(`/store/items/${id}/`, fd, 'PATCH') : await reqForm('/store/items/', fd, 'POST');
-  } else {
-    r = id ? await patch(`/store/items/${id}/`, fields) : await post('/store/items/', fields);
-  }
+  // Guard against a double-click (or slow-network double-tap) firing this
+  // function twice before the first request resolves — StoreItem has no
+  // uniqueness constraint on name, so without this, two rapid submissions
+  // create two separate StoreItem rows instead of one.
+  const saveBtn = document.querySelector('#itemModal .m-foot .btn-primary');
+  if(saveBtn?.disabled) return;
+  if(saveBtn) saveBtn.disabled = true;
 
-  if(r?.ok){
-    closeM('itemModal');
-    toast(id ? 'Yangilandi' : "Buyum qo'shildi", 'ok');
-    loadItems(); loadSummary();
-  } else {
-    try{ const e = await r?.json(); toast(e?.detail || Object.values(e||{}).flat()[0] || 'Xatolik', 'err'); }
-    catch{ toast('Server xatosi', 'err'); }
+  try{
+    let r;
+    if(file){
+      const fd = new FormData();
+      Object.entries(fields).forEach(([k, v]) => fd.append(k, v));
+      fd.append('image', file);
+      r = id ? await reqForm(`/store/items/${id}/`, fd, 'PATCH') : await reqForm('/store/items/', fd, 'POST');
+    } else {
+      r = id ? await patch(`/store/items/${id}/`, fields) : await post('/store/items/', fields);
+    }
+
+    if(r?.ok){
+      closeM('itemModal');
+      toast(id ? SMI18N.updated : SMI18N.added, 'ok');
+      loadItems(); loadSummary();
+    } else {
+      try{ const e = await r?.json(); toast(e?.detail || Object.values(e||{}).flat()[0] || SMI18N.error, 'err'); }
+      catch{ toast(SMI18N.serverError, 'err'); }
+    }
+  } finally {
+    if(saveBtn) saveBtn.disabled = false;
   }
 }
 
 async function toggleItemActive(id, isActive){
   const r = await patch(`/store/items/${id}/`, {is_active: !isActive});
-  if(r?.ok){ toast(isActive ? 'Nofaol qilindi' : 'Faollashtirildi', 'ok'); loadItems(); loadSummary(); }
-  else toast('Xatolik', 'err');
+  if(r?.ok){ toast(isActive ? SMI18N.deactivated : SMI18N.activated, 'ok'); loadItems(); loadSummary(); }
+  else toast(SMI18N.error, 'err');
 }
 
 const ORDER_STATUS_MAP = {
-  pending:  {label:'Kutilmoqda',              cls:'bdg-warning'},
-  approved: {label:'Tasdiqlangan / Berildi',  cls:'bdg-active'},
-  rejected: {label:'Rad etildi',              cls:'bdg-unpaid'},
+  pending:  {label:"{{ p_sm_status_pending|escapejs }}",  cls:'bdg-warning'},
+  approved: {label:"{{ p_sm_status_approved|escapejs }}", cls:'bdg-active'},
+  rejected: {label:"{{ p_sm_status_rejected|escapejs }}", cls:'bdg-unpaid'},
 };
 
 async function loadOrders(){
@@ -291,11 +383,11 @@ async function loadOrders(){
   const orders = d?.results || d || [];
   const box = document.getElementById('ordersTbl');
   if(!orders.length){
-    box.innerHTML = '<div class="empty"><i class="fas fa-receipt"></i><p>So\'rovlar yo\'q</p></div>';
+    box.innerHTML = `<div class="empty"><i class="fas fa-receipt"></i><p>${SMI18N.noOrders}</p></div>`;
     return;
   }
   box.innerHTML = `<table class="etable"><thead><tr>
-    <th>O'quvchi</th><th>Buyum</th><th>Kumush</th><th>Sana</th><th>Status</th><th></th>
+    <th>${SMI18N.thStudent}</th><th>${SMI18N.thItem}</th><th>${SMI18N.thKumush}</th><th>${SMI18N.thDate}</th><th>${SMI18N.thStatus}</th><th></th>
   </tr></thead><tbody>
   ${orders.map(o => {
     const sm = ORDER_STATUS_MAP[o.status] || {label:o.status_display||o.status, cls:'bdg-info'};
@@ -310,8 +402,8 @@ async function loadOrders(){
       </td>
       <td>
         ${o.status === 'pending' ? `<div style="display:flex;gap:4px">
-          <button class="btn btn-primary btn-sm" onclick="approveOrder('${o.id}')"><i class="fas fa-check"></i> Tasdiqlash</button>
-          <button class="btn btn-ghost btn-sm" onclick="rejectOrder('${o.id}')"><i class="fas fa-times"></i> Rad etish</button>
+          <button class="btn btn-primary btn-sm" onclick="approveOrder('${o.id}')"><i class="fas fa-check"></i> ${SMI18N.approve}</button>
+          <button class="btn btn-ghost btn-sm" onclick="rejectOrder('${o.id}')"><i class="fas fa-times"></i> ${SMI18N.reject}</button>
         </div>` : ''}
       </td>
     </tr>`;
@@ -320,18 +412,18 @@ async function loadOrders(){
 }
 
 async function approveOrder(id){
-  if(!confirm("Bu so'rovni tasdiqlaysizmi? Kumush va qoldiq darhol yangilanadi.")) return;
+  if(!confirm(SMI18N.confirmApprove)) return;
   const r = await post(`/store/requests/${id}/approve/`, {});
-  if(r?.ok){ toast('Tasdiqlandi', 'ok'); loadOrders(); loadSummary(); loadItems(); }
-  else { try{ const e = await r?.json(); toast(e?.detail || 'Xatolik', 'err'); } catch{ toast('Xatolik', 'err'); } }
+  if(r?.ok){ toast(SMI18N.approvedOk, 'ok'); loadOrders(); loadSummary(); loadItems(); }
+  else { try{ const e = await r?.json(); toast(e?.detail || SMI18N.error, 'err'); } catch{ toast(SMI18N.error, 'err'); } }
 }
 
 async function rejectOrder(id){
-  const reason = prompt("Rad etish sababi (ixtiyoriy):", "") || '';
-  if(!confirm("Bu so'rovni rad etasizmi?")) return;
+  const reason = prompt(SMI18N.rejectPrompt, "") || '';
+  if(!confirm(SMI18N.confirmReject)) return;
   const r = await post(`/store/requests/${id}/reject/`, {reason});
-  if(r?.ok){ toast('Rad etildi', 'ok'); loadOrders(); loadSummary(); }
-  else { try{ const e = await r?.json(); toast(e?.detail || 'Xatolik', 'err'); } catch{ toast('Xatolik', 'err'); } }
+  if(r?.ok){ toast(SMI18N.rejectedLabel, 'ok'); loadOrders(); loadSummary(); }
+  else { try{ const e = await r?.json(); toast(e?.detail || SMI18N.error, 'err'); } catch{ toast(SMI18N.error, 'err'); } }
 }
 
 loadSummary();

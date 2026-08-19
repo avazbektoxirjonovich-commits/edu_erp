@@ -65,6 +65,16 @@ class PaymentCreateSerializer(serializers.ModelSerializer):
             student=student, group=group, month=month, year=year
         ).first()
         if existing:
+            # Snapshot pre-overwrite state so the caller (PaymentViewSet.create) can
+            # log this as an UPDATE with an old/new changes payload instead of a CREATE.
+            self.was_update = True
+            self.previous_state = {
+                'paid_amount': existing.paid_amount,
+                'amount':      existing.amount,
+                'note':        existing.note,
+                'status':      existing.status,
+                'debt_amount': existing.debt_amount,
+            }
             existing.paid_amount  = validated_data['paid_amount']
             existing.amount       = validated_data.get('amount', existing.amount)
             existing.note         = validated_data.get('note', existing.note)
@@ -73,6 +83,7 @@ class PaymentCreateSerializer(serializers.ModelSerializer):
             existing.save()
             return existing
 
+        self.was_update = False
         return Payment.objects.create(**validated_data)
 
 

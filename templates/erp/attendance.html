@@ -1,6 +1,7 @@
 ﻿{% extends "erp/base.html" %}
+{% load i18n %}
 {% block title %}Davomat — Qorako'l Ilm Ziyo{% endblock %}
-{% block page_title %}Davomat{% endblock %}
+{% block page_title %}{% translate "Davomat" %}{% endblock %}
 
 {% block extra_head %}
 <style>
@@ -9,12 +10,12 @@
 .att-status-btn{
   padding:7px 16px;border:1.5px solid var(--border);border-radius:8px;
   font-size:.78rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;
-  background:#fff;color:var(--text);
+  background:var(--card);color:var(--text);
 }
-.att-status-btn.present{border-color:var(--success);background:#ecfdf5;color:var(--success)}
-.att-status-btn.absent{border-color:var(--danger);background:#fef2f2;color:var(--danger)}
-.att-status-btn.late{border-color:var(--warning);background:#fffbeb;color:var(--warning)}
-.att-status-btn.excused{border-color:var(--info);background:#eff6ff;color:var(--info)}
+.att-status-btn.present{border-color:var(--success);background:var(--badge-success-bg);color:var(--badge-success-text)}
+.att-status-btn.absent{border-color:var(--danger);background:var(--badge-danger-bg);color:var(--badge-danger-text)}
+.att-status-btn.late{border-color:var(--warning);background:var(--badge-warning-bg);color:var(--badge-warning-text)}
+.att-status-btn.excused{border-color:var(--info);background:var(--badge-info-bg);color:var(--badge-info-text)}
 .att-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
 .att-row:last-child{border-bottom:none}
 .bulk-bar{
@@ -27,8 +28,8 @@
   cursor:pointer;border:none;font-family:inherit;transition:all .2s;
 }
 .bb-all{background:var(--grad);color:#fff;box-shadow:0 2px 8px rgba(5,150,105,.25)}
-.bb-abs{background:#fef2f2;color:var(--danger);border:1px solid #fecaca}
-.bb-late{background:#fffbeb;color:var(--warning);border:1px solid #fde68a}
+.bb-abs{background:var(--badge-danger-bg);color:var(--badge-danger-text);border:1px solid #fecaca}
+.bb-late{background:var(--badge-warning-bg);color:var(--badge-warning-text);border:1px solid #fde68a}
 
 .hist-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
 .hist-row:last-child{border-bottom:none}
@@ -42,47 +43,47 @@
 {% block content %}
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;animation:fadeUp .35s ease both">
   <div>
-    <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">Davomat</h2>
-    <p style="font-size:.75rem;color:var(--muted);margin-top:3px">Davomatni belgilash va tarixni ko'rish</p>
+    <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">{% translate "Davomat" %}</h2>
+    <p style="font-size:.75rem;color:var(--muted);margin-top:3px">{% translate "Davomatni belgilash va tarixni ko'rish" %}</p>
   </div>
 </div>
 
 <!-- Filter row -->
 <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;animation:fadeUp .35s ease .05s both">
-  <select id="fGroup" onchange="loadStudents()" style="border:1.5px solid var(--border);border-radius:9px;padding:9px 32px 9px 12px;font-size:.8rem;background:#fff;outline:none;cursor:pointer;min-width:200px">
-    <option value="">— Guruh tanlang —</option>
+  <select id="fGroup" onchange="loadStudents()" style="border:1.5px solid var(--border);border-radius:9px;padding:9px 32px 9px 12px;font-size:.8rem;background:var(--card);color:var(--text);outline:none;cursor:pointer;min-width:200px">
+    <option value="">{% translate "— Guruh tanlang —" %}</option>
   </select>
-  <input type="date" id="fDate" value="" onchange="loadStudents()" style="border:1.5px solid var(--border);border-radius:9px;padding:9px 12px;font-size:.8rem;background:#fff;outline:none">
-  <button class="btn btn-primary" onclick="submitAttendance()" id="submitBtn" style="display:none"><i class="fas fa-save"></i>Saqlash</button>
+  <input type="date" id="fDate" value="" onchange="loadStudents()" style="border:1.5px solid var(--border);border-radius:9px;padding:9px 12px;font-size:.8rem;background:var(--card);color:var(--text);outline:none">
+  <button class="btn btn-primary" onclick="submitAttendance()" id="submitBtn" style="display:none"><i class="fas fa-save"></i>{% translate "Saqlash" %}</button>
 </div>
 
 <div class="att-layout">
   <!-- Left: marking -->
   <div class="card" style="overflow:hidden;animation:fadeUp .4s ease .1s both">
     <div class="bulk-bar" id="bulkBar" style="display:none">
-      <span style="font-size:.78rem;font-weight:600;color:var(--muted)">Barchaga:</span>
-      <button class="bulk-btn bb-all" onclick="setAll('present')"><i class="fas fa-check-double"></i> Keldi</button>
-      <button class="bulk-btn bb-abs" onclick="setAll('absent')"><i class="fas fa-times"></i> Kelmadi</button>
-      <button class="bulk-btn bb-late" onclick="setAll('late')"><i class="fas fa-clock"></i> Kech keldi</button>
+      <span style="font-size:.78rem;font-weight:600;color:var(--muted)">{% translate "Barchaga:" %}</span>
+      <button class="bulk-btn bb-all" onclick="setAll('present')"><i class="fas fa-check-double"></i> {% translate "Keldi" %}</button>
+      <button class="bulk-btn bb-abs" onclick="setAll('absent')"><i class="fas fa-times"></i> {% translate "Kelmadi" %}</button>
+      <button class="bulk-btn bb-late" onclick="setAll('late')"><i class="fas fa-clock"></i> {% translate "Kech keldi" %}</button>
       <span style="margin-left:auto;font-size:.74rem;color:var(--muted)" id="markCount"></span>
     </div>
-    <div id="attBody"><div class="empty"><i class="fas fa-calendar-check"></i><p>Guruh va sanani tanlang</p></div></div>
+    <div id="attBody"><div class="empty"><i class="fas fa-calendar-check"></i><p>{% translate "Guruh va sanani tanlang" %}</p></div></div>
   </div>
 
   <!-- Right: summary + history -->
   <div style="display:flex;flex-direction:column;gap:16px">
     <!-- Summary -->
     <div class="card" style="animation:fadeUp .4s ease .15s both">
-      <div class="card-header"><div class="card-title">Bugungi statistika</div></div>
+      <div class="card-header"><div class="card-title">{% translate "Bugungi statistika" %}</div></div>
       <div class="card-body" id="summaryBody">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-          <div class="summary-card" style="background:#ecfdf5"><div class="sum-val" style="color:var(--success)" id="sumP">0</div><div class="sum-lbl" style="color:var(--success)">Keldi</div></div>
-          <div class="summary-card" style="background:#fef2f2"><div class="sum-val" style="color:var(--danger)" id="sumA">0</div><div class="sum-lbl" style="color:var(--danger)">Kelmadi</div></div>
-          <div class="summary-card" style="background:#fffbeb"><div class="sum-val" style="color:var(--warning)" id="sumL">0</div><div class="sum-lbl" style="color:var(--warning)">Kech keldi</div></div>
-          <div class="summary-card" style="background:#eff6ff"><div class="sum-val" style="color:var(--info)" id="sumE">0</div><div class="sum-lbl" style="color:var(--info)">Sababli</div></div>
+          <div class="summary-card" style="background:var(--badge-success-bg)"><div class="sum-val" style="color:var(--badge-success-text)" id="sumP">0</div><div class="sum-lbl" style="color:var(--badge-success-text)">{% translate "Keldi" %}</div></div>
+          <div class="summary-card" style="background:var(--badge-danger-bg)"><div class="sum-val" style="color:var(--badge-danger-text)" id="sumA">0</div><div class="sum-lbl" style="color:var(--badge-danger-text)">{% translate "Kelmadi" %}</div></div>
+          <div class="summary-card" style="background:var(--badge-warning-bg)"><div class="sum-val" style="color:var(--badge-warning-text)" id="sumL">0</div><div class="sum-lbl" style="color:var(--badge-warning-text)">{% translate "Kech keldi" %}</div></div>
+          <div class="summary-card" style="background:var(--badge-info-bg)"><div class="sum-val" style="color:var(--badge-info-text)" id="sumE">0</div><div class="sum-lbl" style="color:var(--badge-info-text)">{% translate "Sababli" %}</div></div>
         </div>
         <div style="margin-top:12px">
-          <div style="display:flex;justify-content:space-between;font-size:.73rem;margin-bottom:5px"><span style="color:var(--muted)">Davomat foizi</span><span id="sumPct" style="font-weight:700;color:var(--text)">—</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:.73rem;margin-bottom:5px"><span style="color:var(--muted)">{% translate "Davomat foizi" %}</span><span id="sumPct" style="font-weight:700;color:var(--text)">—</span></div>
           <div class="prog-wrap"><div class="prog-fill" id="sumProg" style="width:0%"></div></div>
         </div>
       </div>
@@ -90,19 +91,46 @@
 
     <!-- History -->
     <div class="card" style="animation:fadeUp .4s ease .2s both">
-      <div class="card-header"><div class="card-title">Oxirgi yozuvlar</div></div>
+      <div class="card-header"><div class="card-title">{% translate "Oxirgi yozuvlar" %}</div></div>
       <div class="card-body" id="histBody" style="max-height:280px;overflow-y:auto">
-        <div class="empty"><i class="fas fa-history"></i><p>Guruh tanlang</p></div>
+        <div class="empty"><i class="fas fa-history"></i><p>{% translate "Guruh tanlang" %}</p></div>
       </div>
     </div>
   </div>
 </div>
 {% endblock %}
 
+{% translate "Guruh tanlang" as p_select_group %}
+{% translate "Bu guruhda o'quvchi yo'q" as p_no_students_in_group %}
+{% translate "ta o'quvchi" as p_ta_student %}
+{% translate "Keldi" as p_present %}
+{% translate "Kelmadi" as p_absent %}
+{% translate "Kech" as p_late %}
+{% translate "Sababli" as p_excused %}
+{% translate "Guruh va sanani tanlang" as p_select_group_date %}
+{% translate "Tarmoq xatoligi" as p_network_error %}
+{% translate "Davomat saqlandi!" as p_attendance_saved %}
+{% translate "Xatolik" as p_error %}
+{% translate "Tarix yo'q" as p_no_history %}
 {% block extra_js %}
 <script>
 initAuth();
 let students=[], attMap={};
+
+const PI18N = {
+  selectGroup: "{{ p_select_group|escapejs }}",
+  noStudentsInGroup: "{{ p_no_students_in_group|escapejs }}",
+  taStudent: "{{ p_ta_student|escapejs }}",
+  present: "{{ p_present|escapejs }}",
+  absent: "{{ p_absent|escapejs }}",
+  late: "{{ p_late|escapejs }}",
+  excused: "{{ p_excused|escapejs }}",
+  selectGroupDate: "{{ p_select_group_date|escapejs }}",
+  networkError: "{{ p_network_error|escapejs }}",
+  attendanceSaved: "{{ p_attendance_saved|escapejs }}",
+  error: "{{ p_error|escapejs }}",
+  noHistory: "{{ p_no_history|escapejs }}",
+};
 
 async function initGroups(){
   const today=new Date().toISOString().split('T')[0];
@@ -116,7 +144,7 @@ async function initGroups(){
 async function loadStudents(){
   const gid=document.getElementById('fGroup').value;
   const date=document.getElementById('fDate').value;
-  if(!gid){document.getElementById('attBody').innerHTML='<div class="empty"><i class="fas fa-calendar-check"></i><p>Guruh tanlang</p></div>';return;}
+  if(!gid){document.getElementById('attBody').innerHTML=`<div class="empty"><i class="fas fa-calendar-check"></i><p>${PI18N.selectGroup}</p></div>`;return;}
 
   document.getElementById('attBody').innerHTML='<div class="loading"><div class="spinner"></div></div>';
   document.getElementById('bulkBar').style.display='none';
@@ -133,13 +161,13 @@ async function loadStudents(){
   existing.forEach(a=>{attMap[a.student]=a.status});
 
   if(!students.length){
-    document.getElementById('attBody').innerHTML='<div class="empty"><i class="fas fa-users"></i><p>Bu guruhda o\'quvchi yo\'q</p></div>';
+    document.getElementById('attBody').innerHTML=`<div class="empty"><i class="fas fa-users"></i><p>${PI18N.noStudentsInGroup}</p></div>`;
     return;
   }
 
   document.getElementById('bulkBar').style.display='flex';
   document.getElementById('submitBtn').style.display='flex';
-  document.getElementById('markCount').textContent=`${students.length} ta o'quvchi`;
+  document.getElementById('markCount').textContent=`${students.length} ${PI18N.taStudent}`;
 
   renderAttendance();
   loadHistory(gid);
@@ -147,7 +175,7 @@ async function loadStudents(){
 
 function renderAttendance(){
   const statuses=['present','absent','late','excused'];
-  const labels={present:'Keldi',absent:'Kelmadi',late:'Kech',excused:'Sababli'};
+  const labels={present:PI18N.present,absent:PI18N.absent,late:PI18N.late,excused:PI18N.excused};
   document.getElementById('attBody').innerHTML=`<div style="padding:0 4px">
     ${students.map(s=>{
       const cur=attMap[s.id]||'present';
@@ -196,20 +224,20 @@ function updateSummary(){
 async function submitAttendance(){
   const gid=document.getElementById('fGroup').value;
   const date=document.getElementById('fDate').value;
-  if(!gid||!date){toast("Guruh va sanani tanlang",'wrn');return;}
+  if(!gid||!date){toast(PI18N.selectGroupDate,'wrn');return;}
   const records=students.map(s=>({student:s.id,status:attMap[s.id]||'present'}));
   const btn=document.getElementById('submitBtn');
   btn.disabled=true;
   const r=await post('/attendance/bulk-create/',{group:gid,date,records});
-  if(!r){toast("Tarmoq xatoligi",'err');btn.disabled=false;return;}
+  if(!r){toast(PI18N.networkError,'err');btn.disabled=false;return;}
   let body;try{body=await r.json();}catch{body=null;}
-  if(r.ok||r.status===201){toast("Davomat saqlandi!",'ok');loadHistory(gid);}
+  if(r.ok||r.status===201){toast(PI18N.attendanceSaved,'ok');loadHistory(gid);}
   else{
     console.error('Attendance error:',body);
     const errs=body?.errors||body;
     const msg=errs&&typeof errs==='object'
       ?Object.entries(errs).map(([f,v])=>`${f}: ${[].concat(v).join(', ')}`).join(' | ')
-      :body?.detail||`Xatolik (${r.status})`;
+      :body?.detail||`${PI18N.error} (${r.status})`;
     toast(msg,'err');
   }
   btn.disabled=false;
@@ -219,7 +247,7 @@ async function loadHistory(gid){
   const d=await get(`/attendance/?group=${gid}&page_size=10`);
   const items=d?.results||d||[];
   const hb=document.getElementById('histBody');
-  if(!items.length){hb.innerHTML='<div class="empty"><i class="fas fa-history"></i><p>Tarix yo\'q</p></div>';return;}
+  if(!items.length){hb.innerHTML=`<div class="empty"><i class="fas fa-history"></i><p>${PI18N.noHistory}</p></div>`;return;}
   hb.innerHTML=items.slice(0,8).map(a=>`
     <div class="hist-row">
       <div>

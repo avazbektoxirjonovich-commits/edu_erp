@@ -1,22 +1,39 @@
+{% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
 <!DOCTYPE html>
-<html lang="uz">
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Qorako'l Ilm Ziyo — O'quv markazi boshqaruv tizimi</title>
-<meta name="description" content="Qorako'l Ilm Ziyo — o'quv markazi uchun zamonaviy boshqaruv tizimi. O'quvchilar, o'qituvchilar, to'lovlar va guruhlarni oson boshqaring.">
-<meta name="keywords" content="Qorako'l Ilm Ziyo, o'quv markazi, ta'lim tizimi, maktab boshqaruvi, CRM, ERP">
+<title>{% translate "Qorako'l Ilm Ziyo — O'quv markazi boshqaruv tizimi" %}</title>
+<meta name="description" content="{% translate "Qorako'l Ilm Ziyo — o'quv markazi uchun zamonaviy boshqaruv tizimi. O'quvchilar, o'qituvchilar, to'lovlar va guruhlarni oson boshqaring." %}">
+<meta name="keywords" content="Qorako'l Ilm Ziyo, o'quv markazi, ta'lim tizimi, maktab boshqaruvi, ERP">
 <meta name="robots" content="index, follow">
-<meta property="og:title" content="Qorako'l Ilm Ziyo — O'quv markazi boshqaruv tizimi">
-<meta property="og:description" content="O'quv markazi uchun zamonaviy boshqaruv tizimi. Bepul kirish.">
+<meta property="og:title" content="{% translate "Qorako'l Ilm Ziyo — O'quv markazi boshqaruv tizimi" %}">
+<meta property="og:description" content="{% translate "O'quv markazi uchun zamonaviy boshqaruv tizimi. Bepul kirish." %}">
 <meta property="og:type" content="website">
 <meta name="google-site-verification" content="TydEJ49uoK96uDCiLvxMVtBrPCU48J4r2abwih0qa7o" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 <style>
+:root{
+  --bg:#f5f6fa; --card:#ffffff; --text:#1a202c; --muted:#9ca3af; --border:#e5e9f0;
+  --danger:#ef4444;
+  --badge-success-bg:#f0fdf4; --badge-success-text:#059669;
+  --badge-warning-bg:#fffbeb; --badge-warning-text:#d97706;
+  --badge-danger-bg:#fef2f2;  --badge-danger-text:#dc2626;
+  --badge-info-bg:#eff6ff;    --badge-info-text:#2563eb;
+}
+body.dark{
+  --bg:#0f172a; --card:#1e293b; --text:#e2e8f0; --muted:#94a3b8; --border:#334155;
+  --badge-success-bg:rgba(5,150,105,.15); --badge-success-text:#34d399;
+  --badge-warning-bg:rgba(180,83,9,.15);  --badge-warning-text:#fbbf24;
+  --badge-danger-bg:rgba(185,28,28,.15);  --badge-danger-text:#f87171;
+  --badge-info-bg:rgba(59,130,246,.15);   --badge-info-text:#93c5fd;
+}
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{height:100%;font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased}
+html,body{height:100%;font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;transition:background .2s,color .2s}
 
 @keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
 @keyframes slideRight{from{opacity:0;transform:translateX(-28px)}to{opacity:1;transform:translateX(0)}}
@@ -82,7 +99,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;-webkit-font-smoothing:anti
 
 /* RIGHT */
 .right-panel{
-  background:#f5f6fa;display:flex;align-items:center;justify-content:center;padding:40px 24px;
+  background:var(--bg);display:flex;align-items:center;justify-content:center;padding:40px 24px;
 }
 .login-box{width:100%;max-width:400px;animation:fadeUp .55s ease .1s both}
 
@@ -95,35 +112,45 @@ html,body{height:100%;font-family:'Inter',sans-serif;-webkit-font-smoothing:anti
   animation:fadeIn .5s ease .3s both;
 }
 .l-logo-icon i{color:#fff;font-size:1.7rem}
-.l-brand{font-size:1.1rem;font-weight:900;color:#0D1B2A;letter-spacing:-.3px}
+.l-brand{font-size:1.1rem;font-weight:900;color:var(--text);letter-spacing:-.3px}
 .l-brand span{background:linear-gradient(135deg,#059669,#10b981);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.l-tag{font-size:.76rem;color:#9ca3af;margin-top:4px}
+.l-tag{font-size:.76rem;color:var(--muted);margin-top:4px}
 
 .l-card{
-  background:#fff;border-radius:20px;padding:30px;
+  background:var(--card);border-radius:20px;padding:30px;
   box-shadow:0 4px 28px rgba(13,27,42,.08),0 0 1px rgba(13,27,42,.05);
-  border:1px solid #edf0f7;
+  border:1px solid var(--border);
 }
-.l-card h3{font-size:1.1rem;font-weight:800;color:#0D1B2A;margin-bottom:5px}
-.l-card .hint{font-size:.76rem;color:#9ca3af;margin-bottom:26px}
+.l-card h3{font-size:1.1rem;font-weight:800;color:var(--text);margin-bottom:5px}
+.l-card .hint{font-size:.76rem;color:var(--muted);margin-bottom:26px}
 
 .fg{margin-bottom:17px}
-.fg label{display:block;font-size:.74rem;font-weight:600;color:#374151;margin-bottom:6px}
+.fg label{display:block;font-size:.74rem;font-weight:600;color:var(--text);margin-bottom:6px}
 .iw{position:relative}
-.iw .pre{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:#b0b7c3;font-size:.82rem;pointer-events:none;transition:color .2s}
+.iw .pre{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.82rem;pointer-events:none;transition:color .2s}
 .fi{
   width:100%;padding:11px 13px 11px 40px;
-  border:1.5px solid #e5e9f0;border-radius:11px;
-  font-size:.84rem;color:#1a202c;font-family:'Inter',sans-serif;
-  transition:all .2s;outline:none;background:#fff;
+  border:1.5px solid var(--border);border-radius:11px;
+  font-size:.84rem;color:var(--text);font-family:'Inter',sans-serif;
+  transition:all .2s;outline:none;background:var(--card);
 }
 .fi:focus{border-color:#059669;box-shadow:0 0 0 3px rgba(5,150,105,.12)}
 .iw:focus-within .pre{color:#059669}
-.eye-btn{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#b0b7c3;font-size:.82rem;padding:4px;transition:color .2s}
+.eye-btn{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);font-size:.82rem;padding:4px;transition:color .2s}
 .eye-btn:hover{color:#059669}
 
+/* Autofill: browser autofill paints its own light background regardless of
+   theme unless overridden — force it to match the current card/text tokens
+   so dark mode doesn't get a white flash on autofilled fields. */
+.fi:-webkit-autofill,.fi:-webkit-autofill:focus,.fi:-webkit-autofill:hover,
+.otp-box input:-webkit-autofill{
+  -webkit-text-fill-color:var(--text);
+  -webkit-box-shadow:0 0 0 1000px var(--card) inset;
+  transition:background-color 9999s ease-in-out 0s;
+}
+
 .err-box{
-  background:#fef2f2;border:1.5px solid #fecaca;color:#b91c1c;
+  background:var(--badge-danger-bg);border:1.5px solid var(--danger);color:var(--badge-danger-text);
   border-radius:10px;padding:10px 14px;font-size:.77rem;
   display:flex;align-items:center;gap:8px;margin-bottom:16px;
   animation:fadeUp .3s ease;
@@ -140,7 +167,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;-webkit-font-smoothing:anti
 .btn-login:active{transform:translateY(0)}
 .btn-login:disabled{opacity:.65;cursor:not-allowed;transform:none;box-shadow:0 4px 18px rgba(5,150,105,.2)}
 
-.l-footer{text-align:center;margin-top:20px;font-size:.72rem;color:#b0b7c3;line-height:1.65}
+.l-footer{text-align:center;margin-top:20px;font-size:.72rem;color:var(--muted);line-height:1.65}
 .l-footer strong{color:#059669}
 
 .spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite}
@@ -148,35 +175,64 @@ html,body{height:100%;font-family:'Inter',sans-serif;-webkit-font-smoothing:anti
 /* ── FACE ID STEP ─────────────────────────────────────────── */
 .face-step{display:none;animation:fadeUp .4s ease}
 .face-step.active{display:block}
-.face-title{font-size:1rem;font-weight:800;color:#0D1B2A;margin-bottom:4px}
-.face-sub{font-size:.76rem;color:#9ca3af;margin-bottom:16px}
+.face-title{font-size:1rem;font-weight:800;color:var(--text);margin-bottom:4px}
+.face-sub{font-size:.76rem;color:var(--muted);margin-bottom:16px}
 .face-video-wrap{position:relative;border-radius:12px;overflow:hidden;background:#111;aspect-ratio:4/3;margin-bottom:10px}
 .face-video-wrap video{width:100%;display:block}
 .face-ring-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
 .face-ring{width:140px;height:140px;border-radius:50%;border:2px dashed rgba(5,150,105,.7);box-shadow:0 0 0 4px rgba(5,150,105,.1)}
 .face-ring.active{border-color:#10b981;animation:pulseRing 1s ease infinite}
 @keyframes pulseRing{0%,100%{box-shadow:0 0 0 4px rgba(16,185,129,.1)}50%{box-shadow:0 0 0 8px rgba(16,185,129,.2)}}
-.face-challenge{text-align:center;padding:10px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;margin-bottom:10px}
-.face-challenge-lbl{font-size:.74rem;color:#6b7280;margin-bottom:2px}
+.face-challenge{text-align:center;padding:10px;background:var(--badge-success-bg);border:1px solid var(--badge-success-text);border-radius:10px;margin-bottom:10px}
+.face-challenge-lbl{font-size:.74rem;color:var(--muted);margin-bottom:2px}
 .face-challenge-action{font-size:1rem;font-weight:800;color:#059669}
-.face-prog{height:4px;border-radius:2px;background:#e5e9f0;margin-bottom:10px;overflow:hidden}
+.face-prog{height:4px;border-radius:2px;background:var(--border);margin-bottom:10px;overflow:hidden}
 .face-prog-inner{height:100%;background:linear-gradient(90deg,#059669,#10b981);width:0;transition:width .1s}
 .face-status{padding:8px 12px;border-radius:8px;font-size:.76rem;font-weight:600;text-align:center;margin-bottom:10px}
-.face-status.info{background:#eff6ff;color:#2563eb}
-.face-status.ok{background:#f0fdf4;color:#059669}
-.face-status.err{background:#fef2f2;color:#dc2626}
-.face-status.warn{background:#fffbeb;color:#d97706}
+.face-status.info{background:var(--badge-info-bg);color:var(--badge-info-text)}
+.face-status.ok{background:var(--badge-success-bg);color:var(--badge-success-text)}
+.face-status.err{background:var(--badge-danger-bg);color:var(--badge-danger-text)}
+.face-status.warn{background:var(--badge-warning-bg);color:var(--badge-warning-text)}
 .otp-box{display:none;margin-top:10px}
-.otp-box input{width:100%;text-align:center;font-size:1.5rem;letter-spacing:.5rem;padding:10px;border:1.5px solid #e5e9f0;border-radius:11px;font-weight:700}
+.otp-box input{width:100%;text-align:center;font-size:1.5rem;letter-spacing:.5rem;padding:10px;border:1.5px solid var(--border);border-radius:11px;font-weight:700;background:var(--card);color:var(--text);font-family:inherit}
 .otp-box input:focus{border-color:#059669;outline:none;box-shadow:0 0 0 3px rgba(5,150,105,.12)}
-.face-back{background:none;border:none;color:#9ca3af;font-size:.74rem;cursor:pointer;text-decoration:underline;margin-top:8px}
+.face-back{background:none;border:none;color:var(--muted);font-size:.74rem;cursor:pointer;text-decoration:underline;margin-top:8px}
 .face-back:hover{color:#059669}
 
-.dev-link{display:block;text-align:center;margin-top:22px;font-size:.7rem;color:#c2c8d4;text-decoration:none;letter-spacing:.02em;transition:color .2s}
+.dev-link{display:block;text-align:center;margin-top:22px;font-size:.7rem;color:var(--muted);text-decoration:none;letter-spacing:.02em;transition:color .2s}
 .dev-link:hover{color:#059669;text-decoration:underline}
+
+.lang-switch-form{position:absolute;top:18px;right:20px;z-index:5;display:flex;gap:8px}
+.lang-select{
+  background:var(--card);border:1.5px solid var(--border);cursor:pointer;color:var(--text);
+  height:36px;border-radius:10px;padding:0 8px;
+  font-size:.78rem;font-weight:600;font-family:'Inter',sans-serif;
+  transition:all .2s;
+}
+.lang-select:hover{border-color:#059669}
+.lang-select:focus{outline:none;border-color:#059669;box-shadow:0 0 0 3px rgba(5,150,105,.12)}
+.login-dark-toggle{
+  background:var(--card);border:1.5px solid var(--border);cursor:pointer;color:var(--text);
+  width:36px;height:36px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;font-size:.9rem;
+  transition:all .2s;
+}
+.login-dark-toggle:hover{border-color:#059669}
+@media(max-width:900px){.lang-switch-form{top:12px;right:12px}}
 </style>
 </head>
 <body>
+<script>if(localStorage.getItem('erp_dark')==='1')document.body.classList.add('dark');</script>
+<form id="langForm" action="{% url 'set_language' %}" method="post" class="lang-switch-form">
+  {% csrf_token %}
+  <input type="hidden" name="next" value="{{ request.path }}">
+  <select name="language" id="langSelect" class="lang-select" onchange="document.getElementById('langForm').submit()" title="{% translate 'Tilni tanlang' %}">
+    <option value="uz" {% if LANGUAGE_CODE == 'uz' %}selected{% endif %}>🇺🇿 O'zbekcha</option>
+    <option value="ru" {% if LANGUAGE_CODE == 'ru' %}selected{% endif %}>🇷🇺 Русский</option>
+    <option value="en" {% if LANGUAGE_CODE == 'en' %}selected{% endif %}>🇬🇧 English</option>
+  </select>
+  <button type="button" class="login-dark-toggle" id="loginDarkToggle" onclick="toggleLoginDark()" title="{% translate 'Tungi rejim' %}"></button>
+</form>
 <div class="wrap">
 
   <!-- LEFT HERO PANEL -->
@@ -190,39 +246,38 @@ html,body{height:100%;font-family:'Inter',sans-serif;-webkit-font-smoothing:anti
     <div class="lp-inner">
       <div class="lp-badge">
         <span class="lp-dot"></span>
-        Tizim barqaror ishlamoqda
+        {% translate "Tizim barqaror ishlamoqda" %}
       </div>
 
       <div class="lp-headline">
-        Ta'lim markazini<br>
-        <span class="accent">qulay boshqaring</span>
+        {% translate "Ta'lim markazini" %}<br>
+        <span class="accent">{% translate "qulay boshqaring" %}</span>
       </div>
 
       <p class="lp-sub">
-        O'quvchilar, jadvallar va to'lovlarni bitta tizimda ishonch bilan nazorat qiling.
-        Barchasi sizning qulayligingiz uchun.
+        {% translate "O'quvchilar, jadvallar va to'lovlarni bitta tizimda ishonch bilan nazorat qiling. Barchasi sizning qulayligingiz uchun." %}
       </p>
 
       <div class="feat-grid">
         <div class="feat">
           <div class="feat-icon"><i class="fas fa-shield-halved"></i></div>
-          <div class="feat-name">Xavfsiz Tizim</div>
-          <div class="feat-desc">Ma'lumotlaringiz xalqaro standartlar asosida himoyalangan</div>
+          <div class="feat-name">{% translate "Xavfsiz Tizim" %}</div>
+          <div class="feat-desc">{% translate "Ma'lumotlaringiz xalqaro standartlar asosida himoyalangan" %}</div>
         </div>
         <div class="feat">
           <div class="feat-icon"><i class="fas fa-gear"></i></div>
-          <div class="feat-name">Avtomatlashtirilgan</div>
-          <div class="feat-desc">Hisobotlar va to'lovlar avtomatik shakllanadi</div>
+          <div class="feat-name">{% translate "Avtomatlashtirilgan" %}</div>
+          <div class="feat-desc">{% translate "Hisobotlar va to'lovlar avtomatik shakllanadi" %}</div>
         </div>
         <div class="feat">
           <div class="feat-icon"><i class="fas fa-chart-line"></i></div>
-          <div class="feat-name">Real-vaqt Tahlil</div>
-          <div class="feat-desc">Dashboard orqali har bir ko'rsatkichni kuzating</div>
+          <div class="feat-name">{% translate "Real-vaqt Tahlil" %}</div>
+          <div class="feat-desc">{% translate "Dashboard orqali har bir ko'rsatkichni kuzating" %}</div>
         </div>
         <div class="feat">
           <div class="feat-icon"><i class="fas fa-trophy"></i></div>
-          <div class="feat-name">Gamifikatsiya</div>
-          <div class="feat-desc">XP va coins bilan o'quvchilarni rag'batlantiring</div>
+          <div class="feat-name">{% translate "Gamifikatsiya" %}</div>
+          <div class="feat-desc">{% translate "XP va coins bilan o'quvchilarni rag'batlantiring" %}</div>
         </div>
       </div>
     </div>
@@ -234,12 +289,12 @@ html,body{height:100%;font-family:'Inter',sans-serif;-webkit-font-smoothing:anti
       <div class="l-logo">
         <div class="l-logo-icon"><i class="fas fa-graduation-cap"></i></div>
         <div class="l-brand">Qorako'l<span> Ilm Ziyo</span></div>
-        <div class="l-tag">Ta'lim markazi boshqaruv tizimi</div>
+        <div class="l-tag">{% translate "Ta'lim markazi boshqaruv tizimi" %}</div>
       </div>
 
       <div class="l-card">
-        <h3>Kirish</h3>
-        <p class="hint">Hisobingizga kiring davom etish uchun</p>
+        <h3>{% translate "Kirish" %}</h3>
+        <p class="hint">{% translate "Hisobingizga kiring davom etish uchun" %}</p>
 
         <div id="errBox" class="err-box" style="display:none">
           <i class="fas fa-exclamation-circle"></i>
@@ -248,7 +303,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;-webkit-font-smoothing:anti
 
         <form id="loginForm" onsubmit="doLogin(event)">
           <div class="fg">
-            <label>Telefon raqam</label>
+            <label>{% translate "Telefon raqam" %}</label>
             <div class="iw">
               <i class="fas fa-phone pre"></i>
               <input type="text" id="phone" class="fi" placeholder="+998901234567" autocomplete="username" required>
@@ -256,10 +311,10 @@ html,body{height:100%;font-family:'Inter',sans-serif;-webkit-font-smoothing:anti
           </div>
 
           <div class="fg">
-            <label>Parol</label>
+            <label>{% translate "Parol" %}</label>
             <div class="iw">
               <i class="fas fa-lock pre"></i>
-              <input type="password" id="password" class="fi" placeholder="Parolingizni kiriting" autocomplete="current-password" required>
+              <input type="password" id="password" class="fi" placeholder="{% translate "Parolingizni kiriting" %}" autocomplete="current-password" required>
               <button type="button" class="eye-btn" onclick="togglePwd()" id="eyeBtn">
                 <i class="fas fa-eye" id="eyeIcon"></i>
               </button>
@@ -267,14 +322,14 @@ html,body{height:100%;font-family:'Inter',sans-serif;-webkit-font-smoothing:anti
           </div>
 
           <button type="submit" class="btn-login" id="loginBtn">
-            <span id="btnText">Kirish</span>
+            <span id="btnText">{% translate "Kirish" %}</span>
           </button>
         </form>
 
         <!-- ── FACE ID STEP (hidden initially) ──────────────────── -->
         <div id="faceStep" class="face-step">
-          <div class="face-title"><i class="fas fa-face-smile" style="color:#059669;margin-right:6px"></i>Yuz tekshiruvi</div>
-          <div class="face-sub">Kameraga qarang va rasmga olish tugmasini bosing</div>
+          <div class="face-title"><i class="fas fa-face-smile" style="color:#059669;margin-right:6px"></i>{% translate "Yuz tekshiruvi" %}</div>
+          <div class="face-sub">{% translate "Kameraga qarang va rasmga olish tugmasini bosing" %}</div>
 
           <div class="face-video-wrap" id="faceVideoWrap" style="display:none">
             <video id="faceVideo" autoplay playsinline muted></video>
@@ -282,35 +337,35 @@ html,body{height:100%;font-family:'Inter',sans-serif;-webkit-font-smoothing:anti
             <canvas id="faceCanvas" style="display:none"></canvas>
           </div>
 
-          <div class="face-status info" id="faceStatus">Kamera ochilmoqda...</div>
+          <div class="face-status info" id="faceStatus">{% translate "Kamera ochilmoqda..." %}</div>
 
           <!-- OTP Fallback -->
           <div class="otp-box" id="otpBox">
-            <div style="font-size:.76rem;color:#374151;font-weight:600;margin-bottom:8px">
-              <i class="fas fa-envelope" style="color:#059669;margin-right:5px"></i>Email zaxira kodi
+            <div style="font-size:.76rem;color:var(--text);font-weight:600;margin-bottom:8px">
+              <i class="fas fa-envelope" style="color:#059669;margin-right:5px"></i>{% translate "Email zaxira kodi" %}
             </div>
             <input type="text" id="otpInput" maxlength="6" placeholder="——————" inputmode="numeric">
             <button class="btn-login" style="margin-top:10px;padding:10px" onclick="verifyOTP()">
-              <i class="fas fa-check"></i> Kodni tasdiqlash
+              <i class="fas fa-check"></i> {% translate "Kodni tasdiqlash" %}
             </button>
           </div>
 
           <div style="display:flex;gap:8px;margin-top:12px">
             <button class="btn-login" style="flex:1" id="faceCaptureBtn" onclick="captureAndVerify()" disabled>
-              <i class="fas fa-camera"></i> Rasmga olish
+              <i class="fas fa-camera"></i> {% translate "Rasmga olish" %}
             </button>
             <button class="btn-login" id="faceOtpBtn" onclick="requestOTP()" style="display:none;background:linear-gradient(135deg,#6b7280,#9ca3af)">
-              <i class="fas fa-envelope"></i> Zaxira kod
+              <i class="fas fa-envelope"></i> {% translate "Zaxira kod" %}
             </button>
           </div>
           <div style="text-align:center">
-            <button class="face-back" onclick="resetToLogin()">← Parol bilan qayta kirish</button>
+            <button class="face-back" onclick="resetToLogin()">← {% translate "Parol bilan qayta kirish" %}</button>
           </div>
         </div>
 
         <div class="l-footer">
-          Login yoki parolingizni unutgan bo'lsangiz,<br>
-          <strong>adminga murojaat qiling</strong>
+          {% translate "Login yoki parolingizni unutgan bo'lsangiz," %}<br>
+          <strong>{% translate "adminga murojaat qiling" %}</strong>
         </div>
       </div>
 
@@ -319,8 +374,65 @@ html,body{height:100%;font-family:'Inter',sans-serif;-webkit-font-smoothing:anti
   </div>
 
 </div>
+{% translate "Kunduzgi rejim" as vlg_dark_day %}
+{% translate "Tungi rejim" as vlg_dark_night %}
+{% translate "Telefon yoki parol noto'g'ri" as vlg_wrong_creds %}
+{% translate "Server bilan bog'lanishda xatolik. Qayta urinib ko'ring." as vlg_conn_error %}
+{% translate "Kirish" as vlg_login_btn %}
+{% translate "Kamera ochilmoqda..." as vlg_cam_opening %}
+{% translate "Kameraga qarang va 'Rasmga olish' tugmasini bosing" as vlg_cam_ready %}
+{% translate "Kamera ochilmadi: " as vlg_cam_failed %}
+{% translate "Tekshirilmoqda..." as vlg_checking %}
+{% translate "Muvaffaqiyatli! Tizimga kirilmoqda..." as vlg_face_ok %}
+{% translate "Yuz tekshiruvi muvaffaqiyatsiz" as vlg_face_fail %}
+{% translate "Server bilan bog'lanishda xatolik" as vlg_server_error %}
+{% translate "OTP kod yuborilmoqda..." as vlg_otp_sending %}
+{% translate "OTP kod emailingizga yuborildi. Kodni kiriting:" as vlg_otp_sent %}
+{% translate "OTP yuborishda xatolik" as vlg_otp_send_fail %}
+{% translate "6 raqamli kodni kiriting" as vlg_otp_enter6 %}
+{% translate "OTP tasdiqlandi! Tizimga kirilmoqda..." as vlg_otp_ok %}
+{% translate "Noto'g'ri OTP kod" as vlg_otp_wrong %}
 <script>
 const API = '/api/v1';
+const LOGIN_I18N = {
+  darkDay: "{{ vlg_dark_day|escapejs }}",
+  darkNight: "{{ vlg_dark_night|escapejs }}",
+  wrongCreds: "{{ vlg_wrong_creds|escapejs }}",
+  connError: "{{ vlg_conn_error|escapejs }}",
+  loginBtn: "{{ vlg_login_btn|escapejs }}",
+  camOpening: "{{ vlg_cam_opening|escapejs }}",
+  camReady: "{{ vlg_cam_ready|escapejs }}",
+  camFailed: "{{ vlg_cam_failed|escapejs }}",
+  checking: "{{ vlg_checking|escapejs }}",
+  faceOk: "{{ vlg_face_ok|escapejs }}",
+  faceFail: "{{ vlg_face_fail|escapejs }}",
+  serverError: "{{ vlg_server_error|escapejs }}",
+  otpSending: "{{ vlg_otp_sending|escapejs }}",
+  otpSent: "{{ vlg_otp_sent|escapejs }}",
+  otpSendFail: "{{ vlg_otp_send_fail|escapejs }}",
+  otpEnter6: "{{ vlg_otp_enter6|escapejs }}",
+  otpOk: "{{ vlg_otp_ok|escapejs }}",
+  otpWrong: "{{ vlg_otp_wrong|escapejs }}",
+};
+
+// ── Dark mode (same erp_dark key/behavior as the rest of the app;
+// the class itself is already applied by the early inline script right
+// after <body> opens, so this only wires the toggle button + its icon) ──
+function toggleLoginDark(){
+  const isDark = document.body.classList.toggle('dark');
+  localStorage.setItem('erp_dark', isDark ? '1' : '0');
+  updateLoginDarkBtn();
+}
+function updateLoginDarkBtn(){
+  const btn = document.getElementById('loginDarkToggle');
+  if(!btn) return;
+  const isDark = document.body.classList.contains('dark');
+  btn.innerHTML = isDark
+    ? '<i class="fas fa-sun" style="color:#f59e0b"></i>'
+    : '<i class="fas fa-moon" style="color:#6366f1"></i>';
+  btn.title = isDark ? LOGIN_I18N.darkDay : LOGIN_I18N.darkNight;
+}
+document.addEventListener('DOMContentLoaded', updateLoginDarkBtn);
 
 // Already logged in → redirect
 (function(){
@@ -371,14 +483,14 @@ async function doLogin(e){
         finishLogin(data);
       }
     } else {
-      showErr(data.detail || data.message || "Telefon yoki parol noto'g'ri");
+      showErr(data.detail || data.message || LOGIN_I18N.wrongCreds);
       btn.disabled = false;
-      txt.textContent = 'Kirish';
+      txt.textContent = LOGIN_I18N.loginBtn;
     }
   } catch{
-    showErr("Server bilan bog'lanishda xatolik. Qayta urinib ko'ring.");
+    showErr(LOGIN_I18N.connError);
     btn.disabled = false;
-    txt.textContent = 'Kirish';
+    txt.textContent = LOGIN_I18N.loginBtn;
   }
 }
 
@@ -408,7 +520,7 @@ function resetToLogin(){
   document.getElementById('loginForm').style.display = '';
   document.getElementById('faceStep').classList.remove('active');
   document.getElementById('loginBtn').disabled = false;
-  document.getElementById('btnText').textContent = 'Kirish';
+  document.getElementById('btnText').textContent = LOGIN_I18N.loginBtn;
   document.getElementById('faceVideoWrap').style.display = 'none';
   document.getElementById('faceCaptureBtn').disabled = true;
   _facePendingToken = null;
@@ -421,7 +533,7 @@ function setFaceStatus(msg, type){
 }
 
 async function openCamera(){
-  setFaceStatus("Kamera ochilmoqda...", 'info');
+  setFaceStatus(LOGIN_I18N.camOpening, 'info');
   try{
     _faceStream = await navigator.mediaDevices.getUserMedia({
       video:{width:640, height:480, facingMode:'user'}, audio:false
@@ -432,9 +544,9 @@ async function openCamera(){
     document.getElementById('faceVideoWrap').style.display = 'block';
     document.getElementById('faceRing').classList.add('active');
     document.getElementById('faceCaptureBtn').disabled = false;
-    setFaceStatus("Kameraga qarang va 'Rasmga olish' tugmasini bosing", 'info');
+    setFaceStatus(LOGIN_I18N.camReady, 'info');
   } catch(e){
-    setFaceStatus("Kamera ochilmadi: " + e.message, 'err');
+    setFaceStatus(LOGIN_I18N.camFailed + e.message, 'err');
   }
 }
 
@@ -455,7 +567,7 @@ async function captureAndVerify(){
 
   stopCamera();
   document.getElementById('faceRing').classList.remove('active');
-  setFaceStatus("Tekshirilmoqda...", 'info');
+  setFaceStatus(LOGIN_I18N.checking, 'info');
 
   try{
     const res = await fetch(`${API}/face-auth/verify-login/`,{
@@ -468,10 +580,10 @@ async function captureAndVerify(){
     });
     const data = await res.json();
     if(res.ok){
-      setFaceStatus("Muvaffaqiyatli! Tizimga kirilmoqda...", 'ok');
+      setFaceStatus(LOGIN_I18N.faceOk, 'ok');
       setTimeout(() => finishLogin(data), 800);
     } else {
-      setFaceStatus(data.detail || "Yuz tekshiruvi muvaffaqiyatsiz", 'err');
+      setFaceStatus(data.detail || LOGIN_I18N.faceFail, 'err');
       if(data.otp_available){
         document.getElementById('faceOtpBtn').style.display = '';
       }
@@ -479,7 +591,7 @@ async function captureAndVerify(){
       setTimeout(() => openCamera(), 1200);
     }
   } catch{
-    setFaceStatus("Server bilan bog'lanishda xatolik", 'err');
+    setFaceStatus(LOGIN_I18N.serverError, 'err');
     setTimeout(() => openCamera(), 1200);
   }
 }
@@ -487,7 +599,7 @@ async function captureAndVerify(){
 // ── OTP Fallback ──────────────────────────────────────────────────────────────
 async function requestOTP(){
   document.getElementById('faceOtpBtn').disabled = true;
-  setFaceStatus("OTP kod yuborilmoqda...", 'info');
+  setFaceStatus(LOGIN_I18N.otpSending, 'info');
   try{
     const res = await fetch(`${API}/face-auth/otp-request/`,{
       method:'POST',
@@ -497,22 +609,22 @@ async function requestOTP(){
     const data = await res.json();
     if(res.ok){
       _otpVerifyToken = data.otp_verification_token;
-      setFaceStatus("OTP kod emailingizga yuborildi. Kodni kiriting:", 'ok');
+      setFaceStatus(LOGIN_I18N.otpSent, 'ok');
       document.getElementById('otpBox').style.display = 'block';
     } else {
-      setFaceStatus(data.detail || "OTP yuborishda xatolik", 'err');
+      setFaceStatus(data.detail || LOGIN_I18N.otpSendFail, 'err');
       document.getElementById('faceOtpBtn').disabled = false;
     }
   } catch{
-    setFaceStatus("Server bilan bog'lanishda xatolik", 'err');
+    setFaceStatus(LOGIN_I18N.serverError, 'err');
     document.getElementById('faceOtpBtn').disabled = false;
   }
 }
 
 async function verifyOTP(){
   const otp = document.getElementById('otpInput').value.trim();
-  if(otp.length !== 6){ setFaceStatus("6 raqamli kodni kiriting", 'warn'); return; }
-  setFaceStatus("Tekshirilmoqda...", 'info');
+  if(otp.length !== 6){ setFaceStatus(LOGIN_I18N.otpEnter6, 'warn'); return; }
+  setFaceStatus(LOGIN_I18N.checking, 'info');
   try{
     const res = await fetch(`${API}/face-auth/otp-verify/`,{
       method:'POST',
@@ -525,13 +637,13 @@ async function verifyOTP(){
     });
     const data = await res.json();
     if(res.ok){
-      setFaceStatus("OTP tasdiqlandi! Tizimga kirilmoqda...", 'ok');
+      setFaceStatus(LOGIN_I18N.otpOk, 'ok');
       setTimeout(() => finishLogin(data), 800);
     } else {
-      setFaceStatus(data.detail || "Noto'g'ri OTP kod", 'err');
+      setFaceStatus(data.detail || LOGIN_I18N.otpWrong, 'err');
     }
   } catch{
-    setFaceStatus("Server bilan bog'lanishda xatolik", 'err');
+    setFaceStatus(LOGIN_I18N.serverError, 'err');
   }
 }
 

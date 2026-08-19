@@ -1,0 +1,2976 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Qorako'l Ilm Ziyo ERP\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-17 01:27\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ru\n"
+
+msgid "\"{name}\" nusxasi — nomni o'zgartiring va saqlang"
+msgstr "Копия «{name}» — измените название и сохраните"
+
+msgid "# To'g'ri yechim kodi..."
+msgstr "# Правильный код решения..."
+
+msgid "# Yechimingizni shu yerga yozing..."
+msgstr "# Напишите своё решение здесь..."
+
+msgid "(bo'sh)"
+msgstr "(пусто)"
+
+msgid "(fayl yuborildi)"
+msgstr "(файл отправлен)"
+
+msgid "(serverda tekshiriladi, talabaga ko'rsatilmaydi)"
+msgstr "(проверяется на сервере, учащемуся не показывается)"
+
+msgid "(tool chaqiruvi)"
+msgstr "(вызов инструмента)"
+
+msgid "1 dona narxi"
+msgstr "Цена за штуку"
+
+msgid "1 dona narxi *"
+msgstr "Цена за штуку *"
+
+msgid "6 Oylik Daromad"
+msgstr "Доход за 6 месяцев"
+
+msgid "6 Oylik Daromad Tahlili"
+msgstr "Анализ дохода за 6 месяцев"
+
+msgid "6 raqamli kodni kiriting"
+msgstr "Введите 6-значный код"
+
+msgid "AI ORQALI TAHLIL QILISH"
+msgstr "АНАЛИЗ С ПОМОЩЬЮ ИИ"
+
+msgid "AI ham xato qilishi mumkin."
+msgstr "ИИ тоже может ошибаться."
+
+msgid "AI tahlili"
+msgstr "Анализ ИИ"
+
+msgid "AI tahlili tayyor"
+msgstr "Анализ ИИ готов"
+
+msgid "AI tarixi"
+msgstr "История ИИ"
+
+msgid "Administrator"
+msgstr "Администратор"
+
+msgid "Administrator bilan bog'laning."
+msgstr "Свяжитесь с администратором."
+
+msgid "Administratsiya tomonidan berilgan"
+msgstr "Начислено администрацией"
+
+msgid "Aktiv"
+msgstr "Активна"
+
+msgid "Aktiv sessiyalar"
+msgstr "Активные сессии"
+
+msgid "Aktivlashtirish"
+msgstr "Активировать"
+
+msgid "Amal"
+msgstr "Действие"
+
+msgid "Aniqlik"
+msgstr "Точность"
+
+msgid "Anti-cheat tizimi shubhali harakatlarni qayd etdi. O'qituvchingiz bu haqida xabardor bo'ladi."
+msgstr "Система защиты от списывания зафиксировала подозрительные действия. Ваш преподаватель будет об этом уведомлён."
+
+msgid "Aprel"
+msgstr "Апрель"
+
+msgid "Aralash"
+msgstr "Смешанный"
+
+msgid "Arxiv"
+msgstr "Архив"
+
+msgid "Arxivlangan"
+msgstr "В архиве"
+
+msgid "Asosiy"
+msgstr "Главная"
+
+msgid "Asosiy ma'lumotlar"
+msgstr "Основная информация"
+
+msgid "Asosiy maosh *"
+msgstr "Оклад *"
+
+msgid "Avgust"
+msgstr "Август"
+
+msgid "Avtomatlashtirilgan"
+msgstr "Автоматизировано"
+
+msgid "Baholangan"
+msgstr "Оценено"
+
+msgid "Baholanishini kuting"
+msgstr "Ожидает оценки"
+
+msgid "Baholash"
+msgstr "Оценить"
+
+msgid "Baholash saqlandi va XP berildi!"
+msgstr "Оценка сохранена, XP начислен!"
+
+msgid "Ball"
+msgstr "Балл"
+
+msgid "Ball *"
+msgstr "Балл *"
+
+msgid "Ball 0 dan {max} gacha bo'lishi kerak"
+msgstr "Балл должен быть от 0 до {max}"
+
+msgid "Barcha * maydonlarni to'ldiring"
+msgstr "Заполните все обязательные поля *"
+
+msgid "Barcha amallar"
+msgstr "Все действия"
+
+msgid "Barcha foydalanuvchilar AI suhbatlari"
+msgstr "Все чаты пользователей с ИИ"
+
+msgid "Barcha guruhlar"
+msgstr "Все группы"
+
+msgid "Barcha holat"
+msgstr "Все статусы"
+
+msgid "Barcha holatlar"
+msgstr "Все состояния"
+
+msgid "Barcha jiddiylik"
+msgstr "Вся серьёзность"
+
+msgid "Barcha maydonlarni to'ldiring"
+msgstr "Заполните все поля"
+
+msgid "Barcha modellar"
+msgstr "Все модели"
+
+msgid "Barcha o'qituvchilar"
+msgstr "Все преподаватели"
+
+msgid "Barcha o'quv guruhlari"
+msgstr "Все учебные группы"
+
+msgid "Barcha o'quvchilar va ularning ma'lumotlari"
+msgstr "Все учащиеся и их данные"
+
+msgid "Barcha qurilmalardan chiqish"
+msgstr "Выйти со всех устройств"
+
+msgid "Barcha qurilmalardan chiqmoqchimisiz?"
+msgstr "Выйти со всех устройств?"
+
+msgid "Barcha rollar"
+msgstr "Все роли"
+
+msgid "Barcha status"
+msgstr "Все статусы"
+
+msgid "Barcha statuslar"
+msgstr "Все статусы"
+
+msgid "Barcha testlarda kutilgan chiqishni to'ldiring"
+msgstr "Заполните ожидаемый результат для всех тестов"
+
+msgid "Barcha to'lovlar amalga oshirilgan"
+msgstr "Все платежи выполнены"
+
+msgid "Barcha vaqt"
+msgstr "За всё время"
+
+msgid "Barchaga:"
+msgstr "Всем:"
+
+msgid "Barchasi"
+msgstr "Все"
+
+msgid "Barchasini tanlash"
+msgstr "Выбрать всё"
+
+msgid "Batafsil"
+msgstr "Подробнее"
+
+msgid "Bekor"
+msgstr "Отмена"
+
+msgid "Bekor qilish"
+msgstr "Отмена"
+
+msgid "Belgilanmagan"
+msgstr "Не указано"
+
+msgid "Berilgan"
+msgstr "Выдано"
+
+msgid "Berilgan sana"
+msgstr "Дата выдачи"
+
+msgid "Bildirishnomalar"
+msgstr "Уведомления"
+
+msgid "Birinchi"
+msgstr "Первый"
+
+msgid "Bonus"
+msgstr "Бонус"
+
+msgid "Bonus (ixtiyoriy)"
+msgstr "Бонус (необязательно)"
+
+msgid "Bosh sahifa"
+msgstr "Главная страница"
+
+msgid "Boshlagan sana"
+msgstr "Дата начала"
+
+msgid "Boshlangan sana"
+msgstr "Дата начала"
+
+msgid "Boshlanish sanasi"
+msgstr "Дата начала"
+
+msgid "Boshlanish vaqti"
+msgstr "Время начала"
+
+msgid "Boshlash"
+msgstr "Начать"
+
+msgid "Boshlash sanasi"
+msgstr "Дата начала"
+
+msgid "Boshqa"
+msgstr "Другое"
+
+msgid "Boshqaruv"
+msgstr "Управление"
+
+msgid "Boshqaruv paneliga qaytish"
+msgstr "Вернуться на панель управления"
+
+msgid "Bosqich"
+msgstr "Уровень"
+
+msgid "Bosqich:"
+msgstr "Уровень:"
+
+msgid "Bu Oy Tushumlari"
+msgstr "Доход за этот месяц"
+
+msgid "Bu guruhda o'quvchi yo'q"
+msgstr "В этой группе нет учащихся"
+
+msgid "Bu hafta"
+msgstr "На этой неделе"
+
+msgid "Bu hujjat avtomatik yaratildi"
+msgstr "Этот документ создан автоматически"
+
+msgid "Bu oy"
+msgstr "В этом месяце"
+
+msgid "Bu oy jami to'langan"
+msgstr "Всего оплачено в этом месяце"
+
+msgid "Bu oy qo'shilgan"
+msgstr "Добавлено в этом месяце"
+
+msgid "Bu oy to'lov tarixi yo'q"
+msgstr "В этом месяце нет истории платежей"
+
+msgid "Bu oy tushum"
+msgstr "Доход за этот месяц"
+
+msgid "Bu sessiyada hali javoblar yo'q"
+msgstr "В этой сессии пока нет ответов"
+
+msgid "Bu sessiyada hali topshiriqlar yo'q. Ustoz avval Bug-find yoki Coding topshiriqlar yaratishi kerak."
+msgstr "В этой сессии пока нет заданий. Преподаватель должен сначала создать задания Bug-Find или Coding."
+
+msgid "Bu so'rovni rad etasizmi?"
+msgstr "Отклонить этот запрос?"
+
+msgid "Bu so'rovni tasdiqlaysizmi? Kumush va qoldiq darhol yangilanadi."
+msgstr "Подтвердить этот запрос? Кумуш и остаток будут обновлены немедленно."
+
+msgid "Bu to'lov yozuvini o'chirishni tasdiqlaysizmi?"
+msgstr "Удалить эту запись о платеже?"
+
+msgid "Bu topshiriq allaqachon yuborilgan"
+msgstr "Это задание уже отправлено"
+
+msgid "Bug-Find topshiriqlar"
+msgstr "Задания Bug-Find"
+
+msgid "Bug-find"
+msgstr "Bug-Find"
+
+msgid "Bug-find savollar soni"
+msgstr "Количество заданий Bug-Find"
+
+msgid "Bug-find topshiriq yaratildi ✓"
+msgstr "Задание Bug-Find создано ✓"
+
+msgid "Bug-find topshiriqlar"
+msgstr "Задания Bug-Find"
+
+msgid "Bug-find topshiriqlar yo'q"
+msgstr "Нет заданий Bug-Find"
+
+msgid "Bugungi Davomat"
+msgstr "Посещаемость сегодня"
+
+msgid "Bugungi davomat"
+msgstr "Посещаемость сегодня"
+
+msgid "Bugungi statistika"
+msgstr "Статистика за сегодня"
+
+msgid "Bugungi tushum"
+msgstr "Доход за сегодня"
+
+msgid "Bugungi xatoliklar"
+msgstr "Ошибки за сегодня"
+
+msgid "Buyum"
+msgstr "Предмет"
+
+msgid "Buyum nomi *"
+msgstr "Название предмета *"
+
+msgid "Buyum nomi yoki kategoriya..."
+msgstr "Название предмета или категория..."
+
+msgid "Buyum nomini kiriting"
+msgstr "Введите название предмета"
+
+msgid "Buyum qo'shildi"
+msgstr "Предмет добавлен"
+
+msgid "Buyum qo'shish"
+msgstr "Добавить предмет"
+
+msgid "Buyum topilmadi"
+msgstr "Предмет не найден"
+
+msgid "Buyumlar"
+msgstr "Предметы"
+
+msgid "Buyumni tahrirlash"
+msgstr "Редактировать предмет"
+
+msgid "Buyurtmalar"
+msgstr "Заказы"
+
+msgid "Buzilgan"
+msgstr "Неисправно"
+
+msgid "C"
+msgstr "Ср"
+
+msgid "Ch"
+msgstr "Ср"
+
+msgid "Chek chop etish"
+msgstr "Распечатать чек"
+
+msgid "Chek topilmadi yoki ko'rish huquqingiz yo'q."
+msgstr "Чек не найден, либо у вас нет прав на его просмотр."
+
+msgid "Cheklovlar"
+msgstr "Ограничения"
+
+msgid "Chiqdi"
+msgstr "Вышел"
+
+msgid "Chiqish"
+msgstr "Выйти"
+
+msgid "Chop etilgan:"
+msgstr "Распечатано:"
+
+msgid "Chop etish"
+msgstr "Печать"
+
+msgid "Chorshanba"
+msgstr "Среда"
+
+msgid "Coding"
+msgstr "Coding"
+
+msgid "Coding savollar soni"
+msgstr "Количество заданий Coding"
+
+msgid "Coding topshiriq yaratildi ✓"
+msgstr "Задание Coding создано ✓"
+
+msgid "Coding topshiriqlar"
+msgstr "Задания Coding"
+
+msgid "Coding topshiriqlar yo'q"
+msgstr "Нет заданий Coding"
+
+msgid "D"
+msgstr "Пн"
+
+msgid "Daraja"
+msgstr "Уровень"
+
+msgid "Darajasi"
+msgstr "Уровень"
+
+msgid "Dars jadvali"
+msgstr "Расписание занятий"
+
+msgid "Dars jadvali mavjud emas"
+msgstr "Расписание отсутствует"
+
+msgid "Dars kunlari"
+msgstr "Дни занятий"
+
+msgid "Dars o'tiladigan kunlarni va xonani belgilang:"
+msgstr "Укажите дни занятий и аудиторию:"
+
+msgid "Dars sanasi"
+msgstr "Дата занятия"
+
+msgid "Dars vaqti"
+msgstr "Время занятия"
+
+msgid "Darsga ishtirok bo'yicha"
+msgstr "За участие на занятиях"
+
+msgid "Dashboard"
+msgstr "Дашборд"
+
+msgid "Dashboard orqali har bir ko'rsatkichni kuzating"
+msgstr "Отслеживайте каждый показатель через дашборд"
+
+msgid "Dasturchi — Avazbek"
+msgstr "Разработчик — Авазбек"
+
+msgid "Dasturlash tili"
+msgstr "Язык программирования"
+
+msgid "Davomat"
+msgstr "Посещаемость"
+
+msgid "Davomat %"
+msgstr "Посещаемость %"
+
+msgid "Davomat Tahlili"
+msgstr "Анализ посещаемости"
+
+msgid "Davomat foizi"
+msgstr "Процент посещаемости"
+
+msgid "Davomat ma'lumoti topilmadi"
+msgstr "Данные о посещаемости не найдены"
+
+msgid "Davomat saqlandi!"
+msgstr "Посещаемость сохранена!"
+
+msgid "Davomat, o'quvchilar, to'lovlar haqida so'rang."
+msgstr "Спрашивайте о посещаемости, учащихся, платежах."
+
+msgid "Davomatni belgilash va tarixni ko'rish"
+msgstr "Отметка посещаемости и просмотр истории"
+
+msgid "Davr"
+msgstr "Период"
+
+msgid "Dekabr"
+msgstr "Декабрь"
+
+msgid "Do'kon"
+msgstr "Магазин"
+
+msgid "Do'kon boshqaruvi"
+msgstr "Управление магазином"
+
+msgid "Du"
+msgstr "Пн"
+
+msgid "Dushanba"
+msgstr "Понедельник"
+
+msgid "E'tiborsiz"
+msgstr "Без внимания"
+
+msgid "E'tiborsiz qoldirildi"
+msgstr "Оставлено без внимания"
+
+msgid "ERP xatoliklari va AI suhbatlar tarixi (faqat dasturchi)"
+msgstr "Ошибки ERP и история чатов с ИИ (только для разработчика)"
+
+msgid "Ehtimoliy sabab"
+msgstr "Вероятная причина"
+
+msgid "Eksport xatoligi"
+msgstr "Ошибка экспорта"
+
+msgid "Email"
+msgstr "Email"
+
+msgid "Email zaxira kodi"
+msgstr "Резервный код на email"
+
+msgid "Endpoint"
+msgstr "Endpoint"
+
+msgid "Eng ko'p takrorlangan"
+msgstr "Наиболее частая"
+
+msgid "Eng yuqori daraja"
+msgstr "Наивысший уровень"
+
+msgid "Eslatma"
+msgstr "Напоминание"
+
+msgid "Eslatma yuborish"
+msgstr "Отправить напоминание"
+
+msgid "Excel yuklandi"
+msgstr "Excel-файл скачан"
+
+msgid "Excel yuklash"
+msgstr "Скачать Excel"
+
+msgid "F.I.Sh."
+msgstr "Ф.И.О."
+
+msgid "Face ID muvaffaqiyatli o'rnatildi"
+msgstr "Face ID успешно настроен"
+
+msgid "Face ID muvaffaqiyatli o'rnatildi ✓"
+msgstr "Face ID успешно настроен ✓"
+
+msgid "Face ID o'rnatish"
+msgstr "Настройка Face ID"
+
+msgid "Face ID: O'rnatilmagan"
+msgstr "Face ID: не настроен"
+
+msgid "Face ID: Yoqilgan"
+msgstr "Face ID: включён"
+
+msgid "Fan / Yo'nalish"
+msgstr "Предмет / Направление"
+
+msgid "Fan ko'rsatilmagan"
+msgstr "Предмет не указан"
+
+msgid "Faol"
+msgstr "Активен"
+
+msgid "Faol (do'konda ko'rinadi)"
+msgstr "Активен (виден в магазине)"
+
+msgid "Faol O'quvchilar"
+msgstr "Активные учащиеся"
+
+msgid "Faol o'quvchilar"
+msgstr "Активные учащиеся"
+
+msgid "Faol sessiyalar"
+msgstr "Активные сессии"
+
+msgid "Faol vazifalar"
+msgstr "Активные задания"
+
+msgid "Faoliyat jurnali"
+msgstr "Журнал активности"
+
+msgid "Faoliyatlar topilmadi"
+msgstr "Действия не найдены"
+
+msgid "Faollashtirildi"
+msgstr "Активирован"
+
+msgid "Faollashtirish"
+msgstr "Активировать"
+
+msgid "Faqat sizga ruxsat berilgan ma'lumotlar ko'rsatiladi"
+msgstr "Показываются только те данные, к которым у вас есть доступ"
+
+msgid "Farzandlarim"
+msgstr "Мои дети"
+
+msgid "Farzandlaringizning o'qish holati"
+msgstr "Успеваемость ваших детей"
+
+msgid "Fayl (ixtiyoriy)"
+msgstr "Файл (необязательно)"
+
+msgid "Fayl biriktirish (ixtiyoriy)"
+msgstr "Прикрепить файл (необязательно)"
+
+msgid "Faylni yuklab olish"
+msgstr "Скачать файл"
+
+msgid "Fevral"
+msgstr "Февраль"
+
+msgid "Foydalanuvchi"
+msgstr "Пользователь"
+
+msgid "Foydalanuvchi topilmadi"
+msgstr "Пользователь не найден"
+
+msgid "Foydalanuvchi va barcha ma'lumotlari o'chiriladi!"
+msgstr "Пользователь и все его данные будут удалены!"
+
+msgid "Foydalanuvchi yaratildi"
+msgstr "Пользователь создан"
+
+msgid "Foydalanuvchilar"
+msgstr "Пользователи"
+
+msgid "Gamifikatsiya"
+msgstr "Геймификация"
+
+msgid "Guruh"
+msgstr "Группа"
+
+msgid "Guruh *"
+msgstr "Группа *"
+
+msgid "Guruh bo'yicha"
+msgstr "По группе"
+
+msgid "Guruh ma'lumotlari"
+msgstr "Информация о группе"
+
+msgid "Guruh nomi"
+msgstr "Название группы"
+
+msgid "Guruh nomi majburiy!"
+msgstr "Название группы обязательно!"
+
+msgid "Guruh nomi..."
+msgstr "Название группы..."
+
+msgid "Guruh o'chirildi"
+msgstr "Группа удалена"
+
+msgid "Guruh o'zgartirildi"
+msgstr "Группа изменена"
+
+msgid "Guruh oylik to'lovi"
+msgstr "Ежемесячная оплата группы"
+
+msgid "Guruh qo'shildi"
+msgstr "Группа добавлена"
+
+msgid "Guruh tanlang"
+msgstr "Выберите группу"
+
+msgid "Guruh tanlash shart"
+msgstr "Необходимо выбрать группу"
+
+msgid "Guruh topilmadi"
+msgstr "Группа не найдена"
+
+msgid "Guruh va sanani tanlang"
+msgstr "Выберите группу и дату"
+
+msgid "Guruh — Qorako'l Ilm Ziyo"
+msgstr "Группа — Qorako'l Ilm Ziyo"
+
+msgid "Guruh:"
+msgstr "Группа:"
+
+msgid "Guruhda talaba yo'q"
+msgstr "В группе нет учащихся"
+
+msgid "Guruhga biriktirilmagan"
+msgstr "Не привязан к группе"
+
+msgid "Guruhga ommaviy to'lov"
+msgstr "Массовый платёж для группы"
+
+msgid "Guruhlar"
+msgstr "Группы"
+
+msgid "Guruhlar Bo'yicha Tahlil"
+msgstr "Анализ по группам"
+
+msgid "Guruhlar soni"
+msgstr "Количество групп"
+
+msgid "Guruhlar topilmadi"
+msgstr "Группы не найдены"
+
+msgid "Guruhlarim"
+msgstr "Мои группы"
+
+msgid "Guruhlarim — Qorako'l Ilm Ziyo"
+msgstr "Мои группы — Qorako'l Ilm Ziyo"
+
+msgid "Guruhni o'chirishni tasdiqlaysizmi?"
+msgstr "Удалить эту группу?"
+
+msgid "Guruhni o'zgartirish"
+msgstr "Изменить группу"
+
+msgid "Guruhni tahrirlash"
+msgstr "Редактировать группу"
+
+msgid "Guruhsiz"
+msgstr "Без группы"
+
+msgid "HOZIRCHA MAVJUD EMAS"
+msgstr "ПОКА НЕДОСТУПНО"
+
+msgid "Hafta kunlari"
+msgstr "Дни недели"
+
+msgid "Hal qilindi"
+msgstr "Решено"
+
+msgid "Hali buyum qo'shilmagan"
+msgstr "Предметы ещё не добавлены"
+
+msgid "Hali buyurtma yo'q"
+msgstr "Заказов пока нет"
+
+msgid "Hali suhbat yo'q"
+msgstr "Чатов пока нет"
+
+msgid "Hali to'lanmagan"
+msgstr "Пока не оплачено"
+
+msgid "Hali xabarlar yo'q"
+msgstr "Пока нет сообщений"
+
+msgid "Hammasini o'qildi"
+msgstr "Отметить все прочитанными"
+
+msgid "Havola"
+msgstr "Ссылка"
+
+msgid "Havola nusxalandi: "
+msgstr "Ссылка скопирована: "
+
+msgid "Hisobdan chiqarilgan"
+msgstr "Списано"
+
+msgid "Hisobdan chiqish"
+msgstr "Выйти из аккаунта"
+
+msgid "Hisobingizga kiring davom etish uchun"
+msgstr "Войдите в свой аккаунт, чтобы продолжить"
+
+msgid "Hisobotlar"
+msgstr "Отчёты"
+
+msgid "Hisobotlar va to'lovlar avtomatik shakllanadi"
+msgstr "Отчёты и платежи формируются автоматически"
+
+msgid "Holat"
+msgstr "Статус"
+
+msgid "Holati"
+msgstr "Статус"
+
+msgid "Holati *"
+msgstr "Статус *"
+
+msgid "Hozircha faol sessiya yo'q"
+msgstr "Активных сессий пока нет"
+
+msgid "Hozircha mukofotlar mavjud emas"
+msgstr "Наград пока нет"
+
+msgid "Hozircha vazifa yo'q"
+msgstr "Заданий пока нет"
+
+msgid "Ichki xatolik: "
+msgstr "Внутренняя ошибка: "
+
+msgid "Iltimos, qayta urinib ko'ring"
+msgstr "Пожалуйста, попробуйте ещё раз"
+
+msgid "Imtihondan o'tish bo'yicha"
+msgstr "За сдачу экзамена"
+
+msgid "Ish haqi"
+msgstr "Зарплата"
+
+msgid "Ish haqi (so'm)"
+msgstr "Зарплата (сум)"
+
+msgid "Ish haqi to'landi"
+msgstr "Зарплата выплачена"
+
+msgid "Ish haqi to'lash"
+msgstr "Выплатить зарплату"
+
+msgid "Ism"
+msgstr "Имя"
+
+msgid "Ism Familiya"
+msgstr "Имя Фамилия"
+
+msgid "Ism va telefon bo'sh bo'lmasligi kerak"
+msgstr "Имя и телефон не должны быть пустыми"
+
+msgid "Ism yoki telefon qidiring..."
+msgstr "Поиск по имени или телефону..."
+
+msgid "Ism yoki telefon..."
+msgstr "Имя или телефон..."
+
+msgid "Ism, telefon va parol majburiy!"
+msgstr "Имя, телефон и пароль обязательны!"
+
+msgid "Ismingizni kiriting"
+msgstr "Введите ваше имя"
+
+msgid "Iyul"
+msgstr "Июль"
+
+msgid "Iyun"
+msgstr "Июнь"
+
+msgid "Izoh"
+msgstr "Комментарий"
+
+msgid "Izoh (ixtiyoriy)"
+msgstr "Комментарий (необязательно)"
+
+msgid "Izoh:"
+msgstr "Комментарий:"
+
+msgid "J"
+msgstr "Пт"
+
+msgid "Jadval"
+msgstr "Расписание"
+
+msgid "Jadval saqlandi"
+msgstr "Расписание сохранено"
+
+msgid "Jadval tuzish"
+msgstr "Составить расписание"
+
+msgid "Jadval yo'q"
+msgstr "Расписания нет"
+
+msgid "Jami"
+msgstr "Всего"
+
+msgid "Jami Kumush"
+msgstr "Всего Кумуш"
+
+msgid "Jami O'quvchilar"
+msgstr "Всего учащихся"
+
+msgid "Jami XP"
+msgstr "Всего XP"
+
+msgid "Jami ball"
+msgstr "Общий балл"
+
+msgid "Jami buyum turlari"
+msgstr "Всего видов предметов"
+
+msgid "Jami buyumlar"
+msgstr "Всего предметов"
+
+msgid "Jami dars kunlari"
+msgstr "Всего дней занятий"
+
+msgid "Jami ishtirokchilar"
+msgstr "Всего участников"
+
+msgid "Jami o'quvchilar"
+msgstr "Всего учащихся"
+
+msgid "Jami oylar"
+msgstr "Всего месяцев"
+
+msgid "Jami qiymat"
+msgstr "Общая стоимость"
+
+msgid "Jami qiymat:"
+msgstr "Общая стоимость:"
+
+msgid "Jami sarflangan Kumush"
+msgstr "Всего потрачено Кумуш"
+
+msgid "Jami sessiyalar"
+msgstr "Всего сессий"
+
+msgid "Jami summa"
+msgstr "Общая сумма"
+
+msgid "Jami to'langan"
+msgstr "Всего оплачено"
+
+msgid "Jami vazifalar"
+msgstr "Всего заданий"
+
+msgid "Jami xatoliklar"
+msgstr "Всего ошибок"
+
+msgid "Jami yig'ilgan Kumushlar:"
+msgstr "Всего накоплено Кумуш:"
+
+msgid "Jami yig'ilgan XP:"
+msgstr "Всего накоплено XP:"
+
+msgid "Jami:"
+msgstr "Всего:"
+
+msgid "Javob"
+msgstr "Ответить"
+
+msgid "Javob matni"
+msgstr "Текст ответа"
+
+msgid "Javob yoki fayl kiritish shart"
+msgstr "Необходимо указать ответ или файл"
+
+msgid "Javob yozilmoqda..."
+msgstr "Печатает ответ..."
+
+msgid "Javobingizni yozing..."
+msgstr "Напишите ваш ответ..."
+
+msgid "Jiddiylik"
+msgstr "Серьёзность"
+
+msgid "Joriy parol"
+msgstr "Текущий пароль"
+
+msgid "Joriy parolingiz"
+msgstr "Ваш текущий пароль"
+
+msgid "Ju"
+msgstr "Пт"
+
+msgid "Juma"
+msgstr "Пятница"
+
+msgid "KUMUSH"
+msgstr "KUMUSH"
+
+msgid "Kamera ishga tushirilmoqda..."
+msgstr "Запуск камеры..."
+
+msgid "Kamera ishlamayapti — avval kameraga ruxsat bering"
+msgstr "Камера не работает — сначала разрешите доступ к камере"
+
+msgid "Kamera ochilmadi: "
+msgstr "Не удалось открыть камеру: "
+
+msgid "Kamera ochilmoqda..."
+msgstr "Открывается камера..."
+
+msgid "Kameraga qarang va 'Rasmga olish' tugmasini bosing"
+msgstr "Посмотрите в камеру и нажмите «Сделать снимок»"
+
+msgid "Kameraga qarang va rasmga olish tugmasini bosing"
+msgstr "Посмотрите в камеру и нажмите кнопку съёмки"
+
+msgid "Kamida 1 ta test varianti qo'shing"
+msgstr "Добавьте хотя бы один тестовый пример"
+
+msgid "Kamida 8 ta belgi"
+msgstr "Минимум 8 символов"
+
+msgid "Kartochka"
+msgstr "Карточка"
+
+msgid "Kategoriya"
+msgstr "Категория"
+
+msgid "Kech"
+msgstr "Опоздал"
+
+msgid "Kech keldi"
+msgstr "Опоздал"
+
+msgid "Keldi"
+msgstr "Присутствовал"
+
+msgid "Keldi:"
+msgstr "Присутствовало:"
+
+msgid "Kelgan kunlar"
+msgstr "Дней присутствовал"
+
+msgid "Kelmadi"
+msgstr "Отсутствовал"
+
+msgid "Kelmadi:"
+msgstr "Отсутствовало:"
+
+msgid "Kerak bo'lsa tahrirlash orqali qayta faollashtirish mumkin."
+msgstr "При необходимости можно снова активировать через редактирование."
+
+msgid "Kerak bo'lsa tahrirlashda qayta faollashtirish mumkin."
+msgstr "При необходимости можно снова активировать через редактирование."
+
+msgid "Keyingi bosqich"
+msgstr "Следующий уровень"
+
+msgid "Keyingi topshiriq..."
+msgstr "Следующее задание..."
+
+msgid "Keyingi ›"
+msgstr "Следующая ›"
+
+msgid "Kim nimani o'zgartirdi — barcha amallar tarixi"
+msgstr "Кто что изменил — история всех действий"
+
+msgid "Kim to'ladi"
+msgstr "Кто оплатил"
+
+msgid "Kirdi"
+msgstr "Вошёл"
+
+msgid "Kirish"
+msgstr "Вход"
+
+msgid "Kirish bo'sh bo'lsa stdin yo'q deb qabul qilinadi"
+msgstr "Если ввод пуст, считается, что stdin отсутствует"
+
+msgid "Ko'rish"
+msgstr "Просмотр"
+
+msgid "Ko'rsatgichlarim"
+msgstr "Мои показатели"
+
+msgid "Kod o'xshashlik tekshiruvi"
+msgstr "Проверка на схожесть кода"
+
+msgid "Kod topshiriqlari, sessiyalar va anti-cheat nazorati"
+msgstr "Задания по коду, сессии и контроль анти-чит"
+
+msgid "Kod topshiriqlarini yeching, XP va ball to'plang"
+msgstr "Решайте задания по коду, зарабатывайте XP и баллы"
+
+msgid "Kod yozish"
+msgstr "Написание кода"
+
+msgid "Kodlar taqqoslanmoqda..."
+msgstr "Сравнение кода..."
+
+msgid "Kodni tasdiqlash"
+msgstr "Подтвердить код"
+
+msgid "Kritik"
+msgstr "Критическая"
+
+msgid "Kritik xatoliklar"
+msgstr "Критические ошибки"
+
+msgid "Kumush"
+msgstr "Кумуш"
+
+msgid "Kumushingiz yetarli emas."
+msgstr "Недостаточно Кумуш."
+
+msgid "Kumushlar"
+msgstr "Кумуш"
+
+msgid "Kumushlar:"
+msgstr "Кумуш:"
+
+msgid "Kunduzgi rejim"
+msgstr "Светлая тема"
+
+msgid "Kunlik"
+msgstr "Ежедневно"
+
+msgid "Kurs / Yo'nalish"
+msgstr "Курс / Направление"
+
+msgid "Kutilayotgan oylik daromad"
+msgstr "Ожидаемый месячный доход"
+
+msgid "Kutilayotgan so'rovlar"
+msgstr "Ожидающие запросы"
+
+msgid "Kutilgan"
+msgstr "Ожидаемо"
+
+msgid "Kutilmoqda"
+msgstr "Ожидается"
+
+msgid "Kuzatishda"
+msgstr "На рассмотрении"
+
+msgid "Login yoki parolingizni unutgan bo'lsangiz,"
+msgstr "Если вы забыли логин или пароль,"
+
+msgid "MAVJUD EMAS"
+msgstr "НЕДОСТУПНО"
+
+msgid "MENING KUMUSHIM"
+msgstr "МОЙ КУМУШ"
+
+msgid "Ma'lumot olinmadi"
+msgstr "Данные не получены"
+
+msgid "Ma'lumot olinmoqda..."
+msgstr "Получение данных..."
+
+msgid "Ma'lumot topilmadi"
+msgstr "Данные не найдены"
+
+msgid "Ma'lumot yo'q"
+msgstr "Нет данных"
+
+msgid "Ma'lumot yuklanmadi"
+msgstr "Данные не загружены"
+
+msgid "Ma'lumotlar"
+msgstr "Данные"
+
+msgid "Ma'lumotlar (ish haqi tarixi, guruhlar) saqlanib qoladi."
+msgstr "Данные (история зарплат, группы) сохранятся."
+
+msgid "Ma'lumotlar (to'lovlar, davomat) saqlanib qoladi."
+msgstr "Данные (платежи, посещаемость) сохранятся."
+
+msgid "Ma'lumotlaringiz xalqaro standartlar asosida himoyalangan"
+msgstr "Ваши данные защищены по международным стандартам"
+
+msgid "Maksimal ball"
+msgstr "Максимальный балл"
+
+msgid "Manzil"
+msgstr "Адрес"
+
+msgid "Maosh:"
+msgstr "Оклад:"
+
+msgid "Markaz buyumlari"
+msgstr "Имущество центра"
+
+msgid "Markaz xarajatlari"
+msgstr "Расходы центра"
+
+msgid "Mart"
+msgstr "Март"
+
+msgid "Masala sarlavhasi *"
+msgstr "Заголовок задачи *"
+
+msgid "Masala sarlavhasini kiriting"
+msgstr "Введите заголовок задачи"
+
+msgid "Masala sharti *"
+msgstr "Условие задачи *"
+
+msgid "Masala shartini kiriting"
+msgstr "Введите условие задачи"
+
+msgid "Masalan: 1-bob mashqlari"
+msgstr "Например: упражнения главы 1"
+
+msgid "Masalan: 2-bob mashqlar"
+msgstr "Например: упражнения главы 2"
+
+msgid "Masalan: 3-hafta Bug-Find sinovi"
+msgstr "Например: тест Bug-Find недели 3"
+
+msgid "Masalan: Ikki sonning yig'indisi"
+msgstr "Например: Сумма двух чисел"
+
+msgid "Masalan: Mebel"
+msgstr "Например: Мебель"
+
+msgid "Masalan: Quloqchin"
+msgstr "Например: Наушники"
+
+msgid "Masalan: Ro'yxat indeksi xatosi"
+msgstr "Например: Ошибка индекса списка"
+
+msgid "Masalan: Stul"
+msgstr "Например: Стул"
+
+msgid "Maslahat ko'rish (-2 ball)"
+msgstr "Посмотреть подсказку (-2 балла)"
+
+msgid "Maslahat olsangiz ball -2 ga kamayadi. Davom etasizmi?"
+msgstr "Если вы возьмёте подсказку, балл уменьшится на 2. Продолжить?"
+
+msgid "Mavjud emas"
+msgstr "Недоступно"
+
+msgid "Mavzu"
+msgstr "Тема"
+
+msgid "Mavzu (sarlavha)"
+msgstr "Тема (заголовок)"
+
+msgid "Mavzuni kiriting"
+msgstr "Введите тему"
+
+msgid "Max ball"
+msgstr "Макс. балл"
+
+msgid "May"
+msgstr "Май"
+
+msgid "Mebel, jihoz va boshqa mulklarni hisobga olish"
+msgstr "Учёт мебели, оборудования и другого имущества"
+
+msgid "Men"
+msgstr "Я"
+
+msgid "Men biometrik ma'lumotlarim (yuz tasviri) Qorako'l Ilm Ziyo tizimida xavfsiz saqlanishiga roziman.\n        Ma'lumotlar O'zbekiston shaxsiy ma'lumotlar to'g'risidagi qonuniga muvofiq himoyalanadi."
+msgstr "Я согласен(а) на безопасное хранение моих биометрических данных (изображения лица) в системе Qorako'l Ilm Ziyo.\n        Данные защищены в соответствии с Законом Республики Узбекистан «О персональных данных»."
+
+msgid "Mening"
+msgstr "Мои"
+
+msgid "Mening buyurtmalarim"
+msgstr "Мои заказы"
+
+msgid "Mening dars guruhlarim"
+msgstr "Мои учебные группы"
+
+msgid "Mening guruhlarim"
+msgstr "Мои группы"
+
+msgid "Mening natijalarim"
+msgstr "Мои результаты"
+
+msgid "Mening o'rnim"
+msgstr "Моё место"
+
+msgid "Mening profilim"
+msgstr "Мой профиль"
+
+msgid "Mening sahifam"
+msgstr "Моя страница"
+
+msgid "Mening topshirishim"
+msgstr "Моя отправленная работа"
+
+msgid "Minimal 8 belgi"
+msgstr "Минимум 8 символов"
+
+msgid "Minimal 8 ta belgi"
+msgstr "Минимум 8 символов"
+
+msgid "Moliya"
+msgstr "Финансы"
+
+msgid "Moliya paneli"
+msgstr "Финансовая панель"
+
+msgid "Moliyachi"
+msgstr "Финансист"
+
+msgid "Moliyaviy Ko'rsatkichlar"
+msgstr "Финансовые показатели"
+
+msgid "Moliyaviy natija (naqd asosida)"
+msgstr "Финансовый результат (по кассовому методу)"
+
+msgid "Moliyaviy va davomat tahlili"
+msgstr "Финансовый анализ и анализ посещаемости"
+
+msgid "Muammo yoki savolingizni yozing..."
+msgstr "Опишите проблему или вопрос..."
+
+msgid "Muammo yoki savollaringizni yuboring — Avazbek tez javob beradi!"
+msgstr "Опишите проблему или задайте вопрос — Авазбек ответит быстро!"
+
+msgid "Muddat kiritish shart"
+msgstr "Необходимо указать срок"
+
+msgid "Muddat:"
+msgstr "Срок:"
+
+msgid "Muddati o'tgan"
+msgstr "Просрочено"
+
+msgid "Mukofotlar"
+msgstr "Награды"
+
+msgid "Mukofotlar va xarid so'rovlarini boshqarish"
+msgstr "Управление наградами и запросами на покупку"
+
+msgid "Mulklar"
+msgstr "Имущество"
+
+msgid "Mulklar umumiy qiymati"
+msgstr "Общая стоимость имущества"
+
+msgid "Mumkin bo'lgan yon ta'sirlar"
+msgstr "Возможные побочные эффекты"
+
+msgid "Mutaxassislik"
+msgstr "Специализация"
+
+msgid "Muvaffaqiyatli! Tizimga kirilmoqda..."
+msgstr "Успешно! Выполняется вход..."
+
+msgid "Namuna chiqish"
+msgstr "Пример вывода"
+
+msgid "Namuna kirish"
+msgstr "Пример ввода"
+
+msgid "Narx kamida 1 KUMUSH bo'lishi kerak"
+msgstr "Цена должна быть не менее 1 KUMUSH"
+
+msgid "Narx manfiy bo'lishi mumkin emas"
+msgstr "Цена не может быть отрицательной"
+
+msgid "Narxi"
+msgstr "Цена"
+
+msgid "Narxi (KUMUSH) *"
+msgstr "Цена (KUMUSH) *"
+
+msgid "Natijalar"
+msgstr "Результаты"
+
+msgid "Natijalar ma'lumotlari topilmadi."
+msgstr "Данные о результатах не найдены."
+
+msgid "Natijalarni ko'rish uchun sessiya tanlang"
+msgstr "Выберите сессию для просмотра результатов"
+
+msgid "Nofaol"
+msgstr "Неактивен"
+
+msgid "Nofaol qilindi"
+msgstr "Деактивирован"
+
+msgid "Nofaol qilish"
+msgstr "Деактивировать"
+
+msgid "Nomalum"
+msgstr "Неизвестно"
+
+msgid "Nomi"
+msgstr "Название"
+
+msgid "Nomi *"
+msgstr "Название *"
+
+msgid "Nomi kiritish shart"
+msgstr "Необходимо указать название"
+
+msgid "Nomsiz"
+msgstr "Без названия"
+
+msgid "Nomsiz suhbat"
+msgstr "Чат без названия"
+
+msgid "Noto'g'ri"
+msgstr "Неверно"
+
+msgid "Noto'g'ri OTP kod"
+msgstr "Неверный OTP-код"
+
+msgid "Noyabr"
+msgstr "Ноябрь"
+
+msgid "Nusxa yaratish"
+msgstr "Создать копию"
+
+msgid "Nusxa:"
+msgstr "Копия:"
+
+msgid "O'chirib bo'lmadi"
+msgstr "Не удалось удалить"
+
+msgid "O'chirildi"
+msgstr "Удалено"
+
+msgid "O'chirish"
+msgstr "Удалить"
+
+msgid "O'qituvchi"
+msgstr "Преподаватель"
+
+msgid "O'qituvchi *"
+msgstr "Преподаватель *"
+
+msgid "O'qituvchi belgilanmagan"
+msgstr "Преподаватель не назначен"
+
+msgid "O'qituvchi izohi..."
+msgstr "Комментарий преподавателя..."
+
+msgid "O'qituvchi nofaol qilindi"
+msgstr "Преподаватель деактивирован"
+
+msgid "O'qituvchi qo'shildi"
+msgstr "Преподаватель добавлен"
+
+msgid "O'qituvchi topilmadi"
+msgstr "Преподаватель не найден"
+
+msgid "O'qituvchi:"
+msgstr "Преподаватель:"
+
+msgid "O'qituvchilar"
+msgstr "Преподаватели"
+
+msgid "O'qituvchilar ish haqi"
+msgstr "Зарплата преподавателей"
+
+msgid "O'qituvchilar va ularning guruhlari"
+msgstr "Преподаватели и их группы"
+
+msgid "O'qituvchini tahrirlash"
+msgstr "Редактировать преподавателя"
+
+msgid "O'qituvchini tanlang"
+msgstr "Выберите преподавателя"
+
+msgid "O'quv"
+msgstr "Учёба"
+
+msgid "O'quv markazi uchun zamonaviy boshqaruv tizimi. Bepul kirish."
+msgstr "Современная система управления для учебного центра. Бесплатный вход."
+
+msgid "O'quvchi"
+msgstr "Учащийся"
+
+msgid "O'quvchi ismi..."
+msgstr "Имя учащегося..."
+
+msgid "O'quvchi javobi:"
+msgstr "Ответ учащегося:"
+
+msgid "O'quvchi kartochkasi"
+msgstr "Карточка учащегося"
+
+msgid "O'quvchi nofaol qilindi"
+msgstr "Учащийся деактивирован"
+
+msgid "O'quvchi qo'shildi"
+msgstr "Учащийся добавлен"
+
+msgid "O'quvchi tanlanmagan"
+msgstr "Учащийся не выбран"
+
+msgid "O'quvchi topilmadi"
+msgstr "Учащийся не найден"
+
+msgid "O'quvchi:"
+msgstr "Учащийся:"
+
+msgid "O'quvchilar"
+msgstr "Учащиеся"
+
+msgid "O'quvchilar Reytingi"
+msgstr "Рейтинг учащихся"
+
+msgid "O'quvchilar o'sishi"
+msgstr "Рост числа учащихся"
+
+msgid "O'quvchilar ro'yxati"
+msgstr "Список учащихся"
+
+msgid "O'quvchilar soni"
+msgstr "Количество учащихся"
+
+msgid "O'quvchilar, jadvallar va to'lovlarni bitta tizimda ishonch bilan nazorat qiling. Barchasi sizning qulayligingiz uchun."
+msgstr "Уверенно контролируйте учащихся, расписания и платежи в одной системе. Всё для вашего удобства."
+
+msgid "O'quvchini tahrirlash"
+msgstr "Редактировать учащегося"
+
+msgid "O'quvchini tanlang"
+msgstr "Выберите учащегося"
+
+msgid "O'rnatish"
+msgstr "Установить"
+
+msgid "O'rningiz"
+msgstr "Ваше место"
+
+msgid "O'rta"
+msgstr "Средняя"
+
+msgid "O'rtacha XP"
+msgstr "Средний XP"
+
+msgid "O'rtacha ball"
+msgstr "Средний балл"
+
+msgid "O'rtacha davomat"
+msgstr "Средняя посещаемость"
+
+msgid "O'xshash javoblar topilmadi."
+msgstr "Похожих ответов не найдено."
+
+msgid "O'xshash javoblar topilmadi. {count} ta javob tekshirildi."
+msgstr "Похожих ответов не найдено. Проверено ответов: {count}."
+
+msgid "O'zgarishlar"
+msgstr "Изменения"
+
+msgid "O'zgarishlar yo'q"
+msgstr "Изменений нет"
+
+msgid "O'zgartirish"
+msgstr "Изменить"
+
+msgid "O'zgartirishlar saqlandi"
+msgstr "Изменения сохранены"
+
+msgid "O'zlashtirish"
+msgstr "Успеваемость"
+
+msgid "OTP kod emailingizga yuborildi. Kodni kiriting:"
+msgstr "OTP-код отправлен на ваш email. Введите код:"
+
+msgid "OTP kod yuborilmoqda..."
+msgstr "Отправка OTP-кода..."
+
+msgid "OTP tasdiqlandi! Tizimga kirilmoqda..."
+msgstr "OTP подтверждён! Выполняется вход..."
+
+msgid "OTP yuborishda xatolik"
+msgstr "Ошибка при отправке OTP"
+
+msgid "Obyekt"
+msgstr "Объект"
+
+msgid "Ochiq"
+msgstr "Открыто"
+
+msgid "Oktabr"
+msgstr "Октябрь"
+
+msgid "Oldingizdan {diff} XP farq"
+msgstr "Отставание от идущего впереди: {diff} XP"
+
+msgid "Olingan"
+msgstr "Получено"
+
+msgid "Ommaviy"
+msgstr "Массовый"
+
+msgid "Ommaviy to'lov"
+msgstr "Массовый платёж"
+
+msgid "Ommaviy to'lov qabul"
+msgstr "Приём массового платежа"
+
+msgid "Orqaga"
+msgstr "Назад"
+
+msgid "Oson"
+msgstr "Лёгкий"
+
+msgid "Ota-ona"
+msgstr "Родитель"
+
+msgid "Ota-ona akkaunt"
+msgstr "Аккаунт родителя"
+
+msgid "Ota-ona akkaunt yaratildi:"
+msgstr "Аккаунт родителя создан:"
+
+msgid "Ota-ona akkaunt yaratish"
+msgstr "Создать аккаунт родителя"
+
+msgid "Ota-ona ismi"
+msgstr "Имя родителя"
+
+msgid "Ota-ona portali"
+msgstr "Портал родителя"
+
+msgid "Ota-ona portali — Qorako'l Ilm Ziyo"
+msgstr "Портал родителя — Qorako'l Ilm Ziyo"
+
+msgid "Ota-ona tel"
+msgstr "Тел. родителя"
+
+msgid "Ota-ona telefon"
+msgstr "Телефон родителя"
+
+msgid "Ota-ona telefoni"
+msgstr "Телефон родителя"
+
+msgid "Ota-ona uchun yangi akkaunt yarating. U <b>/parent/</b> sahifasida farzandini kuzata oladi."
+msgstr "Создайте новый аккаунт для родителя. Он сможет наблюдать за успехами ребёнка на странице <b>/parent/</b>."
+
+msgid "Oxirgi"
+msgstr "Последняя"
+
+msgid "Oxirgi darslar"
+msgstr "Последние занятия"
+
+msgid "Oxirgi yozuvlar"
+msgstr "Последние записи"
+
+msgid "Oy"
+msgstr "Месяц"
+
+msgid "Oy *"
+msgstr "Месяц *"
+
+msgid "Oy / Yil"
+msgstr "Месяц / Год"
+
+msgid "Oy/Yil"
+msgstr "Месяц/Год"
+
+msgid "Oylar bo'yicha foizi"
+msgstr "Процент по месяцам"
+
+msgid "Oylar bo'yicha yangi o'quvchilar"
+msgstr "Новые учащиеся по месяцам"
+
+msgid "Oylik ish haqi to'lovlarini boshqarish"
+msgstr "Управление ежемесячными выплатами зарплаты"
+
+msgid "Oylik qabul qilingan mablag'"
+msgstr "Полученные средства за месяц"
+
+msgid "Oylik to'lov"
+msgstr "Ежемесячная оплата"
+
+msgid "Oylik to'lov (so'm)"
+msgstr "Ежемесячная оплата (сум)"
+
+msgid "Oylik to'lovlar tarixi"
+msgstr "История ежемесячных платежей"
+
+msgid "Oylik to'lovlarni boshqarish"
+msgstr "Управление ежемесячными платежами"
+
+msgid "P"
+msgstr "Чт"
+
+msgid "PDF Hisobot"
+msgstr "PDF-отчёт"
+
+msgid "PDF xatoligi"
+msgstr "Ошибка PDF"
+
+msgid "PDF yuklab olish"
+msgstr "Скачать PDF"
+
+msgid "PDF yuklandi"
+msgstr "PDF скачан"
+
+msgid "PDF yuklash"
+msgstr "Скачать PDF"
+
+msgid "Pa"
+msgstr "Чт"
+
+msgid "Parol"
+msgstr "Пароль"
+
+msgid "Parol bilan qayta kirish"
+msgstr "Войти по паролю"
+
+msgid "Parol kamida 8 ta belgi bo'lishi kerak"
+msgstr "Пароль должен содержать не менее 8 символов"
+
+msgid "Parol muvaffaqiyatli yangilandi"
+msgstr "Пароль успешно обновлён"
+
+msgid "Parolingizni kiriting"
+msgstr "Введите ваш пароль"
+
+msgid "Parolni o'zgartirish"
+msgstr "Изменить пароль"
+
+msgid "Parolni qaytaring"
+msgstr "Повторите пароль"
+
+msgid "Parolni yangilash"
+msgstr "Обновить пароль"
+
+msgid "Past"
+msgstr "Низкая"
+
+msgid "Payshanba"
+msgstr "Четверг"
+
+msgid "Plagiat"
+msgstr "Плагиат"
+
+msgid "Plagiat juftlari"
+msgstr "Пары с плагиатом"
+
+msgid "Profil"
+msgstr "Профиль"
+
+msgid "Profil muvaffaqiyatli yangilandi"
+msgstr "Профиль успешно обновлён"
+
+msgid "Profil — Qorako'l Ilm Ziyo"
+msgstr "Профиль — Qorako'l Ilm Ziyo"
+
+msgid "Profilim"
+msgstr "Мой профиль"
+
+msgid "Profilni tahrirlash"
+msgstr "Редактировать профиль"
+
+msgid "Qabul qildi"
+msgstr "Принял(а)"
+
+msgid "Qabul qilingan (shu oy hisobi)"
+msgstr "Получено (за этот месяц)"
+
+msgid "Qabul qilish"
+msgstr "Принять"
+
+msgid "Qarz"
+msgstr "Долг"
+
+msgid "Qarz (shu oy)"
+msgstr "Долг (за этот месяц)"
+
+msgid "Qarz (so'm)"
+msgstr "Долг (сум)"
+
+msgid "Qarz:"
+msgstr "Долг:"
+
+msgid "Qarzdor O'quvchilar"
+msgstr "Учащиеся-должники"
+
+msgid "Qatnashgansiz"
+msgstr "Вы уже участвовали"
+
+msgid "Qator raqami"
+msgstr "Номер строки"
+
+msgid "Qayta tekshirish"
+msgstr "Проверить снова"
+
+msgid "Qidirish..."
+msgstr "Поиск..."
+
+msgid "Qisman"
+msgstr "Частично"
+
+msgid "Qisman to'lagan"
+msgstr "Оплатил частично"
+
+msgid "Qisman to'langan"
+msgstr "Частично оплачено"
+
+msgid "Qisqacha tavsif..."
+msgstr "Краткое описание..."
+
+msgid "Qiyin"
+msgstr "Сложный"
+
+msgid "Qiyinlik"
+msgstr "Сложность"
+
+msgid "Qo'ng'iroq"
+msgstr "Позвонить"
+
+msgid "Qo'shilgan"
+msgstr "Добавлен"
+
+msgid "Qo'shilgan sana"
+msgstr "Дата добавления"
+
+msgid "Qo'shimcha izoh..."
+msgstr "Дополнительный комментарий..."
+
+msgid "Qo'shimcha izohlar..."
+msgstr "Дополнительные комментарии..."
+
+msgid "Qo'shimcha ma'lumot..."
+msgstr "Дополнительная информация..."
+
+msgid "Qoldiq"
+msgstr "Остаток"
+
+msgid "Qoldiq (stock) *"
+msgstr "Остаток *"
+
+msgid "Qoldiq manfiy bo'lishi mumkin emas"
+msgstr "Остаток не может быть отрицательным"
+
+msgid "Qoldiq:"
+msgstr "Остаток:"
+
+msgid "Qolgan qarz"
+msgstr "Оставшийся долг"
+
+msgid "Qolgan vaqt"
+msgstr "Оставшееся время"
+
+msgid "Qorako'l Ilm Ziyo telefoningizga o'rnatildi!"
+msgstr "Qorako'l Ilm Ziyo установлен на ваш телефон!"
+
+msgid "Qorako'l Ilm Ziyo — O'quv markazi boshqaruv tizimi"
+msgstr "Qorako'l Ilm Ziyo — Система управления учебным центром"
+
+msgid "Qorako'l Ilm Ziyo — o'quv markazi uchun zamonaviy boshqaruv tizimi. O'quvchilar, o'qituvchilar, to'lovlar va guruhlarni oson boshqaring."
+msgstr "Qorako'l Ilm Ziyo — современная система управления учебным центром. Удобное управление учащимися, преподавателями, платежами и группами."
+
+msgid "Qoralama"
+msgstr "Черновик"
+
+msgid "Rad etildi"
+msgstr "Отклонено"
+
+msgid "Rad etish"
+msgstr "Отклонить"
+
+msgid "Rad etish sababi (ixtiyoriy):"
+msgstr "Причина отклонения (необязательно):"
+
+msgid "Rasm"
+msgstr "Изображение"
+
+msgid "Rasm olib tashlandi"
+msgstr "Изображение удалено"
+
+msgid "Rasm tanlandi. Rozilikni belgilab \"Saqlash\"ni bosing."
+msgstr "Изображение выбрано. Отметьте согласие и нажмите «Сохранить»."
+
+msgid "Rasmga olish"
+msgstr "Сделать снимок"
+
+msgid "Rasmni o'qib bo'lmadi, boshqa fayl tanlang"
+msgstr "Не удалось прочитать изображение, выберите другой файл"
+
+msgid "Rasmni olib tashlash"
+msgstr "Удалить изображение"
+
+msgid "Rasmni olib tashlaysizmi?"
+msgstr "Удалить изображение?"
+
+msgid "Real-vaqt Tahlil"
+msgstr "Аналитика в реальном времени"
+
+msgid "Reyting"
+msgstr "Рейтинг"
+
+msgid "Reyting ma'lumoti yo'q"
+msgstr "Данных рейтинга нет"
+
+msgid "Reyting o'rni"
+msgstr "Место в рейтинге"
+
+msgid "Reyting topilmadi"
+msgstr "Рейтинг не найден"
+
+msgid "Reyting — Qorako'l Ilm Ziyo"
+msgstr "Рейтинг — Qorako'l Ilm Ziyo"
+
+msgid "Rol"
+msgstr "Роль"
+
+msgid "Rozilikni belgilang"
+msgstr "Отметьте согласие"
+
+msgid "Ruxsat yo'q"
+msgstr "Нет доступа"
+
+msgid "SOTIB OLISH"
+msgstr "КУПИТЬ"
+
+msgid "Sabab:"
+msgstr "Причина:"
+
+msgid "Sababli"
+msgstr "По уважительной причине"
+
+msgid "Sahifa"
+msgstr "Страница"
+
+msgid "Sahifani qayta yuklash yoki sessiyani boshidan boshlash kerak bo'lishi mumkin."
+msgstr "Возможно, потребуется перезагрузить страницу или начать сессию заново."
+
+msgid "Salom! Men <strong>Ziyo AI</strong> — ta'lim markazi yordamchisiman."
+msgstr "Привет! Я <strong>Ziyo AI</strong> — помощник учебного центра."
+
+msgid "Sana"
+msgstr "Дата"
+
+msgid "Saqlandi"
+msgstr "Сохранено"
+
+msgid "Saqlash"
+msgstr "Сохранить"
+
+msgid "Sarlavha"
+msgstr "Заголовок"
+
+msgid "Sarlavha *"
+msgstr "Заголовок *"
+
+msgid "Sarlavha kiritish shart"
+msgstr "Необходимо указать заголовок"
+
+msgid "Savol bering..."
+msgstr "Задайте вопрос..."
+
+msgid "Se"
+msgstr "Вт"
+
+msgid "Sentabr"
+msgstr "Сентябрь"
+
+msgid "Server bilan bog'lanishda xatolik"
+msgstr "Ошибка соединения с сервером"
+
+msgid "Server bilan bog'lanishda xatolik. Qayta urinib ko'ring."
+msgstr "Ошибка соединения с сервером. Попробуйте ещё раз."
+
+msgid "Server bilan bog'lanishda xatolik: "
+msgstr "Ошибка соединения с сервером: "
+
+msgid "Server javob bermadi (req null qaytardi)"
+msgstr "Сервер не ответил (req вернул null)"
+
+msgid "Server xatoligi"
+msgstr "Ошибка сервера"
+
+msgid "Server xatosi"
+msgstr "Ошибка сервера"
+
+msgid "Seshanba"
+msgstr "Вторник"
+
+msgid "Sessiya"
+msgstr "Сессия"
+
+msgid "Sessiya aktivlashtirildi"
+msgstr "Сессия активирована"
+
+msgid "Sessiya natijalari"
+msgstr "Результаты сессии"
+
+msgid "Sessiya topilmadi yoki hali aktivlashtirilmagan. Ustozingizdan sessiya havolasini so'rang."
+msgstr "Сессия не найдена или ещё не активирована. Уточните ссылку на сессию у преподавателя."
+
+msgid "Sessiya topilmadi yoki ruxsat yo'q. Ehtimol guruh sizga tegishli emas."
+msgstr "Сессия не найдена или нет доступа. Возможно, эта группа вам не принадлежит."
+
+msgid "Sessiya yakunlanadi."
+msgstr "Сессия будет завершена."
+
+msgid "Sessiya yaratildi"
+msgstr "Сессия создана"
+
+msgid "Sessiyalar"
+msgstr "Сессии"
+
+msgid "Sessiyalar yo'q"
+msgstr "Сессий нет"
+
+msgid "Sh"
+msgstr "Сб"
+
+msgid "Shanba"
+msgstr "Суббота"
+
+msgid "Shaxsiy ma'lumotlar"
+msgstr "Личные данные"
+
+msgid "Shu hafta"
+msgstr "На этой неделе"
+
+msgid "Shubha bali"
+msgstr "Балл подозрительности"
+
+msgid "Shubha darajasi"
+msgstr "Уровень подозрительности"
+
+msgid "Shubhali"
+msgstr "Подозрительно"
+
+msgid "Shubhali faollik"
+msgstr "Подозрительная активность"
+
+msgid "Shubhali faollik topilmadi ✅"
+msgstr "Подозрительная активность не обнаружена ✅"
+
+msgid "Shubhali javoblar"
+msgstr "Подозрительные ответы"
+
+msgid "Sig'im"
+msgstr "Вместимость"
+
+msgid "Sig'im (max o'quvchilar)"
+msgstr "Вместимость (макс. учащихся)"
+
+msgid "Siz faqat xabarlarni o'qiy olasiz"
+msgstr "Вы можете только читать сообщения"
+
+msgid "Sizning akkauntingizga hech qanday o'quvchi biriktirilmagan."
+msgstr "К вашему аккаунту не привязан ни один учащийся."
+
+msgid "So'nggi to'lovlar"
+msgstr "Последние платежи"
+
+msgid "So'rov yuborildi, admin tasdiqlashini kuting"
+msgstr "Запрос отправлен, ожидайте подтверждения администратора"
+
+msgid "So'rovlar yo'q"
+msgstr "Запросов нет"
+
+msgid "Sof natija"
+msgstr "Чистый результат"
+
+msgid "Soni"
+msgstr "Количество"
+
+msgid "Soni *"
+msgstr "Количество *"
+
+msgid "Soni kamida 1 bo'lishi kerak"
+msgstr "Количество должно быть не менее 1"
+
+msgid "Sotib olingan sana"
+msgstr "Дата покупки"
+
+msgid "Sotilgan"
+msgstr "Продано"
+
+msgid "Sozlamalar"
+msgstr "Настройки"
+
+msgid "Statistika"
+msgstr "Статистика"
+
+msgid "Status"
+msgstr "Статус"
+
+msgid "Status yangilandi"
+msgstr "Статус обновлён"
+
+msgid "Suhbat"
+msgstr "Чат"
+
+msgid "Summani kiriting"
+msgstr "Введите сумму"
+
+msgid "Ta'lim markazi boshqaruv tizimi"
+msgstr "Система управления учебным центром"
+
+msgid "Ta'lim markazini"
+msgstr "Управляйте учебным центром"
+
+msgid "Ta'mir/Buzilgan"
+msgstr "В ремонте/Неисправно"
+
+msgid "Ta'mirlash kerak"
+msgstr "Требует ремонта"
+
+msgid "Ta'sirlangan foydalanuvchilar"
+msgstr "Затронутые пользователи"
+
+msgid "Ta'sirlangan modul"
+msgstr "Затронутый модуль"
+
+msgid "Tab almashtirishlar chegarasiga yetdingiz"
+msgstr "Вы достигли лимита переключений вкладок"
+
+msgid "Tab almashtirishlar chegarasiga yetdingiz ({limit} ta). Sessiya yakunlanadi."
+msgstr "Вы достигли лимита переключений вкладок ({limit}). Сессия будет завершена."
+
+msgid "Tafsilot"
+msgstr "Подробности"
+
+msgid "Tahlil"
+msgstr "Аналитика"
+
+msgid "Tahlil qilinmoqda..."
+msgstr "Анализ..."
+
+msgid "Tahrirlash"
+msgstr "Редактировать"
+
+msgid "Takrorlanish"
+msgstr "Повторение"
+
+msgid "Takrorlash qadamlari"
+msgstr "Шаги для воспроизведения"
+
+msgid "Talaba"
+msgstr "Учащийся"
+
+msgid "Talabaga ko'rsatiladigan masala matni..."
+msgstr "Текст задачи, который увидит учащийся..."
+
+msgid "Talabalar"
+msgstr "Учащиеся"
+
+msgid "Tanlagan qator"
+msgstr "Выбранная строка"
+
+msgid "Tanlanganlarga saqlash"
+msgstr "Сохранить для выбранных"
+
+msgid "Tarix yo'q"
+msgstr "Истории нет"
+
+msgid "Tarmoq xatoligi"
+msgstr "Сетевая ошибка"
+
+msgid "Tarmoq xatosi yuz berdi. Iltimos, qayta urinib ko'ring."
+msgstr "Произошла сетевая ошибка. Пожалуйста, попробуйте ещё раз."
+
+msgid "Tasdiqlandi"
+msgstr "Подтверждено"
+
+msgid "Tasdiqlangan / Berildi"
+msgstr "Подтверждено / Выдано"
+
+msgid "Tasdiqlash"
+msgstr "Подтвердить"
+
+msgid "Tasvir sifati yaxshi. Rozilikni belgilab \"Saqlash\"ni bosing."
+msgstr "Качество изображения хорошее. Отметьте согласие и нажмите «Сохранить»."
+
+msgid "Tavsif"
+msgstr "Описание"
+
+msgid "Tavsif (ixtiyoriy)"
+msgstr "Описание (необязательно)"
+
+msgid "Tavsiya etilgan tuzatish"
+msgstr "Рекомендуемое исправление"
+
+msgid "Tayyor"
+msgstr "Готов"
+
+msgid "Tekshirilmoqda"
+msgstr "Проверяется"
+
+msgid "Tekshirilmoqda..."
+msgstr "Проверка..."
+
+msgid "Tekshirilmoqda... (rasm yuborilmoqda, biroz kutib turing)"
+msgstr "Проверка... (изображение отправляется, подождите немного)"
+
+msgid "Tekshirish uchun yuqoridagi tugmani bosing"
+msgstr "Нажмите кнопку выше, чтобы начать проверку"
+
+msgid "Tekshirishda xatolik yuz berdi"
+msgstr "Произошла ошибка при проверке"
+
+msgid "Tekshirishni boshlash"
+msgstr "Начать проверку"
+
+msgid "Telefon"
+msgstr "Телефон"
+
+msgid "Telefon raqam"
+msgstr "Номер телефона"
+
+msgid "Telefon raqam kiriting"
+msgstr "Введите номер телефона"
+
+msgid "Telefon yoki parol noto'g'ri"
+msgstr "Неверный телефон или пароль"
+
+msgid "Telefon/rasm orqali tanlash (kamera xira bo'lsa)"
+msgstr "Выбрать через телефон/файл (если камера размыта)"
+
+msgid "Telefoningizga o'rnating"
+msgstr "Установите на телефон"
+
+msgid "Test"
+msgstr "Тест"
+
+msgid "Test qo'shish"
+msgstr "Добавить тест"
+
+msgid "Test tavsiyalari"
+msgstr "Рекомендации по тестам"
+
+msgid "Test variantlari *"
+msgstr "Тестовые примеры *"
+
+msgid "Tezkor:"
+msgstr "Быстрые действия:"
+
+msgid "Til"
+msgstr "Язык"
+
+msgid "Tilni tanlang"
+msgstr "Выберите язык"
+
+msgid "Tizim"
+msgstr "Система"
+
+msgid "Tizim administratori"
+msgstr "Администратор системы"
+
+msgid "Tizim barqaror ishlamoqda"
+msgstr "Система работает стабильно"
+
+msgid "Tizim foydalanuvchilari va ularning rollari"
+msgstr "Пользователи системы и их роли"
+
+msgid "Tizimdan chiqish"
+msgstr "Выйти из системы"
+
+msgid "Tizimga kiring"
+msgstr "Войдите в систему"
+
+msgid "Tizimga kirish talab qilinadi."
+msgstr "Требуется вход в систему."
+
+msgid "To'g'ri"
+msgstr "Верно"
+
+msgid "To'g'ri kod *"
+msgstr "Правильный код *"
+
+msgid "To'g'ri qator"
+msgstr "Правильная строка"
+
+msgid "To'g'ri qator:"
+msgstr "Правильная строка:"
+
+msgid "To'lamagan"
+msgstr "Не оплатил"
+
+msgid "To'lamagan o'quvchilar"
+msgstr "Учащиеся-неплательщики"
+
+msgid "To'langan"
+msgstr "Оплачено"
+
+msgid "To'langan summa"
+msgstr "Оплаченная сумма"
+
+msgid "To'langan va qarz taqqoslama"
+msgstr "Сравнение оплаченного и долга"
+
+msgid "To'langan va qarz trend"
+msgstr "Тренд оплаченного и долга"
+
+msgid "To'lanmagan"
+msgstr "Не оплачено"
+
+msgid "To'lash"
+msgstr "Оплатить"
+
+msgid "To'liq ism"
+msgstr "Полное имя"
+
+msgid "To'liq ro'yxat"
+msgstr "Полный список"
+
+msgid "To'liq to'lagan o'quvchi"
+msgstr "Учащийся оплатил полностью"
+
+msgid "To'liq to'langan"
+msgstr "Оплачено полностью"
+
+msgid "To'lov"
+msgstr "Платёж"
+
+msgid "To'lov cheki"
+msgstr "Чек об оплате"
+
+msgid "To'lov cheki / Payment Receipt"
+msgstr "Чек об оплате"
+
+msgid "To'lov olgan o'qituvchilar"
+msgstr "Преподаватели, получившие оплату"
+
+msgid "To'lov qabul"
+msgstr "Приём платежа"
+
+msgid "To'lov qabul qilindi"
+msgstr "Платёж принят"
+
+msgid "To'lov qabul qilish"
+msgstr "Принять платёж"
+
+msgid "To'lov summasi"
+msgstr "Сумма платежа"
+
+msgid "To'lov summasi (so'm)"
+msgstr "Сумма платежа (сум)"
+
+msgid "To'lov tarixi"
+msgstr "История платежей"
+
+msgid "To'lov turi"
+msgstr "Тип платежа"
+
+msgid "To'lov yozuvi topilmadi"
+msgstr "Записи о платежах не найдены"
+
+msgid "To'lovlar"
+msgstr "Платежи"
+
+msgid "To'lovlar holati"
+msgstr "Статус платежей"
+
+msgid "To'lovlarim"
+msgstr "Мои платежи"
+
+msgid "To'xtatilgan"
+msgstr "Приостановлен"
+
+msgid "Token muddati tugagan"
+msgstr "Срок действия токена истёк"
+
+msgid "Token muddati tugagan, qayta kiring"
+msgstr "Срок действия токена истёк, войдите снова"
+
+msgid "Top 3 o'quvchi"
+msgstr "Топ-3 учащихся"
+
+msgid "Top Guruhlar"
+msgstr "Лучшие группы"
+
+msgid "Topshirdi"
+msgstr "Отправил(а)"
+
+msgid "Topshirilgan"
+msgstr "Отправлено"
+
+msgid "Topshirilmagan"
+msgstr "Не отправлено"
+
+msgid "Topshiriq haqida batafsil..."
+msgstr "Подробнее о задании..."
+
+msgid "Topshiriq turi"
+msgstr "Тип задания"
+
+msgid "Topshiriqlar"
+msgstr "Задания"
+
+msgid "Topshiriqlar va baholash"
+msgstr "Задания и оценивание"
+
+msgid "Topshirish"
+msgstr "Отправить"
+
+msgid "Topshirish muddati *"
+msgstr "Срок сдачи *"
+
+msgid "Topshirishlar ({count})"
+msgstr "Отправленные работы ({count})"
+
+msgid "Topshirishlar:"
+msgstr "Отправлено:"
+
+msgid "Tug'ilgan sana"
+msgstr "Дата рождения"
+
+msgid "Tugagan"
+msgstr "Завершено"
+
+msgid "Tugagan buyumlar"
+msgstr "Закончившиеся предметы"
+
+msgid "Tugagan guruhlar yo'q"
+msgstr "Завершённых групп нет"
+
+msgid "Tugash"
+msgstr "Окончание"
+
+msgid "Tugash sanasi"
+msgstr "Дата окончания"
+
+msgid "Tugash vaqti"
+msgstr "Время окончания"
+
+msgid "Tungi rejim"
+msgstr "Тёмная тема"
+
+msgid "Turi"
+msgstr "Тип"
+
+msgid "Tuzatilgan kodni yozing"
+msgstr "Напишите исправленный код"
+
+msgid "URL noto'g'ri. Session ID topilmadi."
+msgstr "Неверный URL. Session ID не найден."
+
+msgid "URL noto'g'ri. Share link topilmadi."
+msgstr "Неверный URL. Ссылка не найдена."
+
+msgid "Ulanish xatosi: "
+msgstr "Ошибка соединения: "
+
+msgid "Umumiy qarz"
+msgstr "Общий долг"
+
+msgid "Umumiy qarz (barcha oylar)"
+msgstr "Общий долг (за все месяцы)"
+
+msgid "Umumiy qiymati"
+msgstr "Общая стоимость"
+
+msgid "Ushbu chek rasmiy hisob xisobot hisoblanadi."
+msgstr "Этот чек является официальным финансовым документом."
+
+msgid "Ushbu guruh uchun hali dars jadvali tuzilmagan."
+msgstr "Для этой группы расписание ещё не составлено."
+
+msgid "Ushbu vazifani o'chirasizmi?"
+msgstr "Удалить это задание?"
+
+msgid "Uyga vazifa bo'yicha"
+msgstr "За домашнее задание"
+
+msgid "Uyga vazifalar"
+msgstr "Домашние задания"
+
+msgid "Uyga vazifalar — Qorako'l Ilm Ziyo"
+msgstr "Домашние задания — Qorako'l Ilm Ziyo"
+
+msgid "Vaqt"
+msgstr "Время"
+
+msgid "Vaqt (s)"
+msgstr "Время (с)"
+
+msgid "Vaqt chegarasi (daqiqa)"
+msgstr "Лимит времени (минуты)"
+
+msgid "Vaqt tugagan yoki xato so'rov"
+msgstr "Время истекло или неверный запрос"
+
+msgid "Vazifa muvaffaqiyatli topshirildi!"
+msgstr "Задание успешно отправлено!"
+
+msgid "Vazifa o'chirildi"
+msgstr "Задание удалено"
+
+msgid "Vazifa qo'shildi"
+msgstr "Задание добавлено"
+
+msgid "Vazifa qo'shish"
+msgstr "Добавить задание"
+
+msgid "Vazifa tafsiloti"
+msgstr "Подробности задания"
+
+msgid "Vazifa yopildi"
+msgstr "Задание закрыто"
+
+msgid "Vazifalar topilmadi"
+msgstr "Задания не найдены"
+
+msgid "Vazifani topshirish"
+msgstr "Отправить задание"
+
+msgid "XP Ball"
+msgstr "Баллы XP"
+
+msgid "XP Statistikasi"
+msgstr "Статистика XP"
+
+msgid "XP ball"
+msgstr "Баллы XP"
+
+msgid "XP ballari bo'yicha eng yaxshi o'quvchilar"
+msgstr "Лучшие учащиеся по баллам XP"
+
+msgid "XP mukofoti"
+msgstr "Награда XP"
+
+msgid "XP qoldi"
+msgstr "XP осталось"
+
+msgid "XP va Kumush hisobi"
+msgstr "Счёт XP и Кумуш"
+
+msgid "XP va coins bilan o'quvchilarni rag'batlantiring"
+msgstr "Мотивируйте учащихся с помощью XP и монет"
+
+msgid "Xabar"
+msgstr "Сообщение"
+
+msgid "Xabar administratorga yuboriladi"
+msgstr "Сообщение будет отправлено администратору"
+
+msgid "Xabar dasturchiga yuboriladi"
+msgstr "Сообщение будет отправлено разработчику"
+
+msgid "Xabar yuboriladi"
+msgstr "Сообщение будет отправлено"
+
+msgid "Xabar yuborildi!"
+msgstr "Сообщение отправлено!"
+
+msgid "Xabar yuborishda xatolik"
+msgstr "Ошибка при отправке сообщения"
+
+msgid "Xabarlar yo'q"
+msgstr "Сообщений нет"
+
+msgid "Xato qatori *"
+msgstr "Строка с ошибкой *"
+
+msgid "Xato qatorni kiriting yoki o'ngdagi koddan bosib tanlang:"
+msgstr "Введите строку с ошибкой или выберите её в коде справа:"
+
+msgid "Xato turi"
+msgstr "Тип ошибки"
+
+msgid "Xato tushuntirishi *"
+msgstr "Объяснение ошибки *"
+
+msgid "Xatoli kod *"
+msgstr "Код с ошибкой *"
+
+msgid "Xatoli kod — qatorni bosing"
+msgstr "Код с ошибкой — нажмите на строку"
+
+msgid "Xatolik"
+msgstr "Ошибка"
+
+msgid "Xatolik tafsilotlari"
+msgstr "Подробности ошибки"
+
+msgid "Xatolik yuz berdi"
+msgstr "Произошла ошибка"
+
+msgid "Xatoliklar"
+msgstr "Ошибки"
+
+msgid "Xatoliklar monitoringi"
+msgstr "Мониторинг ошибок"
+
+msgid "Xatoliklar yo'q"
+msgstr "Ошибок нет"
+
+msgid "Xatoni tuzatib, to'g'ri kodni shu yerga yozing..."
+msgstr "Исправьте ошибку и напишите правильный код здесь..."
+
+msgid "Xavfsiz Tizim"
+msgstr "Безопасная система"
+
+msgid "Xona"
+msgstr "Аудитория"
+
+msgid "Xona (ixtiyoriy)"
+msgstr "Аудитория (необязательно)"
+
+msgid "Xona belgilanmagan"
+msgstr "Аудитория не указана"
+
+msgid "Y"
+msgstr "Вс"
+
+msgid "Ya"
+msgstr "Вс"
+
+msgid "Yakshanba"
+msgstr "Воскресенье"
+
+msgid "Yakuniy natija"
+msgstr "Итоговый результат"
+
+msgid "Yangi"
+msgstr "Новое"
+
+msgid "Yangi Guruh"
+msgstr "Новая группа"
+
+msgid "Yangi O'qituvchi"
+msgstr "Новый преподаватель"
+
+msgid "Yangi O'quvchi"
+msgstr "Новый учащийся"
+
+msgid "Yangi bug-find"
+msgstr "Новый Bug-Find"
+
+msgid "Yangi bug-find topshiriq"
+msgstr "Новое задание Bug-Find"
+
+msgid "Yangi coding"
+msgstr "Новый Coding"
+
+msgid "Yangi coding topshiriq"
+msgstr "Новое задание Coding"
+
+msgid "Yangi foydalanuvchi"
+msgstr "Новый пользователь"
+
+msgid "Yangi guruh"
+msgstr "Новая группа"
+
+msgid "Yangi o'qituvchi"
+msgstr "Новый преподаватель"
+
+msgid "Yangi o'quvchi"
+msgstr "Новый учащийся"
+
+msgid "Yangi o'quvchilar"
+msgstr "Новые учащиеся"
+
+msgid "Yangi parol"
+msgstr "Новый пароль"
+
+msgid "Yangi parol (minimal 8 ta belgi)"
+msgstr "Новый пароль (минимум 8 символов)"
+
+msgid "Yangi parollar mos kelmadi"
+msgstr "Новые пароли не совпадают"
+
+msgid "Yangi parolni tasdiqlang"
+msgstr "Подтвердите новый пароль"
+
+msgid "Yangi sessiya"
+msgstr "Новая сессия"
+
+msgid "Yangi suhbat"
+msgstr "Новый разговор"
+
+msgid "Yangi uyga vazifa"
+msgstr "Новое домашнее задание"
+
+msgid "Yangi vazifa"
+msgstr "Новое задание"
+
+msgid "Yangi vazifa yaratildi!"
+msgstr "Новое задание создано!"
+
+msgid "Yangi vazifa yaratish"
+msgstr "Создать новое задание"
+
+msgid "Yangilandi"
+msgstr "Обновлено"
+
+msgid "Yangilash"
+msgstr "Обновить"
+
+msgid "Yanvar"
+msgstr "Январь"
+
+msgid "Yaratildi"
+msgstr "Создано"
+
+msgid "Yaratilgan"
+msgstr "Создан"
+
+msgid "Yaratish"
+msgstr "Создать"
+
+msgid "Yaxshi"
+msgstr "Хорошее"
+
+msgid "Yechilgan"
+msgstr "Решено"
+
+msgid "Yechilgan topshiriqlar"
+msgstr "Решённые задания"
+
+msgid "Yechim kodi *"
+msgstr "Код решения *"
+
+msgid "Yechim kodini kiriting"
+msgstr "Введите код решения"
+
+msgid "Yig'ilgan natijalar monitoringi"
+msgstr "Мониторинг накопленных результатов"
+
+msgid "Yil"
+msgstr "Год"
+
+msgid "Yil *"
+msgstr "Год *"
+
+msgid "Yo'nalish"
+msgstr "Направление"
+
+msgid "Yo'nalishi"
+msgstr "Направление"
+
+msgid "Yo'q (to'liq to'langan)"
+msgstr "Нет (оплачено полностью)"
+
+msgid "Yopilgan"
+msgstr "Закрыто"
+
+msgid "Yopish"
+msgstr "Закрыть"
+
+msgid "Yordam bo'limi"
+msgstr "Раздел поддержки"
+
+msgid "Yuborilgan kod:"
+msgstr "Отправленный код:"
+
+msgid "Yuborilmoqda..."
+msgstr "Отправка..."
+
+msgid "Yuborish"
+msgstr "Отправить"
+
+msgid "Yuborishda xatolik. Qayta urinib ko'ring."
+msgstr "Ошибка отправки. Попробуйте ещё раз."
+
+msgid "Yuklab bo'lmadi"
+msgstr "Не удалось загрузить"
+
+msgid "Yuklanmoqda..."
+msgstr "Загрузка..."
+
+msgid "Yuklashda xatolik"
+msgstr "Ошибка загрузки"
+
+msgid "Yuqori"
+msgstr "Высокая"
+
+msgid "Yuz tekshiruvi"
+msgstr "Проверка лица"
+
+msgid "Yuz tekshiruvi muvaffaqiyatsiz"
+msgstr "Проверка лица не удалась"
+
+msgid "Yuzingizni doira ichiga joylashtiring"
+msgstr "Расположите лицо внутри круга"
+
+msgid "Yuzingizni doira ichiga joylashtiring. Rozilikni belgilab \"Saqlash\"ni bosing."
+msgstr "Расположите лицо внутри круга. Отметьте согласие и нажмите «Сохранить»."
+
+msgid "Yuzingizni ro'yxatga olish uchun kameraga qarang"
+msgstr "Посмотрите в камеру, чтобы зарегистрировать лицо"
+
+msgid "ZUKKO Challenges"
+msgstr "ZUKKO Задания"
+
+msgid "Zaxira kod"
+msgstr "Резервный код"
+
+msgid "Ziyo AI Yordamchi"
+msgstr "Помощник Ziyo AI"
+
+msgid "adminga murojaat qiling"
+msgstr "обратитесь к администратору"
+
+msgid "baholangan"
+msgstr "оценено"
+
+msgid "ball"
+msgstr "балл"
+
+msgid "bonus"
+msgstr "бонус"
+
+msgid "daqiqa"
+msgstr "мин."
+
+msgid "erp12345 (standart)"
+msgstr "erp12345 (по умолчанию)"
+
+msgid "foydalanuvchiga ta'sir qildi"
+msgstr "затронуто пользователей"
+
+msgid "guruh"
+msgstr "группа"
+
+msgid "guruhdan chiqarish"
+msgstr "убрать из группы"
+
+msgid "jami XP"
+msgstr "всего XP"
+
+msgid "kun"
+msgstr "дн."
+
+msgid "marta takrorlangan"
+msgstr "раз повторилось"
+
+msgid "ni faollashtirasizmi?"
+msgstr " — активировать?"
+
+msgid "ni nofaol qilasizmi?"
+msgstr " — деактивировать?"
+
+msgid "ni o'chirishni tasdiqlaysizmi?"
+msgstr " — удалить?"
+
+msgid "nusxasi — nomni o'zgartiring va saqlang"
+msgstr " (копия) — измените название и сохраните"
+
+msgid "o'quvchi"
+msgstr "учащийся"
+
+msgid "qoldi"
+msgstr "осталось"
+
+msgid "qulay boshqaring"
+msgstr "с комфортом"
+
+msgid "so'm"
+msgstr "сум"
+
+msgid "ta"
+msgstr " "
+
+msgid "ta bu oy yangi"
+msgstr "новых в этом месяце"
+
+msgid "ta buyum"
+msgstr "предметов"
+
+msgid "ta eslatma yuborildi"
+msgstr "напоминаний отправлено"
+
+msgid "ta faol guruh"
+msgstr "активных групп"
+
+msgid "ta foydalanuvchi"
+msgstr "пользователей"
+
+msgid "ta guruh"
+msgstr "групп"
+
+msgid "ta javob"
+msgstr "ответов"
+
+msgid "ta javob tekshirildi"
+msgstr "ответов проверено"
+
+msgid "ta javob tekshirildi."
+msgstr "ответов проверено."
+
+msgid "ta juft shubhali"
+msgstr "подозрительных пар"
+
+msgid "ta natija"
+msgstr "результатов"
+
+msgid "ta o'qituvchi"
+msgstr "преподавателей"
+
+msgid "ta o'quvchi"
+msgstr "учащихся"
+
+msgid "ta shubha"
+msgstr "подозрений"
+
+msgid "ta tanlangan"
+msgstr "выбрано"
+
+msgid "ta to'lov saqlandi"
+msgstr "платежей сохранено"
+
+msgid "ta topshiriq"
+msgstr "заданий"
+
+msgid "ta topshirish"
+msgstr "отправок"
+
+msgid "ta xatolik"
+msgstr "ошибок"
+
+msgid "ta yozuv"
+msgstr "записей"
+
+msgid "test o'tdi"
+msgstr "тестов пройдено"
+
+msgid "token"
+msgstr "токен"
+
+msgid "topshiriq"
+msgstr "задание"
+
+msgid "tushumi"
+msgstr " — доход"
+
+msgid "vazifa"
+msgstr "задание"
+
+msgctxt "weekday-short-sat"
+msgid "S"
+msgstr "Сб"
+
+msgctxt "weekday-short-tue"
+msgid "S"
+msgstr "Вт"
+
+msgid "yoki xabar yuboring"
+msgstr "или отправьте сообщение"
+
+msgid "{count} ta javob tekshirildi — {pairs} ta juft shubhali"
+msgstr "Проверено ответов: {count} — подозрительных пар: {pairs}"
+
+msgid "{count} ta o'quvchi"
+msgstr "Учащихся: {count}"
+
+msgid "{days} kun"
+msgstr "{days} дн."
+
+msgid "{days} kun qoldi"
+msgstr "Осталось {days} дн."
+
+msgid "{label} — jami XP {xp}, Jami Kumush {coins}"
+msgstr "{label} — всего XP {xp}, всего Кумуш {coins}"
+
+msgid "{name} ni faollashtirasizmi?"
+msgstr "Активировать «{name}»?"
+
+msgid "{name} ni nofaol qilasizmi?"
+msgstr "Деактивировать «{name}»?"
+
+msgid "{name} ni o'chirishni tasdiqlaysizmi?"
+msgstr "Удалить «{name}»?"
+
+msgid "{name} ni {price} KUMUSHga so'rov qilasizmi?"
+msgstr "Запросить «{name}» за {price} KUMUSH?"
+
+msgid "{passed}/{total} test o'tdi"
+msgstr "{passed}/{total} тестов пройдено"
+
+msgid "{year}-yil {month}-oy uchun qarzdorlarga eslatma yuborilsinmi?"
+msgstr "Отправить напоминание должникам за {month}-й месяц {year} года?"
+
+msgid "— Guruh tanlang —"
+msgstr "— Выберите группу —"
+
+msgid "— Guruhsiz (guruhdan chiqarish) —"
+msgstr "— Без группы (убрать из группы) —"
+
+msgid "— Guruhsiz —"
+msgstr "— Без группы —"
+
+msgid "— O'quvchi tanlang —"
+msgstr "— Выберите учащегося —"
+
+msgid "— Sessiya tanlang —"
+msgstr "— Выберите сессию —"
+
+msgid "— Tanlang —"
+msgstr "— Выберите —"
+
+msgid "— Tanlanmagan —"
+msgstr "— Не выбрано —"
+
+msgid "‹ Oldingi"
+msgstr "‹ Назад"
+

@@ -1,0 +1,2976 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Qorako'l Ilm Ziyo ERP\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-17 01:27\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+
+msgid "\"{name}\" nusxasi — nomni o'zgartiring va saqlang"
+msgstr "Copy of \"{name}\" — rename and save"
+
+msgid "# To'g'ri yechim kodi..."
+msgstr "# Correct solution code..."
+
+msgid "# Yechimingizni shu yerga yozing..."
+msgstr "# Write your solution here..."
+
+msgid "(bo'sh)"
+msgstr "(empty)"
+
+msgid "(fayl yuborildi)"
+msgstr "(file submitted)"
+
+msgid "(serverda tekshiriladi, talabaga ko'rsatilmaydi)"
+msgstr "(checked on the server, not shown to the student)"
+
+msgid "(tool chaqiruvi)"
+msgstr "(tool call)"
+
+msgid "1 dona narxi"
+msgstr "Price per item"
+
+msgid "1 dona narxi *"
+msgstr "Price per item *"
+
+msgid "6 Oylik Daromad"
+msgstr "6-Month Revenue"
+
+msgid "6 Oylik Daromad Tahlili"
+msgstr "6-Month Revenue Analysis"
+
+msgid "6 raqamli kodni kiriting"
+msgstr "Enter the 6-digit code"
+
+msgid "AI ORQALI TAHLIL QILISH"
+msgstr "ANALYZE WITH AI"
+
+msgid "AI ham xato qilishi mumkin."
+msgstr "AI can make mistakes too."
+
+msgid "AI tahlili"
+msgstr "AI analysis"
+
+msgid "AI tahlili tayyor"
+msgstr "AI analysis ready"
+
+msgid "AI tarixi"
+msgstr "AI history"
+
+msgid "Administrator"
+msgstr "Administrator"
+
+msgid "Administrator bilan bog'laning."
+msgstr "Please contact the administrator."
+
+msgid "Administratsiya tomonidan berilgan"
+msgstr "Awarded by administration"
+
+msgid "Aktiv"
+msgstr "Active"
+
+msgid "Aktiv sessiyalar"
+msgstr "Active sessions"
+
+msgid "Aktivlashtirish"
+msgstr "Activate"
+
+msgid "Amal"
+msgstr "Action"
+
+msgid "Aniqlik"
+msgstr "Accuracy"
+
+msgid "Anti-cheat tizimi shubhali harakatlarni qayd etdi. O'qituvchingiz bu haqida xabardor bo'ladi."
+msgstr "The anti-cheat system detected suspicious activity. Your teacher will be notified."
+
+msgid "Aprel"
+msgstr "April"
+
+msgid "Aralash"
+msgstr "Mixed"
+
+msgid "Arxiv"
+msgstr "Archive"
+
+msgid "Arxivlangan"
+msgstr "Archived"
+
+msgid "Asosiy"
+msgstr "Main"
+
+msgid "Asosiy ma'lumotlar"
+msgstr "Basic information"
+
+msgid "Asosiy maosh *"
+msgstr "Base salary *"
+
+msgid "Avgust"
+msgstr "August"
+
+msgid "Avtomatlashtirilgan"
+msgstr "Automated"
+
+msgid "Baholangan"
+msgstr "Graded"
+
+msgid "Baholanishini kuting"
+msgstr "Awaiting grading"
+
+msgid "Baholash"
+msgstr "Grade"
+
+msgid "Baholash saqlandi va XP berildi!"
+msgstr "Grade saved and XP awarded!"
+
+msgid "Ball"
+msgstr "Score"
+
+msgid "Ball *"
+msgstr "Score *"
+
+msgid "Ball 0 dan {max} gacha bo'lishi kerak"
+msgstr "Score must be between 0 and {max}"
+
+msgid "Barcha * maydonlarni to'ldiring"
+msgstr "Fill in all required (*) fields"
+
+msgid "Barcha amallar"
+msgstr "All actions"
+
+msgid "Barcha foydalanuvchilar AI suhbatlari"
+msgstr "All users' AI conversations"
+
+msgid "Barcha guruhlar"
+msgstr "All groups"
+
+msgid "Barcha holat"
+msgstr "All statuses"
+
+msgid "Barcha holatlar"
+msgstr "All conditions"
+
+msgid "Barcha jiddiylik"
+msgstr "All severities"
+
+msgid "Barcha maydonlarni to'ldiring"
+msgstr "Fill in all fields"
+
+msgid "Barcha modellar"
+msgstr "All models"
+
+msgid "Barcha o'qituvchilar"
+msgstr "All teachers"
+
+msgid "Barcha o'quv guruhlari"
+msgstr "All study groups"
+
+msgid "Barcha o'quvchilar va ularning ma'lumotlari"
+msgstr "All students and their details"
+
+msgid "Barcha qurilmalardan chiqish"
+msgstr "Log out of all devices"
+
+msgid "Barcha qurilmalardan chiqmoqchimisiz?"
+msgstr "Log out of all devices?"
+
+msgid "Barcha rollar"
+msgstr "All roles"
+
+msgid "Barcha status"
+msgstr "All statuses"
+
+msgid "Barcha statuslar"
+msgstr "All statuses"
+
+msgid "Barcha testlarda kutilgan chiqishni to'ldiring"
+msgstr "Fill in the expected output for all tests"
+
+msgid "Barcha to'lovlar amalga oshirilgan"
+msgstr "All payments completed"
+
+msgid "Barcha vaqt"
+msgstr "All time"
+
+msgid "Barchaga:"
+msgstr "For all:"
+
+msgid "Barchasi"
+msgstr "All"
+
+msgid "Barchasini tanlash"
+msgstr "Select all"
+
+msgid "Batafsil"
+msgstr "Details"
+
+msgid "Bekor"
+msgstr "Cancel"
+
+msgid "Bekor qilish"
+msgstr "Cancel"
+
+msgid "Belgilanmagan"
+msgstr "Not set"
+
+msgid "Berilgan"
+msgstr "Assigned"
+
+msgid "Berilgan sana"
+msgstr "Assigned date"
+
+msgid "Bildirishnomalar"
+msgstr "Notifications"
+
+msgid "Birinchi"
+msgstr "First"
+
+msgid "Bonus"
+msgstr "Bonus"
+
+msgid "Bonus (ixtiyoriy)"
+msgstr "Bonus (optional)"
+
+msgid "Bosh sahifa"
+msgstr "Home"
+
+msgid "Boshlagan sana"
+msgstr "Start date"
+
+msgid "Boshlangan sana"
+msgstr "Start date"
+
+msgid "Boshlanish sanasi"
+msgstr "Start date"
+
+msgid "Boshlanish vaqti"
+msgstr "Start time"
+
+msgid "Boshlash"
+msgstr "Start"
+
+msgid "Boshlash sanasi"
+msgstr "Start date"
+
+msgid "Boshqa"
+msgstr "Other"
+
+msgid "Boshqaruv"
+msgstr "Management"
+
+msgid "Boshqaruv paneliga qaytish"
+msgstr "Back to dashboard"
+
+msgid "Bosqich"
+msgstr "Level"
+
+msgid "Bosqich:"
+msgstr "Level:"
+
+msgid "Bu Oy Tushumlari"
+msgstr "Revenue This Month"
+
+msgid "Bu guruhda o'quvchi yo'q"
+msgstr "No students in this group"
+
+msgid "Bu hafta"
+msgstr "This week"
+
+msgid "Bu hujjat avtomatik yaratildi"
+msgstr "This document was generated automatically"
+
+msgid "Bu oy"
+msgstr "This month"
+
+msgid "Bu oy jami to'langan"
+msgstr "Total paid this month"
+
+msgid "Bu oy qo'shilgan"
+msgstr "Added this month"
+
+msgid "Bu oy to'lov tarixi yo'q"
+msgstr "No payment history this month"
+
+msgid "Bu oy tushum"
+msgstr "Revenue this month"
+
+msgid "Bu sessiyada hali javoblar yo'q"
+msgstr "No answers in this session yet"
+
+msgid "Bu sessiyada hali topshiriqlar yo'q. Ustoz avval Bug-find yoki Coding topshiriqlar yaratishi kerak."
+msgstr "There are no tasks in this session yet. The teacher must first create Bug-Find or Coding tasks."
+
+msgid "Bu so'rovni rad etasizmi?"
+msgstr "Reject this request?"
+
+msgid "Bu so'rovni tasdiqlaysizmi? Kumush va qoldiq darhol yangilanadi."
+msgstr "Approve this request? Kumush balance and stock will be updated immediately."
+
+msgid "Bu to'lov yozuvini o'chirishni tasdiqlaysizmi?"
+msgstr "Delete this payment record?"
+
+msgid "Bu topshiriq allaqachon yuborilgan"
+msgstr "This task has already been submitted"
+
+msgid "Bug-Find topshiriqlar"
+msgstr "Bug-Find tasks"
+
+msgid "Bug-find"
+msgstr "Bug-Find"
+
+msgid "Bug-find savollar soni"
+msgstr "Number of Bug-Find tasks"
+
+msgid "Bug-find topshiriq yaratildi ✓"
+msgstr "Bug-Find task created ✓"
+
+msgid "Bug-find topshiriqlar"
+msgstr "Bug-Find tasks"
+
+msgid "Bug-find topshiriqlar yo'q"
+msgstr "No Bug-Find tasks"
+
+msgid "Bugungi Davomat"
+msgstr "Today's Attendance"
+
+msgid "Bugungi davomat"
+msgstr "Today's attendance"
+
+msgid "Bugungi statistika"
+msgstr "Today's statistics"
+
+msgid "Bugungi tushum"
+msgstr "Today's revenue"
+
+msgid "Bugungi xatoliklar"
+msgstr "Today's errors"
+
+msgid "Buyum"
+msgstr "Item"
+
+msgid "Buyum nomi *"
+msgstr "Item name *"
+
+msgid "Buyum nomi yoki kategoriya..."
+msgstr "Item name or category..."
+
+msgid "Buyum nomini kiriting"
+msgstr "Enter the item name"
+
+msgid "Buyum qo'shildi"
+msgstr "Item added"
+
+msgid "Buyum qo'shish"
+msgstr "Add item"
+
+msgid "Buyum topilmadi"
+msgstr "Item not found"
+
+msgid "Buyumlar"
+msgstr "Items"
+
+msgid "Buyumni tahrirlash"
+msgstr "Edit item"
+
+msgid "Buyurtmalar"
+msgstr "Orders"
+
+msgid "Buzilgan"
+msgstr "Broken"
+
+msgid "C"
+msgstr "We"
+
+msgid "Ch"
+msgstr "We"
+
+msgid "Chek chop etish"
+msgstr "Print receipt"
+
+msgid "Chek topilmadi yoki ko'rish huquqingiz yo'q."
+msgstr "Receipt not found, or you don't have permission to view it."
+
+msgid "Cheklovlar"
+msgstr "Restrictions"
+
+msgid "Chiqdi"
+msgstr "Logged out"
+
+msgid "Chiqish"
+msgstr "Log out"
+
+msgid "Chop etilgan:"
+msgstr "Printed:"
+
+msgid "Chop etish"
+msgstr "Print"
+
+msgid "Chorshanba"
+msgstr "Wednesday"
+
+msgid "Coding"
+msgstr "Coding"
+
+msgid "Coding savollar soni"
+msgstr "Number of Coding tasks"
+
+msgid "Coding topshiriq yaratildi ✓"
+msgstr "Coding task created ✓"
+
+msgid "Coding topshiriqlar"
+msgstr "Coding tasks"
+
+msgid "Coding topshiriqlar yo'q"
+msgstr "No Coding tasks"
+
+msgid "D"
+msgstr "Mo"
+
+msgid "Daraja"
+msgstr "Level"
+
+msgid "Darajasi"
+msgstr "Level"
+
+msgid "Dars jadvali"
+msgstr "Class schedule"
+
+msgid "Dars jadvali mavjud emas"
+msgstr "No schedule available"
+
+msgid "Dars kunlari"
+msgstr "Class days"
+
+msgid "Dars o'tiladigan kunlarni va xonani belgilang:"
+msgstr "Specify the class days and room:"
+
+msgid "Dars sanasi"
+msgstr "Lesson date"
+
+msgid "Dars vaqti"
+msgstr "Class time"
+
+msgid "Darsga ishtirok bo'yicha"
+msgstr "For lesson participation"
+
+msgid "Dashboard"
+msgstr "Dashboard"
+
+msgid "Dashboard orqali har bir ko'rsatkichni kuzating"
+msgstr "Track every metric through the dashboard"
+
+msgid "Dasturchi — Avazbek"
+msgstr "Developer — Avazbek"
+
+msgid "Dasturlash tili"
+msgstr "Programming language"
+
+msgid "Davomat"
+msgstr "Attendance"
+
+msgid "Davomat %"
+msgstr "Attendance %"
+
+msgid "Davomat Tahlili"
+msgstr "Attendance Analysis"
+
+msgid "Davomat foizi"
+msgstr "Attendance rate"
+
+msgid "Davomat ma'lumoti topilmadi"
+msgstr "No attendance data found"
+
+msgid "Davomat saqlandi!"
+msgstr "Attendance saved!"
+
+msgid "Davomat, o'quvchilar, to'lovlar haqida so'rang."
+msgstr "Ask about attendance, students, payments."
+
+msgid "Davomatni belgilash va tarixni ko'rish"
+msgstr "Mark attendance and view history"
+
+msgid "Davr"
+msgstr "Period"
+
+msgid "Dekabr"
+msgstr "December"
+
+msgid "Do'kon"
+msgstr "Store"
+
+msgid "Do'kon boshqaruvi"
+msgstr "Store Management"
+
+msgid "Du"
+msgstr "Mo"
+
+msgid "Dushanba"
+msgstr "Monday"
+
+msgid "E'tiborsiz"
+msgstr "Ignored"
+
+msgid "E'tiborsiz qoldirildi"
+msgstr "Dismissed"
+
+msgid "ERP xatoliklari va AI suhbatlar tarixi (faqat dasturchi)"
+msgstr "ERP errors and AI chat history (developer only)"
+
+msgid "Ehtimoliy sabab"
+msgstr "Probable cause"
+
+msgid "Eksport xatoligi"
+msgstr "Export error"
+
+msgid "Email"
+msgstr "Email"
+
+msgid "Email zaxira kodi"
+msgstr "Email backup code"
+
+msgid "Endpoint"
+msgstr "Endpoint"
+
+msgid "Eng ko'p takrorlangan"
+msgstr "Most frequent"
+
+msgid "Eng yuqori daraja"
+msgstr "Highest level"
+
+msgid "Eslatma"
+msgstr "Reminder"
+
+msgid "Eslatma yuborish"
+msgstr "Send reminder"
+
+msgid "Excel yuklandi"
+msgstr "Excel file downloaded"
+
+msgid "Excel yuklash"
+msgstr "Export Excel"
+
+msgid "F.I.Sh."
+msgstr "Full name"
+
+msgid "Face ID muvaffaqiyatli o'rnatildi"
+msgstr "Face ID successfully set up"
+
+msgid "Face ID muvaffaqiyatli o'rnatildi ✓"
+msgstr "Face ID successfully set up ✓"
+
+msgid "Face ID o'rnatish"
+msgstr "Set up Face ID"
+
+msgid "Face ID: O'rnatilmagan"
+msgstr "Face ID: Not set up"
+
+msgid "Face ID: Yoqilgan"
+msgstr "Face ID: Enabled"
+
+msgid "Fan / Yo'nalish"
+msgstr "Subject / Field"
+
+msgid "Fan ko'rsatilmagan"
+msgstr "Subject not specified"
+
+msgid "Faol"
+msgstr "Active"
+
+msgid "Faol (do'konda ko'rinadi)"
+msgstr "Active (visible in store)"
+
+msgid "Faol O'quvchilar"
+msgstr "Active Students"
+
+msgid "Faol o'quvchilar"
+msgstr "Active students"
+
+msgid "Faol sessiyalar"
+msgstr "Active sessions"
+
+msgid "Faol vazifalar"
+msgstr "Active tasks"
+
+msgid "Faoliyat jurnali"
+msgstr "Activity Log"
+
+msgid "Faoliyatlar topilmadi"
+msgstr "No activity found"
+
+msgid "Faollashtirildi"
+msgstr "Activated"
+
+msgid "Faollashtirish"
+msgstr "Activate"
+
+msgid "Faqat sizga ruxsat berilgan ma'lumotlar ko'rsatiladi"
+msgstr "Only data you have access to is shown"
+
+msgid "Farzandlarim"
+msgstr "My Children"
+
+msgid "Farzandlaringizning o'qish holati"
+msgstr "Your children's academic progress"
+
+msgid "Fayl (ixtiyoriy)"
+msgstr "File (optional)"
+
+msgid "Fayl biriktirish (ixtiyoriy)"
+msgstr "Attach file (optional)"
+
+msgid "Faylni yuklab olish"
+msgstr "Download file"
+
+msgid "Fevral"
+msgstr "February"
+
+msgid "Foydalanuvchi"
+msgstr "User"
+
+msgid "Foydalanuvchi topilmadi"
+msgstr "User not found"
+
+msgid "Foydalanuvchi va barcha ma'lumotlari o'chiriladi!"
+msgstr "The user and all their data will be deleted!"
+
+msgid "Foydalanuvchi yaratildi"
+msgstr "User created"
+
+msgid "Foydalanuvchilar"
+msgstr "Users"
+
+msgid "Gamifikatsiya"
+msgstr "Gamification"
+
+msgid "Guruh"
+msgstr "Group"
+
+msgid "Guruh *"
+msgstr "Group *"
+
+msgid "Guruh bo'yicha"
+msgstr "By group"
+
+msgid "Guruh ma'lumotlari"
+msgstr "Group information"
+
+msgid "Guruh nomi"
+msgstr "Group name"
+
+msgid "Guruh nomi majburiy!"
+msgstr "Group name is required!"
+
+msgid "Guruh nomi..."
+msgstr "Group name..."
+
+msgid "Guruh o'chirildi"
+msgstr "Group deleted"
+
+msgid "Guruh o'zgartirildi"
+msgstr "Group changed"
+
+msgid "Guruh oylik to'lovi"
+msgstr "Group's monthly fee"
+
+msgid "Guruh qo'shildi"
+msgstr "Group added"
+
+msgid "Guruh tanlang"
+msgstr "Select a group"
+
+msgid "Guruh tanlash shart"
+msgstr "You must select a group"
+
+msgid "Guruh topilmadi"
+msgstr "Group not found"
+
+msgid "Guruh va sanani tanlang"
+msgstr "Select a group and date"
+
+msgid "Guruh — Qorako'l Ilm Ziyo"
+msgstr "Group — Qorako'l Ilm Ziyo"
+
+msgid "Guruh:"
+msgstr "Group:"
+
+msgid "Guruhda talaba yo'q"
+msgstr "No students in this group"
+
+msgid "Guruhga biriktirilmagan"
+msgstr "Not assigned to a group"
+
+msgid "Guruhga ommaviy to'lov"
+msgstr "Bulk payment for group"
+
+msgid "Guruhlar"
+msgstr "Groups"
+
+msgid "Guruhlar Bo'yicha Tahlil"
+msgstr "Analysis by Group"
+
+msgid "Guruhlar soni"
+msgstr "Number of groups"
+
+msgid "Guruhlar topilmadi"
+msgstr "No groups found"
+
+msgid "Guruhlarim"
+msgstr "My Groups"
+
+msgid "Guruhlarim — Qorako'l Ilm Ziyo"
+msgstr "My Groups — Qorako'l Ilm Ziyo"
+
+msgid "Guruhni o'chirishni tasdiqlaysizmi?"
+msgstr "Delete this group?"
+
+msgid "Guruhni o'zgartirish"
+msgstr "Change group"
+
+msgid "Guruhni tahrirlash"
+msgstr "Edit group"
+
+msgid "Guruhsiz"
+msgstr "No group"
+
+msgid "HOZIRCHA MAVJUD EMAS"
+msgstr "CURRENTLY UNAVAILABLE"
+
+msgid "Hafta kunlari"
+msgstr "Days of the week"
+
+msgid "Hal qilindi"
+msgstr "Resolved"
+
+msgid "Hali buyum qo'shilmagan"
+msgstr "No items added yet"
+
+msgid "Hali buyurtma yo'q"
+msgstr "No orders yet"
+
+msgid "Hali suhbat yo'q"
+msgstr "No conversations yet"
+
+msgid "Hali to'lanmagan"
+msgstr "Not yet paid"
+
+msgid "Hali xabarlar yo'q"
+msgstr "No messages yet"
+
+msgid "Hammasini o'qildi"
+msgstr "Mark all read"
+
+msgid "Havola"
+msgstr "Link"
+
+msgid "Havola nusxalandi: "
+msgstr "Link copied: "
+
+msgid "Hisobdan chiqarilgan"
+msgstr "Written off"
+
+msgid "Hisobdan chiqish"
+msgstr "Log out"
+
+msgid "Hisobingizga kiring davom etish uchun"
+msgstr "Log in to your account to continue"
+
+msgid "Hisobotlar"
+msgstr "Reports"
+
+msgid "Hisobotlar va to'lovlar avtomatik shakllanadi"
+msgstr "Reports and payments are generated automatically"
+
+msgid "Holat"
+msgstr "Status"
+
+msgid "Holati"
+msgstr "Status"
+
+msgid "Holati *"
+msgstr "Status *"
+
+msgid "Hozircha faol sessiya yo'q"
+msgstr "No active sessions yet"
+
+msgid "Hozircha mukofotlar mavjud emas"
+msgstr "No rewards available yet"
+
+msgid "Hozircha vazifa yo'q"
+msgstr "No tasks yet"
+
+msgid "Ichki xatolik: "
+msgstr "Internal error: "
+
+msgid "Iltimos, qayta urinib ko'ring"
+msgstr "Please try again"
+
+msgid "Imtihondan o'tish bo'yicha"
+msgstr "For passing an exam"
+
+msgid "Ish haqi"
+msgstr "Salary"
+
+msgid "Ish haqi (so'm)"
+msgstr "Salary (so'm)"
+
+msgid "Ish haqi to'landi"
+msgstr "Salary paid"
+
+msgid "Ish haqi to'lash"
+msgstr "Pay salary"
+
+msgid "Ism"
+msgstr "Name"
+
+msgid "Ism Familiya"
+msgstr "Full Name"
+
+msgid "Ism va telefon bo'sh bo'lmasligi kerak"
+msgstr "Name and phone cannot be empty"
+
+msgid "Ism yoki telefon qidiring..."
+msgstr "Search by name or phone..."
+
+msgid "Ism yoki telefon..."
+msgstr "Name or phone..."
+
+msgid "Ism, telefon va parol majburiy!"
+msgstr "Name, phone and password are required!"
+
+msgid "Ismingizni kiriting"
+msgstr "Enter your name"
+
+msgid "Iyul"
+msgstr "July"
+
+msgid "Iyun"
+msgstr "June"
+
+msgid "Izoh"
+msgstr "Note"
+
+msgid "Izoh (ixtiyoriy)"
+msgstr "Note (optional)"
+
+msgid "Izoh:"
+msgstr "Note:"
+
+msgid "J"
+msgstr "Fr"
+
+msgid "Jadval"
+msgstr "Schedule"
+
+msgid "Jadval saqlandi"
+msgstr "Schedule saved"
+
+msgid "Jadval tuzish"
+msgstr "Create schedule"
+
+msgid "Jadval yo'q"
+msgstr "No schedule"
+
+msgid "Jami"
+msgstr "Total"
+
+msgid "Jami Kumush"
+msgstr "Total Kumush"
+
+msgid "Jami O'quvchilar"
+msgstr "Total Students"
+
+msgid "Jami XP"
+msgstr "Total XP"
+
+msgid "Jami ball"
+msgstr "Total score"
+
+msgid "Jami buyum turlari"
+msgstr "Total item types"
+
+msgid "Jami buyumlar"
+msgstr "Total items"
+
+msgid "Jami dars kunlari"
+msgstr "Total class days"
+
+msgid "Jami ishtirokchilar"
+msgstr "Total participants"
+
+msgid "Jami o'quvchilar"
+msgstr "Total students"
+
+msgid "Jami oylar"
+msgstr "Total months"
+
+msgid "Jami qiymat"
+msgstr "Total value"
+
+msgid "Jami qiymat:"
+msgstr "Total value:"
+
+msgid "Jami sarflangan Kumush"
+msgstr "Total Kumush spent"
+
+msgid "Jami sessiyalar"
+msgstr "Total sessions"
+
+msgid "Jami summa"
+msgstr "Total amount"
+
+msgid "Jami to'langan"
+msgstr "Total paid"
+
+msgid "Jami vazifalar"
+msgstr "Total tasks"
+
+msgid "Jami xatoliklar"
+msgstr "Total errors"
+
+msgid "Jami yig'ilgan Kumushlar:"
+msgstr "Total Kumush earned:"
+
+msgid "Jami yig'ilgan XP:"
+msgstr "Total XP earned:"
+
+msgid "Jami:"
+msgstr "Total:"
+
+msgid "Javob"
+msgstr "Reply"
+
+msgid "Javob matni"
+msgstr "Answer text"
+
+msgid "Javob yoki fayl kiritish shart"
+msgstr "You must provide an answer or a file"
+
+msgid "Javob yozilmoqda..."
+msgstr "Writing a reply..."
+
+msgid "Javobingizni yozing..."
+msgstr "Write your answer..."
+
+msgid "Jiddiylik"
+msgstr "Severity"
+
+msgid "Joriy parol"
+msgstr "Current password"
+
+msgid "Joriy parolingiz"
+msgstr "Your current password"
+
+msgid "Ju"
+msgstr "Fr"
+
+msgid "Juma"
+msgstr "Friday"
+
+msgid "KUMUSH"
+msgstr "KUMUSH"
+
+msgid "Kamera ishga tushirilmoqda..."
+msgstr "Starting camera..."
+
+msgid "Kamera ishlamayapti — avval kameraga ruxsat bering"
+msgstr "Camera not working — please allow camera access first"
+
+msgid "Kamera ochilmadi: "
+msgstr "Could not open camera: "
+
+msgid "Kamera ochilmoqda..."
+msgstr "Opening camera..."
+
+msgid "Kameraga qarang va 'Rasmga olish' tugmasini bosing"
+msgstr "Look at the camera and press \"Capture\""
+
+msgid "Kameraga qarang va rasmga olish tugmasini bosing"
+msgstr "Look at the camera and press the capture button"
+
+msgid "Kamida 1 ta test varianti qo'shing"
+msgstr "Add at least one test case"
+
+msgid "Kamida 8 ta belgi"
+msgstr "At least 8 characters"
+
+msgid "Kartochka"
+msgstr "Card"
+
+msgid "Kategoriya"
+msgstr "Category"
+
+msgid "Kech"
+msgstr "Late"
+
+msgid "Kech keldi"
+msgstr "Late"
+
+msgid "Keldi"
+msgstr "Present"
+
+msgid "Keldi:"
+msgstr "Present:"
+
+msgid "Kelgan kunlar"
+msgstr "Days present"
+
+msgid "Kelmadi"
+msgstr "Absent"
+
+msgid "Kelmadi:"
+msgstr "Absent:"
+
+msgid "Kerak bo'lsa tahrirlash orqali qayta faollashtirish mumkin."
+msgstr "You can reactivate it later via edit if needed."
+
+msgid "Kerak bo'lsa tahrirlashda qayta faollashtirish mumkin."
+msgstr "You can reactivate it later via edit if needed."
+
+msgid "Keyingi bosqich"
+msgstr "Next level"
+
+msgid "Keyingi topshiriq..."
+msgstr "Next task..."
+
+msgid "Keyingi ›"
+msgstr "Next ›"
+
+msgid "Kim nimani o'zgartirdi — barcha amallar tarixi"
+msgstr "Who changed what — full activity history"
+
+msgid "Kim to'ladi"
+msgstr "Paid by"
+
+msgid "Kirdi"
+msgstr "Logged in"
+
+msgid "Kirish"
+msgstr "Log In"
+
+msgid "Kirish bo'sh bo'lsa stdin yo'q deb qabul qilinadi"
+msgstr "If input is left empty, it's treated as no stdin"
+
+msgid "Ko'rish"
+msgstr "View"
+
+msgid "Ko'rsatgichlarim"
+msgstr "My Stats"
+
+msgid "Kod o'xshashlik tekshiruvi"
+msgstr "Code similarity check"
+
+msgid "Kod topshiriqlari, sessiyalar va anti-cheat nazorati"
+msgstr "Code tasks, sessions and anti-cheat monitoring"
+
+msgid "Kod topshiriqlarini yeching, XP va ball to'plang"
+msgstr "Solve code tasks, earn XP and points"
+
+msgid "Kod yozish"
+msgstr "Write code"
+
+msgid "Kodlar taqqoslanmoqda..."
+msgstr "Comparing code..."
+
+msgid "Kodni tasdiqlash"
+msgstr "Verify code"
+
+msgid "Kritik"
+msgstr "Critical"
+
+msgid "Kritik xatoliklar"
+msgstr "Critical errors"
+
+msgid "Kumush"
+msgstr "Kumush"
+
+msgid "Kumushingiz yetarli emas."
+msgstr "You don't have enough Kumush."
+
+msgid "Kumushlar"
+msgstr "Kumush"
+
+msgid "Kumushlar:"
+msgstr "Kumush:"
+
+msgid "Kunduzgi rejim"
+msgstr "Light mode"
+
+msgid "Kunlik"
+msgstr "Daily"
+
+msgid "Kurs / Yo'nalish"
+msgstr "Course / Field"
+
+msgid "Kutilayotgan oylik daromad"
+msgstr "Expected monthly revenue"
+
+msgid "Kutilayotgan so'rovlar"
+msgstr "Pending requests"
+
+msgid "Kutilgan"
+msgstr "Expected"
+
+msgid "Kutilmoqda"
+msgstr "Pending"
+
+msgid "Kuzatishda"
+msgstr "Under review"
+
+msgid "Login yoki parolingizni unutgan bo'lsangiz,"
+msgstr "If you forgot your login or password,"
+
+msgid "MAVJUD EMAS"
+msgstr "UNAVAILABLE"
+
+msgid "MENING KUMUSHIM"
+msgstr "MY KUMUSH"
+
+msgid "Ma'lumot olinmadi"
+msgstr "No data received"
+
+msgid "Ma'lumot olinmoqda..."
+msgstr "Fetching data..."
+
+msgid "Ma'lumot topilmadi"
+msgstr "No data found"
+
+msgid "Ma'lumot yo'q"
+msgstr "No data"
+
+msgid "Ma'lumot yuklanmadi"
+msgstr "Data failed to load"
+
+msgid "Ma'lumotlar"
+msgstr "Details"
+
+msgid "Ma'lumotlar (ish haqi tarixi, guruhlar) saqlanib qoladi."
+msgstr "Data (salary history, groups) will be preserved."
+
+msgid "Ma'lumotlar (to'lovlar, davomat) saqlanib qoladi."
+msgstr "Data (payments, attendance) will be preserved."
+
+msgid "Ma'lumotlaringiz xalqaro standartlar asosida himoyalangan"
+msgstr "Your data is protected to international standards"
+
+msgid "Maksimal ball"
+msgstr "Maximum score"
+
+msgid "Manzil"
+msgstr "Address"
+
+msgid "Maosh:"
+msgstr "Salary:"
+
+msgid "Markaz buyumlari"
+msgstr "Center Assets"
+
+msgid "Markaz xarajatlari"
+msgstr "Center expenses"
+
+msgid "Mart"
+msgstr "March"
+
+msgid "Masala sarlavhasi *"
+msgstr "Problem title *"
+
+msgid "Masala sarlavhasini kiriting"
+msgstr "Enter the problem title"
+
+msgid "Masala sharti *"
+msgstr "Problem statement *"
+
+msgid "Masala shartini kiriting"
+msgstr "Enter the problem statement"
+
+msgid "Masalan: 1-bob mashqlari"
+msgstr "e.g. Chapter 1 exercises"
+
+msgid "Masalan: 2-bob mashqlar"
+msgstr "e.g. Chapter 2 exercises"
+
+msgid "Masalan: 3-hafta Bug-Find sinovi"
+msgstr "e.g. Week 3 Bug-Find test"
+
+msgid "Masalan: Ikki sonning yig'indisi"
+msgstr "e.g. Sum of two numbers"
+
+msgid "Masalan: Mebel"
+msgstr "e.g. Furniture"
+
+msgid "Masalan: Quloqchin"
+msgstr "e.g. Headphones"
+
+msgid "Masalan: Ro'yxat indeksi xatosi"
+msgstr "e.g. List index error"
+
+msgid "Masalan: Stul"
+msgstr "e.g. Chair"
+
+msgid "Maslahat ko'rish (-2 ball)"
+msgstr "View hint (-2 points)"
+
+msgid "Maslahat olsangiz ball -2 ga kamayadi. Davom etasizmi?"
+msgstr "Taking a hint will reduce your score by 2. Continue?"
+
+msgid "Mavjud emas"
+msgstr "Unavailable"
+
+msgid "Mavzu"
+msgstr "Topic"
+
+msgid "Mavzu (sarlavha)"
+msgstr "Topic (title)"
+
+msgid "Mavzuni kiriting"
+msgstr "Enter the topic"
+
+msgid "Max ball"
+msgstr "Max score"
+
+msgid "May"
+msgstr "May"
+
+msgid "Mebel, jihoz va boshqa mulklarni hisobga olish"
+msgstr "Track furniture, equipment and other assets"
+
+msgid "Men"
+msgstr "Me"
+
+msgid "Men biometrik ma'lumotlarim (yuz tasviri) Qorako'l Ilm Ziyo tizimida xavfsiz saqlanishiga roziman.\n        Ma'lumotlar O'zbekiston shaxsiy ma'lumotlar to'g'risidagi qonuniga muvofiq himoyalanadi."
+msgstr "I consent to my biometric data (facial image) being securely stored in the Qorako'l Ilm Ziyo system.\n        Data is protected in accordance with the Law of the Republic of Uzbekistan \"On Personal Data\"."
+
+msgid "Mening"
+msgstr "Mine"
+
+msgid "Mening buyurtmalarim"
+msgstr "My orders"
+
+msgid "Mening dars guruhlarim"
+msgstr "My study groups"
+
+msgid "Mening guruhlarim"
+msgstr "My groups"
+
+msgid "Mening natijalarim"
+msgstr "My results"
+
+msgid "Mening o'rnim"
+msgstr "My rank"
+
+msgid "Mening profilim"
+msgstr "My profile"
+
+msgid "Mening sahifam"
+msgstr "My Page"
+
+msgid "Mening topshirishim"
+msgstr "My submission"
+
+msgid "Minimal 8 belgi"
+msgstr "Minimum 8 characters"
+
+msgid "Minimal 8 ta belgi"
+msgstr "Minimum 8 characters"
+
+msgid "Moliya"
+msgstr "Finance"
+
+msgid "Moliya paneli"
+msgstr "Finance Panel"
+
+msgid "Moliyachi"
+msgstr "Finance"
+
+msgid "Moliyaviy Ko'rsatkichlar"
+msgstr "Financial Metrics"
+
+msgid "Moliyaviy natija (naqd asosida)"
+msgstr "Financial Result (cash basis)"
+
+msgid "Moliyaviy va davomat tahlili"
+msgstr "Finance and attendance analysis"
+
+msgid "Muammo yoki savolingizni yozing..."
+msgstr "Describe your issue or question..."
+
+msgid "Muammo yoki savollaringizni yuboring — Avazbek tez javob beradi!"
+msgstr "Send your issue or question — Avazbek replies quickly!"
+
+msgid "Muddat kiritish shart"
+msgstr "You must specify a deadline"
+
+msgid "Muddat:"
+msgstr "Deadline:"
+
+msgid "Muddati o'tgan"
+msgstr "Overdue"
+
+msgid "Mukofotlar"
+msgstr "Rewards"
+
+msgid "Mukofotlar va xarid so'rovlarini boshqarish"
+msgstr "Manage rewards and purchase requests"
+
+msgid "Mulklar"
+msgstr "Assets"
+
+msgid "Mulklar umumiy qiymati"
+msgstr "Total asset value"
+
+msgid "Mumkin bo'lgan yon ta'sirlar"
+msgstr "Possible side effects"
+
+msgid "Mutaxassislik"
+msgstr "Specialization"
+
+msgid "Muvaffaqiyatli! Tizimga kirilmoqda..."
+msgstr "Success! Logging you in..."
+
+msgid "Namuna chiqish"
+msgstr "Sample output"
+
+msgid "Namuna kirish"
+msgstr "Sample input"
+
+msgid "Narx kamida 1 KUMUSH bo'lishi kerak"
+msgstr "Price must be at least 1 KUMUSH"
+
+msgid "Narx manfiy bo'lishi mumkin emas"
+msgstr "Price cannot be negative"
+
+msgid "Narxi"
+msgstr "Price"
+
+msgid "Narxi (KUMUSH) *"
+msgstr "Price (KUMUSH) *"
+
+msgid "Natijalar"
+msgstr "Results"
+
+msgid "Natijalar ma'lumotlari topilmadi."
+msgstr "No results data found."
+
+msgid "Natijalarni ko'rish uchun sessiya tanlang"
+msgstr "Select a session to view results"
+
+msgid "Nofaol"
+msgstr "Inactive"
+
+msgid "Nofaol qilindi"
+msgstr "Deactivated"
+
+msgid "Nofaol qilish"
+msgstr "Deactivate"
+
+msgid "Nomalum"
+msgstr "Unknown"
+
+msgid "Nomi"
+msgstr "Name"
+
+msgid "Nomi *"
+msgstr "Name *"
+
+msgid "Nomi kiritish shart"
+msgstr "You must provide a name"
+
+msgid "Nomsiz"
+msgstr "Untitled"
+
+msgid "Nomsiz suhbat"
+msgstr "Untitled conversation"
+
+msgid "Noto'g'ri"
+msgstr "Incorrect"
+
+msgid "Noto'g'ri OTP kod"
+msgstr "Incorrect OTP code"
+
+msgid "Noyabr"
+msgstr "November"
+
+msgid "Nusxa yaratish"
+msgstr "Duplicate"
+
+msgid "Nusxa:"
+msgstr "Copy:"
+
+msgid "O'chirib bo'lmadi"
+msgstr "Could not delete"
+
+msgid "O'chirildi"
+msgstr "Deleted"
+
+msgid "O'chirish"
+msgstr "Delete"
+
+msgid "O'qituvchi"
+msgstr "Teacher"
+
+msgid "O'qituvchi *"
+msgstr "Teacher *"
+
+msgid "O'qituvchi belgilanmagan"
+msgstr "No teacher assigned"
+
+msgid "O'qituvchi izohi..."
+msgstr "Teacher's comment..."
+
+msgid "O'qituvchi nofaol qilindi"
+msgstr "Teacher deactivated"
+
+msgid "O'qituvchi qo'shildi"
+msgstr "Teacher added"
+
+msgid "O'qituvchi topilmadi"
+msgstr "Teacher not found"
+
+msgid "O'qituvchi:"
+msgstr "Teacher:"
+
+msgid "O'qituvchilar"
+msgstr "Teachers"
+
+msgid "O'qituvchilar ish haqi"
+msgstr "Teacher salaries"
+
+msgid "O'qituvchilar va ularning guruhlari"
+msgstr "Teachers and their groups"
+
+msgid "O'qituvchini tahrirlash"
+msgstr "Edit teacher"
+
+msgid "O'qituvchini tanlang"
+msgstr "Select a teacher"
+
+msgid "O'quv"
+msgstr "Study"
+
+msgid "O'quv markazi uchun zamonaviy boshqaruv tizimi. Bepul kirish."
+msgstr "A modern management system for learning centers. Free access."
+
+msgid "O'quvchi"
+msgstr "Student"
+
+msgid "O'quvchi ismi..."
+msgstr "Student's name..."
+
+msgid "O'quvchi javobi:"
+msgstr "Student's answer:"
+
+msgid "O'quvchi kartochkasi"
+msgstr "Student card"
+
+msgid "O'quvchi nofaol qilindi"
+msgstr "Student deactivated"
+
+msgid "O'quvchi qo'shildi"
+msgstr "Student added"
+
+msgid "O'quvchi tanlanmagan"
+msgstr "No student selected"
+
+msgid "O'quvchi topilmadi"
+msgstr "Student not found"
+
+msgid "O'quvchi:"
+msgstr "Student:"
+
+msgid "O'quvchilar"
+msgstr "Students"
+
+msgid "O'quvchilar Reytingi"
+msgstr "Student Leaderboard"
+
+msgid "O'quvchilar o'sishi"
+msgstr "Student growth"
+
+msgid "O'quvchilar ro'yxati"
+msgstr "Student list"
+
+msgid "O'quvchilar soni"
+msgstr "Number of students"
+
+msgid "O'quvchilar, jadvallar va to'lovlarni bitta tizimda ishonch bilan nazorat qiling. Barchasi sizning qulayligingiz uchun."
+msgstr "Confidently track students, schedules and payments in one system. Everything for your convenience."
+
+msgid "O'quvchini tahrirlash"
+msgstr "Edit student"
+
+msgid "O'quvchini tanlang"
+msgstr "Select a student"
+
+msgid "O'rnatish"
+msgstr "Install"
+
+msgid "O'rningiz"
+msgstr "Your rank"
+
+msgid "O'rta"
+msgstr "Medium"
+
+msgid "O'rtacha XP"
+msgstr "Average XP"
+
+msgid "O'rtacha ball"
+msgstr "Average score"
+
+msgid "O'rtacha davomat"
+msgstr "Average attendance"
+
+msgid "O'xshash javoblar topilmadi."
+msgstr "No similar answers found."
+
+msgid "O'xshash javoblar topilmadi. {count} ta javob tekshirildi."
+msgstr "No similar answers found. {count} answers checked."
+
+msgid "O'zgarishlar"
+msgstr "Changes"
+
+msgid "O'zgarishlar yo'q"
+msgstr "No changes"
+
+msgid "O'zgartirish"
+msgstr "Change"
+
+msgid "O'zgartirishlar saqlandi"
+msgstr "Changes saved"
+
+msgid "O'zlashtirish"
+msgstr "Mastery"
+
+msgid "OTP kod emailingizga yuborildi. Kodni kiriting:"
+msgstr "An OTP code has been sent to your email. Enter the code:"
+
+msgid "OTP kod yuborilmoqda..."
+msgstr "Sending OTP code..."
+
+msgid "OTP tasdiqlandi! Tizimga kirilmoqda..."
+msgstr "OTP verified! Logging you in..."
+
+msgid "OTP yuborishda xatolik"
+msgstr "Failed to send OTP"
+
+msgid "Obyekt"
+msgstr "Object"
+
+msgid "Ochiq"
+msgstr "Open"
+
+msgid "Oktabr"
+msgstr "October"
+
+msgid "Oldingizdan {diff} XP farq"
+msgstr "{diff} XP behind the rank above you"
+
+msgid "Olingan"
+msgstr "Received"
+
+msgid "Ommaviy"
+msgstr "Bulk"
+
+msgid "Ommaviy to'lov"
+msgstr "Bulk payment"
+
+msgid "Ommaviy to'lov qabul"
+msgstr "Accept bulk payment"
+
+msgid "Orqaga"
+msgstr "Back"
+
+msgid "Oson"
+msgstr "Easy"
+
+msgid "Ota-ona"
+msgstr "Parent"
+
+msgid "Ota-ona akkaunt"
+msgstr "Parent account"
+
+msgid "Ota-ona akkaunt yaratildi:"
+msgstr "Parent account created:"
+
+msgid "Ota-ona akkaunt yaratish"
+msgstr "Create parent account"
+
+msgid "Ota-ona ismi"
+msgstr "Parent's name"
+
+msgid "Ota-ona portali"
+msgstr "Parent Portal"
+
+msgid "Ota-ona portali — Qorako'l Ilm Ziyo"
+msgstr "Parent Portal — Qorako'l Ilm Ziyo"
+
+msgid "Ota-ona tel"
+msgstr "Parent phone"
+
+msgid "Ota-ona telefon"
+msgstr "Parent phone"
+
+msgid "Ota-ona telefoni"
+msgstr "Parent's phone"
+
+msgid "Ota-ona uchun yangi akkaunt yarating. U <b>/parent/</b> sahifasida farzandini kuzata oladi."
+msgstr "Create a new account for the parent. They'll be able to track their child on the <b>/parent/</b> page."
+
+msgid "Oxirgi"
+msgstr "Last"
+
+msgid "Oxirgi darslar"
+msgstr "Recent lessons"
+
+msgid "Oxirgi yozuvlar"
+msgstr "Recent records"
+
+msgid "Oy"
+msgstr "Month"
+
+msgid "Oy *"
+msgstr "Month *"
+
+msgid "Oy / Yil"
+msgstr "Month / Year"
+
+msgid "Oy/Yil"
+msgstr "Month/Year"
+
+msgid "Oylar bo'yicha foizi"
+msgstr "Percentage by month"
+
+msgid "Oylar bo'yicha yangi o'quvchilar"
+msgstr "New students by month"
+
+msgid "Oylik ish haqi to'lovlarini boshqarish"
+msgstr "Manage monthly salary payments"
+
+msgid "Oylik qabul qilingan mablag'"
+msgstr "Funds received this month"
+
+msgid "Oylik to'lov"
+msgstr "Monthly fee"
+
+msgid "Oylik to'lov (so'm)"
+msgstr "Monthly fee (so'm)"
+
+msgid "Oylik to'lovlar tarixi"
+msgstr "Monthly payment history"
+
+msgid "Oylik to'lovlarni boshqarish"
+msgstr "Manage monthly payments"
+
+msgid "P"
+msgstr "Th"
+
+msgid "PDF Hisobot"
+msgstr "PDF Report"
+
+msgid "PDF xatoligi"
+msgstr "PDF error"
+
+msgid "PDF yuklab olish"
+msgstr "Download PDF"
+
+msgid "PDF yuklandi"
+msgstr "PDF downloaded"
+
+msgid "PDF yuklash"
+msgstr "Download PDF"
+
+msgid "Pa"
+msgstr "Th"
+
+msgid "Parol"
+msgstr "Password"
+
+msgid "Parol bilan qayta kirish"
+msgstr "Log in with password instead"
+
+msgid "Parol kamida 8 ta belgi bo'lishi kerak"
+msgstr "Password must be at least 8 characters"
+
+msgid "Parol muvaffaqiyatli yangilandi"
+msgstr "Password updated successfully"
+
+msgid "Parolingizni kiriting"
+msgstr "Enter your password"
+
+msgid "Parolni o'zgartirish"
+msgstr "Change password"
+
+msgid "Parolni qaytaring"
+msgstr "Repeat password"
+
+msgid "Parolni yangilash"
+msgstr "Update password"
+
+msgid "Past"
+msgstr "Low"
+
+msgid "Payshanba"
+msgstr "Thursday"
+
+msgid "Plagiat"
+msgstr "Plagiarism"
+
+msgid "Plagiat juftlari"
+msgstr "Plagiarism pairs"
+
+msgid "Profil"
+msgstr "Profile"
+
+msgid "Profil muvaffaqiyatli yangilandi"
+msgstr "Profile updated successfully"
+
+msgid "Profil — Qorako'l Ilm Ziyo"
+msgstr "Profile — Qorako'l Ilm Ziyo"
+
+msgid "Profilim"
+msgstr "My Profile"
+
+msgid "Profilni tahrirlash"
+msgstr "Edit profile"
+
+msgid "Qabul qildi"
+msgstr "Received by"
+
+msgid "Qabul qilingan (shu oy hisobi)"
+msgstr "Received (this month)"
+
+msgid "Qabul qilish"
+msgstr "Accept"
+
+msgid "Qarz"
+msgstr "Debt"
+
+msgid "Qarz (shu oy)"
+msgstr "Debt (this month)"
+
+msgid "Qarz (so'm)"
+msgstr "Debt (so'm)"
+
+msgid "Qarz:"
+msgstr "Debt:"
+
+msgid "Qarzdor O'quvchilar"
+msgstr "Students in Debt"
+
+msgid "Qatnashgansiz"
+msgstr "You already participated"
+
+msgid "Qator raqami"
+msgstr "Line number"
+
+msgid "Qayta tekshirish"
+msgstr "Recheck"
+
+msgid "Qidirish..."
+msgstr "Search..."
+
+msgid "Qisman"
+msgstr "Partial"
+
+msgid "Qisman to'lagan"
+msgstr "Partially paid"
+
+msgid "Qisman to'langan"
+msgstr "Partially paid"
+
+msgid "Qisqacha tavsif..."
+msgstr "Brief description..."
+
+msgid "Qiyin"
+msgstr "Hard"
+
+msgid "Qiyinlik"
+msgstr "Difficulty"
+
+msgid "Qo'ng'iroq"
+msgstr "Call"
+
+msgid "Qo'shilgan"
+msgstr "Joined"
+
+msgid "Qo'shilgan sana"
+msgstr "Date joined"
+
+msgid "Qo'shimcha izoh..."
+msgstr "Additional note..."
+
+msgid "Qo'shimcha izohlar..."
+msgstr "Additional comments..."
+
+msgid "Qo'shimcha ma'lumot..."
+msgstr "Additional info..."
+
+msgid "Qoldiq"
+msgstr "Stock"
+
+msgid "Qoldiq (stock) *"
+msgstr "Stock *"
+
+msgid "Qoldiq manfiy bo'lishi mumkin emas"
+msgstr "Stock cannot be negative"
+
+msgid "Qoldiq:"
+msgstr "Stock:"
+
+msgid "Qolgan qarz"
+msgstr "Remaining debt"
+
+msgid "Qolgan vaqt"
+msgstr "Time remaining"
+
+msgid "Qorako'l Ilm Ziyo telefoningizga o'rnatildi!"
+msgstr "Qorako'l Ilm Ziyo has been installed on your phone!"
+
+msgid "Qorako'l Ilm Ziyo — O'quv markazi boshqaruv tizimi"
+msgstr "Qorako'l Ilm Ziyo — Learning Center Management System"
+
+msgid "Qorako'l Ilm Ziyo — o'quv markazi uchun zamonaviy boshqaruv tizimi. O'quvchilar, o'qituvchilar, to'lovlar va guruhlarni oson boshqaring."
+msgstr "Qorako'l Ilm Ziyo — a modern management system for learning centers. Easily manage students, teachers, payments and groups."
+
+msgid "Qoralama"
+msgstr "Draft"
+
+msgid "Rad etildi"
+msgstr "Rejected"
+
+msgid "Rad etish"
+msgstr "Reject"
+
+msgid "Rad etish sababi (ixtiyoriy):"
+msgstr "Rejection reason (optional):"
+
+msgid "Rasm"
+msgstr "Image"
+
+msgid "Rasm olib tashlandi"
+msgstr "Image removed"
+
+msgid "Rasm tanlandi. Rozilikni belgilab \"Saqlash\"ni bosing."
+msgstr "Image selected. Check consent and press \"Save\"."
+
+msgid "Rasmga olish"
+msgstr "Capture"
+
+msgid "Rasmni o'qib bo'lmadi, boshqa fayl tanlang"
+msgstr "Could not read the image, please choose another file"
+
+msgid "Rasmni olib tashlash"
+msgstr "Remove image"
+
+msgid "Rasmni olib tashlaysizmi?"
+msgstr "Remove the image?"
+
+msgid "Real-vaqt Tahlil"
+msgstr "Real-time Analytics"
+
+msgid "Reyting"
+msgstr "Leaderboard"
+
+msgid "Reyting ma'lumoti yo'q"
+msgstr "No leaderboard data"
+
+msgid "Reyting o'rni"
+msgstr "Leaderboard rank"
+
+msgid "Reyting topilmadi"
+msgstr "Leaderboard not found"
+
+msgid "Reyting — Qorako'l Ilm Ziyo"
+msgstr "Leaderboard — Qorako'l Ilm Ziyo"
+
+msgid "Rol"
+msgstr "Role"
+
+msgid "Rozilikni belgilang"
+msgstr "Please check the consent box"
+
+msgid "Ruxsat yo'q"
+msgstr "No permission"
+
+msgid "SOTIB OLISH"
+msgstr "BUY"
+
+msgid "Sabab:"
+msgstr "Reason:"
+
+msgid "Sababli"
+msgstr "Excused"
+
+msgid "Sahifa"
+msgstr "Page"
+
+msgid "Sahifani qayta yuklash yoki sessiyani boshidan boshlash kerak bo'lishi mumkin."
+msgstr "You may need to reload the page or restart the session."
+
+msgid "Salom! Men <strong>Ziyo AI</strong> — ta'lim markazi yordamchisiman."
+msgstr "Hi! I'm <strong>Ziyo AI</strong> — your learning center assistant."
+
+msgid "Sana"
+msgstr "Date"
+
+msgid "Saqlandi"
+msgstr "Saved"
+
+msgid "Saqlash"
+msgstr "Save"
+
+msgid "Sarlavha"
+msgstr "Title"
+
+msgid "Sarlavha *"
+msgstr "Title *"
+
+msgid "Sarlavha kiritish shart"
+msgstr "You must provide a title"
+
+msgid "Savol bering..."
+msgstr "Ask a question..."
+
+msgid "Se"
+msgstr "Tu"
+
+msgid "Sentabr"
+msgstr "September"
+
+msgid "Server bilan bog'lanishda xatolik"
+msgstr "Error connecting to the server"
+
+msgid "Server bilan bog'lanishda xatolik. Qayta urinib ko'ring."
+msgstr "Error connecting to the server. Please try again."
+
+msgid "Server bilan bog'lanishda xatolik: "
+msgstr "Error connecting to the server: "
+
+msgid "Server javob bermadi (req null qaytardi)"
+msgstr "Server did not respond (req returned null)"
+
+msgid "Server xatoligi"
+msgstr "Server error"
+
+msgid "Server xatosi"
+msgstr "Server error"
+
+msgid "Seshanba"
+msgstr "Tuesday"
+
+msgid "Sessiya"
+msgstr "Session"
+
+msgid "Sessiya aktivlashtirildi"
+msgstr "Session activated"
+
+msgid "Sessiya natijalari"
+msgstr "Session results"
+
+msgid "Sessiya topilmadi yoki hali aktivlashtirilmagan. Ustozingizdan sessiya havolasini so'rang."
+msgstr "Session not found or not yet activated. Ask your teacher for the session link."
+
+msgid "Sessiya topilmadi yoki ruxsat yo'q. Ehtimol guruh sizga tegishli emas."
+msgstr "Session not found or access denied. This group may not belong to you."
+
+msgid "Sessiya yakunlanadi."
+msgstr "The session will end."
+
+msgid "Sessiya yaratildi"
+msgstr "Session created"
+
+msgid "Sessiyalar"
+msgstr "Sessions"
+
+msgid "Sessiyalar yo'q"
+msgstr "No sessions"
+
+msgid "Sh"
+msgstr "Sa"
+
+msgid "Shanba"
+msgstr "Saturday"
+
+msgid "Shaxsiy ma'lumotlar"
+msgstr "Personal information"
+
+msgid "Shu hafta"
+msgstr "This week"
+
+msgid "Shubha bali"
+msgstr "Suspicion score"
+
+msgid "Shubha darajasi"
+msgstr "Suspicion level"
+
+msgid "Shubhali"
+msgstr "Suspicious"
+
+msgid "Shubhali faollik"
+msgstr "Suspicious activity"
+
+msgid "Shubhali faollik topilmadi ✅"
+msgstr "No suspicious activity found ✅"
+
+msgid "Shubhali javoblar"
+msgstr "Suspicious answers"
+
+msgid "Sig'im"
+msgstr "Capacity"
+
+msgid "Sig'im (max o'quvchilar)"
+msgstr "Capacity (max students)"
+
+msgid "Siz faqat xabarlarni o'qiy olasiz"
+msgstr "You can only read messages"
+
+msgid "Sizning akkauntingizga hech qanday o'quvchi biriktirilmagan."
+msgstr "No students are linked to your account."
+
+msgid "So'nggi to'lovlar"
+msgstr "Recent payments"
+
+msgid "So'rov yuborildi, admin tasdiqlashini kuting"
+msgstr "Request sent, awaiting admin approval"
+
+msgid "So'rovlar yo'q"
+msgstr "No requests"
+
+msgid "Sof natija"
+msgstr "Net result"
+
+msgid "Soni"
+msgstr "Quantity"
+
+msgid "Soni *"
+msgstr "Quantity *"
+
+msgid "Soni kamida 1 bo'lishi kerak"
+msgstr "Quantity must be at least 1"
+
+msgid "Sotib olingan sana"
+msgstr "Purchase date"
+
+msgid "Sotilgan"
+msgstr "Sold"
+
+msgid "Sozlamalar"
+msgstr "Settings"
+
+msgid "Statistika"
+msgstr "Statistics"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Status yangilandi"
+msgstr "Status updated"
+
+msgid "Suhbat"
+msgstr "Conversation"
+
+msgid "Summani kiriting"
+msgstr "Enter the amount"
+
+msgid "Ta'lim markazi boshqaruv tizimi"
+msgstr "Learning Center Management System"
+
+msgid "Ta'lim markazini"
+msgstr "Manage your learning center"
+
+msgid "Ta'mir/Buzilgan"
+msgstr "Repair/Broken"
+
+msgid "Ta'mirlash kerak"
+msgstr "Needs repair"
+
+msgid "Ta'sirlangan foydalanuvchilar"
+msgstr "Affected users"
+
+msgid "Ta'sirlangan modul"
+msgstr "Affected module"
+
+msgid "Tab almashtirishlar chegarasiga yetdingiz"
+msgstr "You've reached the tab-switch limit"
+
+msgid "Tab almashtirishlar chegarasiga yetdingiz ({limit} ta). Sessiya yakunlanadi."
+msgstr "You've reached the tab-switch limit ({limit}). The session will end."
+
+msgid "Tafsilot"
+msgstr "Details"
+
+msgid "Tahlil"
+msgstr "Analytics"
+
+msgid "Tahlil qilinmoqda..."
+msgstr "Analyzing..."
+
+msgid "Tahrirlash"
+msgstr "Edit"
+
+msgid "Takrorlanish"
+msgstr "Recurrence"
+
+msgid "Takrorlash qadamlari"
+msgstr "Steps to reproduce"
+
+msgid "Talaba"
+msgstr "Student"
+
+msgid "Talabaga ko'rsatiladigan masala matni..."
+msgstr "Problem text shown to the student..."
+
+msgid "Talabalar"
+msgstr "Students"
+
+msgid "Tanlagan qator"
+msgstr "Selected line"
+
+msgid "Tanlanganlarga saqlash"
+msgstr "Save for selected"
+
+msgid "Tarix yo'q"
+msgstr "No history"
+
+msgid "Tarmoq xatoligi"
+msgstr "Network error"
+
+msgid "Tarmoq xatosi yuz berdi. Iltimos, qayta urinib ko'ring."
+msgstr "A network error occurred. Please try again."
+
+msgid "Tasdiqlandi"
+msgstr "Approved"
+
+msgid "Tasdiqlangan / Berildi"
+msgstr "Approved / Given"
+
+msgid "Tasdiqlash"
+msgstr "Approve"
+
+msgid "Tasvir sifati yaxshi. Rozilikni belgilab \"Saqlash\"ni bosing."
+msgstr "Image quality is good. Check consent and press \"Save\"."
+
+msgid "Tavsif"
+msgstr "Description"
+
+msgid "Tavsif (ixtiyoriy)"
+msgstr "Description (optional)"
+
+msgid "Tavsiya etilgan tuzatish"
+msgstr "Suggested fix"
+
+msgid "Tayyor"
+msgstr "Ready"
+
+msgid "Tekshirilmoqda"
+msgstr "Under investigation"
+
+msgid "Tekshirilmoqda..."
+msgstr "Verifying..."
+
+msgid "Tekshirilmoqda... (rasm yuborilmoqda, biroz kutib turing)"
+msgstr "Checking... (uploading image, please wait)"
+
+msgid "Tekshirish uchun yuqoridagi tugmani bosing"
+msgstr "Press the button above to start the check"
+
+msgid "Tekshirishda xatolik yuz berdi"
+msgstr "An error occurred while checking"
+
+msgid "Tekshirishni boshlash"
+msgstr "Start check"
+
+msgid "Telefon"
+msgstr "Phone"
+
+msgid "Telefon raqam"
+msgstr "Phone number"
+
+msgid "Telefon raqam kiriting"
+msgstr "Enter the phone number"
+
+msgid "Telefon yoki parol noto'g'ri"
+msgstr "Incorrect phone or password"
+
+msgid "Telefon/rasm orqali tanlash (kamera xira bo'lsa)"
+msgstr "Choose via phone/file (if camera is blurry)"
+
+msgid "Telefoningizga o'rnating"
+msgstr "Install on your phone"
+
+msgid "Test"
+msgstr "Test"
+
+msgid "Test qo'shish"
+msgstr "Add test"
+
+msgid "Test tavsiyalari"
+msgstr "Test recommendations"
+
+msgid "Test variantlari *"
+msgstr "Test cases *"
+
+msgid "Tezkor:"
+msgstr "Quick:"
+
+msgid "Til"
+msgstr "Language"
+
+msgid "Tilni tanlang"
+msgstr "Select language"
+
+msgid "Tizim"
+msgstr "System"
+
+msgid "Tizim administratori"
+msgstr "System administrator"
+
+msgid "Tizim barqaror ishlamoqda"
+msgstr "System running smoothly"
+
+msgid "Tizim foydalanuvchilari va ularning rollari"
+msgstr "System users and their roles"
+
+msgid "Tizimdan chiqish"
+msgstr "Log out"
+
+msgid "Tizimga kiring"
+msgstr "Please log in"
+
+msgid "Tizimga kirish talab qilinadi."
+msgstr "Login required."
+
+msgid "To'g'ri"
+msgstr "Correct"
+
+msgid "To'g'ri kod *"
+msgstr "Correct code *"
+
+msgid "To'g'ri qator"
+msgstr "Correct line"
+
+msgid "To'g'ri qator:"
+msgstr "Correct line:"
+
+msgid "To'lamagan"
+msgstr "Hasn't paid"
+
+msgid "To'lamagan o'quvchilar"
+msgstr "Students who haven't paid"
+
+msgid "To'langan"
+msgstr "Paid"
+
+msgid "To'langan summa"
+msgstr "Amount paid"
+
+msgid "To'langan va qarz taqqoslama"
+msgstr "Paid vs. debt comparison"
+
+msgid "To'langan va qarz trend"
+msgstr "Paid vs. debt trend"
+
+msgid "To'lanmagan"
+msgstr "Unpaid"
+
+msgid "To'lash"
+msgstr "Pay"
+
+msgid "To'liq ism"
+msgstr "Full name"
+
+msgid "To'liq ro'yxat"
+msgstr "Full list"
+
+msgid "To'liq to'lagan o'quvchi"
+msgstr "Fully-paid student"
+
+msgid "To'liq to'langan"
+msgstr "Fully paid"
+
+msgid "To'lov"
+msgstr "Payment"
+
+msgid "To'lov cheki"
+msgstr "Payment Receipt"
+
+msgid "To'lov cheki / Payment Receipt"
+msgstr "Payment Receipt"
+
+msgid "To'lov olgan o'qituvchilar"
+msgstr "Teachers paid"
+
+msgid "To'lov qabul"
+msgstr "Accept payment"
+
+msgid "To'lov qabul qilindi"
+msgstr "Payment accepted"
+
+msgid "To'lov qabul qilish"
+msgstr "Accept Payment"
+
+msgid "To'lov summasi"
+msgstr "Payment amount"
+
+msgid "To'lov summasi (so'm)"
+msgstr "Payment amount (so'm)"
+
+msgid "To'lov tarixi"
+msgstr "Payment history"
+
+msgid "To'lov turi"
+msgstr "Payment type"
+
+msgid "To'lov yozuvi topilmadi"
+msgstr "No payment records found"
+
+msgid "To'lovlar"
+msgstr "Payments"
+
+msgid "To'lovlar holati"
+msgstr "Payment status"
+
+msgid "To'lovlarim"
+msgstr "My Payments"
+
+msgid "To'xtatilgan"
+msgstr "Suspended"
+
+msgid "Token muddati tugagan"
+msgstr "Token has expired"
+
+msgid "Token muddati tugagan, qayta kiring"
+msgstr "Token expired, please log in again"
+
+msgid "Top 3 o'quvchi"
+msgstr "Top 3 Students"
+
+msgid "Top Guruhlar"
+msgstr "Top Groups"
+
+msgid "Topshirdi"
+msgstr "Submitted"
+
+msgid "Topshirilgan"
+msgstr "Submitted"
+
+msgid "Topshirilmagan"
+msgstr "Not submitted"
+
+msgid "Topshiriq haqida batafsil..."
+msgstr "More about the task..."
+
+msgid "Topshiriq turi"
+msgstr "Task type"
+
+msgid "Topshiriqlar"
+msgstr "Tasks"
+
+msgid "Topshiriqlar va baholash"
+msgstr "Tasks and grading"
+
+msgid "Topshirish"
+msgstr "Submit"
+
+msgid "Topshirish muddati *"
+msgstr "Due date *"
+
+msgid "Topshirishlar ({count})"
+msgstr "Submissions ({count})"
+
+msgid "Topshirishlar:"
+msgstr "Submissions:"
+
+msgid "Tug'ilgan sana"
+msgstr "Date of birth"
+
+msgid "Tugagan"
+msgstr "Finished"
+
+msgid "Tugagan buyumlar"
+msgstr "Out-of-stock items"
+
+msgid "Tugagan guruhlar yo'q"
+msgstr "No finished groups"
+
+msgid "Tugash"
+msgstr "Ends"
+
+msgid "Tugash sanasi"
+msgstr "End date"
+
+msgid "Tugash vaqti"
+msgstr "End time"
+
+msgid "Tungi rejim"
+msgstr "Dark mode"
+
+msgid "Turi"
+msgstr "Type"
+
+msgid "Tuzatilgan kodni yozing"
+msgstr "Write the corrected code"
+
+msgid "URL noto'g'ri. Session ID topilmadi."
+msgstr "Invalid URL. Session ID not found."
+
+msgid "URL noto'g'ri. Share link topilmadi."
+msgstr "Invalid URL. Share link not found."
+
+msgid "Ulanish xatosi: "
+msgstr "Connection error: "
+
+msgid "Umumiy qarz"
+msgstr "Total debt"
+
+msgid "Umumiy qarz (barcha oylar)"
+msgstr "Total debt (all months)"
+
+msgid "Umumiy qiymati"
+msgstr "Total value"
+
+msgid "Ushbu chek rasmiy hisob xisobot hisoblanadi."
+msgstr "This receipt is an official financial document."
+
+msgid "Ushbu guruh uchun hali dars jadvali tuzilmagan."
+msgstr "No schedule has been created for this group yet."
+
+msgid "Ushbu vazifani o'chirasizmi?"
+msgstr "Delete this task?"
+
+msgid "Uyga vazifa bo'yicha"
+msgstr "For homework"
+
+msgid "Uyga vazifalar"
+msgstr "Homework"
+
+msgid "Uyga vazifalar — Qorako'l Ilm Ziyo"
+msgstr "Homework — Qorako'l Ilm Ziyo"
+
+msgid "Vaqt"
+msgstr "Time"
+
+msgid "Vaqt (s)"
+msgstr "Time (s)"
+
+msgid "Vaqt chegarasi (daqiqa)"
+msgstr "Time limit (minutes)"
+
+msgid "Vaqt tugagan yoki xato so'rov"
+msgstr "Time expired or invalid request"
+
+msgid "Vazifa muvaffaqiyatli topshirildi!"
+msgstr "Task submitted successfully!"
+
+msgid "Vazifa o'chirildi"
+msgstr "Task deleted"
+
+msgid "Vazifa qo'shildi"
+msgstr "Task added"
+
+msgid "Vazifa qo'shish"
+msgstr "Add task"
+
+msgid "Vazifa tafsiloti"
+msgstr "Task details"
+
+msgid "Vazifa yopildi"
+msgstr "Task closed"
+
+msgid "Vazifalar topilmadi"
+msgstr "No tasks found"
+
+msgid "Vazifani topshirish"
+msgstr "Submit task"
+
+msgid "XP Ball"
+msgstr "XP Points"
+
+msgid "XP Statistikasi"
+msgstr "XP Statistics"
+
+msgid "XP ball"
+msgstr "XP points"
+
+msgid "XP ballari bo'yicha eng yaxshi o'quvchilar"
+msgstr "Top students by XP points"
+
+msgid "XP mukofoti"
+msgstr "XP reward"
+
+msgid "XP qoldi"
+msgstr "XP left"
+
+msgid "XP va Kumush hisobi"
+msgstr "XP and Kumush balance"
+
+msgid "XP va coins bilan o'quvchilarni rag'batlantiring"
+msgstr "Motivate students with XP and coins"
+
+msgid "Xabar"
+msgstr "Message"
+
+msgid "Xabar administratorga yuboriladi"
+msgstr "Your message will be sent to the administrator"
+
+msgid "Xabar dasturchiga yuboriladi"
+msgstr "Your message will be sent to the developer"
+
+msgid "Xabar yuboriladi"
+msgstr "Your message will be sent"
+
+msgid "Xabar yuborildi!"
+msgstr "Message sent!"
+
+msgid "Xabar yuborishda xatolik"
+msgstr "Failed to send message"
+
+msgid "Xabarlar yo'q"
+msgstr "No messages"
+
+msgid "Xato qatori *"
+msgstr "Error line *"
+
+msgid "Xato qatorni kiriting yoki o'ngdagi koddan bosib tanlang:"
+msgstr "Enter the error line or select it from the code on the right:"
+
+msgid "Xato turi"
+msgstr "Error type"
+
+msgid "Xato tushuntirishi *"
+msgstr "Error explanation *"
+
+msgid "Xatoli kod *"
+msgstr "Buggy code *"
+
+msgid "Xatoli kod — qatorni bosing"
+msgstr "Buggy code — click a line"
+
+msgid "Xatolik"
+msgstr "Error"
+
+msgid "Xatolik tafsilotlari"
+msgstr "Error details"
+
+msgid "Xatolik yuz berdi"
+msgstr "An error occurred"
+
+msgid "Xatoliklar"
+msgstr "Errors"
+
+msgid "Xatoliklar monitoringi"
+msgstr "Error Monitor"
+
+msgid "Xatoliklar yo'q"
+msgstr "No errors"
+
+msgid "Xatoni tuzatib, to'g'ri kodni shu yerga yozing..."
+msgstr "Fix the bug and write the correct code here..."
+
+msgid "Xavfsiz Tizim"
+msgstr "Secure System"
+
+msgid "Xona"
+msgstr "Room"
+
+msgid "Xona (ixtiyoriy)"
+msgstr "Room (optional)"
+
+msgid "Xona belgilanmagan"
+msgstr "Room not set"
+
+msgid "Y"
+msgstr "Su"
+
+msgid "Ya"
+msgstr "Su"
+
+msgid "Yakshanba"
+msgstr "Sunday"
+
+msgid "Yakuniy natija"
+msgstr "Final Result"
+
+msgid "Yangi"
+msgstr "New"
+
+msgid "Yangi Guruh"
+msgstr "New Group"
+
+msgid "Yangi O'qituvchi"
+msgstr "New Teacher"
+
+msgid "Yangi O'quvchi"
+msgstr "New Student"
+
+msgid "Yangi bug-find"
+msgstr "New Bug-Find"
+
+msgid "Yangi bug-find topshiriq"
+msgstr "New Bug-Find task"
+
+msgid "Yangi coding"
+msgstr "New Coding"
+
+msgid "Yangi coding topshiriq"
+msgstr "New Coding task"
+
+msgid "Yangi foydalanuvchi"
+msgstr "New user"
+
+msgid "Yangi guruh"
+msgstr "New group"
+
+msgid "Yangi o'qituvchi"
+msgstr "New teacher"
+
+msgid "Yangi o'quvchi"
+msgstr "New student"
+
+msgid "Yangi o'quvchilar"
+msgstr "New students"
+
+msgid "Yangi parol"
+msgstr "New password"
+
+msgid "Yangi parol (minimal 8 ta belgi)"
+msgstr "New password (min. 8 characters)"
+
+msgid "Yangi parollar mos kelmadi"
+msgstr "New passwords don't match"
+
+msgid "Yangi parolni tasdiqlang"
+msgstr "Confirm new password"
+
+msgid "Yangi sessiya"
+msgstr "New session"
+
+msgid "Yangi suhbat"
+msgstr "New chat"
+
+msgid "Yangi uyga vazifa"
+msgstr "New homework"
+
+msgid "Yangi vazifa"
+msgstr "New task"
+
+msgid "Yangi vazifa yaratildi!"
+msgstr "New task created!"
+
+msgid "Yangi vazifa yaratish"
+msgstr "Create new task"
+
+msgid "Yangilandi"
+msgstr "Updated"
+
+msgid "Yangilash"
+msgstr "Refresh"
+
+msgid "Yanvar"
+msgstr "January"
+
+msgid "Yaratildi"
+msgstr "Created"
+
+msgid "Yaratilgan"
+msgstr "Created"
+
+msgid "Yaratish"
+msgstr "Create"
+
+msgid "Yaxshi"
+msgstr "Good"
+
+msgid "Yechilgan"
+msgstr "Solved"
+
+msgid "Yechilgan topshiriqlar"
+msgstr "Solved tasks"
+
+msgid "Yechim kodi *"
+msgstr "Solution code *"
+
+msgid "Yechim kodini kiriting"
+msgstr "Enter the solution code"
+
+msgid "Yig'ilgan natijalar monitoringi"
+msgstr "Earned results overview"
+
+msgid "Yil"
+msgstr "Year"
+
+msgid "Yil *"
+msgstr "Year *"
+
+msgid "Yo'nalish"
+msgstr "Field"
+
+msgid "Yo'nalishi"
+msgstr "Field"
+
+msgid "Yo'q (to'liq to'langan)"
+msgstr "None (fully paid)"
+
+msgid "Yopilgan"
+msgstr "Closed"
+
+msgid "Yopish"
+msgstr "Close"
+
+msgid "Yordam bo'limi"
+msgstr "Support"
+
+msgid "Yuborilgan kod:"
+msgstr "Submitted code:"
+
+msgid "Yuborilmoqda..."
+msgstr "Sending..."
+
+msgid "Yuborish"
+msgstr "Submit"
+
+msgid "Yuborishda xatolik. Qayta urinib ko'ring."
+msgstr "Failed to submit. Please try again."
+
+msgid "Yuklab bo'lmadi"
+msgstr "Failed to load"
+
+msgid "Yuklanmoqda..."
+msgstr "Loading..."
+
+msgid "Yuklashda xatolik"
+msgstr "Failed to load"
+
+msgid "Yuqori"
+msgstr "High"
+
+msgid "Yuz tekshiruvi"
+msgstr "Face verification"
+
+msgid "Yuz tekshiruvi muvaffaqiyatsiz"
+msgstr "Face verification failed"
+
+msgid "Yuzingizni doira ichiga joylashtiring"
+msgstr "Position your face inside the circle"
+
+msgid "Yuzingizni doira ichiga joylashtiring. Rozilikni belgilab \"Saqlash\"ni bosing."
+msgstr "Position your face inside the circle. Check consent and press \"Save\"."
+
+msgid "Yuzingizni ro'yxatga olish uchun kameraga qarang"
+msgstr "Look at the camera to register your face"
+
+msgid "ZUKKO Challenges"
+msgstr "ZUKKO Challenges"
+
+msgid "Zaxira kod"
+msgstr "Backup code"
+
+msgid "Ziyo AI Yordamchi"
+msgstr "Ziyo AI Assistant"
+
+msgid "adminga murojaat qiling"
+msgstr "please contact your administrator"
+
+msgid "baholangan"
+msgstr "graded"
+
+msgid "ball"
+msgstr "points"
+
+msgid "bonus"
+msgstr "bonus"
+
+msgid "daqiqa"
+msgstr "min"
+
+msgid "erp12345 (standart)"
+msgstr "erp12345 (default)"
+
+msgid "foydalanuvchiga ta'sir qildi"
+msgstr "users affected"
+
+msgid "guruh"
+msgstr "group"
+
+msgid "guruhdan chiqarish"
+msgstr "remove from group"
+
+msgid "jami XP"
+msgstr "total XP"
+
+msgid "kun"
+msgstr "days"
+
+msgid "marta takrorlangan"
+msgstr "occurrences"
+
+msgid "ni faollashtirasizmi?"
+msgstr " — activate?"
+
+msgid "ni nofaol qilasizmi?"
+msgstr " — deactivate?"
+
+msgid "ni o'chirishni tasdiqlaysizmi?"
+msgstr " — delete?"
+
+msgid "nusxasi — nomni o'zgartiring va saqlang"
+msgstr " (copy) — rename and save"
+
+msgid "o'quvchi"
+msgstr "student"
+
+msgid "qoldi"
+msgstr "left"
+
+msgid "qulay boshqaring"
+msgstr "with ease"
+
+msgid "so'm"
+msgstr "so'm"
+
+msgid "ta"
+msgstr " "
+
+msgid "ta bu oy yangi"
+msgstr "new this month"
+
+msgid "ta buyum"
+msgstr "items"
+
+msgid "ta eslatma yuborildi"
+msgstr "reminders sent"
+
+msgid "ta faol guruh"
+msgstr "active groups"
+
+msgid "ta foydalanuvchi"
+msgstr "users"
+
+msgid "ta guruh"
+msgstr "groups"
+
+msgid "ta javob"
+msgstr "answers"
+
+msgid "ta javob tekshirildi"
+msgstr "answers checked"
+
+msgid "ta javob tekshirildi."
+msgstr "answers checked."
+
+msgid "ta juft shubhali"
+msgstr "suspicious pairs"
+
+msgid "ta natija"
+msgstr "results"
+
+msgid "ta o'qituvchi"
+msgstr "teachers"
+
+msgid "ta o'quvchi"
+msgstr "students"
+
+msgid "ta shubha"
+msgstr "flags"
+
+msgid "ta tanlangan"
+msgstr "selected"
+
+msgid "ta to'lov saqlandi"
+msgstr "payments saved"
+
+msgid "ta topshiriq"
+msgstr "tasks"
+
+msgid "ta topshirish"
+msgstr "submissions"
+
+msgid "ta xatolik"
+msgstr "errors"
+
+msgid "ta yozuv"
+msgstr "records"
+
+msgid "test o'tdi"
+msgstr "tests passed"
+
+msgid "token"
+msgstr "tokens"
+
+msgid "topshiriq"
+msgstr "task"
+
+msgid "tushumi"
+msgstr " revenue"
+
+msgid "vazifa"
+msgstr "task"
+
+msgctxt "weekday-short-sat"
+msgid "S"
+msgstr "Sa"
+
+msgctxt "weekday-short-tue"
+msgid "S"
+msgstr "Tu"
+
+msgid "yoki xabar yuboring"
+msgstr "or send a message"
+
+msgid "{count} ta javob tekshirildi — {pairs} ta juft shubhali"
+msgstr "{count} answers checked — {pairs} suspicious pairs"
+
+msgid "{count} ta o'quvchi"
+msgstr "{count} students"
+
+msgid "{days} kun"
+msgstr "{days} days"
+
+msgid "{days} kun qoldi"
+msgstr "{days} days left"
+
+msgid "{label} — jami XP {xp}, Jami Kumush {coins}"
+msgstr "{label} — total XP {xp}, total Kumush {coins}"
+
+msgid "{name} ni faollashtirasizmi?"
+msgstr "Activate \"{name}\"?"
+
+msgid "{name} ni nofaol qilasizmi?"
+msgstr "Deactivate \"{name}\"?"
+
+msgid "{name} ni o'chirishni tasdiqlaysizmi?"
+msgstr "Delete \"{name}\"?"
+
+msgid "{name} ni {price} KUMUSHga so'rov qilasizmi?"
+msgstr "Request \"{name}\" for {price} KUMUSH?"
+
+msgid "{passed}/{total} test o'tdi"
+msgstr "{passed}/{total} tests passed"
+
+msgid "{year}-yil {month}-oy uchun qarzdorlarga eslatma yuborilsinmi?"
+msgstr "Send debt reminders for month {month} of {year}?"
+
+msgid "— Guruh tanlang —"
+msgstr "— Select group —"
+
+msgid "— Guruhsiz (guruhdan chiqarish) —"
+msgstr "— No group (remove from group) —"
+
+msgid "— Guruhsiz —"
+msgstr "— No group —"
+
+msgid "— O'quvchi tanlang —"
+msgstr "— Select student —"
+
+msgid "— Sessiya tanlang —"
+msgstr "— Select session —"
+
+msgid "— Tanlang —"
+msgstr "— Select —"
+
+msgid "— Tanlanmagan —"
+msgstr "— Not selected —"
+
+msgid "‹ Oldingi"
+msgstr "‹ Previous"
+

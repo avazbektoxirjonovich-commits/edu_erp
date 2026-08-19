@@ -1,35 +1,36 @@
 {% extends "erp/base.html" %}
+{% load i18n %}
 {% block title %}Foydalanuvchilar — Qorako'l Ilm Ziyo{% endblock %}
-{% block page_title %}Foydalanuvchilar{% endblock %}
+{% block page_title %}{% translate "Foydalanuvchilar" %}{% endblock %}
 
 {% block content %}
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;animation:fadeUp .35s ease both">
   <div>
-    <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">Foydalanuvchilar</h2>
-    <p style="font-size:.75rem;color:var(--muted);margin-top:3px">Tizim foydalanuvchilari va ularning rollari</p>
+    <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">{% translate "Foydalanuvchilar" %}</h2>
+    <p style="font-size:.75rem;color:var(--muted);margin-top:3px">{% translate "Tizim foydalanuvchilari va ularning rollari" %}</p>
   </div>
-  <button class="btn btn-primary" onclick="openAddModal()"><i class="fas fa-user-plus"></i>Yangi foydalanuvchi</button>
+  <button class="btn btn-primary" onclick="openAddModal()"><i class="fas fa-user-plus"></i>{% translate "Yangi foydalanuvchi" %}</button>
 </div>
 
 <div class="card" style="animation:fadeUp .4s ease .08s both;overflow:hidden">
   <div class="fbar">
     <div class="search-wrap">
       <i class="fas fa-search"></i>
-      <input type="text" id="srch" placeholder="Ism yoki telefon..." oninput="load()">
+      <input type="text" id="srch" placeholder="{% translate "Ism yoki telefon..." %}" oninput="load()">
     </div>
-    <select id="fRole" onchange="load()" style="border:1.5px solid var(--border);border-radius:8px;padding:7px 32px 7px 12px;font-size:.78rem;background:#fff;outline:none;cursor:pointer">
-      <option value="">Barcha rollar</option>
+    <select id="fRole" onchange="load()" style="border:1.5px solid var(--border);border-radius:8px;padding:7px 32px 7px 12px;font-size:.78rem;background:var(--card);color:var(--text);outline:none;cursor:pointer">
+      <option value="">{% translate "Barcha rollar" %}</option>
       <option value="admin">Admin</option>
-      <option value="teacher">O'qituvchi</option>
-      <option value="student">O'quvchi</option>
-      <option value="parent">Ota-ona</option>
-      <option value="finance">Moliyachi</option>
+      <option value="teacher">{% translate "O'qituvchi" %}</option>
+      <option value="student">{% translate "O'quvchi" %}</option>
+      <option value="parent">{% translate "Ota-ona" %}</option>
+      <option value="finance">{% translate "Moliyachi" %}</option>
       <option value="developer">Developer</option>
     </select>
-    <select id="fActive" onchange="load()" style="border:1.5px solid var(--border);border-radius:8px;padding:7px 32px 7px 12px;font-size:.78rem;background:#fff;outline:none;cursor:pointer">
-      <option value="">Barcha status</option>
-      <option value="true">Faol</option>
-      <option value="false">Nofaol</option>
+    <select id="fActive" onchange="load()" style="border:1.5px solid var(--border);border-radius:8px;padding:7px 32px 7px 12px;font-size:.78rem;background:var(--card);color:var(--text);outline:none;cursor:pointer">
+      <option value="">{% translate "Barcha status" %}</option>
+      <option value="true">{% translate "Faol" %}</option>
+      <option value="false">{% translate "Nofaol" %}</option>
     </select>
     <span style="margin-left:auto;font-size:.75rem;color:var(--muted)" id="cntLbl"></span>
   </div>
@@ -40,50 +41,104 @@
 <div class="overlay" id="addModal">
   <div class="modal">
     <div class="m-head">
-      <h5><i class="fas fa-user-plus" style="color:var(--accent);margin-right:6px"></i>Yangi foydalanuvchi</h5>
+      <h5><i class="fas fa-user-plus" style="color:var(--accent);margin-right:6px"></i>{% translate "Yangi foydalanuvchi" %}</h5>
       <button class="m-close" onclick="closeM('addModal')"><i class="fas fa-times"></i></button>
     </div>
     <div class="m-body">
       <div class="row2">
-        <div class="fg"><label>Ism Familiya *</label><input class="fc" id="aName" placeholder="To'liq ism"></div>
-        <div class="fg"><label>Telefon *</label><input class="fc" id="aPhone" placeholder="+998901234567"></div>
+        <div class="fg"><label>{% translate "Ism Familiya" %} *</label><input class="fc" id="aName" placeholder="{% translate "To'liq ism" %}"></div>
+        <div class="fg"><label>{% translate "Telefon" %} *</label><input class="fc" id="aPhone" placeholder="+998901234567"></div>
       </div>
       <div class="row2">
-        <div class="fg"><label>Parol *</label><input class="fc" type="password" id="aPwd" placeholder="Parol"></div>
-        <div class="fg"><label>Rol *</label>
+        <div class="fg"><label>{% translate "Parol" %} *</label><input class="fc" type="password" id="aPwd" placeholder="{% translate "Parol" %}"></div>
+        <div class="fg"><label>{% translate "Rol" %} *</label>
           <select class="fc fc-sel" id="aRole">
             <option value="admin">Admin</option>
-            <option value="teacher">O'qituvchi</option>
-            <option value="student">O'quvchi</option>
-            <option value="parent">Ota-ona</option>
-            <option value="finance">Moliyachi</option>
+            <option value="teacher">{% translate "O'qituvchi" %}</option>
+            <option value="student">{% translate "O'quvchi" %}</option>
+            <option value="parent">{% translate "Ota-ona" %}</option>
+            <option value="finance">{% translate "Moliyachi" %}</option>
           </select>
         </div>
       </div>
     </div>
     <div class="m-foot">
-      <button class="btn btn-ghost" onclick="closeM('addModal')">Bekor</button>
-      <button class="btn btn-primary" onclick="doAdd()"><i class="fas fa-check"></i>Saqlash</button>
+      <button class="btn btn-ghost" onclick="closeM('addModal')">{% translate "Bekor" %}</button>
+      <button class="btn btn-primary" onclick="doAdd()"><i class="fas fa-check"></i>{% translate "Saqlash" %}</button>
     </div>
   </div>
 </div>
 {% endblock %}
 
+{% translate "Ruxsat yo'q" as p_no_permission %}
+{% translate "ta foydalanuvchi" as p_ta_user %}
+{% translate "Foydalanuvchi topilmadi" as p_user_not_found %}
+{% translate "Foydalanuvchi" as p_user_word %}
+{% translate "Telefon" as p_phone %}
+{% translate "Rol" as p_role %}
+{% translate "Status" as p_status %}
+{% translate "Faol" as p_active %}
+{% translate "Nofaol" as p_inactive %}
+{% translate "Nofaol qilish" as p_deactivate %}
+{% translate "Faollashtirish" as p_activate %}
+{% translate "O'qituvchi" as p_teacher %}
+{% translate "O'quvchi" as p_student %}
+{% translate "Ota-ona" as p_parent %}
+{% translate "Moliyachi" as p_finance %}
+{% translate "Ism, telefon va parol majburiy!" as p_required_fields %}
+{% translate "Foydalanuvchi yaratildi" as p_user_created %}
+{% translate "Xatolik" as p_error %}
+{% translate "Server xatosi" as p_server_error %}
+{% translate "{name} ni nofaol qilasizmi?" as p_deactivate_q_tpl %}
+{% translate "{name} ni faollashtirasizmi?" as p_activate_q_tpl %}
+{% translate "Yangilandi" as p_updated %}
+{% translate "{name} ni o'chirishni tasdiqlaysizmi?" as p_delete_q_tpl %}
+{% translate "Foydalanuvchi va barcha ma'lumotlari o'chiriladi!" as p_delete_warning %}
+{% translate "O'chirildi" as p_deleted %}
 {% block extra_js %}
 <script>
 initAuth();
 const _ME = getUser();
+
+const PI18N = {
+  noPermission: "{{ p_no_permission|escapejs }}",
+  taUser: "{{ p_ta_user|escapejs }}",
+  userNotFound: "{{ p_user_not_found|escapejs }}",
+  userWord: "{{ p_user_word|escapejs }}",
+  phone: "{{ p_phone|escapejs }}",
+  role: "{{ p_role|escapejs }}",
+  status: "{{ p_status|escapejs }}",
+  active: "{{ p_active|escapejs }}",
+  inactive: "{{ p_inactive|escapejs }}",
+  deactivate: "{{ p_deactivate|escapejs }}",
+  activate: "{{ p_activate|escapejs }}",
+  teacher: "{{ p_teacher|escapejs }}",
+  student: "{{ p_student|escapejs }}",
+  parent: "{{ p_parent|escapejs }}",
+  finance: "{{ p_finance|escapejs }}",
+  requiredFields: "{{ p_required_fields|escapejs }}",
+  userCreated: "{{ p_user_created|escapejs }}",
+  error: "{{ p_error|escapejs }}",
+  serverError: "{{ p_server_error|escapejs }}",
+  deactivateQTpl: "{{ p_deactivate_q_tpl|escapejs }}",
+  activateQTpl: "{{ p_activate_q_tpl|escapejs }}",
+  updated: "{{ p_updated|escapejs }}",
+  deleteQTpl: "{{ p_delete_q_tpl|escapejs }}",
+  deleteWarning: "{{ p_delete_warning|escapejs }}",
+  deleted: "{{ p_deleted|escapejs }}",
+};
+
 if(_ME.role !== 'developer' && _ME.role !== 'admin'){
-  document.querySelector('.content').innerHTML = '<div class="empty"><i class="fas fa-lock"></i><p>Ruxsat yo\'q</p></div>';
+  document.querySelector('.content').innerHTML = `<div class="empty"><i class="fas fa-lock"></i><p>${PI18N.noPermission}</p></div>`;
 }
 
 const ROLE_MAP = {
   developer: {label:'Developer', cls:'bdg-blue'},
   admin:     {label:'Admin',     cls:'bdg-purple'},
-  teacher:   {label:"O'qituvchi", cls:'bdg-active'},
-  student:   {label:"O'quvchi",  cls:'bdg-info'},
-  parent:    {label:'Ota-ona',   cls:'bdg-warning'},
-  finance:   {label:'Moliyachi', cls:'bdg-paid'},
+  teacher:   {label:PI18N.teacher, cls:'bdg-active'},
+  student:   {label:PI18N.student,  cls:'bdg-info'},
+  parent:    {label:PI18N.parent,   cls:'bdg-warning'},
+  finance:   {label:PI18N.finance, cls:'bdg-paid'},
 };
 
 async function load(){
@@ -97,15 +152,15 @@ async function load(){
   const d = await get(url);
   let items = d?.results || d || [];
   if(a !== '') items = items.filter(u => String(u.is_active) === a);
-  document.getElementById('cntLbl').textContent = `${items.length} ta foydalanuvchi`;
+  document.getElementById('cntLbl').textContent = `${items.length} ${PI18N.taUser}`;
   if(!items.length){
-    document.getElementById('tbl').innerHTML = '<div class="empty"><i class="fas fa-users"></i><p>Foydalanuvchi topilmadi</p></div>';
+    document.getElementById('tbl').innerHTML = `<div class="empty"><i class="fas fa-users"></i><p>${PI18N.userNotFound}</p></div>`;
     return;
   }
   const canToggle = _ME.role === 'developer';
   document.getElementById('tbl').innerHTML = `
   <table class="etable"><thead><tr>
-    <th>#</th><th>Foydalanuvchi</th><th>Telefon</th><th>Rol</th><th>Status</th><th></th>
+    <th>#</th><th>${PI18N.userWord}</th><th>${PI18N.phone}</th><th>${PI18N.role}</th><th>${PI18N.status}</th><th></th>
   </tr></thead><tbody>
   ${items.map((u,i) => {
     const rm = ROLE_MAP[u.role] || {label: u.role, cls:'bdg-info'};
@@ -121,11 +176,11 @@ async function load(){
       <td style="color:var(--muted);font-size:.8rem">${u.phone||'—'}</td>
       <td><span class="bdg ${rm.cls}">${rm.label}</span></td>
       <td>${u.is_active
-        ? '<span class="bdg bdg-active"><i class="fas fa-circle" style="font-size:.35rem"></i> Faol</span>'
-        : '<span class="bdg bdg-inactive">Nofaol</span>'}</td>
+        ? `<span class="bdg bdg-active"><i class="fas fa-circle" style="font-size:.35rem"></i> ${PI18N.active}</span>`
+        : `<span class="bdg bdg-inactive">${PI18N.inactive}</span>`}</td>
       <td>
         <div style="display:flex;gap:4px">
-          ${!isDev ? `<button class="btn-icon ${u.is_active?'del':'edit'}" onclick="toggleActive('${u.id}','${escHtml(u.full_name||'')}',${u.is_active})" title="${u.is_active?'Nofaol qilish':'Faollashtirish'}">
+          ${!isDev ? `<button class="btn-icon ${u.is_active?'del':'edit'}" onclick="toggleActive('${u.id}','${escHtml(u.full_name||'')}',${u.is_active})" title="${u.is_active?PI18N.deactivate:PI18N.activate}">
             <i class="fas fa-${u.is_active?'user-slash':'user-check'}"></i>
           </button>` : ''}
           ${canToggle && !isDev ? `<button class="btn-icon del" onclick="doDelete('${u.id}','${escHtml(u.full_name||'')}')"><i class="fas fa-trash"></i></button>` : ''}
@@ -147,30 +202,30 @@ async function doAdd(){
   const phone = document.getElementById('aPhone').value.trim();
   const pwd = document.getElementById('aPwd').value;
   const role = document.getElementById('aRole').value;
-  if(!name||!phone||!pwd){toast('Ism, telefon va parol majburiy!','wrn');return;}
+  if(!name||!phone||!pwd){toast(PI18N.requiredFields,'wrn');return;}
   const r = await post('/auth/users/', {full_name:name, phone, password:pwd, password2:pwd, role});
-  if(r?.ok){closeM('addModal');toast('Foydalanuvchi yaratildi','ok');load();}
-  else{try{const e=await r?.json();toast(e?.detail||Object.values(e||{}).flat()[0]||'Xatolik','err');}catch{toast('Server xatosi','err');}}
+  if(r?.ok){closeM('addModal');toast(PI18N.userCreated,'ok');load();}
+  else{try{const e=await r?.json();toast(e?.detail||Object.values(e||{}).flat()[0]||PI18N.error,'err');}catch{toast(PI18N.serverError,'err');}}
 }
 
 async function toggleActive(id, name, isActive){
-  const msg = isActive ? `"${name}" ni nofaol qilasizmi?` : `"${name}" ni faollashtirасizmi?`;
+  const msg = isActive ? PI18N.deactivateQTpl.replace('{name}', name) : PI18N.activateQTpl.replace('{name}', name);
   if(!confirm(msg)) return;
   const r = await post(`/auth/users/${id}/toggle-active/`, {});
   if(r?.ok){
     const d = await r.json();
-    toast(d.detail || 'Yangilandi', 'ok');
+    toast(d.detail || PI18N.updated, 'ok');
     load();
   } else {
-    try{const e=await r?.json();toast(e?.detail||'Xatolik','err');}catch{toast('Server xatosi','err');}
+    try{const e=await r?.json();toast(e?.detail||PI18N.error,'err');}catch{toast(PI18N.serverError,'err');}
   }
 }
 
 async function doDelete(id, name){
-  if(!confirm(`"${name}" ni o'chirishni tasdiqlaysizmi?\nFoydalanuvchi va barcha ma'lumotlari o'chiriladi!`)) return;
+  if(!confirm(`${PI18N.deleteQTpl.replace('{name}', name)}\n${PI18N.deleteWarning}`)) return;
   const r = await del(`/auth/users/${id}/`);
-  if(r?.ok||r?.status===204){toast("O'chirildi",'ok');load();}
-  else{try{const e=await r?.json();toast(e?.detail||'Xatolik','err');}catch{toast('Server xatosi','err');}}
+  if(r?.ok||r?.status===204){toast(PI18N.deleted,'ok');load();}
+  else{try{const e=await r?.json();toast(e?.detail||PI18N.error,'err');}catch{toast(PI18N.serverError,'err');}}
 }
 
 load();

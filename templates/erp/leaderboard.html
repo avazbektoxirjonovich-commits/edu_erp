@@ -1,6 +1,7 @@
 ﻿{% extends "erp/base.html" %}
-{% block title %}Reyting — Qorako'l Ilm Ziyo{% endblock %}
-{% block page_title %}Reyting{% endblock %}
+{% load i18n %}
+{% block title %}{% translate "Reyting — Qorako'l Ilm Ziyo" %}{% endblock %}
+{% block page_title %}{% translate "Reyting" %}{% endblock %}
 
 {% block extra_head %}
 <style>
@@ -48,7 +49,7 @@
 .n1{background:linear-gradient(135deg,#FFD700,#FFA500);color:#fff;box-shadow:0 2px 8px rgba(255,165,0,.35)}
 .n2{background:linear-gradient(135deg,#C0C0C0,#909090);color:#fff}
 .n3{background:linear-gradient(135deg,#CD7F32,#A0522D);color:#fff}
-.nN{background:#f0f1f5;color:var(--muted)}
+.nN{background:var(--card);color:var(--muted)}
 .lb-info{flex:1;min-width:0}
 .lb-name{font-size:.84rem;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .lb-group{font-size:.7rem;color:var(--muted)}
@@ -58,13 +59,13 @@
 .lb-bar{height:4px;border-radius:4px;background:var(--grad);margin-top:3px;transition:width .6s cubic-bezier(.4,0,.2,1)}
 
 /* Filter tabs */
-.ftabs{display:flex;gap:6px;padding:4px;background:#f0f1f5;border-radius:10px}
+.ftabs{display:flex;gap:6px;padding:4px;background:var(--bg);border-radius:10px}
 .ftab{padding:7px 16px;border:none;border-radius:8px;font-size:.78rem;font-weight:600;cursor:pointer;font-family:inherit;background:none;color:var(--muted);transition:all .2s}
-.ftab.on{background:#fff;color:var(--text);box-shadow:0 1px 6px rgba(13,27,42,.08)}
+.ftab.on{background:var(--card);color:var(--text);box-shadow:0 1px 6px rgba(13,27,42,.08)}
 
 /* Period tabs */
 .ptabs{display:flex;gap:6px}
-.ptab{padding:6px 13px;border:1.5px solid var(--border);border-radius:8px;font-size:.75rem;font-weight:600;cursor:pointer;font-family:inherit;background:#fff;color:var(--muted);transition:all .2s}
+.ptab{padding:6px 13px;border:1.5px solid var(--border);border-radius:8px;font-size:.75rem;font-weight:600;cursor:pointer;font-family:inherit;background:var(--card);color:var(--muted);transition:all .2s}
 .ptab.on{border-color:var(--accent);background:var(--accent-light);color:var(--accent)}
 
 /* Group select */
@@ -75,28 +76,28 @@
 {% block content %}
 <div class="lb-header">
   <div>
-    <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">O'quvchilar Reytingi</h2>
-    <p style="font-size:.75rem;color:var(--muted);margin-top:3px">XP ballari bo'yicha eng yaxshi o'quvchilar</p>
+    <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">{% translate "O'quvchilar Reytingi" %}</h2>
+    <p style="font-size:.75rem;color:var(--muted);margin-top:3px">{% translate "XP ballari bo'yicha eng yaxshi o'quvchilar" %}</p>
   </div>
 </div>
 
 <!-- Filters -->
 <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px;animation:fadeUp .35s ease .05s both">
   <div class="ftabs">
-    <button class="ftab on" data-type="all" onclick="setType('all',this)">Barchasi</button>
-    <button class="ftab" data-type="group" onclick="setType('group',this)">Guruh bo'yicha</button>
+    <button class="ftab on" data-type="all" onclick="setType('all',this)">{% translate "Barchasi" %}</button>
+    <button class="ftab" data-type="group" onclick="setType('group',this)">{% translate "Guruh bo'yicha" %}</button>
   </div>
   <div class="ptabs">
-    <button class="ptab on" data-p="all" onclick="setPeriod('all',this)">Barcha vaqt</button>
-    <button class="ptab" data-p="month" onclick="setPeriod('month',this)">Bu oy</button>
-    <button class="ptab" data-p="week" onclick="setPeriod('week',this)">Bu hafta</button>
+    <button class="ptab on" data-p="all" onclick="setPeriod('all',this)">{% translate "Barcha vaqt" %}</button>
+    <button class="ptab" data-p="month" onclick="setPeriod('month',this)">{% translate "Bu oy" %}</button>
+    <button class="ptab" data-p="week" onclick="setPeriod('week',this)">{% translate "Bu hafta" %}</button>
   </div>
 </div>
 
 <div class="grp-filter" id="grpFilter" style="display:none;margin-bottom:16px">
   <i class="fas fa-users" style="color:var(--muted);font-size:.85rem"></i>
-  <select id="fGrp" onchange="load()" style="border:1.5px solid var(--border);border-radius:9px;padding:8px 32px 8px 12px;font-size:.78rem;background:#fff;outline:none;cursor:pointer">
-    <option value="">— Guruh tanlang —</option>
+  <select id="fGrp" onchange="load()" style="border:1.5px solid var(--border);border-radius:9px;padding:8px 32px 8px 12px;font-size:.78rem;background:var(--card);color:var(--text);outline:none;cursor:pointer">
+    <option value="">{% translate "— Guruh tanlang —" %}</option>
   </select>
 </div>
 
@@ -106,7 +107,7 @@
     <!-- Podium -->
     <div class="card" style="overflow:hidden;animation:fadeUp .4s ease .1s both">
       <div class="podium" id="podium">
-        <div style="text-align:center;padding:30px;color:var(--muted);font-size:.8rem;width:100%">Yuklanmoqda...</div>
+        <div style="text-align:center;padding:30px;color:var(--muted);font-size:.8rem;width:100%">{% translate "Yuklanmoqda..." %}</div>
       </div>
       <div style="height:1px;background:var(--border);margin:0 20px"></div>
     </div>
@@ -114,7 +115,7 @@
     <!-- Full list -->
     <div class="card" style="overflow:hidden;animation:fadeUp .4s ease .18s both">
       <div class="card-header">
-        <div class="card-title">To'liq ro'yxat</div>
+        <div class="card-title">{% translate "To'liq ro'yxat" %}</div>
         <span style="font-size:.74rem;color:var(--muted)" id="cntLbl"></span>
       </div>
       <div id="lbList"><div class="loading"><div class="spinner"></div></div></div>
@@ -125,17 +126,17 @@
   <div style="display:flex;flex-direction:column;gap:16px">
     <!-- My position -->
     <div class="card" style="animation:fadeUp .4s ease .12s both">
-      <div class="card-header"><div class="card-title">Mening o'rnim</div></div>
+      <div class="card-header"><div class="card-title">{% translate "Mening o'rnim" %}</div></div>
       <div class="card-body" id="myPos">
-        <div style="text-align:center;padding:8px;color:var(--muted);font-size:.8rem">Yuklanmoqda...</div>
+        <div style="text-align:center;padding:8px;color:var(--muted);font-size:.8rem">{% translate "Yuklanmoqda..." %}</div>
       </div>
     </div>
 
     <!-- Top movers -->
     <div class="card" style="animation:fadeUp .4s ease .2s both">
-      <div class="card-header"><div class="card-title">XP Statistikasi</div></div>
+      <div class="card-header"><div class="card-title">{% translate "XP Statistikasi" %}</div></div>
       <div class="card-body" id="statsBox">
-        <div style="text-align:center;padding:8px;color:var(--muted);font-size:.8rem">Yuklanmoqda...</div>
+        <div style="text-align:center;padding:8px;color:var(--muted);font-size:.8rem">{% translate "Yuklanmoqda..." %}</div>
       </div>
     </div>
   </div>
@@ -143,7 +144,37 @@
 {% endblock %}
 
 {% block extra_js %}
+{% translate "{count} ta o'quvchi" as p_student_count %}
+{% translate "Ma'lumot yo'q" as p_no_data %}
+{% translate "Reyting ma'lumoti yo'q" as p_no_ranking_data %}
+{% translate "Reyting topilmadi" as p_ranking_not_found %}
+{% translate "Daraja" as p_level %}
+{% translate "O'rningiz" as p_your_position %}
+{% translate "XP ball" as p_xp_ball %}
+{% translate "Oldingizdan {diff} XP farq" as p_xp_gap %}
+{% translate "Jami ishtirokchilar" as p_total_participants %}
+{% translate "ta" as p_ta_unit %}
+{% translate "O'rtacha XP" as p_avg_xp %}
+{% translate "Jami XP" as p_total_xp %}
+{% translate "Eng yuqori daraja" as p_top_level %}
+{% translate "Top 3 o'quvchi" as p_top3 %}
 <script>
+const PI18N={
+  studentCount:"{{ p_student_count|escapejs }}",
+  noData:"{{ p_no_data|escapejs }}",
+  noRankingData:"{{ p_no_ranking_data|escapejs }}",
+  rankingNotFound:"{{ p_ranking_not_found|escapejs }}",
+  level:"{{ p_level|escapejs }}",
+  yourPosition:"{{ p_your_position|escapejs }}",
+  xpBall:"{{ p_xp_ball|escapejs }}",
+  xpGap:"{{ p_xp_gap|escapejs }}",
+  totalParticipants:"{{ p_total_participants|escapejs }}",
+  taUnit:"{{ p_ta_unit|escapejs }}",
+  avgXp:"{{ p_avg_xp|escapejs }}",
+  totalXp:"{{ p_total_xp|escapejs }}",
+  topLevel:"{{ p_top_level|escapejs }}",
+  top3:"{{ p_top3|escapejs }}",
+};
 initAuth();
 let lbType='all', lbPeriod='all';
 const me=getUser();
@@ -179,7 +210,7 @@ async function load(){
   document.getElementById('lbList').innerHTML='<div class="loading"><div class="spinner"></div></div>';
   const d=await get(url);
   const items=d?.results||d||[];
-  document.getElementById('cntLbl').textContent=`${items.length} ta o'quvchi`;
+  document.getElementById('cntLbl').textContent=PI18N.studentCount.replace('{count}', items.length);
 
   renderPodium(items);
   renderList(items);
@@ -189,7 +220,7 @@ async function load(){
 
 function renderPodium(items){
   const top3=items.slice(0,3);
-  if(!top3.length){document.getElementById('podium').innerHTML='<div style="padding:30px;text-align:center;color:var(--muted);font-size:.8rem;width:100%">Ma\'lumot yo\'q</div>';return;}
+  if(!top3.length){document.getElementById('podium').innerHTML=`<div style="padding:30px;text-align:center;color:var(--muted);font-size:.8rem;width:100%">${PI18N.noData}</div>`;return;}
 
   const order=[1,0,2]; // silver, gold, bronze display order
   document.getElementById('podium').innerHTML=`<div style="display:flex;align-items:flex-end;justify-content:center;gap:8px;padding:24px 20px 0;width:100%">
@@ -211,7 +242,7 @@ function renderPodium(items){
 }
 
 function renderList(items){
-  if(!items.length){document.getElementById('lbList').innerHTML='<div style="padding:32px;text-align:center;color:var(--muted);font-size:.8rem"><i class="fas fa-trophy" style="font-size:2rem;opacity:.2;display:block;margin-bottom:10px"></i>Reyting ma\'lumoti yo\'q</div>';return;}
+  if(!items.length){document.getElementById('lbList').innerHTML=`<div style="padding:32px;text-align:center;color:var(--muted);font-size:.8rem"><i class="fas fa-trophy" style="font-size:2rem;opacity:.2;display:block;margin-bottom:10px"></i>${PI18N.noRankingData}</div>`;return;}
   const maxXp=items[0]?.xp_points||1;
   document.getElementById('lbList').innerHTML=items.map((s,i)=>{
     const nCls=i===0?'n1':i===1?'n2':i===2?'n3':'nN';
@@ -221,12 +252,12 @@ function renderList(items){
       <div class="lb-num ${nCls}">${i+1}</div>
       <div class="av" style="width:30px;height:30px;font-size:.65rem;flex-shrink:0">${initials(s.full_name||'?')}</div>
       <div class="lb-info">
-        <div class="lb-name">${s.full_name||'—'}${isMe?' <span style="background:var(--accent-light);color:var(--accent);padding:1px 6px;border-radius:10px;font-size:.6rem">Men</span>':''}</div>
-        <div class="lb-group">${s.group_name||'—'} · Daraja ${s.level||1}</div>
+        <div class="lb-name">${s.full_name||'—'}${isMe?` <span style="background:var(--accent-light);color:var(--accent);padding:1px 6px;border-radius:10px;font-size:.6rem">${I18N.me}</span>`:''}</div>
+        <div class="lb-group">${s.group_name||'—'} · ${PI18N.level} ${s.level||1}</div>
         <div class="lb-bar" style="width:${pct}%"></div>
       </div>
       <div class="lb-xp-col">
-        <div class="lb-xp-val">${(s.xp_points||0).toLocaleString('uz-UZ')}</div>
+        <div class="lb-xp-val">${(s.xp_points||0).toLocaleString(JS_LOCALE)}</div>
         <div class="lb-xp-lbl">XP</div>
       </div>
     </div>`;
@@ -237,22 +268,22 @@ function renderMyPos(items){
   const myIdx=items.findIndex(s=>s.full_name===me.full_name);
   const myData=myIdx>=0?items[myIdx]:null;
   if(!myData){
-    document.getElementById('myPos').innerHTML='<div style="text-align:center;padding:8px;color:var(--muted);font-size:.8rem">Reyting topilmadi</div>';
+    document.getElementById('myPos').innerHTML=`<div style="text-align:center;padding:8px;color:var(--muted);font-size:.8rem">${PI18N.rankingNotFound}</div>`;
     return;
   }
   const rank=myIdx+1;
   document.getElementById('myPos').innerHTML=`
     <div style="text-align:center;margin-bottom:16px">
       <div style="font-size:2.5rem;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-.5px">#${rank}</div>
-      <div style="font-size:.75rem;color:var(--muted)">O'rningiz</div>
+      <div style="font-size:.75rem;color:var(--muted)">${PI18N.yourPosition}</div>
     </div>
     <div style="display:flex;flex-direction:column;gap:8px">
       <div style="display:flex;justify-content:space-between;font-size:.8rem">
-        <span style="color:var(--muted)">XP ball</span>
-        <span style="font-weight:700;color:var(--accent)">${(myData.xp_points||0).toLocaleString('uz-UZ')}</span>
+        <span style="color:var(--muted)">${PI18N.xpBall}</span>
+        <span style="font-weight:700;color:var(--accent)">${(myData.xp_points||0).toLocaleString(JS_LOCALE)}</span>
       </div>
       <div style="display:flex;justify-content:space-between;font-size:.8rem">
-        <span style="color:var(--muted)">Daraja</span>
+        <span style="color:var(--muted)">${PI18N.level}</span>
         <span style="font-weight:700">${myData.level||1}</span>
       </div>
       <div style="display:flex;justify-content:space-between;font-size:.8rem">
@@ -260,36 +291,36 @@ function renderMyPos(items){
         <span style="font-weight:700;color:#f59e0b">${myData.coins||0}</span>
       </div>
       ${rank>1?`<div style="font-size:.72rem;color:var(--muted);text-align:center;margin-top:6px;padding:6px;background:var(--bg);border-radius:8px">
-        Oldingizdan ${(items[myIdx-1].xp_points||0)-(myData.xp_points||0)} XP farq
+        ${PI18N.xpGap.replace('{diff}', (items[myIdx-1].xp_points||0)-(myData.xp_points||0))}
       </div>`:''}
     </div>`;
 }
 
 function renderStats(items){
-  if(!items.length){document.getElementById('statsBox').innerHTML='<div style="text-align:center;padding:8px;color:var(--muted);font-size:.8rem">Ma\'lumot yo\'q</div>';return;}
+  if(!items.length){document.getElementById('statsBox').innerHTML=`<div style="text-align:center;padding:8px;color:var(--muted);font-size:.8rem">${PI18N.noData}</div>`;return;}
   const totalXp=items.reduce((s,i)=>s+(i.xp_points||0),0);
   const avgXp=Math.round(totalXp/items.length);
   const maxLvl=Math.max(...items.map(i=>i.level||1));
   document.getElementById('statsBox').innerHTML=`
     <div style="display:flex;flex-direction:column;gap:10px">
       <div style="display:flex;justify-content:space-between;align-items:center">
-        <span style="font-size:.78rem;color:var(--muted)">Jami ishtirokchilar</span>
-        <span style="font-size:.88rem;font-weight:800;color:var(--text)">${items.length} ta</span>
+        <span style="font-size:.78rem;color:var(--muted)">${PI18N.totalParticipants}</span>
+        <span style="font-size:.88rem;font-weight:800;color:var(--text)">${items.length} ${PI18N.taUnit}</span>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center">
-        <span style="font-size:.78rem;color:var(--muted)">O'rtacha XP</span>
-        <span style="font-size:.88rem;font-weight:800;color:var(--accent)">${avgXp.toLocaleString('uz-UZ')}</span>
+        <span style="font-size:.78rem;color:var(--muted)">${PI18N.avgXp}</span>
+        <span style="font-size:.88rem;font-weight:800;color:var(--accent)">${avgXp.toLocaleString(JS_LOCALE)}</span>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center">
-        <span style="font-size:.78rem;color:var(--muted)">Jami XP</span>
-        <span style="font-size:.88rem;font-weight:800;color:var(--text)">${totalXp.toLocaleString('uz-UZ')}</span>
+        <span style="font-size:.78rem;color:var(--muted)">${PI18N.totalXp}</span>
+        <span style="font-size:.88rem;font-weight:800;color:var(--text)">${totalXp.toLocaleString(JS_LOCALE)}</span>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center">
-        <span style="font-size:.78rem;color:var(--muted)">Eng yuqori daraja</span>
-        <span style="font-size:.88rem;font-weight:800;color:#8b5cf6">Daraja ${maxLvl}</span>
+        <span style="font-size:.78rem;color:var(--muted)">${PI18N.topLevel}</span>
+        <span style="font-size:.88rem;font-weight:800;color:#8b5cf6">${PI18N.level} ${maxLvl}</span>
       </div>
       <div style="height:1px;background:var(--border);margin:4px 0"></div>
-      <div style="font-size:.72rem;color:var(--muted);text-align:center">Top 3 o'quvchi</div>
+      <div style="font-size:.72rem;color:var(--muted);text-align:center">${PI18N.top3}</div>
       ${items.slice(0,3).map((s,i)=>`
         <div style="display:flex;align-items:center;gap:8px">
           <div style="width:20px;height:20px;border-radius:50%;background:${i===0?'linear-gradient(135deg,#FFD700,#FFA500)':i===1?'linear-gradient(135deg,#C0C0C0,#909090)':'linear-gradient(135deg,#CD7F32,#A0522D)'};color:#fff;font-size:.6rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0">${i+1}</div>

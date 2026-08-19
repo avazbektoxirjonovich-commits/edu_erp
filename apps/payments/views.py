@@ -10,7 +10,7 @@ from rest_framework.views import APIView
 
 from apps.accounts.permissions import IsAdminOrTeacher, IsFinance, IsFinanceOrAdmin
 from apps.notifications.models import ActivityLog
-from apps.notifications.views import log_activity
+from apps.notifications.views import diff_fields, log_activity
 
 from .models import Payment
 from .serializers import (
@@ -70,10 +70,24 @@ class PaymentViewSet(generics.ListCreateAPIView):
                 {'detail': f'Saqlashda xato: {str(e)}'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        log_activity(
-            request.user, ActivityLog.Action.CREATE, 'Payment',
-            payment.pk, str(payment), request=request,
-        )
+        # This endpoint upserts: an existing Payment for the same student/group/
+        # month/year is overwritten rather than duplicated. Log the action that
+        # actually happened (UPDATE, with an old/new changes payload) instead of
+        # always claiming CREATE — the HTTP response/status is unchanged either way.
+        if getattr(serializer, 'was_update', False):
+            changes = diff_fields(
+                getattr(serializer, 'previous_state', {}), payment,
+                ('paid_amount', 'amount', 'note', 'status', 'debt_amount'),
+            )
+            log_activity(
+                request.user, ActivityLog.Action.UPDATE, 'Payment',
+                payment.pk, str(payment), changes=changes, request=request,
+            )
+        else:
+            log_activity(
+                request.user, ActivityLog.Action.CREATE, 'Payment',
+                payment.pk, str(payment), request=request,
+            )
         return Response(
             PaymentSerializer(payment).data,
             status=status.HTTP_201_CREATED,
@@ -91,10 +105,14 @@ class PaymentDetailView(generics.RetrieveUpdateAPIView):
         return PaymentSerializer
 
     def perform_update(self, serializer):
+        before = {f: getattr(serializer.instance, f) for f in
+                  ('paid_amount', 'debt_amount', 'status', 'note', 'payment_date')}
         payment = serializer.save()
+        changes = diff_fields(before, payment,
+                               ('paid_amount', 'debt_amount', 'status', 'note', 'payment_date'))
         log_activity(
             self.request.user, ActivityLog.Action.UPDATE, 'Payment',
-            payment.pk, str(payment), request=self.request,
+            payment.pk, str(payment), changes=changes, request=self.request,
         )
 
 

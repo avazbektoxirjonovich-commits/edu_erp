@@ -37,6 +37,26 @@ def log_activity(user, action, model_name, object_id='', object_repr='', changes
     )
 
 
+def diff_fields(before, after, fields):
+    """
+    Build an ActivityLog-ready {field: {'old': ..., 'new': ...}} payload for the
+    given field names, comparing a pre-save snapshot dict (`before`) against the
+    post-save model instance (`after`). Only fields whose value actually changed
+    are included, so an update that doesn't touch a given field stays silent on it.
+    Values are stringified for stable, JSON-safe comparison/storage (Decimal,
+    date, etc.) — callers are responsible for only listing non-sensitive fields.
+    """
+    changes = {}
+    for field in fields:
+        old_val = before.get(field)
+        new_val = getattr(after, field, None)
+        old_str = None if old_val is None else str(old_val)
+        new_str = None if new_val is None else str(new_val)
+        if old_str != new_str:
+            changes[field] = {'old': old_str, 'new': new_str}
+    return changes or None
+
+
 # ── Bildirishnomalar ──────────────────────────────────────────────────────────
 
 class NotificationListView(generics.ListAPIView):

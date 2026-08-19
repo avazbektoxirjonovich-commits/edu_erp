@@ -1,6 +1,7 @@
 ﻿{% extends "erp/base.html" %}
-{% block title %}Ko'rsatgichlarim — Qorako'l Ilm Ziyo{% endblock %}
-{% block page_title %}Ko'rsatgichlarim{% endblock %}
+{% load i18n %}
+{% block title %}{% translate "Ko'rsatgichlarim" %} — Qorako'l Ilm Ziyo{% endblock %}
+{% block page_title %}{% translate "Ko'rsatgichlarim" %}{% endblock %}
 
 {% block extra_head %}
 <style>
@@ -24,11 +25,11 @@
 <!-- Header -->
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;animation:fadeUp .33s ease both">
   <div>
-    <h2 style="font-size:1.05rem;font-weight:800;color:var(--text)">Mening natijalarim</h2>
-    <p style="font-size:.73rem;color:var(--muted);margin-top:3px">XP va Kumush hisobi</p>
+    <h2 style="font-size:1.05rem;font-weight:800;color:var(--text)">{% translate "Mening natijalarim" %}</h2>
+    <p style="font-size:.73rem;color:var(--muted);margin-top:3px">{% translate "XP va Kumush hisobi" %}</p>
   </div>
   <div style="display:flex;align-items:center;gap:6px;font-size:.9rem;font-weight:700;color:var(--text)">
-    <i class="fas fa-gem" style="color:#8b5cf6;font-size:.82rem"></i> Kumushlar: <span id="coinsTop">—</span>
+    <i class="fas fa-gem" style="color:#8b5cf6;font-size:.82rem"></i> {% translate "Kumushlar:" %} <span id="coinsTop">—</span>
   </div>
 </div>
 
@@ -38,7 +39,7 @@
   <div style="position:relative;z-index:1">
     <div style="display:flex;align-items:center;gap:7px;margin-bottom:10px">
       <i class="fas fa-arrow-trend-up" style="color:#4ade80"></i>
-      <span style="font-weight:700;font-size:.88rem;color:#fff">Bosqich: <span id="shLevel">—</span></span>
+      <span style="font-weight:700;font-size:.88rem;color:#fff">{% translate "Bosqich:" %} <span id="shLevel">—</span></span>
     </div>
     <span id="xpBadge" style="background:#16a34a;color:#fff;padding:3px 14px;border-radius:20px;font-size:.79rem;font-weight:700;display:inline-block;margin-bottom:10px">— / —</span>
     <div class="xp-prog-track" style="margin-bottom:10px">
@@ -53,16 +54,16 @@
 <!-- Category breakdown -->
 <div class="card" style="animation:fadeUp .4s ease .1s both">
   <div style="padding:18px 20px">
-    <div style="font-weight:800;font-size:.88rem;margin-bottom:14px;color:var(--text)">Yig'ilgan natijalar monitoringi</div>
+    <div style="font-weight:800;font-size:.88rem;margin-bottom:14px;color:var(--text)">{% translate "Yig'ilgan natijalar monitoringi" %}</div>
     <div id="catList"><div class="loading"><div class="spinner"></div></div></div>
     <div style="border-top:2px solid var(--border);margin-top:14px;padding-top:12px">
       <div class="total-row">
         <i class="fas fa-globe" style="color:#16a34a;font-size:.78rem"></i>
-        Jami yig'ilgan XP: <span id="totalXP" style="color:#16a34a">—</span>
+        {% translate "Jami yig'ilgan XP:" %} <span id="totalXP" style="color:#16a34a">—</span>
       </div>
       <div class="total-row">
         <i class="fas fa-gem" style="color:#8b5cf6;font-size:.78rem"></i>
-        Jami yig'ilgan Kumushlar: <span id="totalCoins" style="color:#8b5cf6">—</span>
+        {% translate "Jami yig'ilgan Kumushlar:" %} <span id="totalCoins" style="color:#8b5cf6">—</span>
       </div>
     </div>
   </div>
@@ -70,7 +71,19 @@
 {% endblock %}
 
 {% block extra_js %}
+{% translate "Darsga ishtirok bo'yicha" as p_cat_attendance %}
+{% translate "Uyga vazifa bo'yicha" as p_cat_homework %}
+{% translate "Imtihondan o'tish bo'yicha" as p_cat_exam %}
+{% translate "Administratsiya tomonidan berilgan" as p_cat_admin %}
+{% translate "{label} — jami XP {xp}, Jami Kumush {coins}" as p_category_line_tpl %}
 <script>
+const PI18N = {
+  catAttendance: "{{ p_cat_attendance|escapejs }}",
+  catHomework: "{{ p_cat_homework|escapejs }}",
+  catExam: "{{ p_cat_exam|escapejs }}",
+  catAdmin: "{{ p_cat_admin|escapejs }}",
+  categoryLineTpl: "{{ p_category_line_tpl|escapejs }}",
+};
 async function load(){
   if(!initAuth())return;
   const u=getUser();
@@ -86,11 +99,11 @@ async function load(){
 
   // Coins & XP
   const totalCoins=profile.coins||0, xp=profile.xp_points||0, toNext=profile.xp_to_next_level||500;
-  document.getElementById('coinsTop').textContent=totalCoins.toLocaleString('uz-UZ');
-  document.getElementById('totalCoins').textContent=totalCoins.toLocaleString('uz-UZ');
-  document.getElementById('totalXP').textContent=xp.toLocaleString('uz-UZ');
+  document.getElementById('coinsTop').textContent=totalCoins.toLocaleString(JS_LOCALE);
+  document.getElementById('totalCoins').textContent=totalCoins.toLocaleString(JS_LOCALE);
+  document.getElementById('totalXP').textContent=xp.toLocaleString(JS_LOCALE);
   document.getElementById('shLevel').textContent=profile.level||1;
-  document.getElementById('shXP').textContent=xp.toLocaleString('uz-UZ');
+  document.getElementById('shXP').textContent=xp.toLocaleString(JS_LOCALE);
   document.getElementById('xpBadge').textContent=`${xp} / ${xp+toNext}`;
   const pct=xp+toNext>0?Math.round(xp/(xp+toNext)*100):0;
   setTimeout(()=>{document.getElementById('xpFill').style.width=pct+'%';},200);
@@ -107,17 +120,17 @@ async function load(){
   const hwCoins=hwXP*4;
 
   const cats=[
-    {ic:'fa-calendar-check',bg:'ic-blue',label:"Darsga ishtirok bo'yicha",xp:attXP,coins:attCoins},
-    {ic:'fa-book-open',bg:'ic-orange',label:"Uyga vazifa bo'yicha",xp:hwXP,coins:hwCoins},
-    {ic:'fa-file-alt',bg:'ic-amber',label:"Imtihondan o'tish bo'yicha",xp:0,coins:0},
-    {ic:'fa-shield-alt',bg:'ic-green',label:"Administratsiya tomonidan berilgan",xp:0,coins:totalCoins-attCoins-hwCoins>0?totalCoins-attCoins-hwCoins:0},
+    {ic:'fa-calendar-check',bg:'ic-blue',label:PI18N.catAttendance,xp:attXP,coins:attCoins},
+    {ic:'fa-book-open',bg:'ic-orange',label:PI18N.catHomework,xp:hwXP,coins:hwCoins},
+    {ic:'fa-file-alt',bg:'ic-amber',label:PI18N.catExam,xp:0,coins:0},
+    {ic:'fa-shield-alt',bg:'ic-green',label:PI18N.catAdmin,xp:0,coins:totalCoins-attCoins-hwCoins>0?totalCoins-attCoins-hwCoins:0},
   ];
 
   document.getElementById('catList').innerHTML=cats.map((c,i)=>`
     <div class="cat-row" style="animation-delay:${i*0.05}s">
       <div style="display:flex;align-items:center;gap:10px;flex:1">
         <div class="cat-icon ${c.bg}"><i class="fas ${c.ic}"></i></div>
-        <span style="font-size:.81rem;color:var(--text)">${c.label} jami XP ${c.xp.toLocaleString('uz-UZ')}, Jami Kumush ${c.coins.toLocaleString('uz-UZ')}</span>
+        <span style="font-size:.81rem;color:var(--text)">${PI18N.categoryLineTpl.replace('{label}', c.label).replace('{xp}', c.xp.toLocaleString(JS_LOCALE)).replace('{coins}', c.coins.toLocaleString(JS_LOCALE))}</span>
       </div>
       <i class="fas fa-arrow-right-to-bracket" style="color:var(--muted);font-size:.85rem;margin-left:8px"></i>
     </div>`).join('');

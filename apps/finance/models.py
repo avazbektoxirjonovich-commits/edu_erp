@@ -25,6 +25,18 @@ class PaymentTransaction(models.Model):
                          related_name='transactions', verbose_name="To'lov hisobi",
                          db_index=True,
                      )
+    # Shu tranzaksiya yozilgan paytdagi guruh — Payment.group'dan MUSTAQIL,
+    # qotgan (frozen) nusxa. Payment.group kelajakda (FIN-005 Policy B)
+    # o'zgaruvchan bo'lib qolishi mumkin (guruh almashinuvida joriy oylik
+    # hisobni yangilash uchun), shu bois eski cheklar noto'g'ri guruhni
+    # ko'rsatib qolmasligi uchun bu maydon alohida saqlanadi. Bu faza faqat
+    # maydonni qo'shadi — to'ldirish (backfill) va foydalanish keyingi
+    # fazalarda amalga oshiriladi.
+    group          = models.ForeignKey(
+                         'groups.Group', on_delete=models.SET_NULL,
+                         null=True, blank=True, related_name='payment_transactions',
+                         verbose_name="Guruh (tranzaksiya vaqtidagi)",
+                     )
     amount         = models.DecimalField(
                          max_digits=10, decimal_places=0,
                          validators=[MinValueValidator(1)],

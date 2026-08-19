@@ -1,6 +1,7 @@
 ﻿{% extends "erp/base.html" %}
-{% block title %}Uyga vazifalar — Qorako'l Ilm Ziyo{% endblock %}
-{% block page_title %}Uyga vazifalar{% endblock %}
+{% load i18n %}
+{% block title %}{% translate "Uyga vazifalar — Qorako'l Ilm Ziyo" %}{% endblock %}
+{% block page_title %}{% translate "Uyga vazifalar" %}{% endblock %}
 
 {% block extra_head %}
 <style>
@@ -9,16 +10,16 @@
 @media(max-width:1100px){.hw-layout{grid-template-columns:1fr}}
 
 /* ── TABS ───────────────────────────────────────────────────── */
-.tabs{display:flex;gap:4px;background:#f0f1f5;padding:4px;border-radius:10px;width:fit-content;margin-bottom:20px}
+.tabs{display:flex;gap:4px;background:var(--bg);padding:4px;border-radius:10px;width:fit-content;margin-bottom:20px}
 .tab-btn{padding:7px 18px;border-radius:7px;border:none;background:none;font-size:.78rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all .2s;font-family:inherit}
-.tab-btn.active{background:#fff;color:var(--accent);box-shadow:0 1px 6px rgba(0,0,0,.1)}
+.tab-btn.active{background:var(--card);color:var(--accent);box-shadow:0 1px 6px rgba(0,0,0,.1)}
 
 /* ── ASSIGNMENT CARDS ───────────────────────────────────────── */
 .hw-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
 @media(max-width:900px){.hw-grid{grid-template-columns:1fr}}
 
 .hw-card{
-  background:#fff;border:1.5px solid var(--border);border-radius:14px;
+  background:var(--card);border:1.5px solid var(--border);border-radius:14px;
   padding:18px;box-shadow:var(--shadow);transition:all .25s;
   animation:fadeUp .38s ease both;cursor:pointer;position:relative;
 }
@@ -39,18 +40,18 @@
   padding:3px 9px;border-radius:20px;font-size:.68rem;font-weight:600;
   background:var(--bg);color:var(--warning);
 }
-.due-pill.ok{background:#ecfdf5;color:#059669}
-.due-pill.late{background:#fef2f2;color:#b91c1c}
+.due-pill.ok{background:var(--badge-success-bg);color:var(--badge-success-text)}
+.due-pill.late{background:var(--badge-danger-bg);color:var(--badge-danger-text)}
 
-.bdg-draft{background:#f0f1f5;color:#6b7280}
-.bdg-active-hw{background:#ecfdf5;color:#059669}
-.bdg-closed{background:#eff6ff;color:#1d4ed8}
+.bdg-draft{background:var(--border);color:var(--muted)}
+.bdg-active-hw{background:var(--badge-success-bg);color:var(--badge-success-text)}
+.bdg-closed{background:var(--badge-info-bg);color:var(--badge-info-text)}
 
 /* ── SIDE PANEL ─────────────────────────────────────────────── */
 .side-panel{display:flex;flex-direction:column;gap:16px}
 
 .mini-stat{
-  background:#fff;border:1px solid var(--border);border-radius:12px;
+  background:var(--card);border:1px solid var(--border);border-radius:12px;
   padding:16px;display:flex;align-items:center;gap:14px;
   box-shadow:var(--shadow);animation:fadeUp .4s ease both;
 }
@@ -58,7 +59,7 @@
 .mini-stat-val{font-size:1.6rem;font-weight:900;color:var(--text);line-height:1;letter-spacing:-.5px}
 .mini-stat-lbl{font-size:.7rem;color:var(--muted);margin-top:2px}
 
-.create-card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:20px;box-shadow:var(--shadow)}
+.create-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;box-shadow:var(--shadow)}
 .create-card h4{font-size:.88rem;font-weight:700;color:var(--text);margin-bottom:16px;display:flex;align-items:center;gap:7px}
 
 /* ── SUBMISSION LIST ────────────────────────────────────────── */
@@ -79,11 +80,11 @@
 <!-- Header -->
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;animation:fadeUp .3s ease both">
   <div>
-    <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">Uyga vazifalar</h2>
-    <p style="font-size:.75rem;color:var(--muted);margin-top:3px">Topshiriqlar va baholash</p>
+    <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">{% translate "Uyga vazifalar" %}</h2>
+    <p style="font-size:.75rem;color:var(--muted);margin-top:3px">{% translate "Topshiriqlar va baholash" %}</p>
   </div>
   <button class="btn btn-primary admin-teacher-only" onclick="openM('createModal')" style="display:none">
-    <i class="fas fa-plus"></i>Yangi vazifa
+    <i class="fas fa-plus"></i>{% translate "Yangi vazifa" %}
   </button>
 </div>
 
@@ -92,23 +93,23 @@
   <div>
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
       <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('active',this)">Faol</button>
-        <button class="tab-btn" onclick="switchTab('all',this)">Barchasi</button>
-        <button class="tab-btn student-only" onclick="switchTab('mine',this)" style="display:none">Mening</button>
+        <button class="tab-btn active" onclick="switchTab('active',this)">{% translate "Faol" %}</button>
+        <button class="tab-btn" onclick="switchTab('all',this)">{% translate "Barchasi" %}</button>
+        <button class="tab-btn student-only" onclick="switchTab('mine',this)" style="display:none">{% translate "Mening" %}</button>
       </div>
       <div style="display:flex;gap:8px;align-items:center">
         <div class="search-wrap">
           <i class="fas fa-search"></i>
-          <input type="text" id="srch" placeholder="Qidirish..." oninput="loadAssignments()" style="width:180px">
+          <input type="text" id="srch" placeholder="{% translate "Qidirish..." %}" oninput="loadAssignments()" style="width:180px">
         </div>
         <select id="fGroup" onchange="loadAssignments()" class="fc fc-sel admin-teacher-only" style="width:140px;display:none;padding:8px 32px 8px 12px;font-size:.78rem">
-          <option value="">Barcha guruhlar</option>
+          <option value="">{% translate "Barcha guruhlar" %}</option>
         </select>
       </div>
     </div>
 
     <div class="hw-grid" id="hwGrid">
-      <div style="grid-column:1/-1" class="loading"><div class="spinner"></div><p>Yuklanmoqda...</p></div>
+      <div style="grid-column:1/-1" class="loading"><div class="spinner"></div><p>{% translate "Yuklanmoqda..." %}</p></div>
     </div>
   </div>
 
@@ -116,24 +117,24 @@
   <div class="side-panel">
     <div class="mini-stat" style="animation-delay:.05s">
       <div class="mini-stat-icon ic-blue"><i class="fas fa-tasks"></i></div>
-      <div><div class="mini-stat-val" id="sTotal">—</div><div class="mini-stat-lbl">Jami vazifalar</div></div>
+      <div><div class="mini-stat-val" id="sTotal">—</div><div class="mini-stat-lbl">{% translate "Jami vazifalar" %}</div></div>
     </div>
     <div class="mini-stat" style="animation-delay:.1s">
       <div class="mini-stat-icon ic-green"><i class="fas fa-circle-check"></i></div>
-      <div><div class="mini-stat-val" id="sActive">—</div><div class="mini-stat-lbl">Faol vazifalar</div></div>
+      <div><div class="mini-stat-val" id="sActive">—</div><div class="mini-stat-lbl">{% translate "Faol vazifalar" %}</div></div>
     </div>
     <div class="mini-stat" style="animation-delay:.15s">
       <div class="mini-stat-icon ic-amber"><i class="fas fa-paper-plane"></i></div>
-      <div><div class="mini-stat-val" id="sSubmitted">—</div><div class="mini-stat-lbl">Topshirilgan</div></div>
+      <div><div class="mini-stat-val" id="sSubmitted">—</div><div class="mini-stat-lbl">{% translate "Topshirilgan" %}</div></div>
     </div>
     <div class="mini-stat" style="animation-delay:.2s">
       <div class="mini-stat-icon ic-purple"><i class="fas fa-star"></i></div>
-      <div><div class="mini-stat-val" id="sGraded">—</div><div class="mini-stat-lbl">Baholangan</div></div>
+      <div><div class="mini-stat-val" id="sGraded">—</div><div class="mini-stat-lbl">{% translate "Baholangan" %}</div></div>
     </div>
 
     <!-- Quick stats chart -->
     <div class="create-card" style="animation-delay:.25s;animation:fadeUp .4s .25s both">
-      <h4><i class="fas fa-chart-pie" style="color:var(--accent)"></i>Statistika</h4>
+      <h4><i class="fas fa-chart-pie" style="color:var(--accent)"></i>{% translate "Statistika" %}</h4>
       <canvas id="hwChart" height="180"></canvas>
     </div>
   </div>
@@ -145,27 +146,27 @@
 <div class="overlay" id="createModal">
   <div class="modal modal-lg">
     <div class="m-head">
-      <h5><i class="fas fa-plus" style="color:var(--accent);margin-right:6px"></i>Yangi vazifa yaratish</h5>
+      <h5><i class="fas fa-plus" style="color:var(--accent);margin-right:6px"></i>{% translate "Yangi vazifa yaratish" %}</h5>
       <button class="m-close" onclick="closeM('createModal')"><i class="fas fa-times"></i></button>
     </div>
     <div class="m-body">
-      <div class="fg"><label>Sarlavha *</label><input class="fc" id="cTitle" placeholder="Masalan: 1-bob mashqlari"></div>
-      <div class="fg"><label>Tavsif</label><textarea class="fc" id="cDesc" rows="3" placeholder="Topshiriq haqida batafsil..."></textarea></div>
+      <div class="fg"><label>{% translate "Sarlavha *" %}</label><input class="fc" id="cTitle" placeholder="{% translate "Masalan: 1-bob mashqlari" %}"></div>
+      <div class="fg"><label>{% translate "Tavsif" %}</label><textarea class="fc" id="cDesc" rows="3" placeholder="{% translate "Topshiriq haqida batafsil..." %}"></textarea></div>
       <div class="row2">
-        <div class="fg"><label>Guruh *</label>
-          <select class="fc fc-sel" id="cGroup"><option value="">— Tanlang —</option></select>
+        <div class="fg"><label>{% translate "Guruh *" %}</label>
+          <select class="fc fc-sel" id="cGroup"><option value="">{% translate "— Tanlang —" %}</option></select>
         </div>
-        <div class="fg"><label>Topshirish muddati *</label><input class="fc" type="datetime-local" id="cDue"></div>
+        <div class="fg"><label>{% translate "Topshirish muddati *" %}</label><input class="fc" type="datetime-local" id="cDue"></div>
       </div>
       <div class="row2">
-        <div class="fg"><label>Maksimal ball</label><input class="fc" type="number" id="cMaxScore" value="100" min="1" max="1000"></div>
-        <div class="fg"><label>XP mukofoti</label><input class="fc" type="number" id="cXp" value="50" min="0" max="500"></div>
+        <div class="fg"><label>{% translate "Maksimal ball" %}</label><input class="fc" type="number" id="cMaxScore" value="100" min="1" max="1000"></div>
+        <div class="fg"><label>{% translate "XP mukofoti" %}</label><input class="fc" type="number" id="cXp" value="50" min="0" max="500"></div>
       </div>
-      <div class="fg"><label>Fayl (ixtiyoriy)</label><input class="fc" type="file" id="cFile" accept=".pdf,.doc,.docx,.zip,.txt,.png,.jpg"></div>
+      <div class="fg"><label>{% translate "Fayl (ixtiyoriy)" %}</label><input class="fc" type="file" id="cFile" accept=".pdf,.doc,.docx,.zip,.txt,.png,.jpg"></div>
     </div>
     <div class="m-foot">
-      <button class="btn btn-ghost" onclick="closeM('createModal')">Bekor qilish</button>
-      <button class="btn btn-primary" onclick="createAssignment()"><i class="fas fa-save"></i>Saqlash</button>
+      <button class="btn btn-ghost" onclick="closeM('createModal')">{% translate "Bekor qilish" %}</button>
+      <button class="btn btn-primary" onclick="createAssignment()"><i class="fas fa-save"></i>{% translate "Saqlash" %}</button>
     </div>
   </div>
 </div>
@@ -174,7 +175,7 @@
 <div class="overlay" id="detailModal">
   <div class="modal modal-xl">
     <div class="m-head">
-      <h5 id="dtTitle">Vazifa tafsiloti</h5>
+      <h5 id="dtTitle">{% translate "Vazifa tafsiloti" %}</h5>
       <button class="m-close" onclick="closeM('detailModal')"><i class="fas fa-times"></i></button>
     </div>
     <div class="m-body" id="dtBody">
@@ -187,17 +188,17 @@
 <div class="overlay" id="submitModal">
   <div class="modal">
     <div class="m-head">
-      <h5><i class="fas fa-paper-plane" style="color:var(--accent);margin-right:6px"></i>Vazifani topshirish</h5>
+      <h5><i class="fas fa-paper-plane" style="color:var(--accent);margin-right:6px"></i>{% translate "Vazifani topshirish" %}</h5>
       <button class="m-close" onclick="closeM('submitModal')"><i class="fas fa-times"></i></button>
     </div>
     <div class="m-body">
       <input type="hidden" id="subAssignId">
-      <div class="fg"><label>Javob matni</label><textarea class="fc" id="subAnswer" rows="4" placeholder="Javobingizni yozing..."></textarea></div>
-      <div class="fg"><label>Fayl biriktirish (ixtiyoriy)</label><input class="fc" type="file" id="subFile"></div>
+      <div class="fg"><label>{% translate "Javob matni" %}</label><textarea class="fc" id="subAnswer" rows="4" placeholder="{% translate "Javobingizni yozing..." %}"></textarea></div>
+      <div class="fg"><label>{% translate "Fayl biriktirish (ixtiyoriy)" %}</label><input class="fc" type="file" id="subFile"></div>
     </div>
     <div class="m-foot">
-      <button class="btn btn-ghost" onclick="closeM('submitModal')">Bekor qilish</button>
-      <button class="btn btn-primary" onclick="submitAssignment()"><i class="fas fa-paper-plane"></i>Topshirish</button>
+      <button class="btn btn-ghost" onclick="closeM('submitModal')">{% translate "Bekor qilish" %}</button>
+      <button class="btn btn-primary" onclick="submitAssignment()"><i class="fas fa-paper-plane"></i>{% translate "Topshirish" %}</button>
     </div>
   </div>
 </div>
@@ -206,31 +207,117 @@
 <div class="overlay" id="gradeModal">
   <div class="modal">
     <div class="m-head">
-      <h5><i class="fas fa-star" style="color:var(--accent);margin-right:6px"></i>Baholash</h5>
+      <h5><i class="fas fa-star" style="color:var(--accent);margin-right:6px"></i>{% translate "Baholash" %}</h5>
       <button class="m-close" onclick="closeM('gradeModal')"><i class="fas fa-times"></i></button>
     </div>
     <div class="m-body">
       <input type="hidden" id="gradeSubId">
       <div style="background:var(--bg);border-radius:10px;padding:14px;margin-bottom:16px">
-        <div style="font-size:.75rem;color:var(--muted);margin-bottom:4px">O'quvchi javobi:</div>
+        <div style="font-size:.75rem;color:var(--muted);margin-bottom:4px">{% translate "O'quvchi javobi:" %}</div>
         <div id="gradeStudentAnswer" style="font-size:.82rem;color:var(--text);white-space:pre-wrap"></div>
       </div>
       <div class="row2">
-        <div class="fg"><label>Ball *</label><input class="fc" type="number" id="gradeScore" min="0" placeholder="0"></div>
-        <div class="fg"><label>Max ball</label><input class="fc" type="number" id="gradeMaxScore" readonly style="background:var(--bg);color:var(--muted)"></div>
+        <div class="fg"><label>{% translate "Ball *" %}</label><input class="fc" type="number" id="gradeScore" min="0" placeholder="0"></div>
+        <div class="fg"><label>{% translate "Max ball" %}</label><input class="fc" type="number" id="gradeMaxScore" readonly style="background:var(--bg);color:var(--muted)"></div>
       </div>
-      <div class="fg"><label>Izoh (ixtiyoriy)</label><textarea class="fc" id="gradeFeedback" rows="3" placeholder="O'qituvchi izohi..."></textarea></div>
+      <div class="fg"><label>{% translate "Izoh (ixtiyoriy)" %}</label><textarea class="fc" id="gradeFeedback" rows="3" placeholder="{% translate "O'qituvchi izohi..." %}"></textarea></div>
     </div>
     <div class="m-foot">
-      <button class="btn btn-ghost" onclick="closeM('gradeModal')">Bekor qilish</button>
-      <button class="btn btn-primary" onclick="gradeSubmission()"><i class="fas fa-check"></i>Baholash</button>
+      <button class="btn btn-ghost" onclick="closeM('gradeModal')">{% translate "Bekor qilish" %}</button>
+      <button class="btn btn-primary" onclick="gradeSubmission()"><i class="fas fa-check"></i>{% translate "Baholash" %}</button>
     </div>
   </div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
+{% translate "— Tanlang —" as p_select_placeholder %}
+{% translate "Barcha guruhlar" as p_all_groups %}
+{% translate "Yopilgan" as p_closed %}
+{% translate "Muddati o'tgan" as p_overdue %}
+{% translate "{days} kun qoldi" as p_days_left_tpl %}
+{% translate "{days} kun" as p_days_count_tpl %}
+{% translate "Qoralama" as p_draft %}
+{% translate "Topshirilgan" as p_submitted %}
+{% translate "Baholangan" as p_graded %}
+{% translate "Kech" as p_late %}
+{% translate "Topshirilmagan" as p_missing %}
+{% translate "Ball" as p_ball_lbl %}
+{% translate "ball" as p_ball_word %}
+{% translate "Topshirish" as p_submit_btn %}
+{% translate "Baholanishini kuting" as p_waiting_grade %}
+{% translate "ta topshirish" as p_ta_submit %}
+{% translate "baholangan" as p_graded_suffix %}
+{% translate "Vazifalar topilmadi" as p_not_found %}
+{% translate "Boshqa" as p_other %}
+{% translate "Ma'lumot yuklanmadi" as p_data_not_loaded %}
+{% translate "Topshirishlar ({count})" as p_submissions_count %}
+{% translate "Baholash" as p_grade_btn %}
+{% translate "Mening topshirishim" as p_my_submission %}
+{% translate "Faylni yuklab olish" as p_download_file %}
+{% translate "Izoh:" as p_feedback_lbl %}
+{% translate "Yopish" as p_close_btn %}
+{% translate "Guruh:" as p_group_lbl %}
+{% translate "O'qituvchi:" as p_teacher_lbl %}
+{% translate "Muddat:" as p_due_lbl %}
+{% translate "Topshirishlar:" as p_submissions_lbl %}
+{% translate "Javob yoki fayl kiritish shart" as p_answer_or_file_required %}
+{% translate "Vazifa muvaffaqiyatli topshirildi!" as p_submit_success %}
+{% translate "Xatolik yuz berdi" as p_generic_error %}
+{% translate "Tarmoq xatoligi" as p_network_error %}
+{% translate "(fayl yuborildi)" as p_file_sent_fallback %}
+{% translate "Ball 0 dan {max} gacha bo'lishi kerak" as p_score_range_error %}
+{% translate "Baholash saqlandi va XP berildi!" as p_grade_saved %}
+{% translate "Sarlavha kiritish shart" as p_title_required %}
+{% translate "Guruh tanlash shart" as p_group_required %}
+{% translate "Muddat kiritish shart" as p_due_required %}
+{% translate "Yangi vazifa yaratildi!" as p_assignment_created %}
+{% translate "Vazifa yopildi" as p_assignment_closed %}
 <script>
+const PI18N={
+  selectPlaceholder:"{{ p_select_placeholder|escapejs }}",
+  allGroups:"{{ p_all_groups|escapejs }}",
+  closed:"{{ p_closed|escapejs }}",
+  overdue:"{{ p_overdue|escapejs }}",
+  daysLeftTpl:"{{ p_days_left_tpl|escapejs }}",
+  daysCountTpl:"{{ p_days_count_tpl|escapejs }}",
+  draft:"{{ p_draft|escapejs }}",
+  submitted:"{{ p_submitted|escapejs }}",
+  graded:"{{ p_graded|escapejs }}",
+  late:"{{ p_late|escapejs }}",
+  missing:"{{ p_missing|escapejs }}",
+  ballLbl:"{{ p_ball_lbl|escapejs }}",
+  ballWord:"{{ p_ball_word|escapejs }}",
+  submitBtn:"{{ p_submit_btn|escapejs }}",
+  waitingGrade:"{{ p_waiting_grade|escapejs }}",
+  taSubmit:"{{ p_ta_submit|escapejs }}",
+  gradedSuffix:"{{ p_graded_suffix|escapejs }}",
+  notFound:"{{ p_not_found|escapejs }}",
+  other:"{{ p_other|escapejs }}",
+  dataNotLoaded:"{{ p_data_not_loaded|escapejs }}",
+  submissionsCount:"{{ p_submissions_count|escapejs }}",
+  gradeBtn:"{{ p_grade_btn|escapejs }}",
+  mySubmission:"{{ p_my_submission|escapejs }}",
+  downloadFile:"{{ p_download_file|escapejs }}",
+  feedbackLbl:"{{ p_feedback_lbl|escapejs }}",
+  closeBtn:"{{ p_close_btn|escapejs }}",
+  groupLbl:"{{ p_group_lbl|escapejs }}",
+  teacherLbl:"{{ p_teacher_lbl|escapejs }}",
+  dueLbl:"{{ p_due_lbl|escapejs }}",
+  submissionsLbl:"{{ p_submissions_lbl|escapejs }}",
+  answerOrFileRequired:"{{ p_answer_or_file_required|escapejs }}",
+  submitSuccess:"{{ p_submit_success|escapejs }}",
+  genericError:"{{ p_generic_error|escapejs }}",
+  networkError:"{{ p_network_error|escapejs }}",
+  fileSentFallback:"{{ p_file_sent_fallback|escapejs }}",
+  scoreRangeError:"{{ p_score_range_error|escapejs }}",
+  gradeSaved:"{{ p_grade_saved|escapejs }}",
+  titleRequired:"{{ p_title_required|escapejs }}",
+  groupRequired:"{{ p_group_required|escapejs }}",
+  dueRequired:"{{ p_due_required|escapejs }}",
+  assignmentCreated:"{{ p_assignment_created|escapejs }}",
+  assignmentClosed:"{{ p_assignment_closed|escapejs }}",
+};
 const ME = getUser();
 const isAdmin   = ME.role === 'admin';
 const isTeacher = ME.role === 'teacher';
@@ -264,31 +351,31 @@ async function loadGroups() {
   const data = await get('/groups/?page_size=200');
   allGroups = data?.results || [];
   const opts = allGroups.map(g => `<option value="${g.id}">${g.name}</option>`).join('');
-  document.getElementById('cGroup').innerHTML = '<option value="">— Tanlang —</option>' + opts;
+  document.getElementById('cGroup').innerHTML = `<option value="">${PI18N.selectPlaceholder}</option>` + opts;
   const fGroup = document.getElementById('fGroup');
-  if (fGroup) fGroup.innerHTML = '<option value="">Barcha guruhlar</option>' + opts;
+  if (fGroup) fGroup.innerHTML = `<option value="">${PI18N.allGroups}</option>` + opts;
 }
 
 // ── Format helpers ────────────────────────────────────────────
 function duePill(due_date, status) {
-  if (status === 'closed') return '<span class="due-pill" style="background:#eff6ff;color:#1d4ed8">Yopilgan</span>';
+  if (status === 'closed') return `<span class="due-pill" style="background:var(--badge-info-bg);color:var(--badge-info-text)">${PI18N.closed}</span>`;
   if (!due_date) return '';
   const diff = new Date(due_date) - new Date();
   const days = Math.ceil(diff / 864e5);
-  if (diff < 0) return '<span class="due-pill late"><i class="fas fa-clock"></i>Muddati o\'tgan</span>';
-  if (days <= 2) return `<span class="due-pill"><i class="fas fa-clock"></i>${days}k qoldi</span>`;
-  return `<span class="due-pill ok"><i class="fas fa-clock"></i>${days} kun</span>`;
+  if (diff < 0) return `<span class="due-pill late"><i class="fas fa-clock"></i>${PI18N.overdue}</span>`;
+  if (days <= 2) return `<span class="due-pill"><i class="fas fa-clock"></i>${PI18N.daysLeftTpl.replace('{days}', days)}</span>`;
+  return `<span class="due-pill ok"><i class="fas fa-clock"></i>${PI18N.daysCountTpl.replace('{days}', days)}</span>`;
 }
 
 function statusBdg(s) {
   const m = {
-    draft: '<span class="bdg bdg-draft">Qoralama</span>',
-    active: '<span class="bdg bdg-active-hw"><i class="fas fa-circle" style="font-size:.35rem"></i> Faol</span>',
-    closed: '<span class="bdg bdg-frozen">Yopilgan</span>',
-    submitted: '<span class="bdg" style="background:var(--bg);color:var(--warning)">Topshirilgan</span>',
-    graded: '<span class="bdg" style="background:linear-gradient(135deg,#ecfdf5,#d1fae5);color:#059669"><i class="fas fa-star" style="font-size:.6rem"></i> Baholangan</span>',
-    late: '<span class="bdg bdg-unpaid">Kech</span>',
-    missing: '<span class="bdg" style="background:#fef2f2;color:#b91c1c">Topshirilmagan</span>',
+    draft: `<span class="bdg bdg-draft">${PI18N.draft}</span>`,
+    active: `<span class="bdg bdg-active-hw"><i class="fas fa-circle" style="font-size:.35rem"></i> ${I18N.stActive}</span>`,
+    closed: `<span class="bdg bdg-frozen">${PI18N.closed}</span>`,
+    submitted: `<span class="bdg" style="background:var(--bg);color:var(--warning)">${PI18N.submitted}</span>`,
+    graded: `<span class="bdg" style="background:var(--badge-success-bg);color:var(--badge-success-text)"><i class="fas fa-star" style="font-size:.6rem"></i> ${PI18N.graded}</span>`,
+    late: `<span class="bdg bdg-unpaid">${PI18N.late}</span>`,
+    missing: `<span class="bdg" style="background:var(--badge-danger-bg);color:var(--badge-danger-text)">${PI18N.missing}</span>`,
   };
   return m[s] || `<span class="bdg bdg-inactive">${s}</span>`;
 }
@@ -299,7 +386,7 @@ function scoreBar(score, max) {
   const color = pct >= 80 ? 'var(--success)' : pct >= 50 ? '#f59e0b' : 'var(--danger)';
   return `<div class="hw-score-bar">
     <div class="hw-score-lbl">
-      <span style="color:var(--muted);font-size:.7rem">Ball</span>
+      <span style="color:var(--muted);font-size:.7rem">${PI18N.ballLbl}</span>
       <span style="font-weight:700;font-size:.75rem">${score}/${max}</span>
     </div>
     ${prog(pct, color)}
@@ -327,17 +414,17 @@ function renderCard(a, idx) {
   let actions = '';
   if (isStudent && !sub && a.status === 'active') {
     actions = `<button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openSubmit('${a.id}')">
-      <i class="fas fa-paper-plane"></i>Topshirish
+      <i class="fas fa-paper-plane"></i>${PI18N.submitBtn}
     </button>`;
   } else if (isStudent && sub && sub.status !== 'graded') {
-    actions = `<span style="font-size:.72rem;color:var(--muted);padding:6px 0"><i class="fas fa-clock" style="margin-right:4px"></i>Baholanishini kuting</span>`;
+    actions = `<span style="font-size:.72rem;color:var(--muted);padding:6px 0"><i class="fas fa-clock" style="margin-right:4px"></i>${PI18N.waitingGrade}</span>`;
   }
 
   if (isAdmin || isTeacher) {
     actions = `<span style="font-size:.72rem;color:var(--muted)">
-      <i class="fas fa-users" style="margin-right:3px"></i>${a.submission_count || 0} ta topshirish
+      <i class="fas fa-users" style="margin-right:3px"></i>${a.submission_count || 0} ${PI18N.taSubmit}
       &nbsp;|&nbsp;
-      <i class="fas fa-check" style="margin-right:3px;color:var(--success)"></i>${a.graded_count || 0} baholangan
+      <i class="fas fa-check" style="margin-right:3px;color:var(--success)"></i>${a.graded_count || 0} ${PI18N.gradedSuffix}
     </span>`;
   }
 
@@ -351,7 +438,7 @@ function renderCard(a, idx) {
     </div>
     <div class="hw-meta">
       ${duePill(a.due_date, a.status)}
-      <span style="font-size:.7rem;color:var(--muted)"><i class="fas fa-trophy" style="margin-right:3px;color:#f59e0b"></i>${a.max_score} ball</span>
+      <span style="font-size:.7rem;color:var(--muted)"><i class="fas fa-trophy" style="margin-right:3px;color:#f59e0b"></i>${a.max_score} ${PI18N.ballWord}</span>
       <span style="font-size:.7rem;color:var(--muted)"><i class="fas fa-bolt" style="margin-right:3px;color:var(--accent)"></i>${a.xp_reward} XP</span>
     </div>
     ${subInfo}
@@ -362,7 +449,7 @@ function renderCard(a, idx) {
 // ── Load assignments ──────────────────────────────────────────
 async function loadAssignments() {
   const grid = document.getElementById('hwGrid');
-  grid.innerHTML = '<div style="grid-column:1/-1" class="loading"><div class="spinner"></div><p>Yuklanmoqda...</p></div>';
+  grid.innerHTML = `<div style="grid-column:1/-1" class="loading"><div class="spinner"></div><p>${I18N.loading}</p></div>`;
 
   const srch = document.getElementById('srch').value.trim();
   const fGroup = document.getElementById('fGroup');
@@ -385,7 +472,7 @@ async function loadAssignments() {
   if (!items.length) {
     grid.innerHTML = `<div class="hw-empty">
       <i class="fas fa-book-open"></i>
-      <p>Vazifalar topilmadi</p>
+      <p>${PI18N.notFound}</p>
     </div>`;
     return;
   }
@@ -415,7 +502,7 @@ function updateChart(active, other, submitted, graded) {
   hwChart = new Chart(ctx, {
     type: 'doughnut',
     data: {
-      labels: ['Faol', 'Boshqa', 'Topshirilgan', 'Baholangan'],
+      labels: [I18N.stActive, PI18N.other, PI18N.submitted, PI18N.graded],
       datasets: [{
         data: [active, other, submitted, graded],
         backgroundColor: ['#10b981','#e2e8f0','#f59e0b','#059669'],
@@ -437,14 +524,14 @@ async function openDetail(id) {
   openM('detailModal');
   document.getElementById('dtBody').innerHTML = '<div class="loading"><div class="spinner"></div></div>';
   const a = await get('/homework/assignments/' + id + '/');
-  if (!a) { closeM('detailModal'); toast('Ma\'lumot yuklanmadi', 'err'); return; }
+  if (!a) { closeM('detailModal'); toast(PI18N.dataNotLoaded, 'err'); return; }
 
   document.getElementById('dtTitle').textContent = a.title;
 
   let subsHtml = '';
   if ((isAdmin || isTeacher) && a.submissions?.length) {
     subsHtml = `<div style="margin-top:20px">
-      <div style="font-size:.82rem;font-weight:700;margin-bottom:12px">Topshirishlar (${a.submissions.length})</div>
+      <div style="font-size:.82rem;font-weight:700;margin-bottom:12px">${PI18N.submissionsCount.replace('{count}', a.submissions.length)}</div>
       ${a.submissions.map(s => `
         <div class="sub-row">
           <div style="display:flex;align-items:center;gap:10px">
@@ -459,7 +546,7 @@ async function openDetail(id) {
             ${s.has_file ? `<a href="/api/v1/homework/submissions/${s.id}/file/" target="_blank" class="btn btn-sm btn-ghost" style="padding:4px 10px;font-size:.72rem"><i class="fas fa-download"></i></a>` : ''}
             ${s.score != null
               ? `<span style="font-size:.78rem;font-weight:700;color:var(--text)">${s.score}/${a.max_score}</span>`
-              : `<button class="btn btn-sm btn-outline" onclick="openGrade('${s.id}','${s.answer||''}',${a.max_score})" style="padding:4px 10px;font-size:.72rem">Baholash</button>`
+              : `<button class="btn btn-sm btn-outline" onclick="openGrade('${s.id}','${s.answer||''}',${a.max_score})" style="padding:4px 10px;font-size:.72rem">${PI18N.gradeBtn}</button>`
             }
           </div>
         </div>
@@ -475,14 +562,14 @@ async function openDetail(id) {
            style="display:inline-flex;align-items:center;gap:5px;margin-top:8px;
                   padding:5px 12px;border-radius:7px;background:var(--grad);
                   color:#fff;text-decoration:none;font-size:.74rem;font-weight:600">
-           <i class="fas fa-download"></i>${s.file_name||'Faylni yuklab olish'}
+           <i class="fas fa-download"></i>${s.file_name||PI18N.downloadFile}
          </a>` : '';
     mySubHtml = `<div style="margin-top:20px;padding:16px;background:var(--bg);border-radius:12px;border:1px solid var(--border)">
-      <div style="font-size:.82rem;font-weight:700;margin-bottom:10px">Mening topshirishim</div>
+      <div style="font-size:.82rem;font-weight:700;margin-bottom:10px">${PI18N.mySubmission}</div>
       ${s.answer ? `<div style="font-size:.8rem;color:var(--text);white-space:pre-wrap;margin-bottom:10px">${escHtml(s.answer)}</div>` : ''}
       ${dlBtn}
       ${s.score != null ? scoreBar(s.score, a.max_score) : ''}
-      ${s.feedback ? `<div style="margin-top:10px;font-size:.75rem;color:var(--muted)"><b>Izoh:</b> ${escHtml(s.feedback)}</div>` : ''}
+      ${s.feedback ? `<div style="margin-top:10px;font-size:.75rem;color:var(--muted)"><b>${PI18N.feedbackLbl}</b> ${escHtml(s.feedback)}</div>` : ''}
       <div style="margin-top:8px">${statusBdg(s.status)}</div>
     </div>`;
   }
@@ -490,7 +577,7 @@ async function openDetail(id) {
   let adminBtns = '';
   if ((isAdmin || isTeacher) && a.status === 'active') {
     adminBtns = `<div style="margin-top:16px;display:flex;gap:8px">
-      <button class="btn btn-sm btn-danger" onclick="closeAssignment('${a.id}')"><i class="fas fa-lock"></i>Yopish</button>
+      <button class="btn btn-sm btn-danger" onclick="closeAssignment('${a.id}')"><i class="fas fa-lock"></i>${PI18N.closeBtn}</button>
     </div>`;
   }
 
@@ -499,14 +586,14 @@ async function openDetail(id) {
       ${statusBdg(a.status)}
       ${duePill(a.due_date, a.status)}
       <span class="xp-badge"><i class="fas fa-bolt"></i>${a.xp_reward} XP</span>
-      <span style="font-size:.75rem;color:var(--muted)">Max: <b>${a.max_score}</b> ball</span>
+      <span style="font-size:.75rem;color:var(--muted)">Max: <b>${a.max_score}</b> ${PI18N.ballWord}</span>
     </div>
     ${a.description ? `<p style="font-size:.82rem;color:var(--text);line-height:1.7;margin-bottom:16px">${a.description}</p>` : ''}
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:.75rem;color:var(--muted);margin-bottom:8px">
-      <div><b>Guruh:</b> ${a.group_name || '—'}</div>
-      <div><b>O'qituvchi:</b> ${a.teacher_name || '—'}</div>
-      <div><b>Muddat:</b> ${a.due_date ? new Date(a.due_date).toLocaleString('uz-UZ') : '—'}</div>
-      <div><b>Topshirishlar:</b> ${a.submission_count || 0} / ${a.graded_count || 0} baholangan</div>
+      <div><b>${PI18N.groupLbl}</b> ${a.group_name || '—'}</div>
+      <div><b>${PI18N.teacherLbl}</b> ${a.teacher_name || '—'}</div>
+      <div><b>${PI18N.dueLbl}</b> ${a.due_date ? new Date(a.due_date).toLocaleString(JS_LOCALE) : '—'}</div>
+      <div><b>${PI18N.submissionsLbl}</b> ${a.submission_count || 0} / ${a.graded_count || 0} ${PI18N.gradedSuffix}</div>
     </div>
     ${mySubHtml}
     ${subsHtml}
@@ -528,7 +615,7 @@ async function submitAssignment() {
   const fileInput = document.getElementById('subFile');
 
   if (!answer && !fileInput.files.length) {
-    toast('Javob yoki fayl kiritish shart', 'wrn'); return;
+    toast(PI18N.answerOrFileRequired, 'wrn'); return;
   }
 
   const fd = new FormData();
@@ -536,7 +623,7 @@ async function submitAssignment() {
   if (fileInput.files[0]) fd.append('file', fileInput.files[0]);
 
   const btn = document.querySelector('#submitModal .btn-primary');
-  if (btn) { btn.disabled=true; btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Yuklanmoqda...'; }
+  if (btn) { btn.disabled=true; btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> '+I18N.loading; }
 
   const doFetch = async () => {
     const token = getAccess();
@@ -554,24 +641,24 @@ async function submitAssignment() {
       else { toLogin(); return; }
     }
     if (res && res.ok) {
-      toast('Vazifa muvaffaqiyatli topshirildi!', 'ok');
+      toast(PI18N.submitSuccess, 'ok');
       closeM('submitModal');
       loadAssignments();
     } else {
       const err = await res?.json().catch(() => ({}));
-      toast(err?.detail || err?.error || 'Xatolik yuz berdi', 'err');
+      toast(err?.detail || err?.error || PI18N.genericError, 'err');
     }
   } catch {
-    toast('Tarmoq xatoligi', 'err');
+    toast(PI18N.networkError, 'err');
   } finally {
-    if (btn) { btn.disabled=false; btn.innerHTML='<i class="fas fa-paper-plane"></i>Topshirish'; }
+    if (btn) { btn.disabled=false; btn.innerHTML='<i class="fas fa-paper-plane"></i>'+PI18N.submitBtn; }
   }
 }
 
 // ── Grade submission (teacher/admin) ─────────────────────────
 function openGrade(subId, answer, maxScore) {
   document.getElementById('gradeSubId').value = subId;
-  document.getElementById('gradeStudentAnswer').textContent = answer || '(fayl yuborildi)';
+  document.getElementById('gradeStudentAnswer').textContent = answer || PI18N.fileSentFallback;
   document.getElementById('gradeScore').value = '';
   document.getElementById('gradeScore').max = maxScore;
   document.getElementById('gradeMaxScore').value = maxScore;
@@ -586,18 +673,18 @@ async function gradeSubmission() {
   const feedback = document.getElementById('gradeFeedback').value.trim();
 
   if (isNaN(score) || score < 0 || score > max) {
-    toast(`Ball 0 dan ${max} gacha bo'lishi kerak`, 'wrn'); return;
+    toast(PI18N.scoreRangeError.replace('{max}', max), 'wrn'); return;
   }
 
   const res = await post(`/homework/submissions/${id}/grade/`, { score, feedback });
   if (res?.ok) {
-    toast('Baholash saqlandi va XP berildi!', 'ok');
+    toast(PI18N.gradeSaved, 'ok');
     closeM('gradeModal');
     closeM('detailModal');
     loadAssignments();
   } else {
     const err = await res?.json().catch(() => ({}));
-    toast(err.detail || 'Xatolik yuz berdi', 'err');
+    toast(err.detail || PI18N.genericError, 'err');
   }
 }
 
@@ -607,9 +694,9 @@ async function createAssignment() {
   const group = document.getElementById('cGroup').value;
   const due = document.getElementById('cDue').value;
 
-  if (!title) { toast('Sarlavha kiritish shart', 'wrn'); return; }
-  if (!group) { toast('Guruh tanlash shart', 'wrn'); return; }
-  if (!due) { toast('Muddat kiritish shart', 'wrn'); return; }
+  if (!title) { toast(PI18N.titleRequired, 'wrn'); return; }
+  if (!group) { toast(PI18N.groupRequired, 'wrn'); return; }
+  if (!due) { toast(PI18N.dueRequired, 'wrn'); return; }
 
   const fileInput = document.getElementById('cFile');
   const hasFile = fileInput.files.length > 0;
@@ -649,7 +736,7 @@ async function createAssignment() {
   }
 
   if (res?.ok) {
-    toast('Yangi vazifa yaratildi!', 'ok');
+    toast(PI18N.assignmentCreated, 'ok');
     closeM('createModal');
     document.getElementById('cTitle').value = '';
     document.getElementById('cDesc').value = '';
@@ -658,7 +745,7 @@ async function createAssignment() {
     loadAssignments();
   } else {
     const err = await (res?.json?.().catch(() => ({}))||Promise.resolve({}));
-    toast(err.detail || JSON.stringify(err) || 'Xatolik yuz berdi', 'err');
+    toast(err.detail || JSON.stringify(err) || PI18N.genericError, 'err');
   }
 }
 
@@ -666,11 +753,11 @@ async function createAssignment() {
 async function closeAssignment(id) {
   const res = await patch(`/homework/assignments/${id}/`, { status: 'closed' });
   if (res?.ok) {
-    toast('Vazifa yopildi', 'ok');
+    toast(PI18N.assignmentClosed, 'ok');
     closeM('detailModal');
     loadAssignments();
   } else {
-    toast('Xatolik yuz berdi', 'err');
+    toast(PI18N.genericError, 'err');
   }
 }
 

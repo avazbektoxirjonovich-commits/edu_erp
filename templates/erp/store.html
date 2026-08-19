@@ -1,11 +1,12 @@
 {% extends "erp/base.html" %}
-{% block title %}Do'kon — Qorako'l Ilm Ziyo{% endblock %}
-{% block page_title %}Do'kon{% endblock %}
+{% load i18n %}
+{% block title %}{% translate "Do'kon" %} — Qorako'l Ilm Ziyo{% endblock %}
+{% block page_title %}{% translate "Do'kon" %}{% endblock %}
 
 {% block extra_head %}
 <style>
 .st-balance{
-  display:flex;align-items:center;gap:14px;background:#fff;border:1px solid var(--border);
+  display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--border);
   border-radius:14px;padding:16px 20px;box-shadow:var(--shadow);margin-bottom:20px;
 }
 .st-balance-icon{
@@ -17,7 +18,7 @@
 
 .st-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px;margin-bottom:26px}
 .st-card{
-  background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden;
+  background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;
   box-shadow:var(--shadow);transition:all .2s;display:flex;flex-direction:column;
 }
 .st-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
@@ -49,23 +50,40 @@
 <div class="st-balance" id="stBalanceBox" style="animation:fadeUp .35s ease both;display:none">
   <div class="st-balance-icon"><i class="fas fa-gem"></i></div>
   <div>
-    <div class="st-balance-lbl">MENING KUMUSHIM</div>
+    <div class="st-balance-lbl">{% translate "MENING KUMUSHIM" %}</div>
     <div class="st-balance-val" id="stBalance">—</div>
   </div>
 </div>
 
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-  <h2 style="font-size:1rem;font-weight:800;color:var(--text)">Mukofotlar</h2>
+  <h2 style="font-size:1rem;font-weight:800;color:var(--text)">{% translate "Mukofotlar" %}</h2>
 </div>
 <div id="stGrid" class="st-grid"><div class="loading"><div class="spinner"></div></div></div>
 
 <div class="card" id="stOrdersBox" style="overflow:hidden;animation:fadeUp .4s ease .1s both;display:none">
-  <div class="card-header"><div class="card-title"><i class="fas fa-receipt" style="margin-right:6px;color:var(--accent)"></i>Mening buyurtmalarim</div></div>
+  <div class="card-header"><div class="card-title"><i class="fas fa-receipt" style="margin-right:6px;color:var(--accent)"></i>{% translate "Mening buyurtmalarim" %}</div></div>
   <div id="stOrders"><div class="loading"><div class="spinner"></div></div></div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
+{% translate "ta" as p_st_ta %}
+{% translate "KUMUSH" as p_st_kumush %}
+{% translate "Hozircha mukofotlar mavjud emas" as p_st_no_items %}
+{% translate "HOZIRCHA MAVJUD EMAS" as p_st_out_of_stock %}
+{% translate "Qoldiq:" as p_st_stock_left %}
+{% translate "MAVJUD EMAS" as p_st_unavailable %}
+{% translate "SOTIB OLISH" as p_st_buy %}
+{% translate "Kumushingiz yetarli emas." as p_st_not_enough %}
+{% translate "{name} ni {price} KUMUSHga so'rov qilasizmi?" as p_st_confirm_buy %}
+{% translate "So'rov yuborildi, admin tasdiqlashini kuting" as p_st_request_sent %}
+{% translate "Xatolik" as p_st_error %}
+{% translate "Server xatosi" as p_st_server_error %}
+{% translate "Hali buyurtma yo'q" as p_st_no_orders %}
+{% translate "Sabab:" as p_st_reason %}
+{% translate "Kutilmoqda" as p_st_status_pending %}
+{% translate "Tasdiqlangan / Berildi" as p_st_status_approved %}
+{% translate "Rad etildi" as p_st_status_rejected %}
 <script>
 initAuth();
 const _ME = getUser();
@@ -76,10 +94,27 @@ if(_IS_STUDENT){
   document.getElementById('stOrdersBox').style.display = 'block';
 }
 
+const STI18N = {
+  ta: "{{ p_st_ta|escapejs }}",
+  kumush: "{{ p_st_kumush|escapejs }}",
+  noItems: "{{ p_st_no_items|escapejs }}",
+  outOfStock: "{{ p_st_out_of_stock|escapejs }}",
+  stockLeft: "{{ p_st_stock_left|escapejs }}",
+  unavailable: "{{ p_st_unavailable|escapejs }}",
+  buy: "{{ p_st_buy|escapejs }}",
+  notEnough: "{{ p_st_not_enough|escapejs }}",
+  confirmBuy: "{{ p_st_confirm_buy|escapejs }}",
+  requestSent: "{{ p_st_request_sent|escapejs }}",
+  error: "{{ p_st_error|escapejs }}",
+  serverError: "{{ p_st_server_error|escapejs }}",
+  noOrders: "{{ p_st_no_orders|escapejs }}",
+  reason: "{{ p_st_reason|escapejs }}",
+};
+
 const STATUS_MAP = {
-  pending:  {label:'Kutilmoqda',              cls:'bdg-warning'},
-  approved: {label:'Tasdiqlangan / Berildi',  cls:'bdg-active'},
-  rejected: {label:'Rad etildi',              cls:'bdg-unpaid'},
+  pending:  {label:"{{ p_st_status_pending|escapejs }}",  cls:'bdg-warning'},
+  approved: {label:"{{ p_st_status_approved|escapejs }}", cls:'bdg-active'},
+  rejected: {label:"{{ p_st_status_rejected|escapejs }}", cls:'bdg-unpaid'},
 };
 
 let myCoins = 0;
@@ -87,7 +122,7 @@ let myCoins = 0;
 async function loadBalance(){
   const me = await get('/students/me/');
   myCoins = me?.coins || 0;
-  document.getElementById('stBalance').textContent = myCoins.toLocaleString('uz-UZ');
+  document.getElementById('stBalance').textContent = myCoins.toLocaleString(JS_LOCALE);
 }
 
 async function loadItems(){
@@ -95,7 +130,7 @@ async function loadItems(){
   const items = (d?.results || d || []).filter(i => i.is_active);
   const grid = document.getElementById('stGrid');
   if(!items.length){
-    grid.innerHTML = '<div class="empty"><i class="fas fa-store"></i><p>Hozircha mukofotlar mavjud emas</p></div>';
+    grid.innerHTML = `<div class="empty"><i class="fas fa-store"></i><p>${STI18N.noItems}</p></div>`;
     return;
   }
   grid.innerHTML = items.map(it => {
@@ -105,10 +140,10 @@ async function loadItems(){
       <div class="st-body">
         <div class="st-name">${escHtml(it.name)}</div>
         <div class="st-desc">${escHtml(it.description || '')}</div>
-        <div class="st-price"><i class="fas fa-gem" style="font-size:.8rem"></i> ${it.price.toLocaleString('uz-UZ')} KUMUSH</div>
-        <div class="st-stock ${outOfStock ? 'out' : ''}">${outOfStock ? "HOZIRCHA MAVJUD EMAS" : `Qoldiq: ${it.stock} ta`}</div>
+        <div class="st-price"><i class="fas fa-gem" style="font-size:.8rem"></i> ${it.price.toLocaleString(JS_LOCALE)} ${STI18N.kumush}</div>
+        <div class="st-stock ${outOfStock ? 'out' : ''}">${outOfStock ? STI18N.outOfStock : `${STI18N.stockLeft} ${it.stock} ${STI18N.ta}`}</div>
         ${_IS_STUDENT ? `<button class="st-buy-btn" ${outOfStock ? 'disabled' : ''} onclick="buyItem('${it.id}','${jsAttrEscape(it.name)}',${it.price})">
-          ${outOfStock ? "MAVJUD EMAS" : 'SOTIB OLISH'}
+          ${outOfStock ? STI18N.unavailable : STI18N.buy}
         </button>` : ''}
       </div>
     </div>`;
@@ -127,18 +162,18 @@ function jsAttrEscape(s){
 }
 
 async function buyItem(id, name, price){
-  if(myCoins < price){ toast('Kumushingiz yetarli emas.', 'wrn'); return; }
-  if(!confirm(`"${name}" ni ${price.toLocaleString('uz-UZ')} KUMUSHga so'rov qilasizmi?`)) return;
+  if(myCoins < price){ toast(STI18N.notEnough, 'wrn'); return; }
+  if(!confirm(STI18N.confirmBuy.replace('{name}', name).replace('{price}', price.toLocaleString(JS_LOCALE)))) return;
   const r = await post('/store/requests/', {item: id});
   if(r?.ok || r?.status === 201){
-    toast("So'rov yuborildi, admin tasdiqlashini kuting", 'ok');
+    toast(STI18N.requestSent, 'ok');
     loadOrders();
     loadItems();
   } else {
     try{
       const e = await r?.json();
-      toast(e?.detail || Object.values(e || {}).flat()[0] || 'Xatolik', 'err');
-    } catch { toast('Server xatosi', 'err'); }
+      toast(e?.detail || Object.values(e || {}).flat()[0] || STI18N.error, 'err');
+    } catch { toast(STI18N.serverError, 'err'); }
   }
 }
 
@@ -147,7 +182,7 @@ async function loadOrders(){
   const orders = d?.results || d || [];
   const box = document.getElementById('stOrders');
   if(!orders.length){
-    box.innerHTML = '<div class="empty"><i class="fas fa-receipt"></i><p>Hali buyurtma yo\'q</p></div>';
+    box.innerHTML = `<div class="empty"><i class="fas fa-receipt"></i><p>${STI18N.noOrders}</p></div>`;
     return;
   }
   box.innerHTML = orders.map(o => {
@@ -158,8 +193,8 @@ async function loadOrders(){
       <div style="flex:1">
         <div style="font-size:.82rem;font-weight:700;color:var(--text)">${escHtml(o.item_name || '—')}</div>
         <div style="font-size:.72rem;color:var(--muted);margin-top:2px">
-          <i class="fas fa-gem" style="color:#8b5cf6"></i> ${o.price_at_request} KUMUSH &nbsp;·&nbsp; ${date}
-          ${o.status === 'rejected' && o.rejection_reason ? ` &nbsp;·&nbsp; Sabab: ${escHtml(o.rejection_reason)}` : ''}
+          <i class="fas fa-gem" style="color:#8b5cf6"></i> ${o.price_at_request} ${STI18N.kumush} &nbsp;·&nbsp; ${date}
+          ${o.status === 'rejected' && o.rejection_reason ? ` &nbsp;·&nbsp; ${STI18N.reason} ${escHtml(o.rejection_reason)}` : ''}
         </div>
       </div>
       <span class="bdg ${sm.cls}">${sm.label}</span>

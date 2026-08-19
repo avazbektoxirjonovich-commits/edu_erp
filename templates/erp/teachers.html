@@ -1,26 +1,27 @@
 ﻿{% extends "erp/base.html" %}
+{% load i18n %}
 {% block title %}O'qituvchilar — Qorako'l Ilm Ziyo{% endblock %}
-{% block page_title %}O'qituvchilar{% endblock %}
+{% block page_title %}{% translate "O'qituvchilar" %}{% endblock %}
 
 {% block content %}
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;animation:fadeUp .35s ease both">
   <div>
-    <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">O'qituvchilar</h2>
-    <p style="font-size:.75rem;color:var(--muted);margin-top:3px">O'qituvchilar va ularning guruhlari</p>
+    <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">{% translate "O'qituvchilar" %}</h2>
+    <p style="font-size:.75rem;color:var(--muted);margin-top:3px">{% translate "O'qituvchilar va ularning guruhlari" %}</p>
   </div>
-  <button class="btn btn-primary admin-only" onclick="openAddModal()"><i class="fas fa-user-plus"></i>Yangi o'qituvchi</button>
+  <button class="btn btn-primary admin-only" onclick="openAddModal()"><i class="fas fa-user-plus"></i>{% translate "Yangi o'qituvchi" %}</button>
 </div>
 
 <div class="card" style="animation:fadeUp .4s ease .08s both;overflow:hidden">
   <div class="fbar">
     <div class="search-wrap">
       <i class="fas fa-search"></i>
-      <input type="text" id="srch" placeholder="Ism yoki telefon..." oninput="load()">
+      <input type="text" id="srch" placeholder="{% translate "Ism yoki telefon..." %}" oninput="load()">
     </div>
-    <select id="fActive" onchange="load()" style="border:1.5px solid var(--border);border-radius:8px;padding:7px 32px 7px 12px;font-size:.78rem;background:#fff;outline:none;cursor:pointer">
-      <option value="">Barcha status</option>
-      <option value="true">Faol</option>
-      <option value="false">Nofaol</option>
+    <select id="fActive" onchange="load()" style="border:1.5px solid var(--border);border-radius:8px;padding:7px 32px 7px 12px;font-size:.78rem;background:var(--card);color:var(--text);outline:none;cursor:pointer">
+      <option value="">{% translate "Barcha status" %}</option>
+      <option value="true">{% translate "Faol" %}</option>
+      <option value="false">{% translate "Nofaol" %}</option>
     </select>
     <span style="margin-left:auto;font-size:.75rem;color:var(--muted)" id="cntLbl"></span>
   </div>
@@ -31,23 +32,23 @@
 <div class="overlay" id="addModal">
   <div class="modal">
     <div class="m-head">
-      <h5><i class="fas fa-user-plus" style="color:var(--accent);margin-right:6px"></i>Yangi O'qituvchi</h5>
+      <h5><i class="fas fa-user-plus" style="color:var(--accent);margin-right:6px"></i>{% translate "Yangi O'qituvchi" %}</h5>
       <button class="m-close" onclick="closeM('addModal')"><i class="fas fa-times"></i></button>
     </div>
     <div class="m-body">
       <div class="row2">
-        <div class="fg"><label>Ism Familiya *</label><input class="fc" id="aName" placeholder="Karimov Sardor"></div>
-        <div class="fg"><label>Telefon *</label><input class="fc" id="aPhone" placeholder="+998901234567"></div>
+        <div class="fg"><label>{% translate "Ism Familiya" %} *</label><input class="fc" id="aName" placeholder="Karimov Sardor"></div>
+        <div class="fg"><label>{% translate "Telefon" %} *</label><input class="fc" id="aPhone" placeholder="+998901234567"></div>
       </div>
-      <div class="fg"><label>Parol *</label><input class="fc" type="password" id="aPwd" placeholder="Minimal 8 belgi"></div>
+      <div class="fg"><label>{% translate "Parol" %} *</label><input class="fc" type="password" id="aPwd" placeholder="{% translate "Minimal 8 belgi" %}"></div>
       <div class="row2">
-        <div class="fg"><label>Mutaxassislik</label><input class="fc" id="aSpec" placeholder="Matematika, Ingliz tili..."></div>
+        <div class="fg"><label>{% translate "Mutaxassislik" %}</label><input class="fc" id="aSpec" placeholder="Matematika, Ingliz tili..."></div>
       </div>
-      <div class="fg"><label>Ish haqi (so'm)</label><input class="fc" type="number" id="aSalary" placeholder="0"></div>
+      <div class="fg"><label>{% translate "Ish haqi (so'm)" %}</label><input class="fc" type="number" id="aSalary" placeholder="0"></div>
     </div>
     <div class="m-foot">
-      <button class="btn btn-ghost" onclick="closeM('addModal')">Bekor</button>
-      <button class="btn btn-primary" onclick="doAdd()"><i class="fas fa-check"></i>Saqlash</button>
+      <button class="btn btn-ghost" onclick="closeM('addModal')">{% translate "Bekor" %}</button>
+      <button class="btn btn-primary" onclick="doAdd()"><i class="fas fa-check"></i>{% translate "Saqlash" %}</button>
     </div>
   </div>
 </div>
@@ -56,35 +57,56 @@
 <div class="overlay" id="editModal">
   <div class="modal">
     <div class="m-head">
-      <h5><i class="fas fa-user-edit" style="color:var(--accent);margin-right:6px"></i>O'qituvchini tahrirlash</h5>
+      <h5><i class="fas fa-user-edit" style="color:var(--accent);margin-right:6px"></i>{% translate "O'qituvchini tahrirlash" %}</h5>
       <button class="m-close" onclick="closeM('editModal')"><i class="fas fa-times"></i></button>
     </div>
     <div class="m-body">
       <div class="row2">
-        <div class="fg"><label>Ism Familiya *</label><input class="fc" id="eName" placeholder="Ism Familiya"></div>
-        <div class="fg"><label>Telefon *</label><input class="fc" id="ePhone" placeholder="+998901234567"></div>
+        <div class="fg"><label>{% translate "Ism Familiya" %} *</label><input class="fc" id="eName" placeholder="{% translate "Ism Familiya" %}"></div>
+        <div class="fg"><label>{% translate "Telefon" %} *</label><input class="fc" id="ePhone" placeholder="+998901234567"></div>
       </div>
       <div class="row2">
-        <div class="fg"><label>Mutaxassislik</label><input class="fc" id="eSpec" placeholder="Mutaxassislik"></div>
+        <div class="fg"><label>{% translate "Mutaxassislik" %}</label><input class="fc" id="eSpec" placeholder="{% translate "Mutaxassislik" %}"></div>
       </div>
       <div class="row2">
-        <div class="fg"><label>Ish haqi</label><input class="fc" type="number" id="eSalary" placeholder="0"></div>
-        <div class="fg"><label>Status</label>
+        <div class="fg"><label>{% translate "Ish haqi" %}</label><input class="fc" type="number" id="eSalary" placeholder="0"></div>
+        <div class="fg"><label>{% translate "Status" %}</label>
           <select class="fc fc-sel" id="eActive">
-            <option value="true">Faol</option>
-            <option value="false">Nofaol</option>
+            <option value="true">{% translate "Faol" %}</option>
+            <option value="false">{% translate "Nofaol" %}</option>
           </select>
         </div>
       </div>
     </div>
     <div class="m-foot">
-      <button class="btn btn-ghost" onclick="closeM('editModal')">Bekor</button>
-      <button class="btn btn-primary" onclick="doEdit()"><i class="fas fa-check"></i>Saqlash</button>
+      <button class="btn btn-ghost" onclick="closeM('editModal')">{% translate "Bekor" %}</button>
+      <button class="btn btn-primary" onclick="doEdit()"><i class="fas fa-check"></i>{% translate "Saqlash" %}</button>
     </div>
   </div>
 </div>
 {% endblock %}
 
+{% translate "ta o'qituvchi" as p_ta_teacher %}
+{% translate "O'qituvchi topilmadi" as p_teacher_not_found %}
+{% translate "O'qituvchi" as p_teacher_word %}
+{% translate "Telefon" as p_phone %}
+{% translate "Mutaxassislik" as p_specialty %}
+{% translate "Guruhlar" as p_groups %}
+{% translate "Ish haqi" as p_salary %}
+{% translate "Status" as p_status %}
+{% translate "ta" as p_ta %}
+{% translate "Faol" as p_active %}
+{% translate "Nofaol" as p_inactive %}
+{% translate "Ism, telefon va parol majburiy!" as p_required_fields %}
+{% translate "O'qituvchi qo'shildi" as p_teacher_added %}
+{% translate "Xatolik" as p_error %}
+{% translate "Yuklab bo'lmadi" as p_load_failed %}
+{% translate "Saqlandi" as p_saved %}
+{% translate "Server xatosi" as p_server_error %}
+{% translate "{name} ni nofaol qilasizmi?" as p_deactivate_q_tpl %}
+{% translate "Ma'lumotlar (ish haqi tarixi, guruhlar) saqlanib qoladi." as p_deactivate_info1 %}
+{% translate "Kerak bo'lsa tahrirlashda qayta faollashtirish mumkin." as p_deactivate_info2 %}
+{% translate "O'qituvchi nofaol qilindi" as p_teacher_deactivated %}
 {% block extra_js %}
 <script>
 initAuth();
@@ -92,6 +114,30 @@ const _ME=getUser();
 const _isAdmin=_ME.role==='admin'||_ME.role==='developer';
 if(!_isAdmin) document.querySelectorAll('.admin-only').forEach(el=>el.style.display='none');
 let editId=null;
+
+const PI18N = {
+  taTeacher: "{{ p_ta_teacher|escapejs }}",
+  teacherNotFound: "{{ p_teacher_not_found|escapejs }}",
+  teacherWord: "{{ p_teacher_word|escapejs }}",
+  phone: "{{ p_phone|escapejs }}",
+  specialty: "{{ p_specialty|escapejs }}",
+  groups: "{{ p_groups|escapejs }}",
+  salary: "{{ p_salary|escapejs }}",
+  status: "{{ p_status|escapejs }}",
+  ta: "{{ p_ta|escapejs }}",
+  active: "{{ p_active|escapejs }}",
+  inactive: "{{ p_inactive|escapejs }}",
+  requiredFields: "{{ p_required_fields|escapejs }}",
+  teacherAdded: "{{ p_teacher_added|escapejs }}",
+  error: "{{ p_error|escapejs }}",
+  loadFailed: "{{ p_load_failed|escapejs }}",
+  saved: "{{ p_saved|escapejs }}",
+  serverError: "{{ p_server_error|escapejs }}",
+  deactivateQTpl: "{{ p_deactivate_q_tpl|escapejs }}",
+  deactivateInfo1: "{{ p_deactivate_info1|escapejs }}",
+  deactivateInfo2: "{{ p_deactivate_info2|escapejs }}",
+  teacherDeactivated: "{{ p_teacher_deactivated|escapejs }}",
+};
 
 async function load(){
   const q=document.getElementById('srch').value.trim();
@@ -102,11 +148,11 @@ async function load(){
   document.getElementById('tbl').innerHTML='<div class="loading"><div class="spinner"></div></div>';
   const d=await get(url);
   const items=d?.results||d||[];
-  document.getElementById('cntLbl').textContent=`${items.length} ta o'qituvchi`;
-  if(!items.length){document.getElementById('tbl').innerHTML='<div class="empty"><i class="fas fa-chalkboard-teacher"></i><p>O\'qituvchi topilmadi</p></div>';return;}
+  document.getElementById('cntLbl').textContent=`${items.length} ${PI18N.taTeacher}`;
+  if(!items.length){document.getElementById('tbl').innerHTML=`<div class="empty"><i class="fas fa-chalkboard-teacher"></i><p>${PI18N.teacherNotFound}</p></div>`;return;}
   document.getElementById('tbl').innerHTML=`
   <table class="etable"><thead><tr>
-    <th>#</th><th>O'qituvchi</th><th>Telefon</th><th>Mutaxassislik</th><th>Guruhlar</th><th>Ish haqi</th><th>Status</th><th></th>
+    <th>#</th><th>${PI18N.teacherWord}</th><th>${PI18N.phone}</th><th>${PI18N.specialty}</th><th>${PI18N.groups}</th><th>${PI18N.salary}</th><th>${PI18N.status}</th><th></th>
   </tr></thead><tbody>
   ${items.map((t,i)=>`<tr>
     <td style="color:var(--muted);font-size:.75rem">${i+1}</td>
@@ -118,9 +164,9 @@ async function load(){
     </td>
     <td style="color:var(--muted);font-size:.8rem">${t.phone||'—'}</td>
     <td style="font-size:.8rem">${t.subject||'—'}</td>
-    <td><span class="bdg bdg-active">${t.group_count||0} ta</span></td>
+    <td><span class="bdg bdg-active">${t.group_count||0} ${PI18N.ta}</span></td>
     <td style="font-size:.8rem;font-weight:600">${t.salary?fmoney(t.salary):'—'}</td>
-    <td>${t.is_active?'<span class="bdg bdg-active"><i class="fas fa-circle" style="font-size:.35rem"></i> Faol</span>':'<span class="bdg bdg-inactive">Nofaol</span>'}</td>
+    <td>${t.is_active?`<span class="bdg bdg-active"><i class="fas fa-circle" style="font-size:.35rem"></i> ${PI18N.active}</span>`:`<span class="bdg bdg-inactive">${PI18N.inactive}</span>`}</td>
     <td>
       <div style="display:flex;gap:4px">
         ${_isAdmin?`<button class="btn-icon edit" onclick="openEdit('${t.id}')"><i class="fas fa-pen"></i></button>
@@ -140,20 +186,20 @@ async function doAdd(){
   const name=document.getElementById('aName').value.trim();
   const phone=document.getElementById('aPhone').value.trim();
   const pwd=document.getElementById('aPwd').value;
-  if(!name||!phone||!pwd){toast('Ism, telefon va parol majburiy!','wrn');return;}
+  if(!name||!phone||!pwd){toast(PI18N.requiredFields,'wrn');return;}
   const r=await post('/teachers/',{
     full_name: name, phone, password: pwd,
     subject:   document.getElementById('aSpec').value,
     salary:    document.getElementById('aSalary').value||0,
   });
-  if(r?.ok){closeM('addModal');toast("O'qituvchi qo'shildi",'ok');load();}
-  else{const e=await r?.json();toast(e?.detail||JSON.stringify(e)||"Xatolik",'err');}
+  if(r?.ok){closeM('addModal');toast(PI18N.teacherAdded,'ok');load();}
+  else{const e=await r?.json();toast(e?.detail||JSON.stringify(e)||PI18N.error,'err');}
 }
 
 async function openEdit(id){
   editId=id;
   const d=await get(`/teachers/${id}/`);
-  if(!d){toast("Yuklab bo'lmadi",'err');return;}
+  if(!d){toast(PI18N.loadFailed,'err');return;}
   document.getElementById('eName').value=d.full_name||d.user?.full_name||'';
   document.getElementById('ePhone').value=d.phone||'';
   document.getElementById('eSpec').value=d.subject||'';
@@ -170,15 +216,15 @@ async function doEdit(){
     salary:    document.getElementById('eSalary').value||0,
     is_active: document.getElementById('eActive').value==='true',
   });
-  if(r?.ok){closeM('editModal');toast("Saqlandi",'ok');load();}
-  else{try{const e=await r?.json();toast(e?.detail||JSON.stringify(e)||'Xatolik','err');}catch{toast('Server xatosi','err');}}
+  if(r?.ok){closeM('editModal');toast(PI18N.saved,'ok');load();}
+  else{try{const e=await r?.json();toast(e?.detail||JSON.stringify(e)||PI18N.error,'err');}catch{toast(PI18N.serverError,'err');}}
 }
 
 async function doDelete(id,name){
-  if(!confirm(`"${name}" ni nofaol qilasizmi?\n\nMa'lumotlar (ish haqi tarixi, guruhlar) saqlanib qoladi.\nKerak bo'lsa tahrirlashda qayta faollashtirish mumkin.`)) return;
+  if(!confirm(`${PI18N.deactivateQTpl.replace('{name}', name)}\n\n${PI18N.deactivateInfo1}\n${PI18N.deactivateInfo2}`)) return;
   const r=await del(`/teachers/${id}/`);
-  if(r?.ok||r?.status===204){toast("O'qituvchi nofaol qilindi",'ok');load();}
-  else{try{const e=await r?.json();toast(e?.detail||JSON.stringify(e)||'Xatolik','err');}catch{toast('Server xatosi','err');}}
+  if(r?.ok||r?.status===204){toast(PI18N.teacherDeactivated,'ok');load();}
+  else{try{const e=await r?.json();toast(e?.detail||JSON.stringify(e)||PI18N.error,'err');}catch{toast(PI18N.serverError,'err');}}
 }
 
 load();

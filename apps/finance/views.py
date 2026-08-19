@@ -10,7 +10,7 @@ from rest_framework.views import APIView
 
 from apps.accounts.permissions import IsAdmin, IsFinanceOrAdmin
 from apps.notifications.models import ActivityLog
-from apps.notifications.views import log_activity
+from apps.notifications.views import diff_fields, log_activity
 from apps.payments.models import Payment
 from apps.payments.serializers import PaymentSerializer
 from apps.students.models import Student
@@ -163,10 +163,14 @@ class ExpenseViewSet(viewsets.ModelViewSet):
         )
 
     def perform_update(self, serializer):
+        before = {f: getattr(serializer.instance, f) for f in
+                  ('name', 'category', 'amount', 'expense_date', 'description')}
         expense = serializer.save()
+        changes = diff_fields(before, expense,
+                               ('name', 'category', 'amount', 'expense_date', 'description'))
         log_activity(
             self.request.user, ActivityLog.Action.UPDATE, 'Expense',
-            expense.pk, str(expense), request=self.request,
+            expense.pk, str(expense), changes=changes, request=self.request,
         )
 
     def perform_destroy(self, instance):
@@ -222,10 +226,13 @@ class AssetViewSet(viewsets.ModelViewSet):
         )
 
     def perform_update(self, serializer):
+        before = {f: getattr(serializer.instance, f) for f in
+                  ('name', 'quantity', 'purchase_price', 'condition')}
         asset = serializer.save()
+        changes = diff_fields(before, asset, ('name', 'quantity', 'purchase_price', 'condition'))
         log_activity(
             self.request.user, ActivityLog.Action.UPDATE, 'Asset',
-            asset.pk, str(asset), request=self.request,
+            asset.pk, str(asset), changes=changes, request=self.request,
         )
 
     def perform_destroy(self, instance):
@@ -305,6 +312,19 @@ class FinanceDashboardView(APIView):
     """
     GET /api/v1/finance/dashboard/?month=&year=
     Moliya panelining bosh sahifasi uchun barcha ko'rsatkichlar bitta so'rovda.
+
+    FIN-003 — two deliberately different income bases are returned side by side:
+      - `expected_monthly_income` / `received_income` / `outstanding_debt_*`
+        are ACCRUAL BASIS: Sum(Payment.amount / paid_amount / debt_amount) for
+        Payment rows whose *billing* month/year matches the request, regardless
+        of when the cash was actually collected.
+      - `today_income` / `monthly_income` / `net_result` (via
+        compute_financial_summary, see apps/finance/services.py) are CASH BASIS:
+        Sum(PaymentTransaction.amount) filtered by the transaction's own
+        `paid_at` date, regardless of which billing period it was applied to.
+    Both bases read from PaymentTransaction / Payment independently — neither
+    figure is derived from the other, so there is no double-counting between
+    them; they are simply two different, both-correct views of the same data.
     """
     permission_classes = [IsFinanceOrAdmin]
 

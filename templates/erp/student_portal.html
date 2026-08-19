@@ -1,6 +1,7 @@
 ﻿{% extends "erp/base.html" %}
-{% block title %}Bosh sahifa — Qorako'l Ilm Ziyo{% endblock %}
-{% block page_title %}Bosh sahifa{% endblock %}
+{% load i18n %}
+{% block title %}{% translate "Bosh sahifa" %} — Qorako'l Ilm Ziyo{% endblock %}
+{% block page_title %}{% translate "Bosh sahifa" %}{% endblock %}
 
 {% block extra_head %}
 <style>
@@ -26,7 +27,7 @@
 /* ── MINI STATS ─────────────────────────────── */
 .s-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
 @media(max-width:860px){.s-stats{grid-template-columns:repeat(2,1fr)}}
-.s-stat{background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px 12px;text-align:center;box-shadow:var(--shadow);animation:fadeUp .4s ease both;transition:all .22s;cursor:default}
+.s-stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 12px;text-align:center;box-shadow:var(--shadow);animation:fadeUp .4s ease both;transition:all .22s;cursor:default}
 .s-stat:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
 .s-stat-ic{width:38px;height:38px;border-radius:10px;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-size:.88rem}
 .s-stat-v{font-size:1.35rem;font-weight:900;letter-spacing:-.5px;line-height:1;color:var(--text)}
@@ -34,7 +35,7 @@
 
 /* ── CALENDAR ───────────────────────────────── */
 .cal-nav{border:none;background:none;cursor:pointer;width:26px;height:26px;border-radius:6px;color:var(--muted);display:flex;align-items:center;justify-content:center;font-size:.7rem;transition:background .15s}
-.cal-nav:hover{background:#f0f1f5}
+.cal-nav:hover{background:var(--bg)}
 .cal-today{background:var(--grad)!important;color:#fff!important;font-weight:700!important}
 </style>
 {% endblock %}
@@ -46,10 +47,10 @@
   <div class="s-hero-inner">
     <div class="s-hero-av" id="hAv">?</div>
     <div style="flex:1;min-width:0">
-      <div class="s-hero-name" id="hName">Yuklanmoqda...</div>
+      <div class="s-hero-name" id="hName">{% translate "Yuklanmoqda..." %}</div>
       <div class="s-hero-sub"><i class="fas fa-users" style="font-size:.6rem"></i><span id="hGroup">—</span></div>
       <div class="s-badges">
-        <span class="s-bdg s-bdg-lv"><i class="fas fa-star" style="font-size:.6rem"></i>Bosqich <span id="hLv">1</span></span>
+        <span class="s-bdg s-bdg-lv"><i class="fas fa-star" style="font-size:.6rem"></i>{% translate "Bosqich" %} <span id="hLv">1</span></span>
         <span class="s-bdg s-bdg-xp"><i class="fas fa-bolt" style="font-size:.6rem"></i><span id="hXP">0</span> XP</span>
         <span class="s-bdg s-bdg-coin"><i class="fas fa-gem" style="font-size:.6rem"></i><span id="hCoins">0</span></span>
       </div>
@@ -57,8 +58,8 @@
   </div>
   <div class="s-xp-wrap">
     <div class="s-xp-info">
-      <span style="color:rgba(255,255,255,.44)">Keyingi bosqich</span>
-      <span style="color:rgba(255,255,255,.33)" id="hXPLeft">— XP qoldi</span>
+      <span style="color:rgba(255,255,255,.44)">{% translate "Keyingi bosqich" %}</span>
+      <span style="color:rgba(255,255,255,.33)" id="hXPLeft">— {% translate "XP qoldi" %}</span>
     </div>
     <div class="s-xp-track"><div class="s-xp-fill" id="hXPFill"></div></div>
   </div>
@@ -69,29 +70,29 @@
   <div class="s-stat" style="animation-delay:.04s">
     <div class="s-stat-ic ic-blue"><i class="fas fa-calendar-check"></i></div>
     <div class="s-stat-v" id="msAtt">—</div>
-    <div class="s-stat-l">Davomat %</div>
+    <div class="s-stat-l">{% translate "Davomat %" %}</div>
   </div>
   <div class="s-stat" style="animation-delay:.09s">
     <div class="s-stat-ic ic-green"><i class="fas fa-check-circle"></i></div>
     <div class="s-stat-v" id="msPresent">—</div>
-    <div class="s-stat-l">Kelgan kunlar</div>
+    <div class="s-stat-l">{% translate "Kelgan kunlar" %}</div>
   </div>
   <div class="s-stat" style="animation-delay:.14s">
     <div class="s-stat-ic ic-orange"><i class="fas fa-trophy"></i></div>
     <div class="s-stat-v" id="msRank">—</div>
-    <div class="s-stat-l">Reyting o'rni</div>
+    <div class="s-stat-l">{% translate "Reyting o'rni" %}</div>
   </div>
   <div class="s-stat" style="animation-delay:.19s">
     <div class="s-stat-ic ic-red"><i class="fas fa-credit-card"></i></div>
     <div class="s-stat-v" id="msDebt">—</div>
-    <div class="s-stat-l">Qarz (so'm)</div>
+    <div class="s-stat-l">{% translate "Qarz (so'm)" %}</div>
   </div>
 </div>
 
 <!-- Calendar Card -->
 <div class="card" style="animation:fadeUp .42s ease .22s both">
   <div style="padding:18px 20px">
-    <div style="font-weight:800;font-size:.9rem;margin-bottom:14px;color:var(--text)">Dars jadvali</div>
+    <div style="font-weight:800;font-size:.9rem;margin-bottom:14px;color:var(--text)">{% translate "Dars jadvali" %}</div>
 
     <!-- Month nav -->
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
@@ -113,20 +114,35 @@
     <!-- Legend -->
     <div style="display:flex;gap:14px;margin-top:12px;flex-wrap:wrap">
       <span style="display:flex;align-items:center;gap:5px;font-size:.68rem;color:var(--muted)">
-        <span style="width:8px;height:8px;border-radius:50%;background:#16a34a;flex-shrink:0"></span>Keldi</span>
+        <span style="width:8px;height:8px;border-radius:50%;background:#16a34a;flex-shrink:0"></span>{% translate "Keldi" %}</span>
       <span style="display:flex;align-items:center;gap:5px;font-size:.68rem;color:var(--muted)">
-        <span style="width:8px;height:8px;border-radius:50%;background:#ef4444;flex-shrink:0"></span>Kelmadi</span>
+        <span style="width:8px;height:8px;border-radius:50%;background:#ef4444;flex-shrink:0"></span>{% translate "Kelmadi" %}</span>
       <span style="display:flex;align-items:center;gap:5px;font-size:.68rem;color:var(--muted)">
-        <span style="width:8px;height:8px;border-radius:50%;background:#f59e0b;flex-shrink:0"></span>Kech keldi</span>
+        <span style="width:8px;height:8px;border-radius:50%;background:#f59e0b;flex-shrink:0"></span>{% translate "Kech keldi" %}</span>
     </div>
   </div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
+{% translate "D" as p_cal_mon %}{% translate "S" context "weekday-short-tue" as p_cal_tue %}{% translate "C" as p_cal_wed %}
+{% translate "P" as p_cal_thu %}{% translate "J" as p_cal_fri %}{% translate "S" context "weekday-short-sat" as p_cal_sat %}
+{% translate "Y" as p_cal_sun %}
+{% translate "Guruhsiz" as p_no_group %}
+{% translate "XP qoldi" as p_xp_qoldi %}
 <script>
-const MNS_UZ=['Yanvar','Fevral','Mart','Aprel','May','Iyun','Iyul','Avgust','Sentabr','Oktabr','Noyabr','Dekabr'];
-const CAL_H=['D','S','C','P','J','S','Y'];
+const PI18N = {
+  calMon: "{{ p_cal_mon|escapejs }}",
+  calTue: "{{ p_cal_tue|escapejs }}",
+  calWed: "{{ p_cal_wed|escapejs }}",
+  calThu: "{{ p_cal_thu|escapejs }}",
+  calFri: "{{ p_cal_fri|escapejs }}",
+  calSat: "{{ p_cal_sat|escapejs }}",
+  calSun: "{{ p_cal_sun|escapejs }}",
+  noGroup: "{{ p_no_group|escapejs }}",
+  xpQoldi: "{{ p_xp_qoldi|escapejs }}",
+};
+const CAL_H=[PI18N.calMon,PI18N.calTue,PI18N.calWed,PI18N.calThu,PI18N.calFri,PI18N.calSat,PI18N.calSun];
 const TODAY_STR=new Date().toISOString().split('T')[0];
 let calY=new Date().getFullYear(), calM=new Date().getMonth()+1;
 let attMap={};
@@ -136,7 +152,7 @@ document.getElementById('calDays').innerHTML=CAL_H.map(d=>
 ).join('');
 
 function buildCal(){
-  document.getElementById('calLabel').textContent=`${MNS_UZ[calM-1]} ${calY}`;
+  document.getElementById('calLabel').textContent=`${I18N.months[calM-1]} ${calY}`;
   const first=new Date(calY,calM-1,1);
   const startDay=(first.getDay()+6)%7; // Monday-first
   const dim=new Date(calY,calM,0).getDate();
@@ -172,12 +188,12 @@ async function loadPortal(){
   if(profile){
     document.getElementById('hAv').textContent=initials(profile.full_name||'?');
     document.getElementById('hName').textContent=profile.full_name||'—';
-    document.getElementById('hGroup').textContent=profile.group_name||'Guruhsiz';
+    document.getElementById('hGroup').textContent=profile.group_name||PI18N.noGroup;
     document.getElementById('hLv').textContent=profile.level||1;
     const xp=profile.xp_points||0, toNext=profile.xp_to_next_level||500;
-    document.getElementById('hXP').textContent=xp.toLocaleString('uz-UZ');
-    document.getElementById('hCoins').textContent=(profile.coins||0).toLocaleString('uz-UZ');
-    document.getElementById('hXPLeft').textContent=toNext+' XP qoldi';
+    document.getElementById('hXP').textContent=xp.toLocaleString(JS_LOCALE);
+    document.getElementById('hCoins').textContent=(profile.coins||0).toLocaleString(JS_LOCALE);
+    document.getElementById('hXPLeft').textContent=toNext+' '+PI18N.xpQoldi;
     const pct=xp+toNext>0?Math.round(xp/(xp+toNext)*100):0;
     setTimeout(()=>{document.getElementById('hXPFill').style.width=pct+'%';},300);
     const debt=Math.round(profile.total_debt||0);

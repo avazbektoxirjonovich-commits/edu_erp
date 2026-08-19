@@ -5,7 +5,7 @@ from rest_framework.viewsets import ModelViewSet
 
 from apps.accounts.permissions import IsAdmin, IsFinance, IsFinanceOrAdmin
 from apps.notifications.models import ActivityLog
-from apps.notifications.views import log_activity
+from apps.notifications.views import diff_fields, log_activity
 
 from .models import Teacher, TeacherSalaryPayment
 from .serializers import (
@@ -83,10 +83,14 @@ class TeacherSalaryDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset           = TeacherSalaryPayment.objects.select_related('teacher__user', 'paid_by')
 
     def perform_update(self, serializer):
+        before = {f: getattr(serializer.instance, f) for f in
+                  ('amount', 'worked_hours', 'bonus', 'deductions', 'status')}
         salary = serializer.save()
+        changes = diff_fields(before, salary,
+                               ('amount', 'worked_hours', 'bonus', 'deductions', 'status'))
         log_activity(
             self.request.user, ActivityLog.Action.UPDATE, 'TeacherSalaryPayment',
-            salary.pk, str(salary), request=self.request,
+            salary.pk, str(salary), changes=changes, request=self.request,
         )
 
     def perform_destroy(self, instance):

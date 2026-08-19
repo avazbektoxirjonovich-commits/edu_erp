@@ -1,6 +1,7 @@
 ﻿{% extends "erp/base.html" %}
-{% block title %}Guruhlarim — Qorako'l Ilm Ziyo{% endblock %}
-{% block page_title %}Guruhlarim{% endblock %}
+{% load i18n %}
+{% block title %}{% translate "Guruhlarim — Qorako'l Ilm Ziyo" %}{% endblock %}
+{% block page_title %}{% translate "Guruhlarim" %}{% endblock %}
 
 {% block extra_head %}
 <style>
@@ -23,7 +24,7 @@
 /* ── STAT CARDS ───────────────────────────────────────── */
 .th-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
 @media(max-width:900px){.th-stats{grid-template-columns:repeat(2,1fr)}}
-.th-stat{background:#fff;border:1px solid var(--border);border-radius:13px;padding:16px 14px;text-align:center;box-shadow:var(--shadow);animation:fadeUp .4s ease both;transition:all .25s cubic-bezier(.4,0,.2,1);cursor:default;position:relative;overflow:hidden}
+.th-stat{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:16px 14px;text-align:center;box-shadow:var(--shadow);animation:fadeUp .4s ease both;transition:all .25s cubic-bezier(.4,0,.2,1);cursor:default;position:relative;overflow:hidden}
 .th-stat::before{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;border-radius:0 0 13px 13px;background:var(--grad);transform:scaleX(0);transition:transform .3s ease}
 .th-stat:hover{transform:translateY(-3px);box-shadow:var(--shadow-md)}
 .th-stat:hover::before{transform:scaleX(1)}
@@ -35,7 +36,7 @@
 .g-link{color:var(--accent);font-weight:700;text-decoration:none;transition:opacity .18s}
 .g-link:hover{opacity:.72;text-decoration:underline}
 .g-sched{display:flex;gap:3px;flex-wrap:wrap}
-.g-day{background:#f0f1f5;color:var(--muted);border-radius:4px;padding:1px 5px;font-size:.62rem;font-weight:700}
+.g-day{background:var(--card);color:var(--muted);border-radius:4px;padding:1px 5px;font-size:.62rem;font-weight:700}
 
 /* Row stagger animation */
 @keyframes rowIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:translateX(0)}}
@@ -54,12 +55,12 @@
   <div class="th-hero-inner">
     <div class="th-av" id="thAv">?</div>
     <div style="flex:1;min-width:0">
-      <div class="th-name" id="thName">Yuklanmoqda...</div>
-      <div class="th-sub"><i class="fas fa-chalkboard-teacher" style="font-size:.62rem"></i><span id="thSub">O'qituvchi</span></div>
+      <div class="th-name" id="thName">{% translate "Yuklanmoqda..." %}</div>
+      <div class="th-sub"><i class="fas fa-chalkboard-teacher" style="font-size:.62rem"></i><span id="thSub">{% translate "O'qituvchi" %}</span></div>
       <div class="th-badges">
-        <span class="th-bdg th-bdg-g"><i class="fas fa-users" style="font-size:.6rem"></i><span id="thGrpCnt">0</span> guruh</span>
-        <span class="th-bdg th-bdg-s"><i class="fas fa-user-graduate" style="font-size:.6rem"></i><span id="thStCnt">0</span> o'quvchi</span>
-        <span class="th-bdg th-bdg-h"><i class="fas fa-book-open" style="font-size:.6rem"></i><span id="thHwCnt">0</span> vazifa</span>
+        <span class="th-bdg th-bdg-g"><i class="fas fa-users" style="font-size:.6rem"></i><span id="thGrpCnt">0</span> {% translate "guruh" %}</span>
+        <span class="th-bdg th-bdg-s"><i class="fas fa-user-graduate" style="font-size:.6rem"></i><span id="thStCnt">0</span> {% translate "o'quvchi" %}</span>
+        <span class="th-bdg th-bdg-h"><i class="fas fa-book-open" style="font-size:.6rem"></i><span id="thHwCnt">0</span> {% translate "vazifa" %}</span>
       </div>
     </div>
   </div>
@@ -70,29 +71,29 @@
   <div class="th-stat" style="animation-delay:.04s">
     <div class="th-stat-ic ic-blue"><i class="fas fa-users"></i></div>
     <div class="th-stat-v" id="stGrp">—</div>
-    <div class="th-stat-l">Mening guruhlarim</div>
+    <div class="th-stat-l">{% translate "Mening guruhlarim" %}</div>
   </div>
   <div class="th-stat" style="animation-delay:.09s">
     <div class="th-stat-ic ic-green"><i class="fas fa-user-graduate"></i></div>
     <div class="th-stat-v" id="stStu">—</div>
-    <div class="th-stat-l">Jami o'quvchilar</div>
+    <div class="th-stat-l">{% translate "Jami o'quvchilar" %}</div>
   </div>
   <div class="th-stat" style="animation-delay:.14s">
     <div class="th-stat-ic ic-orange"><i class="fas fa-book-open"></i></div>
     <div class="th-stat-v" id="stHw">—</div>
-    <div class="th-stat-l">Faol vazifalar</div>
+    <div class="th-stat-l">{% translate "Faol vazifalar" %}</div>
   </div>
   <div class="th-stat" style="animation-delay:.19s">
     <div class="th-stat-ic ic-red"><i class="fas fa-calendar-check"></i></div>
     <div class="th-stat-v" id="stAtt">—</div>
-    <div class="th-stat-l">Bugungi davomat</div>
+    <div class="th-stat-l">{% translate "Bugungi davomat" %}</div>
   </div>
 </div>
 
 <!-- Groups Table -->
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;animation:fadeUp .42s ease .22s both">
   <div>
-    <span style="font-weight:800;font-size:.92rem;color:var(--text)">Guruhlar</span>
+    <span style="font-weight:800;font-size:.92rem;color:var(--text)">{% translate "Guruhlar" %}</span>
     <span style="font-size:.75rem;color:var(--muted);margin-left:8px" id="grpCountLbl"></span>
   </div>
 </div>
@@ -103,8 +104,31 @@
 {% endblock %}
 
 {% block extra_js %}
+{% translate "ta guruh" as p_ta_guruh %}
+{% translate "ta" as p_ta_unit %}
+{% translate "Guruh topilmadi" as p_no_groups %}
+{% translate "Guruh nomi" as p_th_name %}
+{% translate "Yo'nalish" as p_th_dir %}
+{% translate "O'quvchilar" as p_th_students %}
+{% translate "Dars vaqti" as p_th_time %}
+{% translate "Boshlagan sana" as p_th_start %}
+{% translate "Jadval" as p_th_sched %}
+{% translate "Holat" as p_th_status %}
+{% translate "Batafsil" as p_details %}
 <script>
-const DL={1:'Du',2:'Se',3:'Ch',4:'Pa',5:'Ju',6:'Sh',7:'Ya'};
+const PI18N={
+  taGuruh:"{{ p_ta_guruh|escapejs }}",
+  taUnit:"{{ p_ta_unit|escapejs }}",
+  noGroups:"{{ p_no_groups|escapejs }}",
+  thName:"{{ p_th_name|escapejs }}",
+  thDir:"{{ p_th_dir|escapejs }}",
+  thStudents:"{{ p_th_students|escapejs }}",
+  thTime:"{{ p_th_time|escapejs }}",
+  thStart:"{{ p_th_start|escapejs }}",
+  thSched:"{{ p_th_sched|escapejs }}",
+  thStatus:"{{ p_th_status|escapejs }}",
+  details:"{{ p_details|escapejs }}",
+};
 const TODAY=new Date().toISOString().split('T')[0];
 
 async function load(){
@@ -145,17 +169,17 @@ async function load(){
 }
 
 function renderGroups(grps, stus, hws){
-  document.getElementById('grpCountLbl').textContent = grps.length+' ta guruh';
+  document.getElementById('grpCountLbl').textContent = grps.length+' '+PI18N.taGuruh;
   if(!grps.length){
-    document.getElementById('groupTable').innerHTML='<div class="empty"><i class="fas fa-users"></i><p>Guruh topilmadi</p></div>';
+    document.getElementById('groupTable').innerHTML=`<div class="empty"><i class="fas fa-users"></i><p>${PI18N.noGroups}</p></div>`;
     return;
   }
   document.getElementById('groupTable').innerHTML=`
   <table class="etable"><thead><tr>
-    <th>Guruh nomi</th><th>Yo'nalish</th><th>O'quvchilar</th><th>Dars vaqti</th><th>Boshlagan sana</th><th>Jadval</th><th>Holat</th><th></th>
+    <th>${PI18N.thName}</th><th>${PI18N.thDir}</th><th>${PI18N.thStudents}</th><th>${PI18N.thTime}</th><th>${PI18N.thStart}</th><th>${PI18N.thSched}</th><th>${PI18N.thStatus}</th><th></th>
   </tr></thead><tbody>
   ${grps.map((g,i)=>{
-    const days=(g.days_of_week||[]).map(d=>`<span class="g-day">${DL[d]||d}</span>`).join('');
+    const days=(g.days_of_week||[]).map(d=>`<span class="g-day">${I18N.daysShort[d-1]||d}</span>`).join('');
     const stuCount=stus.filter(s=>s.group===g.id).length||g.students_count||0;
     return`<tr style="animation-delay:${i*0.04}s">
       <td>
@@ -165,16 +189,16 @@ function renderGroups(grps, stus, hws){
       <td>
         <div style="display:flex;align-items:center;gap:5px">
           <span style="font-weight:700;font-size:.85rem">${stuCount}</span>
-          <span style="font-size:.68rem;color:var(--muted)">ta</span>
+          <span style="font-size:.68rem;color:var(--muted)">${PI18N.taUnit}</span>
         </div>
       </td>
       <td style="font-size:.8rem">${g.start_time&&g.end_time?g.start_time+' – '+g.end_time:'—'}</td>
       <td style="font-size:.78rem;color:var(--muted)">${g.start_date?fdate(g.start_date):'—'}</td>
       <td><div class="g-sched">${days||'<span style="color:var(--muted);font-size:.75rem">—</span>'}</div></td>
-      <td>${g.status==='active'?'<span class="bdg bdg-active"><i class="fas fa-circle" style="font-size:.35rem"></i> Faol</span>':'<span class="bdg bdg-inactive">Nofaol</span>'}</td>
+      <td>${bdg(g.status)}</td>
       <td>
         <div class="col-actions">
-          <a href="/teacher/group/?id=${g.id}" class="btn-icon" title="Batafsil"><i class="fas fa-arrow-right"></i></a>
+          <a href="/teacher/group/?id=${g.id}" class="btn-icon" title="${PI18N.details}"><i class="fas fa-arrow-right"></i></a>
         </div>
       </td>
     </tr>`;

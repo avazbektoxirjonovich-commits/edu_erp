@@ -33,7 +33,22 @@ def resolve_period(request):
 
 
 def compute_financial_summary(start_date, end_date):
-    """TOTAL INCOME − TOTAL EXPENSES (ish haqi + boshqa xarajatlar) = NET RESULT."""
+    """
+    TOTAL INCOME − TOTAL EXPENSES (ish haqi + boshqa xarajatlar) = NET RESULT.
+
+    CASH BASIS (FIN-003): `total_income` here is Sum(PaymentTransaction.amount)
+    filtered by the transaction's own `paid_at` date — i.e. cash actually
+    collected within [start_date, end_date], regardless of which billing
+    month/year the underlying Payment belongs to. This is intentionally a
+    different figure from FinanceDashboardView's `expected_monthly_income` /
+    `received_income`, which are ACCRUAL BASIS: Sum(Payment.amount /
+    paid_amount) for Payment rows whose own `month`/`year` (billing period)
+    matches the requested period, regardless of when the cash was received.
+    A payment collected late (e.g. December cash for a November bill) is
+    correctly counted once under each basis, in different periods — this is
+    not double-counting, it's two legitimate, differently-defined figures.
+    Do not unify these without an explicit product decision to do so.
+    """
     income = PaymentTransaction.objects.filter(
         paid_at__date__gte=start_date, paid_at__date__lte=end_date,
     ).aggregate(total=Sum('amount'))['total'] or 0
