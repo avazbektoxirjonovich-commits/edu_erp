@@ -37,7 +37,7 @@ ruff>=0.4
 # Face Auth (2FA)
 insightface>=0.7.3
 onnxruntime>=1.16.0
-opencv-python>=4.8.0
+opencv-python-headless>=4.8.0
 numpy>=1.24.0
 cryptography>=42.0.0
 
