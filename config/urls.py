@@ -75,7 +75,7 @@ api_v1_urlpatterns = [
 frontend_urlpatterns = [
     # PUBLIC HOME PAGE
     path('', TemplateView.as_view(
-        template_name='erp/public_home.html'
+        template_name='erp/dashboard.html'
     ), name='dashboard'),
 
     path('login/', TemplateView.as_view(
