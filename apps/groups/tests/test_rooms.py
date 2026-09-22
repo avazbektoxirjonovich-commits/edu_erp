@@ -53,7 +53,12 @@ class TestRoomConflicts:
     def test_room_name_case_and_spaces_ignored(self, admin, rooms):
         Room.objects.create(name='Katta zal')
         new_group(admin, 'A', '10:00', '12:00', [6], 'Katta zal')
-        assert new_group(admin, 'B', '11:00', '13:00', [6], ' katta ZAL ').status_code == 400
+        busy = new_group(admin, 'B', '11:00', '13:00', [6], ' katta ZAL ')
+        assert busy.status_code == 400
+        assert 'band' in str(busy.data['detail'])  # "ro'yxatda yo'q" emas — aynan band
+        free = new_group(admin, 'C', '12:00', '13:00', [6], ' katta ZAL ')
+        assert free.status_code == 201
+        assert LessonSchedule.objects.get(group_id=free.data['id']).room == 'Katta zal'
 
     def test_unknown_room_rejected(self, admin, rooms):
         resp = new_group(admin, 'A', '10:00', '12:00', [1], '999')
