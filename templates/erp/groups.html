@@ -56,7 +56,10 @@
     <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">{% translate "Guruhlar" %}</h2>
     <p style="font-size:.75rem;color:var(--muted);margin-top:3px">{% translate "Barcha o'quv guruhlari" %}</p>
   </div>
-  <button class="btn btn-primary admin-only" onclick="openM('addModal')"><i class="fas fa-plus"></i>{% translate "Yangi guruh" %}</button>
+  <div style="display:flex;gap:8px">
+    <button class="btn btn-ghost" onclick="openRooms()"><i class="fas fa-door-open" style="color:var(--accent)"></i>{% translate "Xonalar" %}</button>
+    <button class="btn btn-primary admin-only" onclick="openM('addModal')"><i class="fas fa-plus"></i>{% translate "Yangi guruh" %}</button>
+  </div>
 </div>
 
 <!-- Filter bar -->
@@ -89,6 +92,24 @@
       <button class="btn btn-ghost" onclick="closeM('detailModal')">{% translate "Yopish" %}</button>
       <button class="btn btn-ghost admin-only" id="dtEditBtn" onclick="switchToEdit()"><i class="fas fa-pen"></i>{% translate "Tahrirlash" %}</button>
       <button class="btn btn-primary admin-only" id="dtSchedBtn" onclick="openScheduleModal()"><i class="fas fa-calendar-alt"></i>{% translate "Dars jadvali" %}</button>
+    </div>
+  </div>
+</div>
+
+<!-- XONALAR -->
+<div class="overlay" id="roomsModal">
+  <div class="modal modal-lg">
+    <div class="m-head">
+      <h5><i class="fas fa-door-open" style="color:var(--accent);margin-right:6px"></i>{% translate "Xonalar va bandligi" %}</h5>
+      <button class="m-close" onclick="closeM('roomsModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="m-body">
+      <div class="admin-only room-admin" style="display:flex;gap:8px;align-items:flex-end;margin-bottom:14px">
+        <div class="fg" style="flex:2;margin:0"><label>{% translate "Xona nomi" %}</label><input class="fc" id="rName" placeholder="101"></div>
+        <div class="fg" style="flex:1;margin:0"><label>{% translate "Sig'imi" %}</label><input class="fc" type="number" min="1" id="rCap"></div>
+        <button class="btn btn-primary" onclick="addRoom()"><i class="fas fa-plus"></i>{% translate "Qo'shish" %}</button>
+      </div>
+      <div id="roomsList"><div class="loading"><div class="spinner"></div></div></div>
     </div>
   </div>
 </div>
@@ -142,6 +163,9 @@
           <div class="day-check-item"><input type="checkbox" class="day-cb" data-day="6"><span>{% translate "Sh" %}</span></div>
           <div class="day-check-item"><input type="checkbox" class="day-cb" data-day="7"><span>{% translate "Ya" %}</span></div>
         </div>
+      </div>
+      <div class="fg" style="margin-top:10px"><label>{% translate "Xona (tanlangan kunlar uchun)" %}</label>
+        <select class="fc fc-sel room-sel" id="aRoom"></select>
       </div>
       <div class="row2" style="margin-top:10px">
         <div class="fg"><label>{% translate "Boshlanish vaqti" %}</label><input class="fc" type="time" id="aStartTime" value="09:00"></div>
@@ -197,6 +221,7 @@
 </div>
 {% endblock %}
 
+{% block extra_js %}
 {% translate "ta guruh" as p_ta_group %}
 {% translate "Guruh topilmadi" as p_group_not_found %}
 {% translate "Jadval yo'q" as p_no_schedule %}
@@ -210,6 +235,10 @@
 {% translate "Yuklab bo'lmadi" as p_load_failed %}
 {% translate "Dars jadvali" as p_schedule %}
 {% translate "Xona belgilanmagan" as p_no_room %}
+{% translate "o'rin" as p_seats %}
+{% translate "Bo'sh — hech qaysi guruhga berilmagan" as p_room_free %}
+{% translate "Hali xona qo'shilmagan" as p_no_rooms %}
+{% translate "Xona o'chirilsinmi?" as p_delete_room %}
 {% translate "Dars jadvali mavjud emas" as p_no_schedule_title %}
 {% translate "Ushbu guruh uchun hali dars jadvali tuzilmagan." as p_no_schedule_desc %}
 {% translate "Jadval tuzish" as p_create_schedule %}
@@ -232,7 +261,6 @@
 {% translate "Guruhni o'chirishni tasdiqlaysizmi?" as p_delete_confirm %}
 {% translate "Guruh o'chirildi" as p_group_deleted %}
 {% translate "O'chirib bo'lmadi" as p_delete_failed %}
-{% block extra_js %}
 <script>
 initAuth();
 const _ME = getUser();
@@ -253,6 +281,10 @@ const PI18N = {
   loadFailed: "{{ p_load_failed|escapejs }}",
   schedule: "{{ p_schedule|escapejs }}",
   noRoom: "{{ p_no_room|escapejs }}",
+  seats: "{{ p_seats|escapejs }}",
+  roomFree: "{{ p_room_free|escapejs }}",
+  noRooms: "{{ p_no_rooms|escapejs }}",
+  deleteRoomConfirm: "{{ p_delete_room|escapejs }}",
   noScheduleTitle: "{{ p_no_schedule_title|escapejs }}",
   noScheduleDesc: "{{ p_no_schedule_desc|escapejs }}",
   createSchedule: "{{ p_create_schedule|escapejs }}",
@@ -284,6 +316,7 @@ async function init(){
     get('/teachers/?page_size=100&is_active=true'),
   ]);
   teachers = t?.results||t||[];
+  loadRooms();
 
   ['aTeacher','eTeacher'].forEach(id=>{
     const s=document.getElementById(id);
@@ -400,9 +433,62 @@ function switchToEdit(){
   setTimeout(()=>openEditDirect(editId), 200);
 }
 
+/* ─── Xonalar ─── */
+let ROOMS=[];
+function errText(e){
+  if(!e||typeof e!=='object') return PI18N.error;
+  if(e.detail) return [].concat(e.detail).join(' ');
+  return Object.values(e).flat().map(String).join(' | ')||PI18N.error;
+}
+async function loadRooms(){
+  const d=await get('/groups/rooms/?page_size=200');
+  ROOMS=(d?.results||d||[]);
+  document.querySelectorAll('.room-sel').forEach(s=>{const v=s.value;s.innerHTML=roomOptions(v);});
+  return ROOMS;
+}
+function roomOptions(selected){
+  const opts=ROOMS.filter(r=>r.is_active||r.name===selected)
+    .map(r=>`<option value="${escHtml(r.name)}" ${r.name===selected?'selected':''}>${escHtml(r.name)}${r.capacity?` (${r.capacity})`:''}</option>`).join('');
+  return `<option value="">${PI18N.noRoom}</option>`+opts;
+}
+async function openRooms(){
+  openM('roomsModal');
+  const isAdmin=['admin','developer'].includes(getUser().role);
+  document.querySelectorAll('.room-admin').forEach(el=>el.style.display=isAdmin?'flex':'none');
+  await loadRooms();
+  document.getElementById('roomsList').innerHTML=ROOMS.length?ROOMS.map(r=>`
+    <div style="border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <i class="fas fa-door-open" style="color:var(--accent)"></i>
+        <b style="font-size:.9rem">${escHtml(r.name)}</b>
+        ${r.capacity?`<span style="font-size:.72rem;color:var(--muted)">${r.capacity} ${PI18N.seats}</span>`:''}
+        ${isAdmin&&!r.usages.length?`<button class="btn-icon del" style="margin-left:auto" onclick="deleteRoom('${r.id}')"><i class="fas fa-trash"></i></button>`:''}
+      </div>
+      <div style="margin-top:6px">${r.usages.length?r.usages.map(u=>`
+        <div style="font-size:.76rem;color:var(--muted)">${escHtml(u.day_display)} · ${(u.start_time||'').slice(0,5)}–${(u.end_time||'').slice(0,5)} · <span style="color:var(--text)">${escHtml(u.group_name)}</span></div>`).join('')
+        :`<div style="font-size:.76rem;color:var(--success)">${PI18N.roomFree}</div>`}</div>
+    </div>`).join(''):`<div class="empty"><p>${PI18N.noRooms}</p></div>`;
+}
+async function addRoom(){
+  const name=document.getElementById('rName').value.trim();
+  if(!name) return;
+  const capacity=parseInt(document.getElementById('rCap').value)||null;
+  const r=await post('/groups/rooms/',{name,capacity});
+  let e;try{e=await r?.json();}catch{e=null;}
+  if(r?.ok){document.getElementById('rName').value='';document.getElementById('rCap').value='';openRooms();}
+  else toast(errText(e),'err');
+}
+async function deleteRoom(id){
+  if(!confirm(PI18N.deleteRoomConfirm)) return;
+  const r=await del(`/groups/rooms/${id}/`);
+  if(r?.ok||r?.status===204) openRooms();
+  else {let e;try{e=await r?.json();}catch{e=null;}toast(errText(e),'err');}
+}
+
 /* ─── Schedule modal ─── */
-function openScheduleModal(){
+async function openScheduleModal(){
   if(!editId){return;}
+  await loadRooms();
   const d = detailData;
   const existingMap = {};
   (d?.schedules||[]).forEach(s=>existingMap[s.day_of_week]={room:s.room||''});
@@ -415,8 +501,7 @@ function openScheduleModal(){
     html += `<div class="sched-row" id="srow${day}">
       <input type="checkbox" id="sch_cb_${day}" ${checked} style="width:16px;height:16px;accent-color:var(--accent);flex-shrink:0">
       <label for="sch_cb_${day}" style="min-width:90px;font-size:.82rem;font-weight:700;cursor:pointer">${I18N.daysFull[day-1]}</label>
-      <input type="text" id="sch_room_${day}" value="${room}" placeholder="${PI18N.roomOptional}"
-        style="flex:1;border:1.5px solid var(--border);border-radius:8px;padding:6px 10px;font-size:.8rem;outline:none;background:var(--card);color:var(--text)">
+      <select id="sch_room_${day}" style="flex:1;border:1.5px solid var(--border);border-radius:8px;padding:6px 10px;font-size:.8rem;outline:none;background:var(--card);color:var(--text)">${roomOptions(room)}</select>
     </div>`;
   }
   document.getElementById('schedRows').innerHTML = html;
@@ -440,8 +525,8 @@ async function saveSchedule(){
     // Refresh detail if still open
     detailData = null;
   } else {
-    const e = await r?.json();
-    toast(e?.detail||PI18N.error,'err');
+    let e; try{e=await r?.json();}catch{e=null;}
+    toast(errText(e),'err');
   }
 }
 
@@ -459,6 +544,7 @@ async function doAdd(){
     teacher: document.getElementById('aTeacher').value||null,
     max_students: parseInt(document.getElementById('aCapacity').value)||20,
     days: getDays('a'),
+    room: document.getElementById('aRoom').value||'',
     start_time: document.getElementById('aStartTime').value||null,
     end_time:   document.getElementById('aEndTime').value||null,
   };
@@ -474,7 +560,7 @@ async function doAdd(){
       detailData = newGroup;
       setTimeout(()=>openScheduleModal(), 400);
     }
-  } else {const e=await r?.json();toast(e?.detail||JSON.stringify(e)||PI18N.error,'err');}
+  } else {let e;try{e=await r?.json();}catch{e=null;}toast(errText(e),'err');}
 }
 
 async function openEditDirect(id){
@@ -504,7 +590,7 @@ async function doEdit(){
     status: document.getElementById('eStatus').value,
   });
   if(r?.ok){closeM('editModal');toast(PI18N.saved,'ok');load();}
-  else toast(PI18N.error,'err');
+  else {let e;try{e=await r?.json();}catch{e=null;}toast(errText(e),'err');}
 }
 
 async function cloneGroup(id){
@@ -512,7 +598,6 @@ async function cloneGroup(id){
   if(!d){toast(PI18N.loadFailed,'err');return;}
   document.getElementById('aName').value=PI18N.copyPrefix+' '+d.name;
   document.getElementById('aSubject').value=d.subject||'';
-  document.getElementById('aBranch').value=d.branch||'';
   document.getElementById('aTeacher').value=d.teacher||'';
   document.getElementById('aCapacity').value=d.max_students||20;
   document.getElementById('aStartTime').value=d.start_time||'09:00';

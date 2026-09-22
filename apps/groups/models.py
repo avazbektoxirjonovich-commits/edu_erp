@@ -105,3 +105,24 @@ class LessonSchedule(models.Model):
 
     def __str__(self):
         return f"{self.group.name} | {self.get_day_of_week_display()}"
+
+
+class Room(models.Model):
+    """
+    Markaz xonasi. LessonSchedule.room xona NOMINI saqlaydi (eski ma'lumot bilan
+    moslik uchun) — nom faqat shu ro'yxatdan tanlanadi va band bo'lsa rad etiladi
+    (qarang: apps/groups/rooms.py).
+    """
+    id         = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name       = models.CharField(max_length=50, unique=True, verbose_name='Xona nomi')
+    capacity   = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name="Sig'imi (o'rin)")
+    is_active  = models.BooleanField(default=True, verbose_name='Faol')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name        = 'Xona'
+        verbose_name_plural = 'Xonalar'
+        ordering            = ['name']
+
+    def __str__(self):
+        return self.name
