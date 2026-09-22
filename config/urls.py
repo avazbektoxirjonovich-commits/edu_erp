@@ -118,6 +118,10 @@ frontend_urlpatterns = [
         template_name='erp/finance_reports.html'
     ), name='finance_reports'),
 
+    path('finance/expenses/', TemplateView.as_view(
+        template_name='erp/finance_expenses.html'
+    ), name='finance_expenses'),
+
     path('store/', TemplateView.as_view(
         template_name='erp/store.html'
     ), name='store'),

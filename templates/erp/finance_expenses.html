@@ -1,0 +1,243 @@
+{% extends "erp/base.html" %}
+{% load i18n %}
+{% block title %}{% translate "Markaz xarajatlari" %} — Qorako'l Ilm Ziyo{% endblock %}
+{% block page_title %}{% translate "Markaz xarajatlari" %}{% endblock %}
+
+{% block extra_head %}
+<style>
+.ex-kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:16px}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow)}
+.kpi-val{font-size:1.15rem;font-weight:900;color:var(--text);letter-spacing:-.3px}
+.kpi-lbl{font-size:.7rem;color:var(--muted);margin-top:3px}
+.ex-card{background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
+.ex-scroll{overflow-x:auto}
+.ex-bar{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;margin-bottom:16px}
+.ex-bar .fg{margin:0}
+.tag{display:inline-block;font-size:.66rem;font-weight:700;border-radius:6px;padding:2px 7px}
+.tag-rec{background:var(--badge-success-bg);color:var(--badge-success-text)}
+.tag-one{background:var(--bg);color:var(--muted)}
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:16px;animation:fadeUp .35s ease both">
+  <div>
+    <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">{% translate "Markaz xarajatlari" %}</h2>
+    <p style="font-size:.75rem;color:var(--muted);margin-top:3px">{% translate "Ijara, kommunal, kanselyariya, olib kelingan narsalar — davomli va davomsiz" %}</p>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <button class="btn btn-ghost" onclick="carryRecurring()"><i class="fas fa-rotate" style="color:var(--accent)"></i>{% translate "Davomlilarni shu oyga o'tkazish" %}</button>
+    <button class="btn btn-primary" onclick="openAdd()"><i class="fas fa-plus"></i>{% translate "Xarajat qo'shish" %}</button>
+  </div>
+</div>
+
+<div class="ex-bar">
+  <div class="fg"><label>{% translate "Oy" %}</label><select class="fc fc-sel" id="fMonth" onchange="load()"></select></div>
+  <div class="fg"><label>{% translate "Yil" %}</label><select class="fc fc-sel" id="fYear" onchange="load()"></select></div>
+  <div class="fg"><label>{% translate "Toifa" %}</label><select class="fc fc-sel" id="fCat" onchange="load()"><option value="">{% translate "Hammasi" %}</option></select></div>
+  <div class="fg"><label>{% translate "Turi" %}</label>
+    <select class="fc fc-sel" id="fRec" onchange="load()">
+      <option value="">{% translate "Hammasi" %}</option>
+      <option value="true">{% translate "Davomli" %}</option>
+      <option value="false">{% translate "Davomsiz" %}</option>
+    </select>
+  </div>
+</div>
+
+<div class="ex-kpi" id="kpis"></div>
+<div class="ex-card"><div class="ex-scroll" id="tbl"><div class="loading"><div class="spinner"></div></div></div></div>
+
+<div class="overlay" id="exModal">
+  <div class="modal">
+    <div class="m-head">
+      <h5><i class="fas fa-receipt" style="color:var(--accent);margin-right:6px"></i><span id="exTitle">{% translate "Xarajat" %}</span></h5>
+      <button class="m-close" onclick="closeM('exModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="m-body">
+      <div class="fg"><label>{% translate "Nomi" %} *</label><input class="fc" id="eName" placeholder="{% translate "Masalan: Sentabr ijarasi" %}"></div>
+      <div class="row2">
+        <div class="fg"><label>{% translate "Toifa" %} *</label><select class="fc fc-sel" id="eCat" onchange="togglePurchase()"></select></div>
+        <div class="fg"><label>{% translate "Summa (so'm)" %} *</label><input class="fc" type="number" min="1" id="eAmount"></div>
+      </div>
+      <div class="row2">
+        <div class="fg"><label>{% translate "Sana" %} *</label><input class="fc" type="date" id="eDate"></div>
+        <div class="fg"><label>{% translate "Turi" %}</label>
+          <select class="fc fc-sel" id="eRec">
+            <option value="false">{% translate "Davomsiz (bir martalik)" %}</option>
+            <option value="true">{% translate "Davomli (har oy)" %}</option>
+          </select>
+        </div>
+      </div>
+      <div class="row2" id="purchaseRow" style="display:none">
+        <div class="fg"><label>{% translate "Miqdor (dona)" %} *</label><input class="fc" type="number" min="1" id="eQty" value="1"></div>
+        <div class="fg" id="assetBox"><label>&nbsp;</label>
+          <label style="display:flex;gap:6px;align-items:center;font-size:.8rem"><input type="checkbox" id="eAsset"> {% translate "Markaz buyumlariga qo'shish" %}</label>
+        </div>
+      </div>
+      <div class="fg"><label>{% translate "Izoh" %}</label><textarea class="fc" id="eDesc" rows="2"></textarea></div>
+    </div>
+    <div class="m-foot">
+      <button class="btn btn-ghost" onclick="closeM('exModal')">{% translate "Bekor" %}</button>
+      <button class="btn btn-primary" onclick="save()"><i class="fas fa-check"></i>{% translate "Saqlash" %}</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% translate "Jami xarajat" as p_ex_total %}
+{% translate "Davomli" as p_ex_rec %}
+{% translate "Davomsiz" as p_ex_one %}
+{% translate "Nomi" as p_ex_name %}
+{% translate "Toifa" as p_ex_cat %}
+{% translate "Summa" as p_ex_amount %}
+{% translate "Sana" as p_ex_date %}
+{% translate "Turi" as p_ex_kind %}
+{% translate "Kim qo'shdi" as p_ex_by %}
+{% translate "Bu oyda xarajat yo'q" as p_ex_empty %}
+{% translate "Nomi, summa va sanani kiriting" as p_ex_required %}
+{% translate "Saqlandi" as p_ex_saved %}
+{% translate "O'chirilsinmi?" as p_ex_del_confirm %}
+{% translate "O'chirildi" as p_ex_deleted %}
+{% translate "Oldingi oyning davomli xarajatlari shu oyga o'tkazilsinmi?" as p_ex_carry_confirm %}
+{% translate "ta xarajat o'tkazildi" as p_ex_carried %}
+{% translate "Yangi xarajat" as p_ex_new %}
+{% translate "Xarajatni tahrirlash" as p_ex_edit %}
+{% translate "Markaz buyumlariga qo'shilgan" as p_ex_in_assets %}
+{% translate "dona" as p_ex_pcs %}
+<script>
+const EX = {
+  total: "{{ p_ex_total|escapejs }}", rec: "{{ p_ex_rec|escapejs }}", one: "{{ p_ex_one|escapejs }}",
+  name: "{{ p_ex_name|escapejs }}", cat: "{{ p_ex_cat|escapejs }}", amount: "{{ p_ex_amount|escapejs }}",
+  date: "{{ p_ex_date|escapejs }}", kind: "{{ p_ex_kind|escapejs }}", by: "{{ p_ex_by|escapejs }}",
+  empty: "{{ p_ex_empty|escapejs }}", required: "{{ p_ex_required|escapejs }}", saved: "{{ p_ex_saved|escapejs }}",
+  delConfirm: "{{ p_ex_del_confirm|escapejs }}", deleted: "{{ p_ex_deleted|escapejs }}",
+  carryConfirm: "{{ p_ex_carry_confirm|escapejs }}", carried: "{{ p_ex_carried|escapejs }}",
+  newTitle: "{{ p_ex_new|escapejs }}", editTitle: "{{ p_ex_edit|escapejs }}",
+  inAssets: "{{ p_ex_in_assets|escapejs }}", pcs: "{{ p_ex_pcs|escapejs }}",
+};
+// Yangi xarajat uchun tanlanadigan toifalar ("Ish haqi" — Ish haqi bo'limida)
+const CATS = [
+  ['rent', "{% translate "Ijara to'lovi" %}"], ['utilities', "{% translate "Kommunal to'lov" %}"],
+  ['stationery', "{% translate 'Kanselyariya' %}"], ['purchase', "{% translate 'Olib kelingan narsalar' %}"],
+  ['internet', "{% translate 'Internet' %}"], ['advertising', "{% translate 'Reklama' %}"],
+  ['equipment', "{% translate 'Jihoz' %}"], ['repair', "{% translate "Ta'mirlash" %}"],
+  ['other', "{% translate 'Boshqa' %}"],
+];
+let editId = null, rows = [];
+
+function initFilters(){
+  const now = new Date();
+  document.getElementById('fMonth').innerHTML = I18N.months.map((m,i)=>`<option value="${i+1}" ${i===now.getMonth()?'selected':''}>${m}</option>`).join('');
+  const ys = []; for(let y=now.getFullYear()+1; y>=now.getFullYear()-3; y--) ys.push(`<option value="${y}" ${y===now.getFullYear()?'selected':''}>${y}</option>`);
+  document.getElementById('fYear').innerHTML = ys.join('');
+  document.getElementById('fCat').innerHTML += CATS.map(([k,l])=>`<option value="${k}">${l}</option>`).join('');
+  document.getElementById('eCat').innerHTML = CATS.map(([k,l])=>`<option value="${k}">${l}</option>`).join('');
+}
+const month = () => parseInt(document.getElementById('fMonth').value);
+const year = () => parseInt(document.getElementById('fYear').value);
+const kpi = (label,val)=>`<div class="kpi"><div class="kpi-val">${val}</div><div class="kpi-lbl">${label}</div></div>`;
+
+async function load(){
+  let url = `/finance/expenses/?month=${month()}&year=${year()}&page_size=500`;
+  const c = document.getElementById('fCat').value, r = document.getElementById('fRec').value;
+  if(c) url += `&category=${c}`;
+  if(r) url += `&is_recurring=${r}`;
+  const d = await get(url);
+  rows = d?.results || d || [];
+  const sum = f => rows.filter(f).reduce((s,e)=>s+Number(e.amount),0);
+  const byCat = {};
+  rows.forEach(e=>{ byCat[e.category_display] = (byCat[e.category_display]||0) + Number(e.amount); });
+  document.getElementById('kpis').innerHTML =
+    kpi(EX.total, fmoney(sum(()=>true))) + kpi(EX.rec, fmoney(sum(e=>e.is_recurring))) +
+    kpi(EX.one, fmoney(sum(e=>!e.is_recurring))) +
+    Object.entries(byCat).sort((a,b)=>b[1]-a[1]).map(([k,v])=>kpi(escHtml(k), fmoney(v))).join('');
+  if(!rows.length){ document.getElementById('tbl').innerHTML = `<div class="empty" style="padding:28px"><i class="fas fa-receipt"></i><p>${EX.empty}</p></div>`; return; }
+  document.getElementById('tbl').innerHTML = `<table class="etable"><thead><tr>
+      <th>${EX.date}</th><th>${EX.name}</th><th>${EX.cat}</th><th>${EX.kind}</th><th>${EX.amount}</th><th>${EX.by}</th><th></th>
+    </tr></thead><tbody>${rows.map(e=>`<tr>
+      <td style="font-size:.78rem">${fdate(e.expense_date)}</td>
+      <td style="font-size:.82rem;font-weight:600">${escHtml(e.name)}
+        ${e.quantity?`<div style="font-size:.7rem;color:var(--muted)">${e.quantity} ${EX.pcs}${e.asset?' · '+EX.inAssets:''}</div>`:''}</td>
+      <td style="font-size:.78rem">${escHtml(e.category_display)}</td>
+      <td>${e.is_recurring?`<span class="tag tag-rec">${EX.rec}</span>`:`<span class="tag tag-one">${EX.one}</span>`}</td>
+      <td style="font-size:.82rem;font-weight:700">${fmoney(e.amount)}</td>
+      <td style="font-size:.75rem;color:var(--muted)">${escHtml(e.created_by_name||'—')}</td>
+      <td><div style="display:flex;gap:4px">
+        <button class="btn-icon" onclick="openEdit('${e.id}')"><i class="fas fa-pen"></i></button>
+        <button class="btn-icon del" onclick="remove('${e.id}')"><i class="fas fa-trash"></i></button>
+      </div></td></tr>`).join('')}</tbody></table>`;
+}
+
+function togglePurchase(){
+  const isPurchase = document.getElementById('eCat').value === 'purchase';
+  document.getElementById('purchaseRow').style.display = isPurchase ? '' : 'none';
+  document.getElementById('assetBox').style.visibility = editId ? 'hidden' : 'visible';
+}
+function openAdd(){
+  editId = null;
+  document.getElementById('exTitle').textContent = EX.newTitle;
+  ['eName','eAmount','eDesc'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('eCat').value = 'rent';
+  document.getElementById('eRec').value = 'false';
+  document.getElementById('eQty').value = 1;
+  document.getElementById('eAsset').checked = false;
+  const d = new Date(year(), month()-1, Math.min(new Date().getDate(), 28));
+  document.getElementById('eDate').value = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  togglePurchase();
+  openM('exModal');
+}
+function openEdit(id){
+  const e = rows.find(x=>x.id===id); if(!e) return;
+  editId = id;
+  document.getElementById('exTitle').textContent = EX.editTitle;
+  document.getElementById('eName').value = e.name;
+  document.getElementById('eCat').value = e.category;
+  document.getElementById('eAmount').value = Number(e.amount);
+  document.getElementById('eDate').value = e.expense_date;
+  document.getElementById('eRec').value = String(!!e.is_recurring);
+  document.getElementById('eQty').value = e.quantity || 1;
+  document.getElementById('eDesc').value = e.description || '';
+  togglePurchase();
+  openM('exModal');
+}
+function apiError(body, status){
+  if(!body || typeof body !== 'object') return `${status}`;
+  if(body.detail) return String(body.detail);
+  return Object.values(body).flat().map(String).join(' | ');
+}
+async function save(){
+  const body = {
+    name: document.getElementById('eName').value.trim(),
+    category: document.getElementById('eCat').value,
+    amount: parseInt(document.getElementById('eAmount').value) || 0,
+    expense_date: document.getElementById('eDate').value,
+    is_recurring: document.getElementById('eRec').value === 'true',
+    description: document.getElementById('eDesc').value,
+  };
+  if(!body.name || !body.amount || !body.expense_date){ toast(EX.required, 'wrn'); return; }
+  if(body.category === 'purchase'){
+    body.quantity = parseInt(document.getElementById('eQty').value) || null;
+    if(!editId) body.add_to_assets = document.getElementById('eAsset').checked;
+  } else body.quantity = null;
+  const r = editId ? await patch(`/finance/expenses/${editId}/`, body) : await post('/finance/expenses/', body);
+  let d; try{ d = await r?.json(); }catch{ d = null; }
+  if(r && r.ok){ closeM('exModal'); toast(EX.saved, 'ok'); load(); }
+  else toast(apiError(d, r?.status), 'err');
+}
+async function remove(id){
+  if(!confirm(EX.delConfirm)) return;
+  const r = await del(`/finance/expenses/${id}/`);
+  if(r && (r.ok || r.status === 204)){ toast(EX.deleted, 'ok'); load(); }
+}
+async function carryRecurring(){
+  if(!confirm(EX.carryConfirm)) return;
+  const r = await post('/finance/expenses/carry-recurring/', {month: month(), year: year()});
+  let d; try{ d = await r?.json(); }catch{ d = null; }
+  if(r && r.ok){ toast(`${d.created} ${EX.carried}`, 'ok'); load(); }
+  else toast(apiError(d, r?.status), 'err');
+}
+
+if(initAuth()){ initFilters(); load(); }
+</script>
+{% endblock %}

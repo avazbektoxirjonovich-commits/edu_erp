@@ -12,14 +12,54 @@ from .models import Asset, Expense, PaymentTransaction
 class ExpenseSerializer(serializers.ModelSerializer):
     category_display = serializers.CharField(source='get_category_display', read_only=True)
     created_by_name   = serializers.CharField(source='created_by.full_name', read_only=True, default=None)
+    # Olib kelingan narsani "Markaz buyumlari"ga ham qo'shish (faqat yaratishda)
+    add_to_assets     = serializers.BooleanField(write_only=True, required=False, default=False)
 
     class Meta:
         model  = Expense
         fields = [
             'id', 'name', 'category', 'category_display', 'amount', 'expense_date',
-            'description', 'created_by', 'created_by_name', 'created_at', 'updated_at',
+            'description', 'is_recurring', 'recurring_source', 'quantity', 'asset', 'add_to_assets',
+            'created_by', 'created_by_name', 'created_at', 'updated_at',
         ]
-        read_only_fields = ['id', 'created_by', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'recurring_source', 'asset', 'created_by', 'created_at', 'updated_at']
+
+    def validate(self, data):
+        category = data.get('category', getattr(self.instance, 'category', None))
+        if 'category' in data and data['category'] == Expense.Category.SALARY:
+            raise serializers.ValidationError({'category': [
+                "Oylik bu yerda yozilmaydi — \"Ish haqi\" bo'limidan to'lang (aks holda ikki marta hisoblanadi)."
+            ]})
+        if category == Expense.Category.PURCHASE:
+            qty = data.get('quantity', getattr(self.instance, 'quantity', None))
+            if not qty:
+                raise serializers.ValidationError({'quantity': ["Olib kelingan narsa miqdorini kiriting."]})
+        elif data.get('add_to_assets'):
+            raise serializers.ValidationError({'add_to_assets': [
+                "Faqat \"Olib kelingan narsalar\" markaz buyumlariga qo'shiladi."
+            ]})
+        return data
+
+    def create(self, validated_data):
+        from django.db import transaction
+
+        add_to_assets = validated_data.pop('add_to_assets', False)
+        with transaction.atomic():
+            expense = super().create(validated_data)
+            if add_to_assets:
+                expense.asset = Asset.objects.create(
+                    name=expense.name, category=expense.get_category_display(),
+                    quantity=expense.quantity,
+                    purchase_price=expense.amount // expense.quantity,
+                    purchase_date=expense.expense_date,
+                    notes=expense.description, created_by=expense.created_by,
+                )
+                expense.save(update_fields=['asset'])
+        return expense
+
+    def update(self, instance, validated_data):
+        validated_data.pop('add_to_assets', None)
+        return super().update(instance, validated_data)
 
 
 class AssetSerializer(serializers.ModelSerializer):

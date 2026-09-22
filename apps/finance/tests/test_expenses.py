@@ -44,7 +44,7 @@ class TestExpenseCRUD:
             'expense_date': '2026-03-05', 'description': 'Mart oyi ijarasi',
         })
         assert resp.status_code == 201
-        assert resp.data['category_display'] == 'Ijara'
+        assert resp.data['category_display'] == "Ijara to'lovi"
         assert resp.data['created_by_name'] == 'Finance User'
 
     def test_teacher_cannot_access_expenses(self, teacher_role_user):

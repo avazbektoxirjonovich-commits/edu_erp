@@ -1062,6 +1062,7 @@ const JS_LOCALE = {uz:'uz-UZ', ru:'ru-RU', en:'en-US'}[CURRENT_LANG] || 'uz-UZ';
 {% translate "Ish haqi" as vsb_salary %}
 {% translate "Markaz buyumlari" as vsb_assets %}
 {% translate "Moliya hisobotlari" as vsb_fin_reports %}
+{% translate "Markaz xarajatlari" as vsb_fin_expenses %}
 {% translate "Do'kon" as vsb_store %}
 {% translate "Do'kon boshqaruvi" as vsb_store_manage %}
 {% translate "Uyga vazifalar" as vsb_homework %}
@@ -1157,6 +1158,7 @@ window.I18N = {
   salary: "{{ vsb_salary|escapejs }}",
   assets: "{{ vsb_assets|escapejs }}",
   finReports: "{{ vsb_fin_reports|escapejs }}",
+  finExpenses: "{{ vsb_fin_expenses|escapejs }}",
   store: "{{ vsb_store|escapejs }}",
   storeManage: "{{ vsb_store_manage|escapejs }}",
   homework: "{{ vsb_homework|escapejs }}",
@@ -1288,6 +1290,7 @@ function buildSidebar(role){
     html+=item('/payments/','credit-card',I.payments,'payments');
     html+=item('/salary/','money-bill-wave',I.salary,'salary');
     html+=item('/finance/reports/','file-invoice-dollar',I.finReports,'finance_reports');
+    html+=item('/finance/expenses/','receipt',I.finExpenses,'finance_expenses');
     html+=item('/finance/assets/','boxes-stacked',I.assets,'finance_assets');
     html+=sec(I.sbSecStore);
     html+=item('/store/','store',I.store,'store');
@@ -1333,6 +1336,7 @@ function buildSidebar(role){
     html+=item('/payments/','credit-card',I.payments,'payments');
     html+=item('/salary/','money-bill-wave',I.salary,'salary');
     html+=item('/finance/reports/','file-invoice-dollar',I.finReports,'finance_reports');
+    html+=item('/finance/expenses/','receipt',I.finExpenses,'finance_expenses');
     html+=item('/finance/assets/','boxes-stacked',I.assets,'finance_assets');
   }
 
@@ -1367,6 +1371,7 @@ const _ROUTE_ROLES = {
   '/finance/':     ['admin','developer','finance'],
   '/finance/assets/': ['admin','developer','finance'],
   '/finance/reports/': ['admin','developer','finance'],
+  '/finance/expenses/': ['admin','developer','finance'],
   '/store/':          ['admin','developer','teacher','student'],
   '/store/manage/':   ['admin','developer'],
   '/error-monitor/':  ['developer'],

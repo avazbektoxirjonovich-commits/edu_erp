@@ -105,13 +105,17 @@ class Expense(models.Model):
     """Markaz xarajati (ijara, internet, reklama va h.k.)."""
 
     class Category(models.TextChoices):
-        RENT        = 'rent',        'Ijara'
+        RENT        = 'rent',        "Ijara to'lovi"
+        UTILITIES   = 'utilities',   "Kommunal to'lov"
+        STATIONERY  = 'stationery',  'Kanselyariya'
+        PURCHASE    = 'purchase',    'Olib kelingan narsalar'
         INTERNET    = 'internet',    'Internet'
         ADVERTISING = 'advertising', 'Reklama'
         EQUIPMENT   = 'equipment',   'Jihoz'
         REPAIR      = 'repair',      "Ta'mirlash"
-        UTILITIES   = 'utilities',   'Kommunal'
-        SALARY      = 'salary',      'Ish haqi'
+        # Faqat eski yozuvlar uchun — oylik "Ish haqi" bo'limida yoziladi
+        # (bu yerda ham yozilsa, xarajat ikki marta hisoblanadi)
+        SALARY      = 'salary',      'Ish haqi (eski)'
         OTHER       = 'other',       'Boshqa'
 
     id           = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -123,6 +127,17 @@ class Expense(models.Model):
                                        validators=[MinValueValidator(1)], verbose_name='Summa')
     expense_date = models.DateField(verbose_name='Sana', db_index=True)
     description  = models.TextField(blank=True, verbose_name='Tavsif')
+    # Davomli (har oy takrorlanadigan: ijara, kommunal) yoki davomsiz (bir martalik)
+    is_recurring = models.BooleanField(default=False, verbose_name='Davomli (har oy)')
+    # Davomli xarajatning keyingi oyga ko'chirilgan nusxasi — qaysi yozuvdan ko'chirilgani
+    recurring_source = models.ForeignKey(
+                       'self', on_delete=models.SET_NULL, null=True, blank=True,
+                       related_name='recurring_copies', verbose_name="Qaysi xarajatdan ko'chirilgan",
+                   )
+    # Olib kelingan narsalar: miqdor va (ixtiyoriy) "Markaz buyumlari"dagi yozuv
+    quantity     = models.PositiveIntegerField(null=True, blank=True, verbose_name='Miqdor')
+    asset        = models.ForeignKey('Asset', on_delete=models.SET_NULL, null=True, blank=True,
+                                     related_name='expenses', verbose_name='Markaz buyumi')
     created_by   = models.ForeignKey('accounts.User', on_delete=models.SET_NULL, null=True,
                                      related_name='created_expenses', verbose_name="Kim qo'shdi")
     created_at   = models.DateTimeField(auto_now_add=True)

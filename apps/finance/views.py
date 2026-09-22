@@ -25,7 +25,7 @@ from .serializers import (
     PaymentTransactionSerializer,
     RecordPaymentSerializer,
 )
-from .services import compute_financial_summary, resolve_period
+from .services import carry_recurring_expenses, compute_financial_summary, resolve_period
 
 
 class RecordPaymentView(generics.CreateAPIView):
@@ -157,7 +157,7 @@ class ExpenseViewSet(viewsets.ModelViewSet):
     permission_classes = [IsFinanceOrAdmin]
     serializer_class    = ExpenseSerializer
     filter_backends     = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields    = ['category']
+    filterset_fields    = ['category', 'is_recurring']
     search_fields        = ['name', 'description']
     ordering             = ['-expense_date']
 
@@ -181,11 +181,10 @@ class ExpenseViewSet(viewsets.ModelViewSet):
         )
 
     def perform_update(self, serializer):
-        before = {f: getattr(serializer.instance, f) for f in
-                  ('name', 'category', 'amount', 'expense_date', 'description')}
+        fields = ('name', 'category', 'amount', 'expense_date', 'description', 'is_recurring', 'quantity')
+        before = {f: getattr(serializer.instance, f) for f in fields}
         expense = serializer.save()
-        changes = diff_fields(before, expense,
-                               ('name', 'category', 'amount', 'expense_date', 'description'))
+        changes = diff_fields(before, expense, fields)
         log_activity(
             self.request.user, ActivityLog.Action.UPDATE, 'Expense',
             expense.pk, str(expense), changes=changes, request=self.request,
@@ -199,6 +198,26 @@ class ExpenseViewSet(viewsets.ModelViewSet):
             self.request.user, ActivityLog.Action.DELETE, 'Expense',
             pk, repr_str, request=self.request,
         )
+
+
+class CarryRecurringExpensesView(APIView):
+    """POST /api/v1/finance/expenses/carry-recurring/ {"month": 10, "year": 2026}
+    Oldingi oyning davomli xarajatlarini shu oyga ko'chiradi (takrorlamaydi)."""
+    permission_classes = [IsFinanceOrAdmin]
+
+    def post(self, request):
+        try:
+            month, year = int(request.data.get('month')), int(request.data.get('year'))
+        except (TypeError, ValueError):
+            return Response({'detail': "month va year butun son bo'lishi kerak."}, status=400)
+        if not (1 <= month <= 12) or not (2000 <= year <= 2100):
+            return Response({'detail': "Oy yoki yil noto'g'ri."}, status=400)
+        created = carry_recurring_expenses(month, year, request.user)
+        for expense in created:
+            log_activity(request.user, ActivityLog.Action.CREATE, 'Expense',
+                         expense.pk, str(expense), request=request)
+        return Response({'created': len(created),
+                         'items': ExpenseSerializer(created, many=True).data})
 
 
 class ExpenseSummaryView(APIView):

@@ -3,7 +3,7 @@ Excel hisobotlar) tomonidan qayta ishlatiladigan umumiy mantiq."""
 import calendar
 from datetime import date
 
-from django.db.models import Sum
+from django.db.models import Q, Sum
 from django.utils import timezone
 
 from apps.teachers.models import TeacherSalaryPayment
@@ -76,3 +76,30 @@ def compute_financial_summary(start_date, end_date):
         'total_expenses':        float(total_expenses),
         'net_result':            float(income - total_expenses),
     }
+
+
+def carry_recurring_expenses(month, year, user):
+    """Davomli xarajatlarni (oldingi oyda is_recurring=True) shu oyga ko'chiradi.
+    Qayta chaqirilsa takrorlamaydi: har bir asl xarajatdan oyiga bitta nusxa."""
+    from django.db import transaction
+
+    prev_month, prev_year = (12, year - 1) if month == 1 else (month - 1, year)
+    templates = Expense.objects.filter(is_recurring=True, expense_date__year=prev_year,
+                                       expense_date__month=prev_month)
+    last_day = calendar.monthrange(year, month)[1]
+    created = []
+    with transaction.atomic():
+        for tpl in templates:
+            origin = tpl.recurring_source_id or tpl.pk
+            exists = Expense.objects.filter(
+                expense_date__year=year, expense_date__month=month, is_recurring=True,
+            ).filter(Q(recurring_source_id=origin) | Q(pk=origin)).exists()
+            if exists:
+                continue
+            created.append(Expense.objects.create(
+                name=tpl.name, category=tpl.category, amount=tpl.amount,
+                expense_date=date(year, month, min(tpl.expense_date.day, last_day)),
+                description=tpl.description, is_recurring=True,
+                recurring_source_id=origin, created_by=user,
+            ))
+    return created
