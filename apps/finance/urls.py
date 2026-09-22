@@ -9,6 +9,7 @@ from .export_views import (
     ExportSalariesView,
 )
 from .pdf_views import TransactionReceiptPDFView
+from .reports import FinanceReportView
 from .views import (
     AssetSummaryView,
     AssetViewSet,
@@ -28,6 +29,7 @@ router.register('expenses', ExpenseViewSet, basename='finance-expense')
 router.register('assets',   AssetViewSet,   basename='finance-asset')
 
 urlpatterns = [
+    path('reports/',            FinanceReportView.as_view(),          name='finance-reports'),
     path('dashboard/',           FinanceDashboardView.as_view(),       name='finance-dashboard'),
     path('transactions/',        PaymentTransactionListView.as_view(), name='finance-transactions'),
     path('transactions/record/', RecordPaymentView.as_view(),          name='finance-record-payment'),

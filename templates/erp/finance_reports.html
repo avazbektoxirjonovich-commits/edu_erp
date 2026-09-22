@@ -1,0 +1,169 @@
+{% extends "erp/base.html" %}
+{% load i18n %}
+{% block title %}{% translate "Moliya hisobotlari" %} — Qorako'l Ilm Ziyo{% endblock %}
+{% block page_title %}{% translate "Moliya hisobotlari" %}{% endblock %}
+
+{% block extra_head %}
+<style>
+.fr-kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:18px}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow)}
+.kpi-val{font-size:1.15rem;font-weight:900;color:var(--text);letter-spacing:-.3px}
+.kpi-lbl{font-size:.7rem;color:var(--muted);margin-top:3px}
+.fr-tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.fr-tab{border:1.5px solid var(--border);background:var(--card);color:var(--text);border-radius:8px;padding:7px 14px;font-size:.8rem;font-weight:600;cursor:pointer}
+.fr-tab.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.fr-sec{display:none}
+.fr-sec.active{display:block}
+.fr-card{background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);margin-bottom:16px;overflow:hidden}
+.fr-card h6{font-size:.85rem;font-weight:800;padding:12px 16px;border-bottom:1px solid var(--border);margin:0}
+.fr-scroll{overflow-x:auto}
+.fr-filter{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;margin-bottom:16px}
+.fr-filter .fg{margin:0}
+.cancelled td{opacity:.55;text-decoration:line-through}
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="margin-bottom:16px;animation:fadeUp .35s ease both">
+  <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">{% translate "Moliya hisobotlari" %}</h2>
+  <p style="font-size:.75rem;color:var(--muted);margin-top:3px">{% translate "Kim qancha pul qabul qildi, qaysi turda, qachon va kimga qancha oylik berildi" %}</p>
+</div>
+
+<div class="fr-filter">
+  <div class="fg"><label>{% translate "Dan" %}</label><input class="fc" type="date" id="fStart"></div>
+  <div class="fg"><label>{% translate "Gacha" %}</label><input class="fc" type="date" id="fEnd"></div>
+  <button class="btn btn-primary" onclick="load()"><i class="fas fa-search"></i>{% translate "Ko'rsatish" %}</button>
+  <button class="btn btn-ghost" onclick="setToday()">{% translate "Bugun" %}</button>
+  <button class="btn btn-ghost" onclick="setThisMonth()">{% translate "Shu oy" %}</button>
+</div>
+
+<div class="fr-kpi" id="kpis"></div>
+
+<div class="fr-tabs">
+  <button class="fr-tab active" data-sec="secCashiers" onclick="showTab(this)"><i class="fas fa-user-tie"></i> {% translate "Kassirlar" %}</button>
+  <button class="fr-tab" data-sec="secTypes" onclick="showTab(this)"><i class="fas fa-wallet"></i> {% translate "To'lov turlari" %}</button>
+  <button class="fr-tab" data-sec="secSalaries" onclick="showTab(this)"><i class="fas fa-money-bill-wave"></i> {% translate "Oyliklar" %}</button>
+</div>
+
+<div class="fr-sec active" id="secCashiers">
+  <div class="fr-card"><h6>{% translate "Kim qancha qabul qildi" %}</h6><div class="fr-scroll" id="tCashiers"></div></div>
+  <div class="fr-card"><h6>{% translate "Barcha cheklar (qachon, kim, qancha)" %}</h6><div class="fr-scroll" id="tReceipts"></div></div>
+</div>
+<div class="fr-sec" id="secTypes">
+  <div class="fr-card"><h6>{% translate "To'lov turlari bo'yicha" %}</h6><div class="fr-scroll" id="tTypes"></div></div>
+</div>
+<div class="fr-sec" id="secSalaries">
+  <div class="fr-card"><h6>{% translate "Kimga jami qancha oylik berildi" %}</h6><div class="fr-scroll" id="tSalaryTeachers"></div></div>
+  <div class="fr-card"><h6>{% translate "Oylik to'lovlari (kimga, qancha, qachon, kim berdi)" %}</h6><div class="fr-scroll" id="tSalaries"></div></div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% translate "Jami tushum" as p_fr_income %}
+{% translate "Cheklar soni" as p_fr_count %}
+{% translate "Bekor qilingan cheklar" as p_fr_cancelled %}
+{% translate "Berilgan oyliklar" as p_fr_salaries %}
+{% translate "Kassir" as p_fr_cashier %}
+{% translate "Jami" as p_fr_total %}
+{% translate "Soni" as p_fr_num %}
+{% translate "Sana" as p_fr_date %}
+{% translate "O'quvchi" as p_fr_student %}
+{% translate "Oy" as p_fr_month %}
+{% translate "Summa" as p_fr_amount %}
+{% translate "Turi" as p_fr_type %}
+{% translate "Chek" as p_fr_receipt %}
+{% translate "Qabul qildi" as p_fr_received %}
+{% translate "O'qituvchi" as p_fr_teacher %}
+{% translate "Asosiy" as p_fr_base %}
+{% translate "Bonus" as p_fr_bonus %}
+{% translate "Ushlab qolingan" as p_fr_deduct %}
+{% translate "Berildi" as p_fr_given %}
+{% translate "Kim berdi" as p_fr_given_by %}
+{% translate "Bu davrda ma'lumot yo'q" as p_fr_empty %}
+{% translate "bekor qilingan" as p_fr_is_cancelled %}
+<script>
+const FR = {
+  income: "{{ p_fr_income|escapejs }}", count: "{{ p_fr_count|escapejs }}",
+  cancelled: "{{ p_fr_cancelled|escapejs }}", salaries: "{{ p_fr_salaries|escapejs }}",
+  cashier: "{{ p_fr_cashier|escapejs }}", total: "{{ p_fr_total|escapejs }}", num: "{{ p_fr_num|escapejs }}",
+  date: "{{ p_fr_date|escapejs }}", student: "{{ p_fr_student|escapejs }}", month: "{{ p_fr_month|escapejs }}",
+  amount: "{{ p_fr_amount|escapejs }}", type: "{{ p_fr_type|escapejs }}", receipt: "{{ p_fr_receipt|escapejs }}",
+  received: "{{ p_fr_received|escapejs }}", teacher: "{{ p_fr_teacher|escapejs }}", base: "{{ p_fr_base|escapejs }}",
+  bonus: "{{ p_fr_bonus|escapejs }}", deduct: "{{ p_fr_deduct|escapejs }}", given: "{{ p_fr_given|escapejs }}",
+  givenBy: "{{ p_fr_given_by|escapejs }}", empty: "{{ p_fr_empty|escapejs }}",
+  isCancelled: "{{ p_fr_is_cancelled|escapejs }}",
+};
+// To'lov turlari — ustunlar tartibi (hisobotda har bir kassir uchun alohida)
+const TYPES = [
+  ['cash', "{% translate 'Naqd' %}"], ['card_transfer', "{% translate "Kartadan o'tkazma" %}"],
+  ['terminal', "{% translate 'Terminal orqali' %}"], ['bank_account', "{% translate 'Hisob raqam orqali' %}"],
+  ['unknown', "{% translate "Noma'lum (eski yozuv)" %}"],
+];
+
+const iso = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+function setThisMonth(){
+  const n=new Date();
+  document.getElementById('fStart').value=iso(new Date(n.getFullYear(), n.getMonth(), 1));
+  document.getElementById('fEnd').value=iso(new Date(n.getFullYear(), n.getMonth()+1, 0));
+  load();
+}
+function setToday(){
+  const t=iso(new Date());
+  document.getElementById('fStart').value=t; document.getElementById('fEnd').value=t;
+  load();
+}
+function showTab(btn){
+  document.querySelectorAll('.fr-tab').forEach(b=>b.classList.toggle('active', b===btn));
+  document.querySelectorAll('.fr-sec').forEach(s=>s.classList.toggle('active', s.id===btn.dataset.sec));
+}
+const table=(head,rows)=>rows.length
+  ? `<table class="etable"><thead><tr>${head.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.join('')}</tbody></table>`
+  : `<div class="empty" style="padding:24px"><p>${FR.empty}</p></div>`;
+const kpi=(label,val)=>`<div class="kpi"><div class="kpi-val">${val}</div><div class="kpi-lbl">${label}</div></div>`;
+
+async function load(){
+  const s=document.getElementById('fStart').value, e=document.getElementById('fEnd').value;
+  const r=await req(`/finance/reports/?start=${s}&end=${e}`);
+  let d; try{d=await r?.json();}catch{d=null;}
+  if(!r||!r.ok){toast(d?.detail||PI18N_ERR,'err');return;}
+  const P=d.payments, S=d.salaries;
+  document.getElementById('kpis').innerHTML=
+    kpi(FR.income,fmoney(P.total))+kpi(FR.count,P.count)+
+    kpi(FR.cancelled,`${P.cancelled.count} · ${fmoney(P.cancelled.total)}`)+kpi(FR.salaries,fmoney(S.total))+
+    P.by_type.map(t=>kpi(escHtml(t.label),fmoney(t.total))).join('');
+
+  const usedTypes=TYPES.filter(([k])=>P.cashiers.some(c=>c.by_type[k]));
+  document.getElementById('tCashiers').innerHTML=table(
+    [FR.cashier,...usedTypes.map(t=>t[1]),FR.num,FR.total],
+    P.cashiers.map(c=>`<tr><td style="font-weight:700">${escHtml(c.name)}</td>
+      ${usedTypes.map(([k])=>`<td>${c.by_type[k]?fmoney(c.by_type[k]):'—'}</td>`).join('')}
+      <td>${c.count}</td><td style="font-weight:800">${fmoney(c.total)}</td></tr>`));
+
+  document.getElementById('tReceipts').innerHTML=table(
+    [FR.date,FR.student,FR.month,FR.amount,FR.type,FR.received,FR.receipt],
+    P.receipts.map(t=>`<tr class="${t.is_cancelled?'cancelled':''}">
+      <td>${fmtDate(t.paid_at)}</td><td>${escHtml(t.student_name)}</td>
+      <td>${I18N.months[t.month-1]} ${t.year}</td><td style="font-weight:700">${fmoney(t.amount)}</td>
+      <td>${escHtml(t.payment_type_display)}</td><td>${escHtml(t.received_by_name||'—')}</td>
+      <td><a href="/finance/receipt/${t.id}/" target="_blank">${escHtml(t.receipt_number)}</a>${t.is_cancelled?` <small style="color:var(--danger)">(${FR.isCancelled})</small>`:''}</td></tr>`));
+
+  document.getElementById('tTypes').innerHTML=table(
+    [FR.type,FR.num,FR.total],
+    P.by_type.map(t=>`<tr><td style="font-weight:700">${escHtml(t.label)}</td><td>${t.count}</td><td style="font-weight:800">${fmoney(t.total)}</td></tr>`));
+
+  document.getElementById('tSalaryTeachers').innerHTML=table(
+    [FR.teacher,FR.total],
+    S.by_teacher.map(t=>`<tr><td style="font-weight:700">${escHtml(t.teacher_name)}</td><td style="font-weight:800">${fmoney(t.total)}</td></tr>`));
+
+  document.getElementById('tSalaries').innerHTML=table(
+    [FR.teacher,FR.month,FR.base,FR.bonus,FR.deduct,FR.total,FR.given,FR.givenBy],
+    S.items.map(i=>`<tr><td style="font-weight:700">${escHtml(i.teacher_name)}</td>
+      <td>${I18N.months[i.month-1]} ${i.year}</td><td>${fmoney(i.amount)}</td>
+      <td>${i.bonus?fmoney(i.bonus):'—'}</td><td>${i.deductions?fmoney(i.deductions):'—'}</td>
+      <td style="font-weight:800">${fmoney(i.total)}</td><td>${fmtDate(i.paid_at)}</td>
+      <td>${escHtml(i.paid_by_name||'—')}</td></tr>`));
+}
+const PI18N_ERR = "{% translate 'Xatolik' %}";
+if(initAuth()) setThisMonth();
+</script>
+{% endblock %}
