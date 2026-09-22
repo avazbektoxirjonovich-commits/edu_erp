@@ -7,6 +7,7 @@ from .views import (
     MonthlySummaryView,
     MyPaymentsView,
     PaymentDetailView,
+    PaymentHistoryView,
     PaymentViewSet,
     UnpaidStudentsView,
 )
@@ -19,4 +20,5 @@ urlpatterns = [
     path('summary/', MonthlySummaryView.as_view(), name='payment-summary'),
     path('export/',  ExportPaymentsView.as_view(), name='payment-export'),
     path('<uuid:pk>/', PaymentDetailView.as_view(), name='payment-detail'),
+    path('<uuid:pk>/history/', PaymentHistoryView.as_view(), name='payment-history'),
 ]

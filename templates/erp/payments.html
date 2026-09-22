@@ -164,6 +164,19 @@
     </div>
   </div>
 </div>
+<!-- TO'LOV TAFSILOTI -->
+<div class="overlay" id="detailModal">
+  <div class="modal modal-lg">
+    <div class="m-head">
+      <h5><i class="fas fa-file-invoice" style="color:var(--accent);margin-right:6px"></i><span id="dTitle">{% translate "To'lov tafsiloti" %}</span></h5>
+      <button class="m-close" onclick="closeM('detailModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="m-body" id="dBody"><div class="loading"><div class="spinner"></div></div></div>
+    <div class="m-foot">
+      <button class="btn btn-ghost" onclick="closeM('detailModal')">{% translate "Yopish" %}</button>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
@@ -171,6 +184,33 @@
 {% translate "Yangi hisob: {created}, oldin bor edi: {existing}, narxi yo'q: {skipped}" as p_generate_done %}
 {% translate "{year}-yil {month}-oy uchun qarzdorlarga eslatma yuborilsinmi?" as p_reminder_confirm %}
 {% translate "To'lov turini tanlang" as p_select_type %}
+{% translate "Oylik narx" as p_d_amount %}
+{% translate "Chegirma" as p_d_discount %}
+{% translate "To'langan" as p_d_paid %}
+{% translate "Qarz" as p_d_debt %}
+{% translate "Holat" as p_d_status %}
+{% translate "To'lov muddati" as p_d_due %}
+{% translate "Cheklar" as p_d_receipts %}
+{% translate "Hali to'lov qilinmagan" as p_d_no_receipts %}
+{% translate "Sana" as p_d_date %}
+{% translate "Summa" as p_d_sum %}
+{% translate "Turi" as p_d_type %}
+{% translate "Qabul qildi" as p_d_cashier %}
+{% translate "Chek" as p_d_receipt %}
+{% translate "BEKOR QILINGAN" as p_d_cancelled %}
+{% translate "Bekor qilish" as p_d_cancel %}
+{% translate "Chekni bekor qilish sababini yozing:" as p_d_cancel_prompt %}
+{% translate "Chek bekor qilindi" as p_d_cancel_done %}
+{% translate "Kim nima qildi" as p_d_history %}
+{% translate "Hisob ochildi" as p_d_opened %}
+{% translate "To'lov qabul qilindi" as p_d_txn_created %}
+{% translate "Chek bekor qilindi" as p_d_txn_cancelled %}
+{% translate "Hisob o'zgartirildi" as p_d_updated %}
+{% translate "Chegirma berish (faqat admin)" as p_d_discount_edit %}
+{% translate "Saqlash" as p_d_save %}
+{% translate "Chegirma saqlandi" as p_d_discount_saved %}
+{% translate "sabab" as p_d_reason %}
+{% translate "Izoh" as p_d_note %}
 {% translate "Tarmoq xatoligi" as p_network_error %}
 {% translate "ta eslatma yuborildi" as p_reminders_sent %}
 {% translate "Xatolik" as p_error %}
@@ -220,6 +260,35 @@ const PI18N = {
   generateDone: "{{ p_generate_done|escapejs }}",
   reminderConfirm: "{{ p_reminder_confirm|escapejs }}",
   selectType: "{{ p_select_type|escapejs }}",
+  detail: {
+    amount: "{{ p_d_amount|escapejs }}",
+    discount: "{{ p_d_discount|escapejs }}",
+    paid: "{{ p_d_paid|escapejs }}",
+    debt: "{{ p_d_debt|escapejs }}",
+    status: "{{ p_d_status|escapejs }}",
+    due: "{{ p_d_due|escapejs }}",
+    receipts: "{{ p_d_receipts|escapejs }}",
+    no_receipts: "{{ p_d_no_receipts|escapejs }}",
+    date: "{{ p_d_date|escapejs }}",
+    sum: "{{ p_d_sum|escapejs }}",
+    type: "{{ p_d_type|escapejs }}",
+    cashier: "{{ p_d_cashier|escapejs }}",
+    receipt: "{{ p_d_receipt|escapejs }}",
+    cancelled: "{{ p_d_cancelled|escapejs }}",
+    cancel: "{{ p_d_cancel|escapejs }}",
+    cancel_prompt: "{{ p_d_cancel_prompt|escapejs }}",
+    cancel_done: "{{ p_d_cancel_done|escapejs }}",
+    history: "{{ p_d_history|escapejs }}",
+    opened: "{{ p_d_opened|escapejs }}",
+    txn_created: "{{ p_d_txn_created|escapejs }}",
+    txn_cancelled: "{{ p_d_txn_cancelled|escapejs }}",
+    updated: "{{ p_d_updated|escapejs }}",
+    discount_edit: "{{ p_d_discount_edit|escapejs }}",
+    save: "{{ p_d_save|escapejs }}",
+    discount_saved: "{{ p_d_discount_saved|escapejs }}",
+    reason: "{{ p_d_reason|escapejs }}",
+    note: "{{ p_d_note|escapejs }}",
+  },
   networkError: "{{ p_network_error|escapejs }}",
   remindersSent: "{{ p_reminders_sent|escapejs }}",
   error: "{{ p_error|escapejs }}",
@@ -346,7 +415,7 @@ async function load(){
     <td style="color:var(--muted);font-size:.75rem">${i+1}</td>
     <td><div style="display:flex;align-items:center;gap:8px">
       <div class="av av-sm">${initials(p.student_name||'?')}</div>
-      <span style="font-size:.82rem;font-weight:600">${p.student_name||'—'}</span>
+      <a href="javascript:void(0)" onclick="openPayDetail('${p.id}')" style="font-size:.82rem;font-weight:600;color:var(--text)">${escHtml(p.student_name||'—')}</a>
     </div></td>
     <td style="font-size:.8rem;color:var(--muted)">${p.group_name||p.group||'—'}</td>
     <td style="font-size:.8rem">${I18N.months[(p.month||1)-1]} ${p.year}</td>
@@ -358,8 +427,11 @@ async function load(){
     <td>${bdg(p.status)}</td>
     <td>
       <div style="display:flex;gap:4px">
-        <button class="btn btn-primary btn-sm" onclick="openQuickPay('${p.student}','${p.student_name||''}',${p.debt_amount||0})">
+        <button class="btn btn-primary btn-sm" onclick="openQuickPay('${p.student}','${p.student_name||''}',${p.debt_amount||0},${p.month},${p.year})">
           <i class="fas fa-plus"></i>${PI18N.paymentWord}
+        </button>
+        <button class="btn btn-ghost btn-sm" onclick="openPayDetail('${p.id}')" title="${PI18N.detail.history}">
+          <i class="fas fa-info-circle"></i>
         </button>
         <button class="btn btn-ghost btn-sm" onclick='printReceipt(${JSON.stringify(p)})' title="${PI18N.printReceipt}">
           <i class="fas fa-print"></i>
@@ -377,8 +449,10 @@ async function initStudents(){
   items.forEach(st=>s.innerHTML+=`<option value="${st.id}">${st.full_name||st.user?.full_name||'?'}</option>`);
 }
 
-function openQuickPay(sid,name,debt){
+function openQuickPay(sid,name,debt,month,year){
   document.getElementById('pStudent').value=sid;
+  if(month) document.getElementById('pMonth').value=month;
+  if(year) document.getElementById('pYear').value=year;
   document.getElementById('pAmount').value=debt||'';
   document.getElementById('pNote').value='';
   document.getElementById('pType').value='';
@@ -415,6 +489,97 @@ async function doPay(){
     console.error('Payment error:',body);
     toast(apiErrorText(body,r.status),'err');
   }
+}
+
+/* ─── To'lov tafsiloti: hisob + cheklar + kim nima qildi ─── */
+const isAdminUser=()=>['admin','developer'].includes(getUser().role);
+let detailId=null;
+
+async function openPayDetail(id){
+  detailId=id;
+  document.getElementById('dBody').innerHTML='<div class="loading"><div class="spinner"></div></div>';
+  openM('detailModal');
+  const d=await get(`/payments/${id}/history/`);
+  if(!d){document.getElementById('dBody').innerHTML=`<div class="empty"><p>${PI18N.error}</p></div>`;return;}
+  renderPayDetail(d);
+}
+
+function renderPayDetail(d){
+  const T=PI18N.detail, p=d.payment, admin=isAdminUser();
+  document.getElementById('dTitle').textContent=`${p.student_name} — ${I18N.months[p.month-1]} ${p.year}`;
+  const cell=(label,val,color)=>`<div style="background:var(--bg);border-radius:10px;padding:10px 12px">
+      <div style="font-size:.7rem;color:var(--muted)">${label}</div>
+      <div style="font-size:.9rem;font-weight:700;${color?`color:${color}`:''}">${val}</div></div>`;
+  const summary=`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:14px">
+      ${cell(T.amount,fmoney(p.amount))}
+      ${cell(T.discount,Number(p.discount)?fmoney(p.discount):'—')}
+      ${cell(T.paid,fmoney(p.paid_amount),'var(--success)')}
+      ${cell(T.debt,Number(p.debt_amount)?fmoney(p.debt_amount):'—',Number(p.debt_amount)?'var(--danger)':'')}
+      ${cell(T.status,bdg(p.effective_status||p.status))}
+      ${cell(T.due,fdate(p.due_date))}
+    </div>
+    <div style="font-size:.78rem;color:var(--muted);margin-bottom:14px">
+      <i class="fas fa-users" style="margin-right:4px"></i>${escHtml(p.group_name||'—')}
+      &nbsp;·&nbsp;<i class="fas fa-phone" style="margin-right:4px"></i>${escHtml(p.student_phone||'—')}
+      ${p.note?`&nbsp;·&nbsp;${T.note}: ${escHtml(p.note)}`:''}
+    </div>`;
+  const discount=admin?`<div style="display:flex;gap:8px;align-items:flex-end;margin-bottom:16px">
+      <div class="fg" style="flex:1;margin:0"><label>${T.discount_edit}</label>
+        <input class="fc" type="number" min="0" id="dDiscount" value="${Number(p.discount)||0}"></div>
+      <button class="btn btn-ghost" onclick="saveDiscount()"><i class="fas fa-percent"></i>${T.save}</button>
+    </div>`:'';
+  const rows=d.transactions.map(t=>`<tr>
+      <td style="font-size:.78rem;${t.is_cancelled?'text-decoration:line-through;opacity:.6':''}">${fmtDate(t.paid_at)}</td>
+      <td style="font-size:.8rem;font-weight:700;${t.is_cancelled?'text-decoration:line-through;opacity:.6':''}">${fmoney(t.amount)}</td>
+      <td style="font-size:.78rem">${escHtml(t.payment_type_display)}</td>
+      <td style="font-size:.78rem">${escHtml(t.received_by_name||'—')}</td>
+      <td style="font-size:.75rem"><a href="/finance/receipt/${t.id}/" target="_blank">${escHtml(t.receipt_number)}</a></td>
+      <td>${t.is_cancelled
+        ?`<span style="font-size:.7rem;color:var(--danger);font-weight:700">${T.cancelled}</span>
+           <div style="font-size:.68rem;color:var(--muted)">${escHtml(t.cancelled_by_name||'')}, ${T.reason}: ${escHtml(t.cancel_reason)}</div>`
+        :(admin?`<button class="btn btn-ghost btn-sm" onclick="cancelReceipt('${t.id}')"><i class="fas fa-ban" style="color:var(--danger)"></i>${T.cancel}</button>`:'')}</td>
+    </tr>`).join('');
+  const receipts=`<h6 style="font-size:.85rem;font-weight:800;margin:6px 0 8px">${T.receipts}</h6>
+    ${d.transactions.length?`<div style="overflow-x:auto"><table class="etable"><thead><tr>
+      <th>${T.date}</th><th>${T.sum}</th><th>${T.type}</th><th>${T.cashier}</th><th>${T.receipt}</th><th></th>
+    </tr></thead><tbody>${rows}</tbody></table></div>`
+    :`<div style="font-size:.8rem;color:var(--muted);padding:8px 0">${T.no_receipts}</div>`}`;
+  const events=[{at:p.created_at,user_name:null,text:T.opened}].concat(d.history
+    .filter(h=>!(h.model_name==='Payment'&&h.action==='create'))
+    .map(h=>{
+      let text=T.updated;
+      if(h.model_name==='PaymentTransaction'){
+        text=(h.changes&&h.changes.is_cancelled)?`${T.txn_cancelled} (${escHtml(h.receipt_number||'')})`
+                                               :`${T.txn_created} (${escHtml(h.receipt_number||'')})`;
+      }
+      const ch=h.changes&&h.model_name==='Payment'
+        ?' — '+Object.entries(h.changes).map(([k,v])=>`${escHtml(k)}: ${escHtml(v.old??'—')} → ${escHtml(v.new??'—')}`).join(', '):'';
+      return {at:h.at,user_name:h.user_name,text:text+ch};
+    })).sort((a,b)=>new Date(a.at)-new Date(b.at));
+  const history=`<h6 style="font-size:.85rem;font-weight:800;margin:16px 0 8px">${T.history}</h6>
+    <div style="border-left:2px solid var(--border);padding-left:12px">${events.map(e=>`
+      <div style="margin-bottom:8px">
+        <div style="font-size:.7rem;color:var(--muted)">${fmtDate(e.at)}${e.user_name?' · '+escHtml(e.user_name):''}</div>
+        <div style="font-size:.8rem">${e.text}</div>
+      </div>`).join('')}</div>`;
+  document.getElementById('dBody').innerHTML=summary+discount+receipts+history;
+}
+
+async function cancelReceipt(txnId){
+  const reason=prompt(PI18N.detail.cancel_prompt);
+  if(reason===null)return;
+  const r=await post(`/finance/transactions/${txnId}/cancel/`,{reason});
+  let body;try{body=await r?.json();}catch{body=null;}
+  if(r&&r.ok){toast(PI18N.detail.cancel_done,'ok');openPayDetail(detailId);load();loadKpi();}
+  else toast(apiErrorText(body,r?.status),'err');
+}
+
+async function saveDiscount(){
+  const discount=parseInt(document.getElementById('dDiscount').value)||0;
+  const r=await patch(`/payments/${detailId}/`,{discount});
+  let body;try{body=await r?.json();}catch{body=null;}
+  if(r&&r.ok){toast(PI18N.detail.discount_saved,'ok');openPayDetail(detailId);load();loadKpi();}
+  else toast(apiErrorText(body,r?.status),'err');
 }
 
 async function printReceipt(p){

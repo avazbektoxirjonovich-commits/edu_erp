@@ -157,6 +157,45 @@ class MonthlySummaryView(APIView):
         return Response(result)
 
 
+class PaymentHistoryView(APIView):
+    """GET /api/v1/payments/<uuid>/history/ — to'lov oynasi uchun hammasi bitta so'rovda:
+    hisob, barcha cheklar (bekor qilinganlari ham) va kim qachon nima qilgani."""
+    permission_classes = [IsFinanceOrAdmin]
+
+    def get(self, request, pk):
+        from apps.finance.models import PaymentTransaction
+        from apps.finance.serializers import PaymentTransactionSerializer
+
+        payment = generics.get_object_or_404(
+            Payment.objects.select_related('student__user', 'group', 'received_by'), pk=pk)
+        txns = list(PaymentTransaction.objects.filter(payment=payment)
+                    .select_related('received_by', 'cancelled_by', 'payment__student__user', 'payment__group')
+                    .order_by('paid_at'))
+        txn_ids = [str(t.pk) for t in txns]
+        logs = (ActivityLog.objects
+                .filter(Q(model_name='Payment', object_id=str(payment.pk)) |
+                        Q(model_name='PaymentTransaction', object_id__in=txn_ids))
+                .select_related('user').order_by('created_at'))
+        receipt_by_id = {str(t.pk): t.receipt_number for t in txns}
+        history = [{
+            'at':          log.created_at,
+            'user_name':   log.user.full_name if log.user else None,
+            'action':      log.action,
+            'action_display': log.get_action_display(),
+            'model_name':  log.model_name,
+            'receipt_number': receipt_by_id.get(log.object_id),
+            'changes':     log.changes,
+        } for log in logs]
+        data = PaymentSerializer(payment).data
+        data['student_phone'] = payment.student.phone
+        data['received_by_name'] = payment.received_by.full_name if payment.received_by else None
+        return Response({
+            'payment':      data,
+            'transactions': PaymentTransactionSerializer(txns, many=True).data,
+            'history':      history,
+        })
+
+
 class GenerateInvoicesView(APIView):
     """POST /api/v1/payments/generate/ {"month": 9, "year": 2026} — barcha faol o'quvchilarga
     shu oy hisobini ochadi. Takroriy chaqiruv xavfsiz (mavjud hisoblarga tegmaydi)."""
