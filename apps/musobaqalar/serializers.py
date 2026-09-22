@@ -38,6 +38,11 @@ class CompetitionSerializer(serializers.ModelSerializer):
         return data
 
 
+class ResultInputSerializer(serializers.Serializer):
+    score = serializers.IntegerField(min_value=0, max_value=100000, allow_null=True)
+    place = serializers.IntegerField(min_value=1, max_value=10000, required=False, allow_null=True)
+
+
 class SetStatusSerializer(serializers.Serializer):
     status = serializers.ChoiceField(choices=Competition.Status.choices)
 

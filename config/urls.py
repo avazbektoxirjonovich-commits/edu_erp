@@ -147,6 +147,10 @@ frontend_urlpatterns = [
         template_name='erp/salary.html'
     ), name='salary'),
 
+    path('musobaqalar/', TemplateView.as_view(
+        template_name='erp/musobaqalar.html'
+    ), name='musobaqalar'),
+
     path('parent/', TemplateView.as_view(
         template_name='erp/parent_portal.html'
     ), name='parent-portal'),

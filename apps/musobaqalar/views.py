@@ -2,6 +2,7 @@
 Musobaqalar — ERP ichidagi boshqaruv API (faqat administrator).
 Public sayt uchun endpointlar alohida: public_views.py (2-bosqich).
 """
+from django.db import transaction
 from django.db.models import Count, F, Q
 from django.utils import timezone
 from openpyxl import Workbook
@@ -15,8 +16,16 @@ from apps.notifications.models import ActivityLog
 from apps.notifications.views import diff_fields, log_activity
 from apps.students.export_views import _add_title, _response, _style_header, _style_row
 
-from .models import Competition, Participant
-from .serializers import CompetitionSerializer, ParticipantSerializer, SetStatusSerializer
+from .models import Competition, Participant, Result
+from .serializers import (
+    CompetitionSerializer,
+    ParticipantSerializer,
+    ResultInputSerializer,
+    SetStatusSerializer,
+)
+
+# Ball faqat ro'yxat yopilgandan keyin kiritiladi; public saytda faqat "yakunlangan"da ko'rinadi
+RESULT_STATUSES = (Competition.Status.REGISTRATION_CLOSED, Competition.Status.FINISHED)
 
 
 class CompetitionViewSet(viewsets.ModelViewSet):
@@ -90,6 +99,34 @@ class CompetitionViewSet(viewsets.ModelViewSet):
                      changes={'status': {'old': old, 'new': new_status}}, request=request)
         return Response(self.get_serializer(self.get_queryset().get(pk=competition.pk)).data)
 
+    @action(detail=True, methods=['post'])
+    def rank(self, request, pk=None):
+        """POST .../<id>/rank/ — o'rinlarni ball bo'yicha avtomatik hisoblash (har bir sinf ichida,
+        sinfsizlar alohida umumiy guruhda). Teng ball — bir xil o'rin: 1, 1, 3 ..."""
+        competition = self.get_object()
+        if competition.status not in RESULT_STATUSES:
+            return Response({'detail': "Natijalar ro'yxat yopilgandan keyin kiritiladi."},
+                            status=status.HTTP_400_BAD_REQUEST)
+        results = list(Result.objects.filter(participant__competition=competition)
+                       .select_related('participant').order_by('-score'))
+        groups = {}
+        for r in results:
+            groups.setdefault(r.participant.grade, []).append(r)
+        updated = 0
+        with transaction.atomic():
+            for rows in groups.values():
+                place, prev_score = 0, None
+                for i, r in enumerate(rows, 1):
+                    if r.score != prev_score:
+                        place, prev_score = i, r.score
+                    if r.place != place:
+                        r.place = place
+                        r.save(update_fields=['place', 'entered_at'])
+                        updated += 1
+        log_activity(request.user, ActivityLog.Action.UPDATE, 'Competition', competition.pk, str(competition),
+                     changes={'rank': {'old': None, 'new': f'{len(results)} ta natija'}}, request=request)
+        return Response({'ranked': len(results), 'updated': updated})
+
     @action(detail=True, methods=['get'])
     def export(self, request, pk=None):
         competition = self.get_object()
@@ -144,5 +181,38 @@ class ParticipantViewSet(viewsets.ReadOnlyModelViewSet):
         log_activity(request.user, ActivityLog.Action.UPDATE, 'Participant', participant.pk, str(participant),
                      changes={'status': {'old': Participant.Status.NEW, 'new': Participant.Status.CONFIRMED}},
                      request=request)
+        return Response(self.get_serializer(participant).data)
+
+    @action(detail=True, methods=['post'])
+    def result(self, request, pk=None):
+        """POST .../participants/<id>/result/ {"score": 87, "place": 2}
+        Ball kiritish/o'zgartirish (o'rin ixtiyoriy — "rank" bilan avtomatik ham hisoblanadi).
+        {"score": null} — natijani o'chirish."""
+        participant = self.get_object()
+        if participant.competition.status not in RESULT_STATUSES:
+            return Response({'detail': "Natijalar ro'yxat yopilgandan keyin kiritiladi."},
+                            status=status.HTTP_400_BAD_REQUEST)
+        serializer = ResultInputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        score = serializer.validated_data.get('score')
+        existing = Result.objects.filter(participant=participant).first()
+        old = {'score': existing.score, 'place': existing.place} if existing else {'score': None, 'place': None}
+        if score is None:
+            if existing:
+                existing.delete()
+            new = {'score': None, 'place': None}
+        else:
+            place = serializer.validated_data.get('place')
+            Result.objects.update_or_create(
+                participant=participant,
+                defaults={'score': score, 'place': place, 'entered_by': request.user},
+            )
+            new = {'score': score, 'place': place}
+        changes = {k: {'old': str(old[k]) if old[k] is not None else None,
+                       'new': str(new[k]) if new[k] is not None else None}
+                   for k in ('score', 'place') if old[k] != new[k]}
+        log_activity(request.user, ActivityLog.Action.UPDATE, 'Participant', participant.pk, str(participant),
+                     changes=changes or None, request=request)
+        participant = self.get_queryset().get(pk=participant.pk)
         return Response(self.get_serializer(participant).data)
 
