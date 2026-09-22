@@ -21,7 +21,6 @@ from datetime import timedelta
 from django.conf import settings
 from django.db import IntegrityError, transaction
 from django.db.models import F
-from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import serializers, status
 from rest_framework.permissions import AllowAny
@@ -83,8 +82,9 @@ class PublicCompetitionSerializer(serializers.ModelSerializer):
     boshlanish_sinf         = serializers.IntegerField(source='grade_from')
     tugash_sinf             = serializers.IntegerField(source='grade_to')
     manzil                  = serializers.CharField(source='location')
-    royxatdan_otish_muddati = serializers.DateTimeField(source='registration_deadline')
-    musobaqa_sanasi         = serializers.DateTimeField(source='competition_date')
+    # ISO 8601 + vaqt zonasi — brauzerlar (Safari ham) Date() bilan xatosiz o'qiydi
+    royxatdan_otish_muddati = serializers.DateTimeField(source='registration_deadline', format='iso-8601')
+    musobaqa_sanasi         = serializers.DateTimeField(source='competition_date', format='iso-8601')
     royxat_ochiq            = serializers.BooleanField(source='is_registration_open')
 
     class Meta:
@@ -200,14 +200,18 @@ def results_payload(competition):
         items.append({'ism': ism, 'familya': familya, 'ball': r.score, 'orin': r.place})
     return {
         'musobaqa': {'id': str(competition.pk), 'nomi': competition.name,
-                     'musobaqa_sanasi': competition.competition_date},
+                     'musobaqa_sanasi': (timezone.localtime(competition.competition_date).isoformat()
+                                         if competition.competition_date else None)},
         'sinflar': [{'sinf': g, 'natijalar': by_grade[g]} for g in sorted(by_grade)],
     }
 
 
 class ResultsView(PublicView):
     def get(self, request, pk):
-        competition = get_object_or_404(Competition, pk=pk, status=Competition.Status.FINISHED)
+        competition = Competition.objects.filter(pk=pk, status=Competition.Status.FINISHED).first()
+        if not competition:
+            return Response({'detail': "Bu musobaqa natijalari hali e'lon qilinmagan."},
+                            status=status.HTTP_404_NOT_FOUND)
         return Response(results_payload(competition))
 
 

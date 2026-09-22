@@ -60,6 +60,8 @@ class TestCurrent:
         assert (data['nomi'], data['boshlanish_sinf'], data['tugash_sinf']) == ('Oktyabr matematika', 1, 11)
         assert data['manzil'] == "Qorako'l, markaz binosi"
         assert data['royxat_ochiq'] is True
+        # ISO 8601 zona bilan (Safari 'YYYY-MM-DD HH:MM:SS' ni o'qiy olmaydi)
+        assert data['royxatdan_otish_muddati'].endswith('+05:00') and 'T' in data['royxatdan_otish_muddati']
 
     def test_deadline_passed_shows_closed(self, anon):
         make_competition(registration_deadline=timezone.now() - timedelta(minutes=1))
@@ -248,9 +250,21 @@ class TestResults:
     @pytest.mark.parametrize('st', ['draft', 'published', 'registration_closed'])
     def test_only_finished(self, anon, st):
         c = make_competition(status=st)
-        assert anon.get(f'{BASE}natijalar/{c.id}/').status_code == 404
+        resp = anon.get(f'{BASE}natijalar/{c.id}/')
+        assert resp.status_code == 404
+        assert "e'lon qilinmagan" in resp.data['detail']
 
     def test_latest(self, anon):
         assert anon.get(f'{BASE}natijalar/oxirgi/').data == {'musobaqa': None, 'sinflar': []}
         c = self._finished()
         assert anon.get(f'{BASE}natijalar/oxirgi/').data['musobaqa']['id'] == str(c.id)
+
+
+# ── Sozlamalar ───────────────────────────────────────────────────────────────
+@pytest.mark.parametrize('module', ['config.settings.development', 'config.settings.windows',
+                                    'config.settings.test'])
+def test_throttle_scopes_configured_in_every_settings_module(module):
+    """Har bir sozlamalar fayli REST_FRAMEWORK'ni o'zi yozadi — scope yo'q bo'lsa endpoint 500 beradi."""
+    import importlib
+    rates = importlib.import_module(module).REST_FRAMEWORK['DEFAULT_THROTTLE_RATES']
+    assert {'musobaqa_public', 'musobaqa_register'} <= set(rates)
