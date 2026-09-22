@@ -92,8 +92,17 @@
           <select class="fc fc-sel" id="pYear"></select>
         </div>
       </div>
-      <div class="fg"><label>{% translate "To'langan summa" %} *</label>
-        <input class="fc" type="number" id="pAmount" placeholder="500000" min="1">
+      <div class="row2">
+        <div class="fg"><label>{% translate "To'langan summa" %} *</label>
+          <input class="fc" type="number" id="pAmount" placeholder="500000" min="1">
+        </div>
+        <div class="fg"><label>{% translate "To'lov turi" %} *</label>
+          <select class="fc fc-sel" id="pType"><option value="">{% translate "— Tanlang —" %}</option>
+          <option value="cash">{% translate "Naqd" %}</option>
+          <option value="card_transfer">{% translate "Kartadan o'tkazma" %}</option>
+          <option value="terminal">{% translate "Terminal orqali" %}</option>
+          <option value="bank_account">{% translate "Hisob raqam orqali" %}</option></select>
+        </div>
       </div>
       <div class="fg"><label>{% translate "Izoh" %}</label>
         <input class="fc" id="pNote" placeholder="{% translate "Qo'shimcha izoh..." %}">
@@ -126,8 +135,17 @@
           </div>
         </div>
       </div>
-      <div class="fg"><label>{% translate "To'lov summasi (so'm)" %}</label>
-        <input class="fc" type="number" id="bAmount" placeholder="{% translate "Guruh oylik to'lovi" %}" oninput="updateBulkAmounts()">
+      <div class="row2">
+        <div class="fg"><label>{% translate "To'lov summasi (so'm)" %}</label>
+          <input class="fc" type="number" id="bAmount" placeholder="{% translate "Har bir o'quvchining oylik to'lovi" %}" oninput="updateBulkAmounts()">
+        </div>
+        <div class="fg"><label>{% translate "To'lov turi" %} *</label>
+          <select class="fc fc-sel" id="bType"><option value="">{% translate "— Tanlang —" %}</option>
+          <option value="cash">{% translate "Naqd" %}</option>
+          <option value="card_transfer">{% translate "Kartadan o'tkazma" %}</option>
+          <option value="terminal">{% translate "Terminal orqali" %}</option>
+          <option value="bank_account">{% translate "Hisob raqam orqali" %}</option></select>
+        </div>
       </div>
       <div id="bulkStudentList" style="max-height:300px;overflow-y:auto;margin-top:8px">
         <div style="font-size:.8rem;color:var(--muted);text-align:center;padding:20px">{% translate "Guruh tanlang" %}</div>
@@ -152,6 +170,7 @@
 {% translate "{year}-yil {month}-oy uchun barcha faol o'quvchilarga hisob ochilsinmi? Mavjud hisoblarga tegilmaydi." as p_generate_confirm %}
 {% translate "Yangi hisob: {created}, oldin bor edi: {existing}, narxi yo'q: {skipped}" as p_generate_done %}
 {% translate "{year}-yil {month}-oy uchun qarzdorlarga eslatma yuborilsinmi?" as p_reminder_confirm %}
+{% translate "To'lov turini tanlang" as p_select_type %}
 {% translate "Tarmoq xatoligi" as p_network_error %}
 {% translate "ta eslatma yuborildi" as p_reminders_sent %}
 {% translate "Xatolik" as p_error %}
@@ -200,6 +219,7 @@ const PI18N = {
   generateConfirm: "{{ p_generate_confirm|escapejs }}",
   generateDone: "{{ p_generate_done|escapejs }}",
   reminderConfirm: "{{ p_reminder_confirm|escapejs }}",
+  selectType: "{{ p_select_type|escapejs }}",
   networkError: "{{ p_network_error|escapejs }}",
   remindersSent: "{{ p_reminders_sent|escapejs }}",
   error: "{{ p_error|escapejs }}",
@@ -361,6 +381,7 @@ function openQuickPay(sid,name,debt){
   document.getElementById('pStudent').value=sid;
   document.getElementById('pAmount').value=debt||'';
   document.getElementById('pNote').value='';
+  document.getElementById('pType').value='';
   openM('payModal');
 }
 
@@ -371,13 +392,15 @@ async function doPay(){
   const amount=parseFloat(document.getElementById('pAmount').value)||0;
   if(!sid){toast(PI18N.selectStudent,'wrn');return;}
   if(!amount){toast(PI18N.enterAmount,'wrn');return;}
+  const ptype=document.getElementById('pType').value;
+  if(!ptype){toast(PI18N.selectType,'wrn');return;}
   // Records a new PaymentTransaction (receipt) for the amount being paid NOW —
   // Payment.paid_amount is derived server-side as the sum of all transactions,
   // so this always accumulates on top of any prior installments and never
   // overwrites them (see apps/finance/services + signals).
   const r=await post('/finance/transactions/record/',{
     student:sid, month:parseInt(month), year:parseInt(year),
-    amount, payment_type:'cash', note:document.getElementById('pNote').value,
+    amount, payment_type:ptype, note:document.getElementById('pNote').value,
   });
   if(!r){toast(PI18N.networkError,'err');return;}
   let body;
@@ -466,6 +489,8 @@ async function doBulkPay(){
   const year=parseInt(document.getElementById('bYear').value);
   const selected=[...document.querySelectorAll('.bulk-st-cb:checked')];
   if(!selected.length){toast(PI18N.noStudentSelected,'wrn');return;}
+  const btype=document.getElementById('bType').value;
+  if(!btype){toast(PI18N.selectType,'wrn');return;}
 
   const btn=document.querySelector('#bulkModal .btn-primary');
   if(btn) btn.disabled=true;
@@ -478,7 +503,7 @@ async function doBulkPay(){
     // PaymentTransaction (receipt), and one student's failure here does not
     // affect transactions already committed for earlier students in the loop.
     const r=await post('/finance/transactions/record/',{
-      student:sid, month, year, amount:amt, payment_type:'cash', note:PI18N.bulkPayment,
+      student:sid, month, year, amount:amt, payment_type:btype, note:PI18N.bulkPayment,
     });
     if(r&&(r.ok||r.status===201)) ok++;
     else{err++;try{const e=await r?.json();console.error('Bulk pay err',sid,e);}catch{}}

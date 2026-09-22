@@ -21,12 +21,13 @@ class PaymentTransaction(models.Model):
     """
 
     class PaymentType(models.TextChoices):
-        CASH     = 'cash',     'Naqd'
-        CARD     = 'card',     'Karta'
-        TRANSFER = 'transfer', "O'tkazma"
+        CASH          = 'cash',          'Naqd'
+        CARD_TRANSFER = 'card_transfer', "Kartadan o'tkazma"
+        TERMINAL      = 'terminal',      'Terminal orqali'
+        BANK_ACCOUNT  = 'bank_account',  'Hisob raqam orqali'
         # Faqat migratsiya uchun: eski tizimda chekisiz yozilgan summalar.
         # Kassir buni tanlay olmaydi (RecordPaymentSerializer).
-        UNKNOWN  = 'unknown',  "Noma'lum (eski yozuv)"
+        UNKNOWN       = 'unknown',       "Noma'lum (eski yozuv)"
 
     id             = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     # PROTECT — hisob o'chirilsa, cheklar jimgina yo'qolmasin
@@ -52,7 +53,7 @@ class PaymentTransaction(models.Model):
                          validators=[MinValueValidator(1)],
                          verbose_name='Summa',
                      )
-    payment_type   = models.CharField(max_length=10, choices=PaymentType.choices,
+    payment_type   = models.CharField(max_length=20, choices=PaymentType.choices,
                                       default=PaymentType.CASH, verbose_name="To'lov turi")
     receipt_number = models.CharField(max_length=30, unique=True, editable=False,
                                       verbose_name='Chek raqami')
