@@ -12,7 +12,7 @@ from rest_framework.viewsets import ModelViewSet
 from apps.accounts.permissions import IsAdmin, IsAdminOrTeacher, IsFinance
 from apps.common.utils import calculate_attendance_pct, debt_annotation
 from apps.notifications.models import ActivityLog
-from apps.notifications.views import log_activity
+from apps.notifications.views import diff_fields, log_activity
 
 from .models import Student
 from .serializers import (
@@ -80,10 +80,13 @@ class StudentViewSet(ModelViewSet):
         )
 
     def perform_update(self, serializer):
+        fields = ('monthly_fee', 'group_id', 'status')
+        before = {f: getattr(serializer.instance, f) for f in fields}
         student = serializer.save()
         log_activity(
             self.request.user, ActivityLog.Action.UPDATE, 'Student',
-            student.pk, str(student), request=self.request,
+            student.pk, str(student), changes=diff_fields(before, student, fields),
+            request=self.request,
         )
 
     def perform_destroy(self, instance):

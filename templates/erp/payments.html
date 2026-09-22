@@ -26,6 +26,7 @@
     <p style="font-size:.75rem;color:var(--muted);margin-top:3px">{% translate "Oylik to'lovlarni boshqarish" %}</p>
   </div>
   <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <button class="btn btn-ghost admin-only" onclick="generateInvoices()" title="{% translate "Barcha faol o'quvchilarga tanlangan oy hisobini ochish" %}"><i class="fas fa-file-invoice-dollar" style="color:var(--accent)"></i>{% translate "Oylik hisoblash" %}</button>
     <button class="btn btn-ghost admin-only" onclick="sendReminders()" title="{% translate "Eslatma yuborish" %}"><i class="fas fa-bell" style="color:var(--warning)"></i>{% translate "Eslatma" %}</button>
     <button class="btn btn-ghost admin-only" onclick="exportPayments()" title="{% translate "Excel yuklash" %}"><i class="fas fa-file-excel" style="color:#10b981"></i>Excel</button>
     <button class="btn btn-ghost admin-only" onclick="openM('bulkModal')" title="{% translate "Guruhga ommaviy to'lov" %}"><i class="fas fa-layer-group" style="color:var(--accent)"></i>{% translate "Ommaviy" %}</button>
@@ -147,6 +148,9 @@
 </div>
 {% endblock %}
 
+{% block extra_js %}
+{% translate "{year}-yil {month}-oy uchun barcha faol o'quvchilarga hisob ochilsinmi? Mavjud hisoblarga tegilmaydi." as p_generate_confirm %}
+{% translate "Yangi hisob: {created}, oldin bor edi: {existing}, narxi yo'q: {skipped}" as p_generate_done %}
 {% translate "{year}-yil {month}-oy uchun qarzdorlarga eslatma yuborilsinmi?" as p_reminder_confirm %}
 {% translate "Tarmoq xatoligi" as p_network_error %}
 {% translate "ta eslatma yuborildi" as p_reminders_sent %}
@@ -186,7 +190,6 @@
 {% translate "ta xatolik" as p_ta_error %}
 {% translate "Xatolik yuz berdi" as p_error_occurred %}
 {% translate "Bu to'lov uchun chek mavjud emas" as p_no_receipt_yet %}
-{% block extra_js %}
 <script>
 initAuth();
 const _ME=getUser();
@@ -194,6 +197,8 @@ const _isAdmin=_ME.role==='admin'||_ME.role==='developer';
 if(!_isAdmin) document.querySelectorAll('.admin-only').forEach(el=>el.style.display='none');
 
 const PI18N = {
+  generateConfirm: "{{ p_generate_confirm|escapejs }}",
+  generateDone: "{{ p_generate_done|escapejs }}",
   reminderConfirm: "{{ p_reminder_confirm|escapejs }}",
   networkError: "{{ p_network_error|escapejs }}",
   remindersSent: "{{ p_reminders_sent|escapejs }}",
@@ -234,6 +239,26 @@ const PI18N = {
   errorOccurred: "{{ p_error_occurred|escapejs }}",
   noReceiptYet: "{{ p_no_receipt_yet|escapejs }}",
 };
+
+async function generateInvoices(){
+  const m=document.getElementById('fMonth')?.value||new Date().getMonth()+1;
+  const y=document.getElementById('fYear')?.value||new Date().getFullYear();
+  if(!confirm(PI18N.generateConfirm.replace('{year}', y).replace('{month}', m)))return;
+  const r=await post('/payments/generate/',{month:parseInt(m),year:parseInt(y)});
+  if(!r){toast(PI18N.networkError,'err');return;}
+  let d;try{d=await r.json();}catch{d=null;}
+  if(r.ok){
+    toast(PI18N.generateDone.replace('{created}',d.created).replace('{existing}',d.existing).replace('{skipped}',d.skipped_no_fee),'ok');
+    load(); loadKpi();
+  }else toast(d?.detail||PI18N.error,'err');
+}
+
+// Server xatosini kassirga tushunarli matnga aylantiradi ({"amount": ["..."]} -> "...")
+function apiErrorText(body,status){
+  if(!body||typeof body!=='object') return `${PI18N.serverError} (${status})`;
+  if(body.detail) return String(body.detail);
+  return Object.values(body).flat().map(String).join(' | ')||`${PI18N.serverError} (${status})`;
+}
 
 async function sendReminders(){
   const m=document.getElementById('fMonth')?.value||new Date().getMonth()+1;
@@ -365,10 +390,7 @@ async function doPay(){
     if(txnId) window.open(`/finance/receipt/${txnId}/`,'_blank');
   }else{
     console.error('Payment error:',body);
-    const msg=body&&typeof body==='object'
-      ?Object.entries(body).map(([f,v])=>`${f}: ${[].concat(v).join(', ')}`).join(' | ')
-      :`${PI18N.serverError} (${r.status})`;
-    toast(msg||`${PI18N.serverError} (${r.status})`,'err');
+    toast(apiErrorText(body,r.status),'err');
   }
 }
 

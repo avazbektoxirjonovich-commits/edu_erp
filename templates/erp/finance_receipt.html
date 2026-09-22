@@ -59,6 +59,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
     <p>{% translate "To'lov cheki" %}</p>
   </div>
   <div class="r-body">
+    <div id="fCancelled" style="display:none;background:#fee2e2;color:#b91c1c;border-radius:8px;padding:10px 12px;margin-bottom:12px;font-weight:700;text-align:center"></div>
     <div class="r-meta">
       <span id="fReceiptNo">—</span>
       <span id="fDate">—</span>
@@ -86,11 +87,15 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 {% translate "so'm" as p_fr_som %}
 {% translate "Tizimga kirish talab qilinadi." as p_fr_login_req %}
 {% translate "Yo'q (to'liq to'langan)" as p_fr_no_debt %}
+{% translate "BEKOR QILINGAN" as p_fr_cancelled %}
+{% translate "sabab" as p_fr_reason %}
 <script>
 const FRI18N = {
   som: "{{ p_fr_som|escapejs }}",
   loginRequired: "{{ p_fr_login_req|escapejs }}",
   noDebt: "{{ p_fr_no_debt|escapejs }}",
+  cancelled: "{{ p_fr_cancelled|escapejs }}",
+  reason: "{{ p_fr_reason|escapejs }}",
 };
 const txnId = location.pathname.split('/').filter(Boolean).pop();
 const token = localStorage.getItem('erp_access');
@@ -125,6 +130,11 @@ async function load(){
     document.getElementById('fAmount').textContent = fmtMoney(t.amount);
     document.getElementById('fType').textContent = t.payment_type_display || t.payment_type;
     document.getElementById('fReceivedBy').textContent = t.received_by_name || '—';
+    if(t.is_cancelled){
+      const c = document.getElementById('fCancelled');
+      c.textContent = `${FRI18N.cancelled} — ${fmtDate(t.cancelled_at)} (${t.cancelled_by_name||'—'}), ${FRI18N.reason}: ${t.cancel_reason}`;
+      c.style.display = 'block';
+    }
 
     const debt = Number(t.debt_after || 0);
     const debtBox = document.getElementById('fDebtBox');

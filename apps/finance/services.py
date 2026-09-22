@@ -49,7 +49,7 @@ def compute_financial_summary(start_date, end_date):
     not double-counting, it's two legitimate, differently-defined figures.
     Do not unify these without an explicit product decision to do so.
     """
-    income = PaymentTransaction.objects.filter(
+    income = PaymentTransaction.objects.valid().filter(
         paid_at__date__gte=start_date, paid_at__date__lte=end_date,
     ).aggregate(total=Sum('amount'))['total'] or 0
 

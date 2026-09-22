@@ -12,6 +12,7 @@ from .pdf_views import TransactionReceiptPDFView
 from .views import (
     AssetSummaryView,
     AssetViewSet,
+    CancelTransactionView,
     DebtorsListView,
     ExpenseSummaryView,
     ExpenseViewSet,
@@ -31,6 +32,7 @@ urlpatterns = [
     path('transactions/',        PaymentTransactionListView.as_view(), name='finance-transactions'),
     path('transactions/record/', RecordPaymentView.as_view(),          name='finance-record-payment'),
     path('transactions/<uuid:pk>/', TransactionDetailView.as_view(),   name='finance-transaction-detail'),
+    path('transactions/<uuid:pk>/cancel/', CancelTransactionView.as_view(), name='finance-transaction-cancel'),
     path('transactions/<uuid:pk>/receipt-pdf/', TransactionReceiptPDFView.as_view(),
          name='finance-transaction-receipt-pdf'),
     path('debts/',           DebtorsListView.as_view(),             name='finance-debts'),

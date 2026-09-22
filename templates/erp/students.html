@@ -90,6 +90,10 @@
         </div>
       </div>
       <div class="row2">
+        <div class="fg"><label>{% translate "Shaxsiy oylik narx" %}</label><input class="fc" type="number" min="0" step="1000" id="aMonthlyFee" placeholder="{% translate "Bo'sh — guruh narxi olinadi" %}"></div>
+        <div class="fg"></div>
+      </div>
+      <div class="row2">
         <div class="fg"><label>{% translate "Ota-ona ismi" %}</label><input class="fc" id="aParentName" placeholder="Abdullayev Vohid"></div>
         <div class="fg"><label>{% translate "Ota-ona telefoni" %}</label><input class="fc" id="aParentPhone" placeholder="+998901234567"></div>
       </div>
@@ -130,6 +134,10 @@
             <option value="frozen">{% translate "To'xtatilgan" %}</option>
           </select>
         </div>
+      </div>
+      <div class="row2">
+        <div class="fg"><label>{% translate "Shaxsiy oylik narx" %}</label><input class="fc" type="number" min="0" step="1000" id="eMonthlyFee" placeholder="{% translate "Bo'sh — guruh narxi olinadi" %}"></div>
+        <div class="fg"></div>
       </div>
       <div class="row2">
         <div class="fg"><label>{% translate "Ota-ona ismi" %}</label><input class="fc" id="eParentName" placeholder="{% translate "Ota-ona ismi" %}"></div>
@@ -199,6 +207,7 @@
 </div>
 {% endblock %}
 
+{% block extra_js %}
 {% translate "Eksport xatoligi" as p_export_error %}
 {% translate "Excel yuklandi" as p_excel_downloaded %}
 {% translate "Yuklab bo'lmadi" as p_download_failed %}
@@ -244,7 +253,6 @@
 {% translate "Qarz" as p_debt %}
 {% translate "Chop etilgan:" as p_printed_on %}
 {% translate "guruhdan chiqarish" as p_remove_from_group %}
-{% block extra_js %}
 <script>
 initAuth();
 const _ME=getUser();
@@ -438,8 +446,14 @@ function renderPagination(total, pg, size){
   document.getElementById('pagination').innerHTML=html;
 }
 
+// Bo'sh maydon = shaxsiy narx yo'q (guruh narxi olinadi)
+function feeValue(id){
+  const v=document.getElementById(id).value.trim();
+  return v===''?null:Number(v);
+}
+
 function openAddModal(){
-  ['aName','aPhone','aPwd','aParentName','aParentPhone','aAddress','aNotes'].forEach(id=>document.getElementById(id).value='');
+  ['aName','aPhone','aPwd','aParentName','aParentPhone','aAddress','aNotes','aMonthlyFee'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('aBirth').value='';
   document.getElementById('aGroup').value='';
   openM('addModal');
@@ -452,6 +466,7 @@ async function doAddStudent(){
   if(!name||!phone||!pwd){toast(PI18N.requiredFields,'wrn');return;}
   const body={full_name:name,phone,password:pwd,
     group:document.getElementById('aGroup').value||null,
+    monthly_fee:feeValue('aMonthlyFee'),
     parent_name:document.getElementById('aParentName').value,
     parent_phone:document.getElementById('aParentPhone').value,
     address:document.getElementById('aAddress').value,
@@ -472,6 +487,7 @@ async function openEdit(id){
   document.getElementById('ePhone').value=d.phone||'';
   document.getElementById('eStatus').value=d.status||'active';
   document.getElementById('eGroup').value=d.group||'';
+  document.getElementById('eMonthlyFee').value=d.monthly_fee??'';
   document.getElementById('eParentName').value=d.parent_name||'';
   document.getElementById('eParentPhone').value=d.parent_phone||'';
   document.getElementById('eAddress').value=d.address||'';
@@ -486,6 +502,7 @@ async function doEditStudent(){
     phone:document.getElementById('ePhone').value.trim(),
     status:document.getElementById('eStatus').value,
     group:document.getElementById('eGroup').value||null,
+    monthly_fee:feeValue('eMonthlyFee'),
     parent_name:document.getElementById('eParentName').value,
     parent_phone:document.getElementById('eParentPhone').value,
     address:document.getElementById('eAddress').value,

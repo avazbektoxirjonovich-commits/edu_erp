@@ -17,8 +17,10 @@ class Payment(models.Model):
         UNPAID  = 'unpaid',  "To'lanmagan"
 
     id          = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    # PROTECT — o'quvchi o'chirilsa, to'lov tarixi jimgina yo'qolmasin
+    # (ERP'da o'quvchi o'chirilmaydi, nofaol qilinadi)
     student     = models.ForeignKey(
-                      'students.Student', on_delete=models.CASCADE,
+                      'students.Student', on_delete=models.PROTECT,
                       related_name='payments', verbose_name="O'quvchi",
                       db_index=True
                   )

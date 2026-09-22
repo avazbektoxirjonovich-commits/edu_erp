@@ -1,9 +1,9 @@
-from django.utils import timezone
+from decimal import Decimal
+
 from rest_framework import serializers
 
-from apps.groups.models import Group
-
 from .models import Payment
+from .services import get_or_create_invoice
 
 
 class PaymentSerializer(serializers.ModelSerializer):
@@ -18,80 +18,81 @@ class PaymentSerializer(serializers.ModelSerializer):
         model  = Payment
         fields = [
             'id', 'student', 'student_name', 'group', 'group_name',
-            'month', 'year', 'amount', 'paid_amount', 'debt_amount',
+            'month', 'year', 'amount', 'discount', 'paid_amount', 'debt_amount',
             'status', 'status_display', 'is_overdue', 'effective_status', 'due_date',
             'payment_date', 'note', 'received_by', 'created_at'
         ]
-        read_only_fields = ['id', 'debt_amount', 'status', 'created_at']
+        read_only_fields = ['id', 'paid_amount', 'debt_amount', 'status', 'created_at']
+
+
+PAID_AMOUNT_READ_ONLY = (
+    "To'langan summani qo'lda o'zgartirib bo'lmaydi — to'lov faqat chek orqali "
+    "qabul qilinadi (/api/v1/finance/transactions/record/)."
+)
 
 
 class PaymentCreateSerializer(serializers.ModelSerializer):
+    """Oylik HISOB ochish (pul qabul qilish emas). Shu oy uchun hisob bo'lsa —
+    mavjudi qaytariladi. Summa ko'rsatilmasa — o'quvchi narxi (shaxsiy yoki guruh)."""
     amount = serializers.DecimalField(
-        max_digits=10, decimal_places=0, required=False, default=0
-    )
-    group = serializers.PrimaryKeyRelatedField(
-        queryset=Group.objects.all(), required=False, allow_null=True, default=None
+        max_digits=10, decimal_places=0, required=False, min_value=Decimal('0')
     )
 
     class Meta:
         model  = Payment
-        fields = ['id', 'student', 'group', 'month', 'year', 'amount', 'paid_amount', 'note']
+        fields = ['id', 'student', 'month', 'year', 'amount', 'note']
         read_only_fields = ['id']
 
     def validate(self, data):
-        student = data['student']
-
-        # group ko'rsatilmasa — student ning joriy guruhidan olish
-        if not data.get('group'):
-            data['group'] = student.group
-
-        # amount ko'rsatilmasa — guruh oylik to'lovidan olish
-        if not data.get('amount'):
-            data['amount'] = data['group'].monthly_fee if data.get('group') else 0
-
+        if self.initial_data.get('paid_amount') not in (None, '', 0, '0'):
+            raise serializers.ValidationError({'paid_amount': [PAID_AMOUNT_READ_ONLY]})
+        if not (1 <= data['month'] <= 12):
+            raise serializers.ValidationError({'month': ["Oy 1 dan 12 gacha bo'lishi kerak."]})
         return data
 
     def create(self, validated_data):
-        validated_data['received_by'] = self.context['request'].user
-        validated_data['payment_date'] = timezone.now().date()
-
-        student = validated_data['student']
-        group   = validated_data.get('group')
-        month   = validated_data['month']
-        year    = validated_data['year']
-
-        # Mavjud bo'lsa — yangilash (upsert); bo'lmasa — yaratish
-        existing = Payment.objects.filter(
-            student=student, group=group, month=month, year=year
-        ).first()
-        if existing:
-            # Snapshot pre-overwrite state so the caller (PaymentViewSet.create) can
-            # log this as an UPDATE with an old/new changes payload instead of a CREATE.
-            self.was_update = True
-            self.previous_state = {
-                'paid_amount': existing.paid_amount,
-                'amount':      existing.amount,
-                'note':        existing.note,
-                'status':      existing.status,
-                'debt_amount': existing.debt_amount,
-            }
-            existing.paid_amount  = validated_data['paid_amount']
-            existing.amount       = validated_data.get('amount', existing.amount)
-            existing.note         = validated_data.get('note', existing.note)
-            existing.received_by  = validated_data['received_by']
-            existing.payment_date = validated_data['payment_date']
-            existing.save()
-            return existing
-
-        self.was_update = False
-        return Payment.objects.create(**validated_data)
+        invoice, created = get_or_create_invoice(
+            validated_data['student'], validated_data['month'], validated_data['year'],
+        )
+        self.was_created = created
+        if created and ('amount' in validated_data or validated_data.get('note')):
+            if 'amount' in validated_data:
+                invoice.amount = validated_data['amount']
+            invoice.note = validated_data.get('note', '')
+            invoice.save()
+        return invoice
 
 
 class PaymentUpdateSerializer(serializers.ModelSerializer):
-    """To'lovga pul qo'shish"""
+    """Hisobni tahrirlash: izoh — moliyachi/admin; narx va chegirma — faqat admin.
+    To'langan summa bu yerda o'zgarmaydi (faqat chek orqali)."""
+    ADMIN_ONLY = ('amount', 'discount')
+
+    amount   = serializers.DecimalField(max_digits=10, decimal_places=0, min_value=Decimal('0'), required=False)
+    discount = serializers.DecimalField(max_digits=10, decimal_places=0, min_value=Decimal('0'), required=False)
+
     class Meta:
         model  = Payment
-        fields = ['paid_amount', 'note', 'payment_date']
+        fields = ['amount', 'discount', 'note']
+
+    def validate(self, data):
+        if 'paid_amount' in self.initial_data:
+            raise serializers.ValidationError({'paid_amount': [PAID_AMOUNT_READ_ONLY]})
+        user = self.context['request'].user
+        if any(f in data for f in self.ADMIN_ONLY) and not (user.is_admin or user.is_developer):
+            raise serializers.ValidationError(
+                {'detail': "Narx va chegirmani faqat administrator o'zgartira oladi."}
+            )
+        amount   = data.get('amount', self.instance.amount)
+        discount = data.get('discount', self.instance.discount)
+        if discount > amount:
+            raise serializers.ValidationError({'discount': ["Chegirma summadan katta bo'lishi mumkin emas."]})
+        if amount - discount < self.instance.paid_amount:
+            raise serializers.ValidationError({'amount': [
+                f"To'lanishi kerak summa to'langan summadan ({self.instance.paid_amount:,.0f}) kam "
+                f"bo'lib qoladi. Avval ortiqcha chekni bekor qiling."
+            ]})
+        return data
 
 
 class MonthlyPaymentSummarySerializer(serializers.Serializer):

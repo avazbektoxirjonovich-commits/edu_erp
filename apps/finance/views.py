@@ -13,11 +13,13 @@ from apps.notifications.models import ActivityLog
 from apps.notifications.views import diff_fields, log_activity
 from apps.payments.models import Payment
 from apps.payments.serializers import PaymentSerializer
+from apps.payments.services import cancel_transaction
 from apps.students.models import Student
 
 from .models import Asset, Expense, PaymentTransaction
 from .serializers import (
     AssetSerializer,
+    CancelTransactionSerializer,
     DebtorPaymentSerializer,
     ExpenseSerializer,
     PaymentTransactionSerializer,
@@ -67,26 +69,42 @@ class PaymentTransactionListView(generics.ListAPIView):
         return qs
 
 
-class TransactionDetailView(generics.RetrieveDestroyAPIView):
+class TransactionDetailView(generics.RetrieveAPIView):
     """
-    GET    /api/v1/finance/transactions/<uuid:pk>/ — bitta chek (chop etish sahifasi uchun).
-    DELETE — to'lovni bekor qilish. Payment.paid_amount avtomatik qayta hisoblanadi
-             (apps/finance/signals.py), audit jurnaliga 'bekor qilindi' deb yoziladi.
+    GET /api/v1/finance/transactions/<uuid:pk>/ — bitta chek (chop etish sahifasi uchun).
+    Chek o'chirilmaydi — bekor qilish uchun: POST .../cancel/
     """
     permission_classes = [IsFinanceOrAdmin]
     serializer_class    = PaymentTransactionSerializer
     queryset            = PaymentTransaction.objects.select_related(
-        'payment__student__user', 'payment__group', 'received_by'
+        'payment__student__user', 'payment__group', 'received_by', 'cancelled_by'
     )
 
-    def perform_destroy(self, instance):
-        repr_str = str(instance)
-        pk = instance.pk
-        instance.delete()
+
+class CancelTransactionView(APIView):
+    """
+    POST /api/v1/finance/transactions/<uuid:pk>/cancel/  {"reason": "..."} — faqat admin.
+    Chek ro'yxatda "bekor qilingan" bo'lib qoladi, Payment.paid_amount qayta hisoblanadi.
+    """
+    permission_classes = [IsAdmin]
+
+    def post(self, request, pk):
+        txn = generics.get_object_or_404(PaymentTransaction, pk=pk)
+        serializer = CancelTransactionSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        txn = cancel_transaction(txn, user=request.user, reason=serializer.validated_data['reason'])
         log_activity(
-            self.request.user, ActivityLog.Action.DELETE, 'PaymentTransaction',
-            pk, repr_str, request=self.request,
+            request.user, ActivityLog.Action.UPDATE, 'PaymentTransaction',
+            txn.pk, str(txn),
+            changes={'is_cancelled': {'old': False, 'new': True},
+                     'cancel_reason': {'old': '', 'new': txn.cancel_reason}},
+            request=request,
         )
+        payment = Payment.objects.select_related('student__user', 'group').get(pk=txn.payment_id)
+        return Response({
+            'transaction': PaymentTransactionSerializer(txn).data,
+            'payment':     PaymentSerializer(payment).data,
+        })
 
 
 class DebtorsListView(generics.ListAPIView):
@@ -347,7 +365,7 @@ class FinanceDashboardView(APIView):
             unpaid   = Count('id', filter=Q(status=Payment.Status.UNPAID)),
         )
 
-        today_income = PaymentTransaction.objects.filter(
+        today_income = PaymentTransaction.objects.valid().filter(
             paid_at__date=now
         ).aggregate(total=Sum('amount'))['total'] or 0
 

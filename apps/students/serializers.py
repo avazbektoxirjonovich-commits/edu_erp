@@ -38,11 +38,12 @@ class StudentDetailSerializer(serializers.ModelSerializer):
     group_name            = serializers.CharField(source='group.name', read_only=True, allow_null=True)
     attendance_percentage = serializers.FloatField(read_only=True)
     total_debt            = serializers.DecimalField(max_digits=12, decimal_places=0, read_only=True)
+    effective_monthly_fee = serializers.DecimalField(max_digits=10, decimal_places=0, read_only=True)
 
     class Meta:
         model  = Student
         fields = [
-            'id', 'user', 'group', 'group_name',
+            'id', 'user', 'group', 'group_name', 'monthly_fee', 'effective_monthly_fee',
             'phone', 'parent_phone', 'parent_name', 'parent_user',
             'address', 'birth_date', 'status',
             'joined_date', 'notes', 'photo',
@@ -63,7 +64,7 @@ class StudentCreateSerializer(serializers.ModelSerializer):
         model  = Student
         fields = [
             'id', 'full_name', 'phone', 'parent_name', 'parent_phone',
-            'group', 'birth_date', 'address', 'notes', 'password',
+            'group', 'monthly_fee', 'birth_date', 'address', 'notes', 'password',
         ]
         read_only_fields = ['id']
 
@@ -97,7 +98,7 @@ class StudentCreateSerializer(serializers.ModelSerializer):
 class StudentUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model  = Student
-        fields = ['phone', 'parent_phone', 'parent_name', 'group',
+        fields = ['phone', 'parent_phone', 'parent_name', 'group', 'monthly_fee',
                   'status', 'birth_date', 'address', 'notes', 'parent_user']
 
     def validate_parent_user(self, value):

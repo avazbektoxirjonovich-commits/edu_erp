@@ -2,6 +2,7 @@ import logging
 import uuid
 from functools import cached_property
 
+from django.core.validators import MinValueValidator
 from django.db import models
 
 from apps.accounts.models import User
@@ -42,6 +43,12 @@ class Student(models.Model):
                        default=Status.ACTIVE,
                        db_index=True
                    )
+    # Bo'sh bo'lsa — guruhning oylik narxi olinadi (qarang: effective_monthly_fee)
+    monthly_fee  = models.DecimalField(
+                       max_digits=10, decimal_places=0, null=True, blank=True,
+                       validators=[MinValueValidator(0)],
+                       verbose_name="Shaxsiy oylik narx"
+                   )
     joined_date  = models.DateField(auto_now_add=True)
     notes        = models.TextField(blank=True)
     photo        = models.ImageField(upload_to='students/photos/', blank=True, null=True)
@@ -77,6 +84,13 @@ class Student(models.Model):
     @property
     def full_name(self):
         return self.user.full_name
+
+    @property
+    def effective_monthly_fee(self):
+        """Oylik hisob summasi: shaxsiy narx, bo'lmasa guruh narxi, guruh ham bo'lmasa 0."""
+        if self.monthly_fee is not None:
+            return self.monthly_fee
+        return self.group.monthly_fee if self.group else 0
 
     def apply_kumush_and_xp(self, *, xp_delta=0, coins_delta=0, reason='', created_by=None,
                              source_type='', source_id=''):

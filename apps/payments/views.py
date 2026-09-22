@@ -18,14 +18,15 @@ from .serializers import (
     PaymentSerializer,
     PaymentUpdateSerializer,
 )
+from .services import generate_monthly_invoices
 
 logger = logging.getLogger('apps.payments')
 
 
 class PaymentViewSet(generics.ListCreateAPIView):
     """
-    GET  /api/v1/payments/?month=5&year=2025&status=unpaid  → Admin+Teacher
-    POST /api/v1/payments/                                   → Admin only
+    GET  /api/v1/payments/?month=5&year=2025&status=unpaid  → Admin+Teacher+Moliyachi
+    POST /api/v1/payments/  — oylik HISOB ochish (pul emas)  → Admin yoki Moliyachi
     """
     filter_backends  = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['status', 'month', 'year', 'student', 'group']
@@ -43,7 +44,12 @@ class PaymentViewSet(generics.ListCreateAPIView):
         if user.is_teacher:
             teacher = getattr(user, 'teacher_profile', None)
             if teacher:
-                return qs.filter(student__group__teacher=teacher)
+                # Hisob ochilgan paytdagi guruh bo'yicha (o'quvchi keyin boshqa guruhga
+                # o'tgan bo'lsa ham); guruhsiz eski hisoblar — o'quvchining joriy guruhi bo'yicha
+                return qs.filter(
+                    Q(group__teacher=teacher) |
+                    Q(group__isnull=True, student__group__teacher=teacher)
+                )
             return qs.none()
         return qs
 
@@ -63,39 +69,20 @@ class PaymentViewSet(generics.ListCreateAPIView):
                 {'detail': f'{first_field}: {first_error}', 'errors': serializer.errors},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        try:
-            payment = serializer.save()
-        except Exception as e:
-            return Response(
-                {'detail': f'Saqlashda xato: {str(e)}'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        # This endpoint upserts: an existing Payment for the same student/group/
-        # month/year is overwritten rather than duplicated. Log the action that
-        # actually happened (UPDATE, with an old/new changes payload) instead of
-        # always claiming CREATE — the HTTP response/status is unchanged either way.
-        if getattr(serializer, 'was_update', False):
-            changes = diff_fields(
-                getattr(serializer, 'previous_state', {}), payment,
-                ('paid_amount', 'amount', 'note', 'status', 'debt_amount'),
-            )
-            log_activity(
-                request.user, ActivityLog.Action.UPDATE, 'Payment',
-                payment.pk, str(payment), changes=changes, request=request,
-            )
-        else:
+        payment = serializer.save()
+        if serializer.was_created:
             log_activity(
                 request.user, ActivityLog.Action.CREATE, 'Payment',
                 payment.pk, str(payment), request=request,
             )
         return Response(
             PaymentSerializer(payment).data,
-            status=status.HTTP_201_CREATED,
+            status=status.HTTP_201_CREATED if serializer.was_created else status.HTTP_200_OK,
         )
 
 
 class PaymentDetailView(generics.RetrieveUpdateAPIView):
-    """GET/PUT/PATCH → Admin yoki Moliyachi"""
+    """GET/PATCH → Admin yoki Moliyachi (narx va chegirma — faqat admin, PaymentUpdateSerializer)"""
     queryset           = Payment.objects.all()
     permission_classes = [IsFinanceOrAdmin]
 
@@ -104,12 +91,13 @@ class PaymentDetailView(generics.RetrieveUpdateAPIView):
             return PaymentUpdateSerializer
         return PaymentSerializer
 
+    http_method_names = ['get', 'patch', 'head', 'options']
+
     def perform_update(self, serializer):
-        before = {f: getattr(serializer.instance, f) for f in
-                  ('paid_amount', 'debt_amount', 'status', 'note', 'payment_date')}
+        fields = ('amount', 'discount', 'debt_amount', 'status', 'note')
+        before = {f: getattr(serializer.instance, f) for f in fields}
         payment = serializer.save()
-        changes = diff_fields(before, payment,
-                               ('paid_amount', 'debt_amount', 'status', 'note', 'payment_date'))
+        changes = diff_fields(before, payment, fields)
         log_activity(
             self.request.user, ActivityLog.Action.UPDATE, 'Payment',
             payment.pk, str(payment), changes=changes, request=self.request,
@@ -166,6 +154,29 @@ class MonthlySummaryView(APIView):
         )
         result['month'] = month
         result['year']  = year
+        return Response(result)
+
+
+class GenerateInvoicesView(APIView):
+    """POST /api/v1/payments/generate/ {"month": 9, "year": 2026} — barcha faol o'quvchilarga
+    shu oy hisobini ochadi. Takroriy chaqiruv xavfsiz (mavjud hisoblarga tegmaydi)."""
+    permission_classes = [IsFinanceOrAdmin]
+
+    def post(self, request):
+        try:
+            month = int(request.data.get('month'))
+            year  = int(request.data.get('year'))
+        except (ValueError, TypeError):
+            return Response({'detail': "month va year butun son bo'lishi kerak."}, status=400)
+        if not (1 <= month <= 12) or not (2000 <= year <= 2100):
+            return Response({'detail': "Oy yoki yil noto'g'ri."}, status=400)
+        result = generate_monthly_invoices(month, year)
+        if result['created']:
+            log_activity(
+                request.user, ActivityLog.Action.CREATE, 'Payment', '',
+                f"Oylik hisoblash {year}/{month:02d}: {result['created']} ta yangi hisob",
+                request=request,
+            )
         return Response(result)
 
 

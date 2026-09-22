@@ -177,32 +177,32 @@ class TestPaymentListTeacherScoping:
 
 
 # ─────────────────────────────────────────────────────────────────────────
-# PaymentViewSet — POST (create / legacy upsert)
+# PaymentViewSet — POST (oylik HISOB ochish; pul faqat chek orqali)
 # ─────────────────────────────────────────────────────────────────────────
 @pytest.mark.django_db
 class TestPaymentCreatePermissions:
 
     def test_finance_can_create(self, finance_user, student):
         resp = auth_client(finance_user).post('/api/v1/payments/', {
-            'student': str(student.id), 'month': 3, 'year': 2026, 'paid_amount': 100000,
+            'student': str(student.id), 'month': 3, 'year': 2026,
         })
         assert resp.status_code == 201
 
     def test_admin_can_create(self, admin_user, student):
         resp = auth_client(admin_user).post('/api/v1/payments/', {
-            'student': str(student.id), 'month': 3, 'year': 2026, 'paid_amount': 100000,
+            'student': str(student.id), 'month': 3, 'year': 2026,
         })
         assert resp.status_code == 201
 
     def test_teacher_cannot_create(self, teacher_role_user, student):
         resp = auth_client(teacher_role_user).post('/api/v1/payments/', {
-            'student': str(student.id), 'month': 3, 'year': 2026, 'paid_amount': 100000,
+            'student': str(student.id), 'month': 3, 'year': 2026,
         })
         assert resp.status_code == 403
 
     def test_student_cannot_create(self, student_user, student):
         resp = auth_client(student_user).post('/api/v1/payments/', {
-            'student': str(student.id), 'month': 3, 'year': 2026, 'paid_amount': 100000,
+            'student': str(student.id), 'month': 3, 'year': 2026,
         })
         assert resp.status_code == 403
 
@@ -212,10 +212,28 @@ class TestPaymentCreateBehavior:
 
     def test_amount_defaults_from_group_monthly_fee(self, finance_user, student):
         resp = auth_client(finance_user).post('/api/v1/payments/', {
-            'student': str(student.id), 'month': 4, 'year': 2026, 'paid_amount': 100000,
+            'student': str(student.id), 'month': 4, 'year': 2026,
         })
         assert resp.status_code == 201
         assert resp.data['amount'] == '500000'  # student.group.monthly_fee
+        assert resp.data['paid_amount'] == '0'
+
+    def test_amount_defaults_from_student_personal_fee(self, finance_user, student):
+        student.monthly_fee = 350000
+        student.save(update_fields=['monthly_fee'])
+        resp = auth_client(finance_user).post('/api/v1/payments/', {
+            'student': str(student.id), 'month': 4, 'year': 2026,
+        })
+        assert resp.status_code == 201
+        assert resp.data['amount'] == '350000'
+
+    def test_paid_amount_cannot_be_set_directly(self, finance_user, student):
+        resp = auth_client(finance_user).post('/api/v1/payments/', {
+            'student': str(student.id), 'month': 4, 'year': 2026, 'paid_amount': 100000,
+        })
+        assert resp.status_code == 400
+        assert 'paid_amount' in resp.data['errors']
+        assert not Payment.objects.filter(student=student, month=4, year=2026).exists()
 
     def test_negative_paid_amount_rejected(self, finance_user, student):
         resp = auth_client(finance_user).post('/api/v1/payments/', {
@@ -225,33 +243,40 @@ class TestPaymentCreateBehavior:
 
     def test_missing_student_rejected(self, finance_user):
         resp = auth_client(finance_user).post('/api/v1/payments/', {
-            'month': 4, 'year': 2026, 'paid_amount': 100000,
+            'month': 4, 'year': 2026,
         })
         assert resp.status_code == 400
 
-    def test_second_post_for_same_bill_overwrites_rather_than_accumulates(self, finance_user, student):
-        """
-        Documents the legacy endpoint's known upsert/overwrite semantics (FIN-001):
-        this is unchanged in this phase — Phase 20.1 moved the live payment UI off
-        this endpoint onto the receipted PaymentTransaction ledger, but the endpoint
-        itself is intentionally kept reachable for compatibility. `group` must be
-        omitted here to match the real payload the old UI sent — see the note in
-        apps/finance/tests/test_audit.py::TestPaymentUpsertAuditLabel for why an
-        explicit `group` value hits DRF's auto unique-together validator instead
-        (400) and never reaches this upsert branch at all.
-        """
-        first = auth_client(finance_user).post('/api/v1/payments/', {
-            'student': str(student.id), 'month': 5, 'year': 2026, 'paid_amount': 100000,
+    def test_second_post_returns_existing_invoice_untouched(self, finance_user, student):
+        """FIN-001 yopildi: ikkinchi POST endi mavjud hisobni ustidan yozmaydi."""
+        client = auth_client(finance_user)
+        first = client.post('/api/v1/payments/', {
+            'student': str(student.id), 'month': 5, 'year': 2026,
         })
         assert first.status_code == 201
-
-        second = auth_client(finance_user).post('/api/v1/payments/', {
-            'student': str(student.id), 'month': 5, 'year': 2026, 'paid_amount': 300000,
+        client.post('/api/v1/finance/transactions/record/', {
+            'student': str(student.id), 'month': 5, 'year': 2026, 'amount': 100000,
         })
-        assert second.status_code == 201
-        assert second.data['paid_amount'] == '300000'  # overwritten, not 100000+300000
 
+        second = client.post('/api/v1/payments/', {
+            'student': str(student.id), 'month': 5, 'year': 2026, 'amount': 1,
+        })
+        assert second.status_code == 200
+        assert second.data['paid_amount'] == '100000'
+        assert second.data['amount'] == '500000'
         assert Payment.objects.filter(student=student, month=5, year=2026).count() == 1
+
+    def test_group_change_does_not_create_second_invoice(self, finance_user, student, other_group):
+        client = auth_client(finance_user)
+        client.post('/api/v1/payments/', {'student': str(student.id), 'month': 5, 'year': 2026})
+        student.group = other_group
+        student.save(update_fields=['group'])
+        client.post('/api/v1/finance/transactions/record/', {
+            'student': str(student.id), 'month': 5, 'year': 2026, 'amount': 100000,
+        })
+        invoices = Payment.objects.filter(student=student, month=5, year=2026)
+        assert invoices.count() == 1
+        assert invoices.get().paid_amount == 100000
 
 
 # ─────────────────────────────────────────────────────────────────────────
@@ -260,21 +285,53 @@ class TestPaymentCreateBehavior:
 @pytest.mark.django_db
 class TestPaymentDetailView:
 
-    def test_finance_can_get_and_patch(self, finance_user, student):
+    def test_finance_can_get_and_patch_note(self, finance_user, student):
         payment = Payment.objects.create(student=student, group=student.group, month=6, year=2026, amount=500000)
         client = auth_client(finance_user)
 
         get_resp = client.get(f'/api/v1/payments/{payment.id}/')
         assert get_resp.status_code == 200
 
-        patch_resp = client.patch(f'/api/v1/payments/{payment.id}/', {'paid_amount': 200000})
+        patch_resp = client.patch(f'/api/v1/payments/{payment.id}/', {'note': 'izoh'})
         assert patch_resp.status_code == 200
-        assert patch_resp.data['paid_amount'] == '200000'
-        # PaymentUpdateSerializer's response only echoes paid_amount/note/payment_date
-        # (not status/debt_amount) — confirm the model-derived fields via the DB row.
         payment.refresh_from_db()
-        assert payment.status == Payment.Status.PARTIAL
-        assert payment.debt_amount == 300000
+        assert payment.note == 'izoh'
+
+    def test_paid_amount_cannot_be_patched(self, admin_user, student):
+        payment = Payment.objects.create(student=student, group=student.group, month=6, year=2026, amount=500000)
+        resp = auth_client(admin_user).patch(f'/api/v1/payments/{payment.id}/', {'paid_amount': 200000})
+        assert resp.status_code == 400
+        payment.refresh_from_db()
+        assert payment.paid_amount == 0
+
+    def test_put_not_allowed(self, admin_user, student):
+        payment = Payment.objects.create(student=student, group=student.group, month=6, year=2026, amount=500000)
+        resp = auth_client(admin_user).put(f'/api/v1/payments/{payment.id}/', {'amount': 1, 'note': ''})
+        assert resp.status_code == 405
+
+    def test_finance_cannot_give_discount(self, finance_user, student):
+        payment = Payment.objects.create(student=student, group=student.group, month=6, year=2026, amount=500000)
+        resp = auth_client(finance_user).patch(f'/api/v1/payments/{payment.id}/', {'discount': 100000})
+        assert resp.status_code == 400
+        payment.refresh_from_db()
+        assert payment.discount == 0
+
+    def test_admin_discount_recomputes_debt(self, admin_user, student):
+        payment = Payment.objects.create(student=student, group=student.group, month=6, year=2026, amount=500000)
+        resp = auth_client(admin_user).patch(f'/api/v1/payments/{payment.id}/', {'discount': 100000})
+        assert resp.status_code == 200
+        payment.refresh_from_db()
+        assert payment.debt_amount == 400000
+
+    def test_discount_cannot_push_bill_below_paid(self, admin_user, finance_user, student):
+        auth_client(finance_user).post('/api/v1/finance/transactions/record/', {
+            'student': str(student.id), 'month': 6, 'year': 2026, 'amount': 450000,
+        })
+        payment = Payment.objects.get(student=student, month=6, year=2026)
+        resp = auth_client(admin_user).patch(f'/api/v1/payments/{payment.id}/', {'discount': 100000})
+        assert resp.status_code == 400
+        payment.refresh_from_db()
+        assert payment.discount == 0
 
     def test_admin_can_get_and_patch(self, admin_user, student):
         payment = Payment.objects.create(student=student, group=student.group, month=6, year=2026, amount=500000)

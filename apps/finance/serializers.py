@@ -1,11 +1,9 @@
 from decimal import Decimal
 
-from django.db import transaction
-from django.utils import timezone
 from rest_framework import serializers
 
-from apps.payments.models import Payment
 from apps.payments.serializers import PaymentSerializer
+from apps.payments.services import record_payment
 from apps.students.models import Student
 
 from .models import Asset, Expense, PaymentTransaction
@@ -45,6 +43,7 @@ class PaymentTransactionSerializer(serializers.ModelSerializer):
     student_name          = serializers.CharField(source='payment.student.user.full_name', read_only=True)
     group_name            = serializers.CharField(source='payment.group.name', read_only=True, default=None)
     receipt_url            = serializers.SerializerMethodField()
+    cancelled_by_name      = serializers.CharField(source='cancelled_by.full_name', read_only=True, default=None)
 
     class Meta:
         model  = PaymentTransaction
@@ -52,8 +51,9 @@ class PaymentTransactionSerializer(serializers.ModelSerializer):
             'id', 'payment', 'student_name', 'group_name', 'amount', 'payment_type',
             'payment_type_display', 'receipt_number', 'note', 'received_by', 'received_by_name',
             'debt_after', 'paid_at', 'created_at', 'receipt_url',
+            'is_cancelled', 'cancelled_at', 'cancelled_by_name', 'cancel_reason',
         ]
-        read_only_fields = ['id', 'receipt_number', 'received_by', 'debt_after', 'paid_at', 'created_at']
+        read_only_fields = fields
 
     def get_receipt_url(self, obj):
         return f'/finance/receipt/{obj.id}/'
@@ -84,30 +84,23 @@ class RecordPaymentSerializer(serializers.Serializer):
     year         = serializers.IntegerField(min_value=2000, max_value=2100)
     amount       = serializers.DecimalField(max_digits=10, decimal_places=0, min_value=Decimal('1'))
     payment_type = serializers.ChoiceField(
-        choices=PaymentTransaction.PaymentType.choices,
+        choices=[c for c in PaymentTransaction.PaymentType.choices
+                 if c[0] != PaymentTransaction.PaymentType.UNKNOWN],
         default=PaymentTransaction.PaymentType.CASH,
     )
     note = serializers.CharField(max_length=200, required=False, allow_blank=True, default='')
 
     def create(self, validated_data):
-        request = self.context['request']
-        student = validated_data['student']
+        return record_payment(
+            student=validated_data['student'],
+            month=validated_data['month'],
+            year=validated_data['year'],
+            amount=validated_data['amount'],
+            payment_type=validated_data['payment_type'],
+            note=validated_data.get('note', ''),
+            user=self.context['request'].user,
+        )
 
-        with transaction.atomic():
-            payment, _created = Payment.objects.get_or_create(
-                student=student, group=student.group,
-                month=validated_data['month'], year=validated_data['year'],
-                defaults={
-                    'amount':       student.group.monthly_fee if student.group else 0,
-                    'payment_date': timezone.localdate(),
-                    'received_by':  request.user,
-                },
-            )
-            txn = PaymentTransaction.objects.create(
-                payment=payment,
-                amount=validated_data['amount'],
-                payment_type=validated_data['payment_type'],
-                note=validated_data.get('note', ''),
-                received_by=request.user,
-            )
-        return txn
+
+class CancelTransactionSerializer(serializers.Serializer):
+    reason = serializers.CharField(max_length=200)

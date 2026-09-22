@@ -1,5 +1,6 @@
 """PDF chek: bitta to'lov operatsiyasi (PaymentTransaction) uchun professional chek."""
 from io import BytesIO
+from xml.sax.saxutils import escape
 
 from django.http import HttpResponse
 from reportlab.lib import colors
@@ -29,12 +30,6 @@ MUTED    = colors.HexColor('#64748b')
 DANGER   = colors.HexColor('#dc2626')
 LIGHT_BG = colors.HexColor('#f0fdf9')
 WHITE    = colors.white
-
-PAYMENT_TYPE_LABELS = {
-    'cash':     'Naqd',
-    'card':     'Karta',
-    'transfer': "O'tkazma",
-}
 
 
 def _fmt(n):
@@ -85,12 +80,19 @@ class TransactionReceiptPDFView(APIView):
             Paragraph(f"Sana: {txn.paid_at.strftime('%d.%m.%Y %H:%M')}", label_style),
             Spacer(1, 12),
         ]
+        if txn.is_cancelled:
+            story.append(Paragraph(
+                f"<b>BEKOR QILINGAN</b> — {txn.cancelled_at.strftime('%d.%m.%Y %H:%M')}, "
+                f"sabab: {escape(txn.cancel_reason)}",
+                ParagraphStyle('Cancelled', fontSize=10, textColor=DANGER, fontName='Helvetica',
+                               spaceAfter=10, alignment=TA_CENTER),
+            ))
 
         rows = [
             ["O'quvchi", student.full_name],
             ["Guruh", group.name if group else "—"],
             ["To'lov summasi", _fmt(txn.amount)],
-            ["To'lov turi", PAYMENT_TYPE_LABELS.get(txn.payment_type, txn.payment_type)],
+            ["To'lov turi", txn.get_payment_type_display()],
             ["Qabul qildi", txn.received_by.full_name if txn.received_by else "—"],
         ]
         info_table = Table(rows, colWidths=[5*cm, 7.5*cm])

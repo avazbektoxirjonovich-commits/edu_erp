@@ -5,6 +5,12 @@ from django.db import models
 from django.utils import timezone
 
 
+class PaymentTransactionQuerySet(models.QuerySet):
+    def valid(self):
+        """Bekor qilinmagan cheklar — pul yig'indisi FAQAT shular bo'yicha hisoblanadi."""
+        return self.filter(is_cancelled=False)
+
+
 class PaymentTransaction(models.Model):
     """
     Bitta to'lov operatsiyasi (chek).
@@ -18,10 +24,14 @@ class PaymentTransaction(models.Model):
         CASH     = 'cash',     'Naqd'
         CARD     = 'card',     'Karta'
         TRANSFER = 'transfer', "O'tkazma"
+        # Faqat migratsiya uchun: eski tizimda chekisiz yozilgan summalar.
+        # Kassir buni tanlay olmaydi (RecordPaymentSerializer).
+        UNKNOWN  = 'unknown',  "Noma'lum (eski yozuv)"
 
     id             = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    # PROTECT — hisob o'chirilsa, cheklar jimgina yo'qolmasin
     payment        = models.ForeignKey(
-                         'payments.Payment', on_delete=models.CASCADE,
+                         'payments.Payment', on_delete=models.PROTECT,
                          related_name='transactions', verbose_name="To'lov hisobi",
                          db_index=True,
                      )
@@ -60,6 +70,18 @@ class PaymentTransaction(models.Model):
                      )
     paid_at        = models.DateTimeField(default=timezone.now, verbose_name="To'lov vaqti")
     created_at     = models.DateTimeField(auto_now_add=True)
+
+    # Chek hech qachon o'chirilmaydi — faqat bekor qilinadi (sabab bilan, faqat
+    # admin). Bekor qilingan chek ro'yxatda qoladi, lekin pul yig'indisiga kirmaydi.
+    is_cancelled   = models.BooleanField(default=False, db_index=True, verbose_name='Bekor qilingan')
+    cancelled_at   = models.DateTimeField(null=True, blank=True, verbose_name='Bekor qilingan vaqt')
+    cancelled_by   = models.ForeignKey(
+                         'accounts.User', on_delete=models.SET_NULL, null=True, blank=True,
+                         related_name='cancelled_transactions', verbose_name='Kim bekor qildi',
+                     )
+    cancel_reason  = models.CharField(max_length=200, blank=True, verbose_name='Bekor qilish sababi')
+
+    objects = PaymentTransactionQuerySet.as_manager()
 
     class Meta:
         verbose_name        = "To'lov operatsiyasi"

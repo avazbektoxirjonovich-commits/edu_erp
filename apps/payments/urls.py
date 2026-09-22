@@ -1,9 +1,19 @@
 from django.urls import path
-from .views import PaymentViewSet, PaymentDetailView, UnpaidStudentsView, MonthlySummaryView, MyPaymentsView
-from apps.students.export_views import ExportPaymentsView, ExportAttendanceView
+
+from apps.students.export_views import ExportPaymentsView
+
+from .views import (
+    GenerateInvoicesView,
+    MonthlySummaryView,
+    MyPaymentsView,
+    PaymentDetailView,
+    PaymentViewSet,
+    UnpaidStudentsView,
+)
 
 urlpatterns = [
     path('',         PaymentViewSet.as_view(),    name='payment-list'),
+    path('generate/', GenerateInvoicesView.as_view(), name='payment-generate'),
     path('my/',      MyPaymentsView.as_view(),    name='payment-my'),
     path('unpaid/',  UnpaidStudentsView.as_view(), name='payment-unpaid'),
     path('summary/', MonthlySummaryView.as_view(), name='payment-summary'),

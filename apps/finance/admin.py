@@ -5,10 +5,21 @@ from .models import Asset, Expense, PaymentTransaction
 
 @admin.register(PaymentTransaction)
 class PaymentTransactionAdmin(admin.ModelAdmin):
-    list_display  = ['receipt_number', 'payment', 'amount', 'payment_type', 'received_by', 'paid_at']
-    list_filter   = ['payment_type']
+    """Faqat ko'rish uchun — chek ERP ichida yoziladi va bekor qilinadi (o'chirilmaydi)."""
+    list_display  = ['receipt_number', 'payment', 'amount', 'payment_type', 'received_by',
+                     'paid_at', 'is_cancelled']
+    list_filter   = ['payment_type', 'is_cancelled']
     search_fields = ['receipt_number', 'payment__student__user__full_name']
     ordering      = ['-paid_at']
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
 @admin.register(Expense)

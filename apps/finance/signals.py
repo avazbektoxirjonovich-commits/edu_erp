@@ -1,6 +1,7 @@
-from django.db.models import Sum
+from django.db.models import Max, Sum
 from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
+from django.utils import timezone
 
 from apps.payments.models import Payment
 
@@ -8,12 +9,13 @@ from .models import PaymentTransaction
 
 
 def _sync_payment(payment):
-    """Payment.paid_amount ni uning PaymentTransaction'lari yig'indisiga tenglaydi.
+    """Payment.paid_amount ni uning bekor qilinmagan PaymentTransaction'lari yig'indisiga tenglaydi.
     Payment.save() ichida compute_status() ishlaydi, shuning uchun status/debt_amount
     ham shu chaqiruv bilan avtomatik yangilanadi."""
-    total = payment.transactions.aggregate(total=Sum('amount'))['total'] or 0
-    payment.paid_amount = total
-    payment.save(update_fields=['paid_amount', 'status', 'debt_amount', 'updated_at'])
+    agg = payment.transactions.valid().aggregate(total=Sum('amount'), last=Max('paid_at'))
+    payment.paid_amount = agg['total'] or 0
+    payment.payment_date = timezone.localdate(agg['last']) if agg['last'] else None
+    payment.save(update_fields=['paid_amount', 'payment_date', 'status', 'debt_amount', 'updated_at'])
 
 
 @receiver(post_save, sender=PaymentTransaction)
