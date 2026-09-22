@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'apps.zukko',
     'apps.store',
     'apps.error_monitor',
+    'apps.musobaqalar',
 ]
 
 # ── Face Auth ────────────────────────────────────────────────────────────────

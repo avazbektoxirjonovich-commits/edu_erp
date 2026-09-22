@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'apps.vlt_ai',
     'apps.error_monitor',
     'apps.zukko',
+    'apps.musobaqalar',
 ]
 
 MIDDLEWARE = [

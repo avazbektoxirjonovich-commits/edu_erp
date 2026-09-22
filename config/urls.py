@@ -64,6 +64,7 @@ api_v1_urlpatterns = [
     path('challenges/',    include('apps.zukko.urls')),
     path('store/',         include('apps.store.urls')),
     path('error-monitor/', include('apps.error_monitor.urls')),
+    path('musobaqalar/',   include('apps.musobaqalar.urls')),
     path('reports/monthly-pdf/', MonthlyReportPDFView.as_view(), name='monthly-pdf'),
     path('token/',         TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(),    name='token_refresh'),
