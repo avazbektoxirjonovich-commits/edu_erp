@@ -139,6 +139,15 @@ class TestRegister:
         assert resp.status_code == 400
         assert field in resp.data
 
+    def test_grade_not_required(self, anon):
+        """Saytdagi formada sinf so'ralmaydi."""
+        c = make_competition()
+        data = form(c)
+        del data['sinf']
+        resp = anon.post(f'{BASE}royxat/', data, format='json', REMOTE_ADDR='10.2.2.2')
+        assert resp.status_code == 201
+        assert Participant.objects.get().grade is None
+
     def test_uzbek_letters_allowed(self, anon):
         resp = register(anon, make_competition(), ism="G‘ayrat", familya="O'ktamov-Sobirov")
         assert resp.status_code == 201
@@ -268,3 +277,21 @@ def test_throttle_scopes_configured_in_every_settings_module(module):
     import importlib
     rates = importlib.import_module(module).REST_FRAMEWORK['DEFAULT_THROTTLE_RATES']
     assert {'musobaqa_public', 'musobaqa_register'} <= set(rates)
+
+
+@pytest.mark.django_db
+def test_results_without_grade_form_overall_top(anon):
+    """Sinfsiz ishtirokchilar bitta umumiy reytingda (sinf: null), sinflilardan keyin."""
+    c = make_competition(status=Competition.Status.FINISHED)
+    for i in range(12):
+        p = Participant.objects.create(competition=c, first_name=f'Ism{i}', last_name='Familya',
+                                       phone=f'+99897000{i:04d}', address='x', grade=None)
+        Result.objects.create(participant=p, score=50 + i)
+    graded = Participant.objects.create(competition=c, first_name='Sinfli', last_name='Bola',
+                                        phone='+998970009999', address='x', grade=4)
+    Result.objects.create(participant=graded, score=10, place=1)
+    groups = anon.get(f'{BASE}natijalar/{c.id}/').data['sinflar']
+    assert [g['sinf'] for g in groups] == [4, None]
+    overall = groups[1]['natijalar']
+    assert len(overall) == 10
+    assert [r['ball'] for r in overall[:3]] == [61, 60, 59]  # o'rin kiritilmasa — ball bo'yicha

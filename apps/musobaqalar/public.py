@@ -4,7 +4,7 @@ PUBLIC API — alohida public sayt uchun (autentifikatsiyasiz).
   GET  /api/public/musobaqa/joriy/                 — e'lon qilingan musobaqa (yo'q bo'lsa musobaqa: null)
   POST /api/public/musobaqa/royxat/                — ro'yxatdan o'tish
   GET  /api/public/musobaqa/natijalar/oxirgi/      — oxirgi yakunlangan musobaqa natijalari
-  GET  /api/public/musobaqa/natijalar/<uuid>/      — yakunlangan musobaqa natijalari (sinf bo'yicha TOP-10)
+  GET  /api/public/musobaqa/natijalar/<uuid>/      — yakunlangan musobaqa natijalari (sinf bo'yicha TOP-10; sinfsizlar — umumiy)
 
 Himoya:
   - IP bo'yicha throttle (DRF, 'musobaqa_register' / 'musobaqa_public' scope'lari)
@@ -37,7 +37,7 @@ NAME_RE = re.compile(r"^[A-Za-zА-Яа-яЁёЎўҚқҒғҲҳʻʼ'‘’`\- ]{2,
 
 
 def client_ip(request):
-    """Mijoz IP'si. Render proxy'si X-Forwarded-For'ga haqiqiy IP'ni OXIRIDAN qo'shadi —
+    """Mijoz IP'si. Railway proxy'si X-Forwarded-For'ga haqiqiy IP'ni OXIRIDAN qo'shadi —
     oldingi qismini mijoz o'zi yozishi mumkin, shuning uchun faqat oxirgisi olinadi."""
     xff = request.META.get('HTTP_X_FORWARDED_FOR', '')
     candidate = xff.split(',')[-1].strip() if xff else ''
@@ -99,7 +99,8 @@ class RegistrationSerializer(serializers.Serializer):
     familya         = serializers.CharField(max_length=60, trim_whitespace=True)
     telefon         = serializers.CharField(max_length=25)
     yashash_manzili = serializers.CharField(max_length=300, trim_whitespace=True)
-    sinf            = serializers.IntegerField(min_value=1, max_value=11)
+    # Ixtiyoriy — saytdagi formada so'ralmaydi
+    sinf            = serializers.IntegerField(min_value=1, max_value=11, required=False, allow_null=True)
 
     def _name(self, value, label):
         value = re.sub(r'\s+', ' ', value)
@@ -130,7 +131,7 @@ class RegistrationSerializer(serializers.Serializer):
             raise serializers.ValidationError({'musobaqa_id': ["Bu musobaqaga ro'yxatdan o'tib bo'lmaydi."]})
         if timezone.now() > competition.registration_deadline:
             raise serializers.ValidationError({'musobaqa_id': ["Ro'yxatdan o'tish muddati tugagan."]})
-        if not competition.accepts_grade(data['sinf']):
+        if data.get('sinf') is not None and not competition.accepts_grade(data['sinf']):
             raise serializers.ValidationError({'sinf': [
                 f"Bu musobaqa {competition.grade_from}-{competition.grade_to} sinflar uchun."]})
         if Participant.objects.filter(competition=competition, phone=data['telefon']).exists():
@@ -178,7 +179,7 @@ class RegisterView(PublicView):
             with transaction.atomic():
                 Participant.objects.create(
                     competition=d['competition'], first_name=d['ism'], last_name=d['familya'],
-                    phone=d['telefon'], address=d['yashash_manzili'], grade=d['sinf'], ip_address=ip,
+                    phone=d['telefon'], address=d['yashash_manzili'], grade=d.get('sinf'), ip_address=ip,
                 )
         except IntegrityError:
             # Bir vaqtda ikki marta yuborilgan forma
@@ -190,7 +191,7 @@ class RegisterView(PublicView):
 def results_payload(competition):
     rows = (Result.objects.filter(participant__competition=competition)
             .select_related('participant')
-            .order_by('participant__grade', F('place').asc(nulls_last=True), '-score'))
+            .order_by(F('participant__grade').asc(nulls_last=True), F('place').asc(nulls_last=True), '-score'))
     by_grade = defaultdict(list)
     for r in rows:
         items = by_grade[r.participant.grade]
@@ -202,7 +203,9 @@ def results_payload(competition):
         'musobaqa': {'id': str(competition.pk), 'nomi': competition.name,
                      'musobaqa_sanasi': (timezone.localtime(competition.competition_date).isoformat()
                                          if competition.competition_date else None)},
-        'sinflar': [{'sinf': g, 'natijalar': by_grade[g]} for g in sorted(by_grade)],
+        # sinf: null — sinfi ko'rsatilmagan ishtirokchilar (umumiy reyting)
+        'sinflar': [{'sinf': g, 'natijalar': by_grade[g]}
+                    for g in sorted(by_grade, key=lambda g: (g is None, g or 0))],
     }
 
 

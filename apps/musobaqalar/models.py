@@ -2,7 +2,7 @@
 MUSOBAQALAR — oylik matematika musobaqalariga ro'yxatdan o'tish
 ================================================================
 Competition (musobaqa) → Participant (ishtirokchi, public saytdan yoziladi)
-→ Result (natija: ball va sinf ichidagi o'rin).
+→ Result (natija: ball va o'rin).
 
 Holat faqat oldinga yuradi (qarang: Competition.NEXT_STATUS):
   draft → published → registration_closed → finished
@@ -94,7 +94,9 @@ class Participant(models.Model):
     last_name     = models.CharField(max_length=60, verbose_name='Familya')
     phone         = models.CharField(max_length=13, validators=[phone_validator], verbose_name='Telefon')
     address       = models.TextField(verbose_name='Yashash manzili')
-    grade         = models.PositiveSmallIntegerField(validators=GRADE_VALIDATORS, verbose_name='Sinf')
+    # Public formada so'ralmaydi (ixtiyoriy) — kerak bo'lsa admin keyin to'ldiradi
+    grade         = models.PositiveSmallIntegerField(validators=GRADE_VALIDATORS, null=True, blank=True,
+                                                     verbose_name='Sinf')
     status        = models.CharField(max_length=10, choices=Status.choices, default=Status.NEW,
                                      db_index=True, verbose_name='Holati')
     confirmed_by  = models.ForeignKey('accounts.User', on_delete=models.SET_NULL, null=True, blank=True,
@@ -115,7 +117,8 @@ class Participant(models.Model):
         indexes = [models.Index(fields=['competition', 'grade', 'status'])]
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name} | {self.grade}-sinf | {self.competition.name}"
+        grade = f"{self.grade}-sinf" if self.grade else "sinf ko'rsatilmagan"
+        return f"{self.first_name} {self.last_name} | {grade} | {self.competition.name}"
 
     @property
     def full_name(self):
@@ -134,7 +137,7 @@ class Result(models.Model):
                                        related_name='result', verbose_name='Ishtirokchi')
     score       = models.PositiveIntegerField(verbose_name='Ball')
     place       = models.PositiveSmallIntegerField(null=True, blank=True,
-                                                   verbose_name="O'rin (sinf ichida)")
+                                                   verbose_name="O'rin")
     entered_by  = models.ForeignKey('accounts.User', on_delete=models.SET_NULL, null=True,
                                     related_name='entered_results', verbose_name='Kim kiritdi')
     entered_at  = models.DateTimeField(auto_now=True, verbose_name='Kiritilgan vaqt')

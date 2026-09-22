@@ -2,7 +2,7 @@
 Musobaqalar — ERP ichidagi boshqaruv API (faqat administrator).
 Public sayt uchun endpointlar alohida: public_views.py (2-bosqich).
 """
-from django.db.models import Count, Q
+from django.db.models import Count, F, Q
 from django.utils import timezone
 from openpyxl import Workbook
 from openpyxl.utils import get_column_letter
@@ -94,7 +94,7 @@ class CompetitionViewSet(viewsets.ModelViewSet):
     def export(self, request, pk=None):
         competition = self.get_object()
         rows = (competition.participants.select_related('result', 'confirmed_by')
-                .order_by('grade', 'last_name', 'first_name'))
+                .order_by(F('grade').asc(nulls_last=True), 'last_name', 'first_name'))
         wb = Workbook()
         ws = wb.active
         ws.title = 'Ishtirokchilar'
@@ -106,7 +106,7 @@ class CompetitionViewSet(viewsets.ModelViewSet):
         for i, p in enumerate(rows, 1):
             result = getattr(p, 'result', None)
             _style_row(ws, i + 2, [
-                i, p.last_name, p.first_name, p.grade, p.phone, p.address, p.get_status_display(),
+                i, p.last_name, p.first_name, p.grade or '', p.phone, p.address, p.get_status_display(),
                 p.confirmed_by.full_name if p.confirmed_by else '—',
                 timezone.localtime(p.registered_at).strftime('%d.%m.%Y %H:%M'),
                 result.score if result else '', (result.place or '') if result else '',
