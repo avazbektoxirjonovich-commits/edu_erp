@@ -26,6 +26,7 @@ urlpatterns = [
     path('api/v1/vlt-ai/',   include('apps.vlt_ai.api.urls')),
     path('api/v1/error-monitor/', include('apps.error_monitor.urls')),
     path('api/v1/musobaqalar/', include('apps.musobaqalar.urls')),
+    path('api/public/', include('apps.musobaqalar.public_urls')),
     path('api/v1/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/v1/token/verify/',  TokenVerifyView.as_view(),  name='token_verify'),
 ]

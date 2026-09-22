@@ -130,6 +130,8 @@ REST_FRAMEWORK = {
         'login':     '5/min',
         'face_auth': '10/min',   # OTP request + verify endpoints
         'submit':    '30/min',   # ZUKKO challenge answer submission
+        'musobaqa_public':   '60/min',  # public sayt: musobaqa ma'lumoti, natijalar
+        'musobaqa_register': '5/min',   # public sayt: ro'yxatdan o'tish formasi (IP bo'yicha)
     },
     'DATE_FORMAT': '%Y-%m-%d',
     'DATETIME_FORMAT': '%Y-%m-%d %H:%M:%S',
@@ -252,3 +254,7 @@ JAZZMIN_SETTINGS = {
         "attendance", "payments", "notifications",
     ],
 }
+
+# Musobaqalar public sayti (alohida loyiha) — CORS faqat shu manzil uchun, faqat /api/public/
+# Masalan: https://musobaqa.qorakolilmziyo.uz (oxirida / yo'q)
+PUBLIC_SITE_ORIGIN = config('PUBLIC_SITE_ORIGIN', default='')

@@ -103,6 +103,9 @@ REST_FRAMEWORK = {
         'login':     '100/min',
         'face_auth': '100/min',   # OTP request + verify endpoints
         'submit':    '1000/min',
+        # production bilan bir xil — throttle testlari haqiqiy chegarani tekshiradi
+        'musobaqa_public':   '60/min',
+        'musobaqa_register': '5/min',
     },
     'EXCEPTION_HANDLER': 'apps.error_monitor.exception_handler.custom_exception_handler',
 }
@@ -164,3 +167,6 @@ LOGGING = {
     'handlers': {'console': {'class': 'logging.StreamHandler'}},
     'loggers': {'apps': {'handlers': ['console'], 'level': 'WARNING'}},
 }
+
+# Musobaqalar public sayti — CORS faqat shu manzil uchun, faqat /api/public/
+PUBLIC_SITE_ORIGIN = ''
