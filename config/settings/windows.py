@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'apps.zukko',
     'apps.store',
     'apps.error_monitor',
+    'apps.musobaqalar',
 ]
 
 # ── Face Auth ────────────────────────────────────────────────────────────────
@@ -117,6 +118,8 @@ REST_FRAMEWORK = {
                                # 500 (ImproperlyConfigured) on this settings
                                # module specifically, since it's standalone
                                # and doesn't inherit base.py's rates.
+        'musobaqa_public':   '60/min',
+        'musobaqa_register': '5/min',
     },
 }
 
@@ -177,3 +180,6 @@ CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8000',
     'http://127.0.0.1:8000',
 ]
+
+# Musobaqalar public sayti — CORS faqat shu manzil uchun, faqat /api/public/
+PUBLIC_SITE_ORIGIN = env('PUBLIC_SITE_ORIGIN', default='')

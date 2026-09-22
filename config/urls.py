@@ -64,6 +64,7 @@ api_v1_urlpatterns = [
     path('challenges/',    include('apps.zukko.urls')),
     path('store/',         include('apps.store.urls')),
     path('error-monitor/', include('apps.error_monitor.urls')),
+    path('musobaqalar/',   include('apps.musobaqalar.urls')),
     path('reports/monthly-pdf/', MonthlyReportPDFView.as_view(), name='monthly-pdf'),
     path('token/',         TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(),    name='token_refresh'),
@@ -154,6 +155,10 @@ frontend_urlpatterns = [
         template_name='erp/salary.html'
     ), name='salary'),
 
+    path('musobaqalar/', TemplateView.as_view(
+        template_name='erp/musobaqalar.html'
+    ), name='musobaqalar'),
+
     path('parent/', TemplateView.as_view(
         template_name='erp/parent_portal.html'
     ), name='parent-portal'),
@@ -219,6 +224,7 @@ frontend_urlpatterns = [
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/', include(api_v1_urlpatterns)),
+    path('api/public/', include('apps.musobaqalar.public_urls')),
     path('i18n/', include('django.conf.urls.i18n')),
     path('sw.js', serve_sw, name='service-worker'),
     path('robots.txt', robots_txt, name='robots'),

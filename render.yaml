@@ -40,6 +40,8 @@ services:
         sync: false
       - key: TIME_ZONE
         value: Asia/Tashkent
+      - key: PUBLIC_SITE_ORIGIN
+        sync: false          # Musobaqa public sayti manzili, masalan https://musobaqa.example.uz
       - key: MONTHLY_FEE_DEFAULT
         value: "500000"
       - key: JWT_ACCESS_TOKEN_LIFETIME_MINUTES

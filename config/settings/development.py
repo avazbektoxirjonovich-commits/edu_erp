@@ -24,6 +24,9 @@ REST_FRAMEWORK = {
     ),
     # Relax throttling in development
     'DEFAULT_THROTTLE_RATES': {
+        # base.py'dagi barcha scope'lar (musobaqa_*, face_auth ...) — aks holda
+        # ular dev'da ImproperlyConfigured (500) beradi; quyidagilar ustidan yoziladi
+        **REST_FRAMEWORK['DEFAULT_THROTTLE_RATES'],
         'anon': '1000/min',
         'user': '5000/min',
         'login': '100/min',
