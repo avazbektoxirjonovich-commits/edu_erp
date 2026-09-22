@@ -7,7 +7,7 @@ orasida eng ko'p uchraydigan narx yoziladi (o'quvchisi bo'lmasa — 500000).
 """
 from collections import Counter
 
-from django.db import migrations, models
+from django.db import migrations
 
 
 def restore_group_fee_from_students(apps, schema_editor):
