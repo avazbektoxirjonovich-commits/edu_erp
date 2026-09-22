@@ -104,8 +104,8 @@ class TestFinancialSummary:
             phone='+998900000072', password='pass1234', full_name='Summary Student', role=User.Role.STUDENT,
         )
         group = Group.objects.create(name='Summary Group', start_date='2026-01-01',
-                                     start_time='09:00', end_time='10:00', monthly_fee=500000)
-        student = Student.objects.create(user=student_user, phone=student_user.phone, group=group)
+                                     start_time='09:00', end_time='10:00')
+        student = Student.objects.create(user=student_user, phone=student_user.phone, group=group, monthly_fee=500000)
         payment = Payment.objects.create(student=student, group=group, month=3, year=2026, amount=500000)
         PaymentTransaction.objects.create(
             payment=payment, amount=500000,

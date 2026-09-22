@@ -39,11 +39,11 @@ class TestFinanceDashboard:
 
     def test_dashboard_aggregates_everything(self, finance_user):
         group = Group.objects.create(name='Dash Group', start_date='2026-01-01',
-                                     start_time='09:00', end_time='10:00', monthly_fee=500000)
+                                     start_time='09:00', end_time='10:00')
         s1_user = User.objects.create_user(phone='+998900000112', password='p', full_name='Paid', role=User.Role.STUDENT)
         s2_user = User.objects.create_user(phone='+998900000113', password='p', full_name='Unpaid', role=User.Role.STUDENT)
-        s1 = Student.objects.create(user=s1_user, phone=s1_user.phone, group=group)
-        s2 = Student.objects.create(user=s2_user, phone=s2_user.phone, group=group)
+        s1 = Student.objects.create(user=s1_user, phone=s1_user.phone, group=group, monthly_fee=500000)
+        s2 = Student.objects.create(user=s2_user, phone=s2_user.phone, group=group, monthly_fee=500000)
 
         p1 = Payment.objects.create(student=s1, group=group, month=3, year=2026, amount=500000)
         PaymentTransaction.objects.create(
@@ -98,9 +98,9 @@ class TestDashboardIncomeBasesDoNotDoubleCount:
 
     def _setup(self, finance_user):
         group = Group.objects.create(name='FIN003 Group', start_date='2026-01-01',
-                                     start_time='09:00', end_time='10:00', monthly_fee=500000)
+                                     start_time='09:00', end_time='10:00')
         user = User.objects.create_user(phone='+998900000120', password='p', full_name='S', role=User.Role.STUDENT)
-        student = Student.objects.create(user=user, phone=user.phone, group=group)
+        student = Student.objects.create(user=user, phone=user.phone, group=group, monthly_fee=500000)
         return auth_client(finance_user), student
 
     def test_single_on_time_payment_appears_once_in_each_basis(self, finance_user):

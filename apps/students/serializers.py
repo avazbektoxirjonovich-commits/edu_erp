@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from rest_framework import serializers
 from apps.accounts.serializers import UserSerializer
 from apps.common.utils import calculate_attendance_pct
@@ -14,7 +16,7 @@ class StudentListSerializer(serializers.ModelSerializer):
     class Meta:
         model  = Student
         fields = [
-            'id', 'full_name', 'phone', 'group', 'group_name',
+            'id', 'full_name', 'phone', 'group', 'group_name', 'monthly_fee',
             'status', 'status_display', 'attendance_percentage',
             'total_debt', 'joined_date',
         ]
@@ -38,12 +40,11 @@ class StudentDetailSerializer(serializers.ModelSerializer):
     group_name            = serializers.CharField(source='group.name', read_only=True, allow_null=True)
     attendance_percentage = serializers.FloatField(read_only=True)
     total_debt            = serializers.DecimalField(max_digits=12, decimal_places=0, read_only=True)
-    effective_monthly_fee = serializers.DecimalField(max_digits=10, decimal_places=0, read_only=True)
 
     class Meta:
         model  = Student
         fields = [
-            'id', 'user', 'group', 'group_name', 'monthly_fee', 'effective_monthly_fee',
+            'id', 'user', 'group', 'group_name', 'monthly_fee',
             'phone', 'parent_phone', 'parent_name', 'parent_user',
             'address', 'birth_date', 'status',
             'joined_date', 'notes', 'photo',
@@ -59,6 +60,8 @@ class StudentCreateSerializer(serializers.ModelSerializer):
     parent_name  = serializers.CharField(required=False, allow_blank=True, default='')
     parent_phone = serializers.CharField(required=False, allow_blank=True, default='')
     password     = serializers.CharField(write_only=True, min_length=4, default='erp12345')
+    # Oylik to'lov o'quvchi ochilganda majburiy e'lon qilinadi (guruhda narx yo'q)
+    monthly_fee  = serializers.DecimalField(max_digits=10, decimal_places=0, min_value=Decimal('0'))
 
     class Meta:
         model  = Student

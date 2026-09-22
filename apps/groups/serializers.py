@@ -30,7 +30,7 @@ class GroupListSerializer(serializers.ModelSerializer):
             'id', 'name', 'subject', 'course_name', 'description',
             'teacher', 'teacher_name',
             'status', 'status_display',
-            'student_count', 'max_students', 'monthly_fee',
+            'student_count', 'max_students',
             'start_date', 'end_date', 'start_time', 'end_time',
             'schedules', 'days_of_week',
         ]
@@ -55,7 +55,7 @@ class GroupCreateSerializer(serializers.ModelSerializer):
         model  = Group
         fields = [
             'id', 'name', 'subject', 'description', 'teacher', 'status',
-            'max_students', 'monthly_fee',
+            'max_students',
             'start_date', 'end_date', 'start_time', 'end_time', 'days',
         ]
         read_only_fields = ['id']

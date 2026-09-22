@@ -317,7 +317,7 @@ class StudentFinanceSummaryView(APIView):
             'phone':           student.phone,
             'group_id':        str(student.group_id) if student.group_id else None,
             'group_name':      student.group.name if student.group else None,
-            'monthly_fee':     student.group.monthly_fee if student.group else None,
+            'monthly_fee':     student.monthly_fee,
             'month':           month,
             'year':            year,
             'current_payment': PaymentSerializer(current_payment).data if current_payment else None,

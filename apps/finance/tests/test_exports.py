@@ -48,8 +48,8 @@ class TestExcelExports:
             phone='+998900000092', password='pass1234', full_name='Debtor', role=User.Role.STUDENT,
         )
         group = Group.objects.create(name='Export Group', start_date='2026-01-01',
-                                     start_time='09:00', end_time='10:00', monthly_fee=500000)
-        student = Student.objects.create(user=student_user, phone=student_user.phone, group=group)
+                                     start_time='09:00', end_time='10:00')
+        student = Student.objects.create(user=student_user, phone=student_user.phone, group=group, monthly_fee=500000)
         Payment.objects.create(student=student, group=group, month=3, year=2026, amount=500000)
 
         client = auth_client(finance_user)

@@ -27,7 +27,7 @@ def teacher_user(db):
 def group_a(db):
     return Group.objects.create(
         name='Debt Group A', start_date='2026-01-01',
-        start_time='09:00', end_time='10:00', monthly_fee=500000, payment_due_day=5,
+        start_time='09:00', end_time='10:00', payment_due_day=5,
     )
 
 
@@ -35,13 +35,16 @@ def group_a(db):
 def group_b(db):
     return Group.objects.create(
         name='Debt Group B', start_date='2026-01-01',
-        start_time='09:00', end_time='10:00', monthly_fee=300000, payment_due_day=25,
+        start_time='09:00', end_time='10:00', payment_due_day=25,
     )
+
+
+GROUP_FEES = {'Debt Group A': 500000, 'Debt Group B': 300000}  # oylik to'lov o'quvchida
 
 
 def make_student(phone, name, group):
     user = User.objects.create_user(phone=phone, password='pass1234', full_name=name, role=User.Role.STUDENT)
-    return Student.objects.create(user=user, phone=phone, group=group)
+    return Student.objects.create(user=user, phone=phone, group=group, monthly_fee=GROUP_FEES[group.name])
 
 
 def auth_client(user):

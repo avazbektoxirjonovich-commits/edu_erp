@@ -66,7 +66,7 @@ def parent_role_user(db):
 def group(db):
     return Group.objects.create(
         name='QuickPay Group', start_date='2026-01-01',
-        start_time='09:00', end_time='10:00', monthly_fee=500000,
+        start_time='09:00', end_time='10:00',
     )
 
 
@@ -76,7 +76,7 @@ def student(db, group):
         phone='+998900000205', password='pass1234',
         full_name='QuickPay Student', role=User.Role.STUDENT,
     )
-    return Student.objects.create(user=user, phone=user.phone, group=group)
+    return Student.objects.create(user=user, phone=user.phone, group=group, monthly_fee=500000)
 
 
 def auth_client(user):
@@ -251,7 +251,7 @@ class TestBulkPaymentCreatesPerStudentTransactions:
                 phone=f'+99890000021{i}', password='pass1234',
                 full_name=f'Bulk Student {i}', role=User.Role.STUDENT,
             )
-            students.append(Student.objects.create(user=user, phone=user.phone, group=group))
+            students.append(Student.objects.create(user=user, phone=user.phone, group=group, monthly_fee=500000))
 
         client = auth_client(finance_user)
         for s in students:

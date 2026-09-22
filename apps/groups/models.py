@@ -48,8 +48,6 @@ class Group(models.Model):
     status      = models.CharField(max_length=15, choices=Status.choices,
                                    default=Status.ACTIVE, verbose_name='Holat')
     max_students = models.PositiveSmallIntegerField(default=20, verbose_name="Max o'quvchi")
-    monthly_fee  = models.DecimalField(max_digits=10, decimal_places=0,
-                                       default=500000, verbose_name='Oylik to\'lov')
     payment_due_day = models.PositiveSmallIntegerField(
                           default=10,
                           validators=[MinValueValidator(1), MaxValueValidator(28)],

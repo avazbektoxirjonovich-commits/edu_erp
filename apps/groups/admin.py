@@ -9,7 +9,7 @@ class LessonScheduleInline(admin.TabularInline):
 
 @admin.register(Group)
 class GroupAdmin(admin.ModelAdmin):
-    list_display  = ['name', 'teacher', 'status', 'student_count', 'max_students', 'monthly_fee']
+    list_display  = ['name', 'teacher', 'status', 'student_count', 'max_students']
     list_filter   = ['status']
     search_fields = ['name']
     inlines       = [LessonScheduleInline]

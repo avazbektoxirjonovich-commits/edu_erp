@@ -412,7 +412,7 @@ async function initBulkGroups(){
   const d=await get('/groups/?page_size=100&status=active');
   const grps=d?.results||d||[];
   const s=document.getElementById('bGroup');
-  grps.forEach(g=>s.innerHTML+=`<option value="${g.id}" data-fee="${g.monthly_fee||0}">${g.name}</option>`);
+  grps.forEach(g=>s.innerHTML+=`<option value="${g.id}">${g.name}</option>`);
   // Populate month/year for bulk modal
   const ms=document.getElementById('bMonth');
   const ys=document.getElementById('bYear');
@@ -423,9 +423,6 @@ async function initBulkGroups(){
 async function loadBulkStudents(){
   const gid=document.getElementById('bGroup').value;
   if(!gid){document.getElementById('bulkStudentList').innerHTML=`<div style="font-size:.8rem;color:var(--muted);text-align:center;padding:20px">${PI18N.selectGroup}</div>`;return;}
-  // Auto-fill amount from group fee
-  const opt=document.getElementById('bGroup').selectedOptions[0];
-  if(opt?.dataset.fee) document.getElementById('bAmount').value=opt.dataset.fee;
   const d=await get(`/students/?group=${gid}&status=active&page_size=100`);
   bulkStudents=d?.results||d||[];
   renderBulkList();
@@ -442,7 +439,7 @@ function renderBulkList(){
       <input type="checkbox" class="bulk-st-cb" data-id="${s.id}" checked onchange="updateBulkSelCount()">
       <div class="av av-sm">${initials(s.full_name||'?')}</div>
       <span style="flex:1;font-size:.82rem;font-weight:600">${s.full_name||'—'}</span>
-      <input type="number" class="bulk-amt" data-id="${s.id}" value="${amount}"
+      <input type="number" class="bulk-amt" data-id="${s.id}" value="${amount||s.monthly_fee||0}"
         style="width:100px;border:1.5px solid var(--border);border-radius:7px;padding:5px 8px;font-size:.78rem;outline:none">
     </div>`).join('');
   document.getElementById('bSelectAll').checked=true;

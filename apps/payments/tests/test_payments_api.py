@@ -37,7 +37,7 @@ def admin_user(db):
 def group(db):
     return Group.objects.create(
         name='Payments Group', start_date='2026-01-01',
-        start_time='09:00', end_time='10:00', monthly_fee=500000,
+        start_time='09:00', end_time='10:00',
     )
 
 
@@ -45,7 +45,7 @@ def group(db):
 def other_group(db):
     return Group.objects.create(
         name='Other Payments Group', start_date='2026-01-01',
-        start_time='09:00', end_time='10:00', monthly_fee=400000,
+        start_time='09:00', end_time='10:00',
     )
 
 
@@ -95,7 +95,7 @@ def student(db, group):
         phone='+998900000306', password='pass1234',
         full_name='Payments Student', role=User.Role.STUDENT,
     )
-    return Student.objects.create(user=user, phone=user.phone, group=group)
+    return Student.objects.create(user=user, phone=user.phone, group=group, monthly_fee=500000)
 
 
 @pytest.fixture
@@ -106,7 +106,7 @@ def other_student(db, other_group):
         phone='+998900000307', password='pass1234',
         full_name='Other Payments Student', role=User.Role.STUDENT,
     )
-    return Student.objects.create(user=user, phone=user.phone, group=other_group)
+    return Student.objects.create(user=user, phone=user.phone, group=other_group, monthly_fee=400000)
 
 
 def auth_client(user):
@@ -210,12 +210,12 @@ class TestPaymentCreatePermissions:
 @pytest.mark.django_db
 class TestPaymentCreateBehavior:
 
-    def test_amount_defaults_from_group_monthly_fee(self, finance_user, student):
+    def test_amount_defaults_from_student_fee(self, finance_user, student):
         resp = auth_client(finance_user).post('/api/v1/payments/', {
             'student': str(student.id), 'month': 4, 'year': 2026,
         })
         assert resp.status_code == 201
-        assert resp.data['amount'] == '500000'  # student.group.monthly_fee
+        assert resp.data['amount'] == '500000'  # student.monthly_fee
         assert resp.data['paid_amount'] == '0'
 
     def test_amount_defaults_from_student_personal_fee(self, finance_user, student):

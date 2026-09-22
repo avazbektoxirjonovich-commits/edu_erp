@@ -28,7 +28,7 @@ def teacher_user(db):
 def group(db):
     return Group.objects.create(
         name='Receipt Group', start_date='2026-01-01',
-        start_time='09:00', end_time='10:00', monthly_fee=500000,
+        start_time='09:00', end_time='10:00',
     )
 
 
@@ -38,7 +38,7 @@ def student(db, group):
         phone='+998900000012', password='pass1234',
         full_name='Receipt Student', role=User.Role.STUDENT,
     )
-    return Student.objects.create(user=user, phone=user.phone, group=group)
+    return Student.objects.create(user=user, phone=user.phone, group=group, monthly_fee=500000)
 
 
 @pytest.fixture

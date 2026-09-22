@@ -49,12 +49,12 @@ groups_data = [
     ('English B1',  teachers[2], [1, 2, 3, 4, 5], '18:00', '20:00', 350000),
 ]
 groups = []
+group_fees = {}  # oylik to'lov o'quvchiga yoziladi (guruhda narx yo'q)
 for name, teacher, days, start, end, fee in groups_data:
     g, created = Group.objects.get_or_create(
         name=name,
         defaults={
             'teacher':     teacher,
-            'monthly_fee': fee,
             'start_date':  date(2025, 1, 1),
             'start_time':  start,
             'end_time':    end,
@@ -64,6 +64,7 @@ for name, teacher, days, start, end, fee in groups_data:
         for d in days:
             LessonSchedule.objects.get_or_create(group=g, day_of_week=d)
     groups.append(g)
+    group_fees[g.pk] = fee
     print(f"  ✅ Guruh: {name}")
 
 # O'quvchilar
@@ -88,7 +89,8 @@ for full_name, phone, parent_phone, group in students_data:
         user.save()
     s, _ = Student.objects.get_or_create(
         user=user,
-        defaults={'phone': phone, 'parent_phone': parent_phone, 'group': group}
+        defaults={'phone': phone, 'parent_phone': parent_phone, 'group': group,
+                  'monthly_fee': group_fees[group.pk]}
     )
     students.append(s)
     print(f"  ✅ O'quvchi: {full_name}")
@@ -115,7 +117,7 @@ for student in students:
     for i in range(3):
         m = today.month - i if today.month - i > 0 else today.month - i + 12
         y = today.year if today.month - i > 0 else today.year - 1
-        fee = student.group.monthly_fee if student.group else 500000
+        fee = student.monthly_fee or 500000
         paid = random.choice([fee, fee // 2, 0])
         Payment.objects.get_or_create(
             student=student,

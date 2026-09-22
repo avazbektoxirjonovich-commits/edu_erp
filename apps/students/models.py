@@ -43,11 +43,11 @@ class Student(models.Model):
                        default=Status.ACTIVE,
                        db_index=True
                    )
-    # Bo'sh bo'lsa — guruhning oylik narxi olinadi (qarang: effective_monthly_fee)
+    # Oylik to'lov faqat o'quvchida (guruhda narx yo'q). Bo'sh = narx belgilanmagan.
     monthly_fee  = models.DecimalField(
                        max_digits=10, decimal_places=0, null=True, blank=True,
                        validators=[MinValueValidator(0)],
-                       verbose_name="Shaxsiy oylik narx"
+                       verbose_name="Oylik to'lov"
                    )
     joined_date  = models.DateField(auto_now_add=True)
     notes        = models.TextField(blank=True)
@@ -87,10 +87,8 @@ class Student(models.Model):
 
     @property
     def effective_monthly_fee(self):
-        """Oylik hisob summasi: shaxsiy narx, bo'lmasa guruh narxi, guruh ham bo'lmasa 0."""
-        if self.monthly_fee is not None:
-            return self.monthly_fee
-        return self.group.monthly_fee if self.group else 0
+        """Oylik hisob summasi (narx belgilanmagan bo'lsa 0)."""
+        return self.monthly_fee or 0
 
     def apply_kumush_and_xp(self, *, xp_delta=0, coins_delta=0, reason='', created_by=None,
                              source_type='', source_id=''):

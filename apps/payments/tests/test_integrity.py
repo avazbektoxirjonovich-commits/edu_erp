@@ -46,13 +46,13 @@ def admin_user(db):
 @pytest.fixture
 def group(db):
     return Group.objects.create(name='G1', start_date='2026-01-01', start_time='09:00',
-                                end_time='10:00', monthly_fee=500000)
+                                end_time='10:00')
 
 
 @pytest.fixture
 def student(db, group):
     user = make_user('+998901110003', User.Role.STUDENT, 'Ali Valiyev')
-    return Student.objects.create(user=user, phone=user.phone, group=group)
+    return Student.objects.create(user=user, phone=user.phone, group=group, monthly_fee=500000)
 
 
 def pay(client, student, amount, month=9, year=2026, **extra):
@@ -247,7 +247,7 @@ class TestMonthlyInvoices:
         group.save(update_fields=['teacher'])
         pay(auth_client(finance_user), student, 100000)
         student.group = Group.objects.create(name='G2', start_date='2026-01-01', start_time='11:00',
-                                             end_time='12:00', monthly_fee=400000)
+                                             end_time='12:00')
         student.save(update_fields=['group'])
         resp = auth_client(teacher_user).get('/api/v1/payments/')
         assert len(resp.data['results']) == 1

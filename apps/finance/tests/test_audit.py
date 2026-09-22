@@ -29,7 +29,7 @@ def admin_user(db):
 @pytest.fixture
 def group(db):
     return Group.objects.create(name='Audit Group', start_date='2026-01-01',
-                                start_time='09:00', end_time='10:00', monthly_fee=500000)
+                                start_time='09:00', end_time='10:00')
 
 
 @pytest.fixture
@@ -37,7 +37,7 @@ def student(db, group):
     user = User.objects.create_user(
         phone='+998900000101', password='pass1234', full_name='Audit Student', role=User.Role.STUDENT,
     )
-    return Student.objects.create(user=user, phone=user.phone, group=group)
+    return Student.objects.create(user=user, phone=user.phone, group=group, monthly_fee=500000)
 
 
 def auth_client(user):
