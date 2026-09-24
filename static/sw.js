@@ -26,6 +26,9 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
 
+  // iOS profil fayli: keshlanmaydi — doim joriy server manzili bilan yuklansin
+  if (url.pathname === '/ios-app.mobileconfig') return;
+
   // API requests: network first, no cache
   if (url.pathname.startsWith('/api/')) {
     e.respondWith(fetch(e.request).catch(() => new Response('{"error":"offline"}', {

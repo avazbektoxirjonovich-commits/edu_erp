@@ -8,6 +8,8 @@ from django.contrib import admin
 from django.urls import include, path
 from rest_framework_simplejwt.views import TokenRefreshView, TokenVerifyView
 
+from apps.common.webclip import ios_webclip
+
 urlpatterns = [
     path('admin/',       admin.site.urls),
     path('api/v1/auth/', include('apps.accounts.urls')),
@@ -29,4 +31,5 @@ urlpatterns = [
     path('api/public/', include('apps.musobaqalar.public_urls')),
     path('api/v1/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/v1/token/verify/',  TokenVerifyView.as_view(),  name='token_verify'),
+    path('ios-app.mobileconfig', ios_webclip, name='ios-webclip'),
 ]

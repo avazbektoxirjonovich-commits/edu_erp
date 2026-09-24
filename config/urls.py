@@ -12,6 +12,7 @@ from rest_framework_simplejwt.views import (
     TokenVerifyView,
 )
 
+from apps.common.webclip import ios_webclip
 from apps.students.pdf_views import MonthlyReportPDFView
 
 
@@ -229,6 +230,7 @@ urlpatterns = [
     path('sw.js', serve_sw, name='service-worker'),
     path('robots.txt', robots_txt, name='robots'),
     path('sitemap.xml', sitemap_xml, name='sitemap'),
+    path('ios-app.mobileconfig', ios_webclip, name='ios-webclip'),
 ] + frontend_urlpatterns
 
 

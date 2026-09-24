@@ -337,6 +337,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
   font-size:1rem;transition:all .2s;position:relative;
 }
 .tb-btn:hover{background:var(--bg);color:var(--text)}
+.ios-btn i{font-size:1.15rem;line-height:1;position:relative;top:-1px}
+.ios-btn:hover{background:var(--bg);color:var(--text)}
 .lang-switch-form{display:inline-flex}
 .lang-select{
   background:none;border:1.5px solid var(--border);cursor:pointer;color:var(--text);
@@ -936,6 +938,9 @@ body.dark .vltai-messages::-webkit-scrollbar-thumb{background:#334155}
       <button class="tb-btn" id="pwaInstallBtn" onclick="installPwa()" title="{% translate "Telefoningizga o'rnating" %}" style="display:none;gap:5px;font-size:.72rem;padding:6px 12px;width:auto">
         <i class="fas fa-mobile-screen"></i><span style="display:none" class="pwa-lbl">{% translate "O'rnatish" %}</span>
       </button>
+      <button class="tb-btn ios-btn" id="iosInstallBtn" onclick="openM('iosInstallOverlay')" title="{% translate "iPhone'ga o'rnatish" %}">
+        <i class="fab fa-apple"></i>
+      </button>
       <button class="tb-btn" onclick="doLogout()" title="{% translate 'Chiqish' %}"><i class="fas fa-right-from-bracket"></i></button>
     </div>
   </div>
@@ -995,6 +1000,48 @@ body.dark .vltai-messages::-webkit-scrollbar-thumb{background:#334155}
     </div>
     <p class="vltai-footer-hint"><i class="fas fa-shield-halved" style="color:var(--accent)"></i> {% translate "Faqat sizga ruxsat berilgan ma'lumotlar ko'rsatiladi" %}</p>
     <p class="vltai-footer-hint">{% translate "AI ham xato qilishi mumkin." %}</p>
+  </div>
+</div>
+
+<!-- iPhone/iPad uchun o'rnatish yo'riqnomasi -->
+<div class="overlay" id="iosInstallOverlay">
+  <div class="modal" style="max-width:420px">
+    <div class="m-head">
+      <h5><i class="fab fa-apple" style="margin-right:8px"></i>{% translate "iPhone'ga o'rnatish" %}</h5>
+      <button class="m-close" onclick="closeM('iosInstallOverlay')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="m-body" style="font-size:.8rem;line-height:1.55">
+
+      <p id="iosSafariWarn" style="display:none;background:#fef3c7;color:#92400e;border-radius:8px;padding:8px 10px;margin-bottom:10px">
+        <i class="fas fa-triangle-exclamation"></i>
+        {% translate "Bu sahifani Safari brauzerida ochib, shundan keyin davom eting — boshqa brauzerlarda o'rnatish ishlamaydi." %}
+      </p>
+
+      <p style="margin-bottom:8px;font-weight:600">{% translate "1-usul — fayl yuklab olish (tavsiya etiladi)" %}</p>
+      <a class="btn btn-primary" href="/ios-app.mobileconfig" style="display:inline-flex;align-items:center;gap:8px;margin-bottom:8px;text-decoration:none">
+        <i class="fas fa-download"></i>{% translate "Ikonkani yuklab olish" %}
+      </a>
+      <ol style="margin:0 0 4px 18px;padding:0">
+        <li>{% translate "“Ruxsat berish” (Allow) ni bosing — fayl yuklab olinadi." %}</li>
+        <li>{% translate "Sozlamalar (Settings) ni ochib, eng yuqoridagi “Profil yuklab olindi” ni bosing." %}</li>
+        <li>{% translate "“O'rnatish” (Install) → telefon parolingiz → yana “O'rnatish”." %}</li>
+        <li>{% translate "Bosh ekranda ERP ikonkasi paydo bo'ladi." %}</li>
+      </ol>
+      <p style="color:var(--muted);font-size:.72rem;margin-bottom:14px">
+        <i class="fas fa-circle-info"></i>
+        {% translate "iPhone “Imzolanmagan” (Not Signed) deb ogohlantiradi — bu normal: fayl markazning o'z serveridan keladi va faqat ikonka qo'shadi." %}
+      </p>
+
+      <div class="help-divider">{% translate "yoki" %}</div>
+
+      <p style="margin:10px 0 8px;font-weight:600">{% translate "2-usul — qo'lda qo'shish" %}</p>
+      <ol style="margin:0 0 0 18px;padding:0">
+        <li>{% translate "Safari'da pastdagi “Ulashish” belgisini bosing" %} <i class="fas fa-arrow-up-from-bracket"></i></li>
+        <li>{% translate "“Bosh ekranga qo'shish” (Add to Home Screen) ni tanlang." %}</li>
+        <li>{% translate "“Qo'shish” (Add) ni bosing." %}</li>
+      </ol>
+
+    </div>
   </div>
 </div>
 
@@ -1623,6 +1670,28 @@ window.addEventListener('beforeinstallprompt', e=>{
   const btn=document.getElementById('pwaInstallBtn');
   if(btn) btn.style.display='flex';
 });
+
+// iOS uchun alohida tugma: Apple belgisi (yo'riqnoma + profil fayli)
+function _isIOS(){
+  return /iPad|iPhone|iPod/.test(navigator.userAgent)
+      || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
+}
+function _isStandalone(){
+  return window.navigator.standalone===true
+      || window.matchMedia('(display-mode: standalone)').matches;
+}
+document.addEventListener('DOMContentLoaded', ()=>{
+  // Ilova sifatida ochilgan bo'lsa o'rnatish tugmalari kerak emas
+  if(_isStandalone()){
+    const ios=document.getElementById('iosInstallBtn');
+    if(ios) ios.style.display='none';
+  }
+  // Konfiguratsiya profilini faqat Safari o'rnatadi
+  const warn=document.getElementById('iosSafariWarn');
+  if(warn && _isIOS() && /CriOS|FxiOS|EdgiOS|OPiOS|YaBrowser/.test(navigator.userAgent))
+    warn.style.display='block';
+});
+
 function installPwa(){
   if(!_deferredPrompt)return;
   _deferredPrompt.prompt();
