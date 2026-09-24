@@ -2974,3 +2974,94 @@ msgstr "— Tanlanmagan —"
 msgid "‹ Oldingi"
 msgstr "‹ Oldingi"
 
+#: templates/erp/arizalar.html
+
+msgid "Arizalar"
+msgstr "Arizalar"
+
+msgid "Saytdan kelgan o'quv markazga yozilish so'rovlari"
+msgstr "Saytdan kelgan o'quv markazga yozilish so'rovlari"
+
+msgid "yangi"
+msgstr "yangi"
+
+msgid "ochiq"
+msgstr "ochiq"
+
+msgid "Ism, telefon, yo'nalish..."
+msgstr "Ism, telefon, yo'nalish..."
+
+msgid "Hammasi"
+msgstr "Hammasi"
+
+msgid "Bog'lanildi"
+msgstr "Bog'lanildi"
+
+msgid "Qabul qilindi"
+msgstr "Qabul qilindi"
+
+msgid "Admin izohi"
+msgstr "Admin izohi"
+
+msgid "Bog'landim, ertaga keladi..."
+msgstr "Bog'landim, ertaga keladi..."
+
+msgid "Panel ochish"
+msgstr "Panel ochish"
+
+msgid "kurs to'lovini kiriting, tugma bosilsa o'quvchi akkaunti avtomat ochiladi."
+msgstr "kurs to'lovini kiriting, tugma bosilsa o'quvchi akkaunti avtomat ochiladi."
+
+msgid "Kurs to'lovi (so'm)"
+msgstr "Kurs to'lovi (so'm)"
+
+msgid "Chegirma (so'm)"
+msgstr "Chegirma (so'm)"
+
+msgid "Oyiga to'laydi"
+msgstr "Oyiga to'laydi"
+
+msgid "Bo'sh qoldirilsa avtomat yaratiladi"
+msgstr "Bo'sh qoldirilsa avtomat yaratiladi"
+
+msgid "Ariza"
+msgstr "Ariza"
+
+msgid "Ism familiya"
+msgstr "Ism familiya"
+
+msgid "Yashash manzili"
+msgstr "Yashash manzili"
+
+msgid "Yosh"
+msgstr "Yosh"
+
+msgid "Kelgan vaqti"
+msgstr "Kelgan vaqti"
+
+msgid "Kim ishlagan"
+msgstr "Kim ishlagan"
+
+msgid "Hozircha ariza yo'q"
+msgstr "Hozircha ariza yo'q"
+
+msgid "Kurs to'lovini kiriting — busiz panel ochilmaydi"
+msgstr "Kurs to'lovini kiriting — busiz panel ochilmaydi"
+
+msgid "Ariza rad etilsinmi?"
+msgstr "Ariza rad etilsinmi?"
+
+msgid "Panel ochildi!"
+msgstr "Panel ochildi!"
+
+msgid "Oylik"
+msgstr "Oylik"
+
+msgid "O'quvchini ochish"
+msgstr "O'quvchini ochish"
+
+msgid "Bu ariza bo'yicha o'quvchi paneli ochilgan"
+msgstr "Bu ariza bo'yicha o'quvchi paneli ochilgan"
+
+msgid "Har oy shu summa ayiriladi"
+msgstr "Har oy shu summa ayiriladi"

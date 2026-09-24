@@ -42,6 +42,7 @@ LOCAL_APPS = [
     'apps.store',
     'apps.error_monitor',
     'apps.musobaqalar',
+    'apps.arizalar',
 ]
 
 # jazzmin must come BEFORE django.contrib.admin
@@ -132,6 +133,7 @@ REST_FRAMEWORK = {
         'submit':    '30/min',   # ZUKKO challenge answer submission
         'musobaqa_public':   '60/min',  # public sayt: musobaqa ma'lumoti, natijalar
         'musobaqa_register': '5/min',   # public sayt: ro'yxatdan o'tish formasi (IP bo'yicha)
+        'ariza_register':    '5/min',   # public sayt: o'quv markazga ariza formasi (IP bo'yicha)
     },
     'DATE_FORMAT': '%Y-%m-%d',
     'DATETIME_FORMAT': '%Y-%m-%d %H:%M:%S',

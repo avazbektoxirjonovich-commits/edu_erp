@@ -1,0 +1,341 @@
+{% extends "erp/base.html" %}
+{% load i18n %}
+{% block title %}{% translate "Arizalar" %} — Qorako'l Ilm Ziyo{% endblock %}
+{% block page_title %}{% translate "Arizalar" %}{% endblock %}
+
+{% block extra_head %}
+<style>
+.ar-box{background:var(--card);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+.ar-head{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border)}
+.ar-filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.ar-filters .fc{width:auto;min-width:150px;padding:7px 10px;font-size:.8rem}
+.ar-name{font-weight:700;color:var(--text);cursor:pointer;text-align:left;background:none;border:none;padding:0;font-size:.84rem;font-family:inherit}
+.ar-name:hover{color:var(--accent);text-decoration:underline}
+.st{display:inline-block;font-size:.66rem;font-weight:800;border-radius:6px;padding:3px 8px;text-transform:uppercase;letter-spacing:.3px}
+.st-new{background:var(--badge-success-bg);color:var(--badge-success-text)}
+.st-contacted{background:#FEF3C7;color:#92400E}
+.st-enrolled{background:#DBEAFE;color:#1E40AF}
+.st-rejected{background:var(--bg);color:var(--muted)}
+.ar-kv{display:grid;grid-template-columns:130px 1fr;gap:8px 12px;font-size:.82rem;margin-bottom:14px}
+.ar-kv dt{color:var(--muted);font-weight:600}
+.ar-kv dd{color:var(--text);font-weight:600;margin:0;word-break:break-word}
+.ar-sum{background:var(--bg);border-radius:10px;padding:12px 14px;margin-bottom:12px;font-size:.8rem}
+.ar-done{background:var(--badge-success-bg);color:var(--badge-success-text);border-radius:10px;padding:12px 14px;font-size:.84rem;line-height:1.7}
+.ar-done b{font-size:1rem}
+.ar-stat{display:flex;gap:16px;font-size:.78rem;color:var(--muted)}
+.ar-stat b{font-size:1.05rem;color:var(--text)}
+.ar-table{min-width:720px}
+.ar-table th,.ar-table td{white-space:nowrap}
+.ar-table th:first-child,.ar-table td:first-child{padding-left:20px}
+.ar-table th:last-child,.ar-table td:last-child{padding-right:20px}
+/* Ism va yo'nalish uzun bo'lsa — kengroq joy, kerak bo'lsa qisqartiriladi */
+.ar-table td:first-child{max-width:320px;overflow:hidden;text-overflow:ellipsis}
+.ar-table td:nth-child(4){max-width:220px;overflow:hidden;text-overflow:ellipsis}
+.ar-table td:nth-child(3){text-align:center}
+.ar-table th:nth-child(3){text-align:center}
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:18px;animation:fadeUp .35s ease both">
+  <div>
+    <h2 style="font-size:1.1rem;font-weight:800;color:var(--text)">{% translate "Arizalar" %}</h2>
+    <p style="font-size:.75rem;color:var(--muted);margin-top:3px">{% translate "Saytdan kelgan o'quv markazga yozilish so'rovlari" %}</p>
+  </div>
+  <div class="ar-stat">
+    <span><b id="stNew">0</b> {% translate "yangi" %}</span>
+    <span><b id="stOpen">0</b> {% translate "ochiq" %}</span>
+  </div>
+</div>
+
+<div class="ar-box">
+  <div class="ar-head">
+    <div class="ar-filters">
+      <input class="fc" id="fSearch" placeholder="{% translate "Ism, telefon, yo'nalish..." %}" oninput="debouncedLoad()">
+      <select class="fc fc-sel" id="fStatus" onchange="loadApplications()">
+        <option value="">{% translate "Hammasi" %}</option>
+        <option value="new" selected>{% translate "Yangi" %}</option>
+        <option value="contacted">{% translate "Bog'lanildi" %}</option>
+        <option value="enrolled">{% translate "Qabul qilindi" %}</option>
+        <option value="rejected">{% translate "Rad etildi" %}</option>
+      </select>
+    </div>
+    <button class="btn btn-ghost btn-sm" onclick="loadApplications()"><i class="fas fa-rotate"></i>{% translate "Yangilash" %}</button>
+  </div>
+  <div style="overflow-x:auto" id="arTable"><div class="loading"><div class="spinner"></div></div></div>
+</div>
+
+<!-- ARIZA — to'liq ma'lumot -->
+<div class="overlay" id="arModal">
+  <div class="modal" style="max-width:560px">
+    <div class="m-head">
+      <h5><i class="fas fa-file-signature" style="color:var(--accent);margin-right:6px"></i><span id="arTitle"></span></h5>
+      <button class="m-close" onclick="closeM('arModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="m-body">
+      <dl class="ar-kv" id="arInfo"></dl>
+
+      <div class="fg">
+        <label>{% translate "Admin izohi" %}</label>
+        <textarea class="fc" id="arNote" rows="2" placeholder="{% translate "Bog'landim, ertaga keladi..." %}"></textarea>
+      </div>
+
+      <!-- PANEL OCHISH -->
+      <div id="arOpenBox">
+        <div class="ar-sum">
+          <b>{% translate "Panel ochish" %}</b> —
+          {% translate "kurs to'lovini kiriting, tugma bosilsa o'quvchi akkaunti avtomat ochiladi." %}
+        </div>
+        <div class="row2">
+          <div class="fg">
+            <label>{% translate "Kurs to'lovi (so'm)" %} *</label>
+            <input class="fc" type="number" min="0" step="1000" id="arFee" placeholder="500000" oninput="arNet()">
+          </div>
+          <div class="fg">
+            <label>{% translate "Chegirma (so'm)" %}</label>
+            <input class="fc" type="number" min="0" step="1000" id="arDiscount" placeholder="0" oninput="arNet()">
+            <small style="display:block;margin-top:4px;color:var(--muted);font-size:.7rem">
+              {% translate "Oyiga to'laydi" %}: <b id="arNetFee">—</b>
+            </small>
+          </div>
+        </div>
+        <div class="row2">
+          <div class="fg">
+            <label>{% translate "Guruh" %}</label>
+            <select class="fc fc-sel" id="arGroup"><option value="">{% translate "— Guruhsiz —" %}</option></select>
+          </div>
+          <div class="fg">
+            <label>{% translate "Parol" %}</label>
+            <input class="fc" id="arPassword" placeholder="{% translate "Bo'sh qoldirilsa avtomat yaratiladi" %}">
+          </div>
+        </div>
+      </div>
+
+      <!-- PANEL OCHILGANDAN KEYIN -->
+      <div class="ar-done" id="arDone" style="display:none"></div>
+    </div>
+    <div class="m-foot" id="arFoot"></div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% translate "Ariza" as p_title %}
+{% translate "Ism familiya" as p_name %}
+{% translate "Telefon" as p_phone %}
+{% translate "Yashash manzili" as p_address %}
+{% translate "Ota-ona ismi" as p_parent %}
+{% translate "Yosh" as p_age %}
+{% translate "Yo'nalish" as p_direction %}
+{% translate "Holati" as p_status %}
+{% translate "Kelgan vaqti" as p_created %}
+{% translate "Kim ishlagan" as p_handled %}
+{% translate "Hozircha ariza yo'q" as p_empty %}
+{% translate "Bog'lanildi" as p_contacted %}
+{% translate "Qabul qilindi" as p_enrolled %}
+{% translate "Rad etish" as p_reject %}
+{% translate "Panel ochish" as p_open %}
+{% translate "Yopish" as p_close %}
+{% translate "Saqlandi" as p_saved %}
+{% translate "Xatolik" as p_error %}
+{% translate "Kurs to'lovini kiriting — busiz panel ochilmaydi" as p_fee_required %}
+{% translate "Ariza rad etilsinmi?" as p_reject_q %}
+{% translate "Panel ochildi!" as p_opened %}
+{% translate "Kirish" as p_login %}
+{% translate "Parol" as p_password %}
+{% translate "Oylik" as p_monthly %}
+{% translate "O'quvchini ochish" as p_goto %}
+{% translate "Bu ariza bo'yicha o'quvchi paneli ochilgan" as p_already %}
+{% translate "Yangi" as p_st_new %}
+{% translate "Rad etildi" as p_st_rejected %}
+<script>
+const AT = {
+  title: "{{ p_title|escapejs }}", name: "{{ p_name|escapejs }}", phone: "{{ p_phone|escapejs }}",
+  address: "{{ p_address|escapejs }}", parent: "{{ p_parent|escapejs }}", age: "{{ p_age|escapejs }}",
+  direction: "{{ p_direction|escapejs }}", status: "{{ p_status|escapejs }}",
+  created: "{{ p_created|escapejs }}", handled: "{{ p_handled|escapejs }}", empty: "{{ p_empty|escapejs }}",
+  contacted: "{{ p_contacted|escapejs }}", reject: "{{ p_reject|escapejs }}", open: "{{ p_open|escapejs }}",
+  close: "{{ p_close|escapejs }}", saved: "{{ p_saved|escapejs }}", error: "{{ p_error|escapejs }}",
+  feeRequired: "{{ p_fee_required|escapejs }}", rejectQ: "{{ p_reject_q|escapejs }}",
+  opened: "{{ p_opened|escapejs }}", login: "{{ p_login|escapejs }}", password: "{{ p_password|escapejs }}",
+  monthly: "{{ p_monthly|escapejs }}", goto: "{{ p_goto|escapejs }}", already: "{{ p_already|escapejs }}",
+  st: { new: "{{ p_st_new|escapejs }}", contacted: "{{ p_contacted|escapejs }}",
+        enrolled: "{{ p_enrolled|escapejs }}", rejected: "{{ p_st_rejected|escapejs }}" },
+};
+
+let applications = [], current = null, timer = null, groupsLoaded = false;
+
+function errText(e) {
+  if (!e || typeof e !== 'object') return AT.error;
+  if (e.detail) return [].concat(e.detail).join(' ');
+  return Object.values(e).flat().map(String).join(' | ') || AT.error;
+}
+
+function debouncedLoad() { clearTimeout(timer); timer = setTimeout(loadApplications, 300); }
+
+async function loadStats() {
+  const d = await get('/arizalar/stats/');
+  if (!d) return;
+  document.getElementById('stNew').textContent = d.new;
+  document.getElementById('stOpen').textContent = d.open;
+}
+
+async function loadApplications() {
+  let url = '/arizalar/?page_size=200&ordering=-created_at';
+  const q = document.getElementById('fSearch').value.trim();
+  const st = document.getElementById('fStatus').value;
+  if (q) url += `&search=${encodeURIComponent(q)}`;
+  if (st) url += `&status=${st}`;
+  const d = await get(url);
+  applications = d?.results || d || [];
+  const box = document.getElementById('arTable');
+  if (!applications.length) {
+    box.innerHTML = `<div class="empty"><i class="fas fa-inbox"></i><p>${AT.empty}</p></div>`;
+    loadStats();
+    return;
+  }
+  box.innerHTML = `<table class="etable ar-table"><thead><tr>
+      <th>${AT.name}</th><th>${AT.phone}</th><th>${AT.age}</th>
+      <th>${AT.direction}</th><th>${AT.status}</th><th>${AT.created}</th>
+    </tr></thead><tbody>${applications.map((a) => `
+      <tr>
+        <td><button class="ar-name" onclick="openApplication('${a.id}')">${escHtml(a.full_name)}</button></td>
+        <td>${escHtml(a.phone)}</td>
+        <td>${a.age}</td>
+        <td>${escHtml(a.direction)}</td>
+        <td><span class="st st-${a.status}">${escHtml(stLabel(a))}</span></td>
+        <td>${escHtml(fmtDate(a.created_at))}</td>
+      </tr>`).join('')}</tbody></table>`;
+  loadStats();
+}
+
+async function loadGroups() {
+  if (groupsLoaded) return;
+  const d = await get('/groups/?page_size=200');
+  const groups = d?.results || d || [];
+  const sel = document.getElementById('arGroup');
+  groups.forEach((g) => {
+    const o = document.createElement('option');
+    o.value = g.id; o.textContent = g.name;
+    sel.appendChild(o);
+  });
+  groupsLoaded = true;
+}
+
+function arNet() {
+  const fee = Number(document.getElementById('arFee').value || 0);
+  const dis = Number(document.getElementById('arDiscount').value || 0);
+  const out = document.getElementById('arNetFee');
+  const net = Math.max(0, fee - dis);
+  out.textContent = fee ? fmoney(net) : '—';
+  out.style.color = dis > fee ? 'var(--danger)' : '';
+}
+
+function row(dt, dd) { return `<dt>${dt}</dt><dd>${dd}</dd>`; }
+
+// Holat nomi tanlangan tilda (serverdagi yorliq o'zbekcha keladi)
+function stLabel(a) { return AT.st[a.status] || a.status_display; }
+
+async function openApplication(id) {
+  const a = await get(`/arizalar/${id}/`);
+  if (!a) { toast(AT.error, 'err'); return; }
+  current = a;
+  await loadGroups();
+
+  document.getElementById('arTitle').textContent = a.full_name;
+  document.getElementById('arInfo').innerHTML =
+      row(AT.phone, `<a href="tel:${escHtml(a.phone)}">${escHtml(a.phone)}</a>`)
+    + row(AT.age, a.age)
+    + row(AT.direction, escHtml(a.direction))
+    + row(AT.parent, escHtml(a.parent_name))
+    + row(AT.address, escHtml(a.address))
+    + row(AT.created, escHtml(fmtDate(a.created_at)))
+    + row(AT.status, `<span class="st st-${a.status}">${escHtml(stLabel(a))}</span>`)
+    + (a.handled_by_name ? row(AT.handled, `${escHtml(a.handled_by_name)} · ${escHtml(fmtDate(a.handled_at))}`) : '');
+  document.getElementById('arNote').value = a.note || '';
+
+  const done = a.status === 'enrolled';
+  document.getElementById('arOpenBox').style.display = done ? 'none' : '';
+  const doneBox = document.getElementById('arDone');
+  doneBox.style.display = done ? '' : 'none';
+  if (done) {
+    doneBox.innerHTML = `<i class="fas fa-circle-check"></i> ${AT.already}`
+      + (a.student_id ? ` — <a href="/students/" style="font-weight:800">${AT.goto}</a>` : '');
+  }
+  if (!done) {
+    ['arFee', 'arDiscount', 'arPassword'].forEach((i) => { document.getElementById(i).value = ''; });
+    document.getElementById('arGroup').value = '';
+    arNet();
+  }
+
+  document.getElementById('arFoot').innerHTML = done
+    ? `<button class="btn btn-ghost" onclick="closeM('arModal')">${AT.close}</button>`
+    : `<button class="btn btn-ghost" onclick="rejectApplication()">${AT.reject}</button>
+       <button class="btn btn-outline" onclick="markContacted()"><i class="fas fa-phone"></i>${AT.contacted}</button>
+       <button class="btn btn-primary" onclick="openPanel()"><i class="fas fa-id-card"></i>${AT.open}</button>`;
+  openM('arModal');
+}
+
+async function saveNote() {
+  const note = document.getElementById('arNote').value;
+  if (!current || note === (current.note || '')) return;
+  await patch(`/arizalar/${current.id}/`, { note });
+}
+
+async function markContacted() {
+  await saveNote();
+  const r = await post(`/arizalar/${current.id}/contacted/`, {});
+  if (r?.ok) { toast(AT.saved, 'ok'); closeM('arModal'); loadApplications(); }
+  else toast(errText(await r?.json()), 'err');
+}
+
+async function rejectApplication() {
+  if (!confirm(AT.rejectQ)) return;
+  await saveNote();
+  const r = await post(`/arizalar/${current.id}/reject/`, {});
+  if (r?.ok) { toast(AT.saved, 'ok'); closeM('arModal'); loadApplications(); }
+  else toast(errText(await r?.json()), 'err');
+}
+
+async function openPanel() {
+  const feeEl = document.getElementById('arFee');
+  const fee = feeEl.value.trim();
+  // Kurs to'lovisiz panel ochilmaydi
+  if (fee === '' || Number(fee) <= 0) {
+    toast(AT.feeRequired, 'wrn');
+    feeEl.focus();
+    return;
+  }
+  const body = {
+    monthly_fee: Number(fee),
+    discount: Number(document.getElementById('arDiscount').value || 0),
+  };
+  const group = document.getElementById('arGroup').value;
+  if (group) body.group = group;
+  const pwd = document.getElementById('arPassword').value.trim();
+  if (pwd) body.password = pwd;
+
+  await saveNote();
+  const btn = event?.target?.closest('button');
+  if (btn) btn.disabled = true;                 // ikki marta bosilmasin
+  const r = await post(`/arizalar/${current.id}/convert/`, body);
+  const d = r ? await r.json() : null;
+  if (btn) btn.disabled = false;
+  if (!r?.ok) { toast(errText(d), 'err'); return; }
+
+  document.getElementById('arOpenBox').style.display = 'none';
+  document.getElementById('arFoot').innerHTML =
+    `<button class="btn btn-primary" onclick="closeM('arModal');loadApplications()">${AT.close}</button>`;
+  const done = document.getElementById('arDone');
+  done.style.display = '';
+  done.innerHTML = `<i class="fas fa-circle-check"></i> <b>${AT.opened}</b><br>
+    ${AT.name}: <b>${escHtml(d.full_name)}</b><br>
+    ${AT.login}: <b>${escHtml(d.phone)}</b><br>
+    ${AT.password}: <b>${escHtml(d.parol)}</b><br>
+    ${AT.monthly}: <b>${fmoney(d.monthly_fee)}</b>`;
+  toast(AT.opened, 'ok');
+}
+
+if (initAuth()) loadApplications();
+</script>
+{% endblock %}

@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'apps.store',
     'apps.error_monitor',
     'apps.musobaqalar',
+    'apps.arizalar',
 ]
 
 # ── Face Auth ────────────────────────────────────────────────────────────────
@@ -120,6 +121,7 @@ REST_FRAMEWORK = {
                                # and doesn't inherit base.py's rates.
         'musobaqa_public':   '60/min',
         'musobaqa_register': '5/min',
+        'ariza_register':    '5/min',   # public sayt: o'quv markazga ariza formasi (IP bo'yicha)
     },
 }
 

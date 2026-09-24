@@ -1108,6 +1108,7 @@ const JS_LOCALE = {uz:'uz-UZ', ru:'ru-RU', en:'en-US'}[CURRENT_LANG] || 'uz-UZ';
 {% translate "To'lovlar" as vsb_payments %}
 {% translate "Ish haqi" as vsb_salary %}
 {% translate "Musobaqalar" as vsb_competitions %}
+{% translate "Arizalar" as vsb_applications %}
 {% translate "Markaz buyumlari" as vsb_assets %}
 {% translate "Moliya hisobotlari" as vsb_fin_reports %}
 {% translate "Markaz xarajatlari" as vsb_fin_expenses %}
@@ -1205,6 +1206,7 @@ window.I18N = {
   payments: "{{ vsb_payments|escapejs }}",
   salary: "{{ vsb_salary|escapejs }}",
   competitions: "{{ vsb_competitions|escapejs }}",
+  applications: "{{ vsb_applications|escapejs }}",
   assets: "{{ vsb_assets|escapejs }}",
   finReports: "{{ vsb_fin_reports|escapejs }}",
   finExpenses: "{{ vsb_fin_expenses|escapejs }}",
@@ -1335,6 +1337,7 @@ function buildSidebar(role){
     html+=item('/teachers/','chalkboard-teacher',I.teachers,'teachers');
     html+=item('/groups/','users',I.groups,'groups');
     html+=item('/musobaqalar/','trophy',I.competitions,'musobaqalar');
+    html+=item('/arizalar/','file-signature',I.applications,'arizalar');
     html+=sec(I.sbSecDaily);
     html+=item('/attendance/','calendar-check',I.attendance,'attendance');
     html+=item('/payments/','credit-card',I.payments,'payments');
@@ -1419,6 +1422,7 @@ const _ROUTE_ROLES = {
   '/payments/':    ['admin','developer','finance'],
   '/salary/':      ['admin','developer','finance'],
   '/musobaqalar/': ['admin','developer'],
+  '/arizalar/':    ['admin','developer'],
   '/finance/':     ['admin','developer','finance'],
   '/finance/assets/': ['admin','developer','finance'],
   '/finance/reports/': ['admin','developer','finance'],

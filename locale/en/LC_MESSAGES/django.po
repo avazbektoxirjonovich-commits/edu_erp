@@ -2974,3 +2974,94 @@ msgstr "— Not selected —"
 msgid "‹ Oldingi"
 msgstr "‹ Previous"
 
+#: templates/erp/arizalar.html
+
+msgid "Arizalar"
+msgstr "Applications"
+
+msgid "Saytdan kelgan o'quv markazga yozilish so'rovlari"
+msgstr "Enrolment requests from the website"
+
+msgid "yangi"
+msgstr "new"
+
+msgid "ochiq"
+msgstr "open"
+
+msgid "Ism, telefon, yo'nalish..."
+msgstr "Name, phone, field..."
+
+msgid "Hammasi"
+msgstr "All"
+
+msgid "Bog'lanildi"
+msgstr "Contacted"
+
+msgid "Qabul qilindi"
+msgstr "Enrolled"
+
+msgid "Admin izohi"
+msgstr "Admin note"
+
+msgid "Bog'landim, ertaga keladi..."
+msgstr "Called, coming tomorrow..."
+
+msgid "Panel ochish"
+msgstr "Open account"
+
+msgid "kurs to'lovini kiriting, tugma bosilsa o'quvchi akkaunti avtomat ochiladi."
+msgstr "enter the course fee — pressing the button creates the student account automatically."
+
+msgid "Kurs to'lovi (so'm)"
+msgstr "Course fee (UZS)"
+
+msgid "Chegirma (so'm)"
+msgstr "Discount (UZS)"
+
+msgid "Oyiga to'laydi"
+msgstr "Pays per month"
+
+msgid "Bo'sh qoldirilsa avtomat yaratiladi"
+msgstr "Left empty — generated automatically"
+
+msgid "Ariza"
+msgstr "Application"
+
+msgid "Ism familiya"
+msgstr "Full name"
+
+msgid "Yashash manzili"
+msgstr "Home address"
+
+msgid "Yosh"
+msgstr "Age"
+
+msgid "Kelgan vaqti"
+msgstr "Received at"
+
+msgid "Kim ishlagan"
+msgstr "Handled by"
+
+msgid "Hozircha ariza yo'q"
+msgstr "No applications yet"
+
+msgid "Kurs to'lovini kiriting — busiz panel ochilmaydi"
+msgstr "Enter the course fee — the account cannot be opened without it"
+
+msgid "Ariza rad etilsinmi?"
+msgstr "Reject this application?"
+
+msgid "Panel ochildi!"
+msgstr "Account created!"
+
+msgid "Oylik"
+msgstr "Monthly"
+
+msgid "O'quvchini ochish"
+msgstr "Open student"
+
+msgid "Bu ariza bo'yicha o'quvchi paneli ochilgan"
+msgstr "A student account already exists for this application"
+
+msgid "Har oy shu summa ayiriladi"
+msgstr "Deducted every month"

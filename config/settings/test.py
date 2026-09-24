@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'apps.error_monitor',
     'apps.zukko',
     'apps.musobaqalar',
+    'apps.arizalar',
 ]
 
 MIDDLEWARE = [
@@ -106,6 +107,7 @@ REST_FRAMEWORK = {
         # production bilan bir xil — throttle testlari haqiqiy chegarani tekshiradi
         'musobaqa_public':   '60/min',
         'musobaqa_register': '5/min',
+        'ariza_register':    '5/min',   # public sayt: o'quv markazga ariza formasi (IP bo'yicha)
     },
     'EXCEPTION_HANDLER': 'apps.error_monitor.exception_handler.custom_exception_handler',
 }

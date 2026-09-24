@@ -2974,3 +2974,94 @@ msgstr "— Не выбрано —"
 msgid "‹ Oldingi"
 msgstr "‹ Назад"
 
+#: templates/erp/arizalar.html
+
+msgid "Arizalar"
+msgstr "Заявки"
+
+msgid "Saytdan kelgan o'quv markazga yozilish so'rovlari"
+msgstr "Заявки на обучение, поступившие с сайта"
+
+msgid "yangi"
+msgstr "новых"
+
+msgid "ochiq"
+msgstr "открытых"
+
+msgid "Ism, telefon, yo'nalish..."
+msgstr "Имя, телефон, направление..."
+
+msgid "Hammasi"
+msgstr "Все"
+
+msgid "Bog'lanildi"
+msgstr "Связались"
+
+msgid "Qabul qilindi"
+msgstr "Принят"
+
+msgid "Admin izohi"
+msgstr "Заметка администратора"
+
+msgid "Bog'landim, ertaga keladi..."
+msgstr "Связался, придёт завтра..."
+
+msgid "Panel ochish"
+msgstr "Открыть панель"
+
+msgid "kurs to'lovini kiriting, tugma bosilsa o'quvchi akkaunti avtomat ochiladi."
+msgstr "укажите стоимость курса — по нажатию кнопки аккаунт ученика создаётся автоматически."
+
+msgid "Kurs to'lovi (so'm)"
+msgstr "Стоимость курса (сум)"
+
+msgid "Chegirma (so'm)"
+msgstr "Скидка (сум)"
+
+msgid "Oyiga to'laydi"
+msgstr "Платит в месяц"
+
+msgid "Bo'sh qoldirilsa avtomat yaratiladi"
+msgstr "Если оставить пустым — создастся автоматически"
+
+msgid "Ariza"
+msgstr "Заявка"
+
+msgid "Ism familiya"
+msgstr "Имя и фамилия"
+
+msgid "Yashash manzili"
+msgstr "Адрес проживания"
+
+msgid "Yosh"
+msgstr "Возраст"
+
+msgid "Kelgan vaqti"
+msgstr "Время поступления"
+
+msgid "Kim ishlagan"
+msgstr "Кто обработал"
+
+msgid "Hozircha ariza yo'q"
+msgstr "Заявок пока нет"
+
+msgid "Kurs to'lovini kiriting — busiz panel ochilmaydi"
+msgstr "Укажите стоимость курса — без неё панель не откроется"
+
+msgid "Ariza rad etilsinmi?"
+msgstr "Отклонить заявку?"
+
+msgid "Panel ochildi!"
+msgstr "Панель открыта!"
+
+msgid "Oylik"
+msgstr "Ежемесячно"
+
+msgid "O'quvchini ochish"
+msgstr "Открыть ученика"
+
+msgid "Bu ariza bo'yicha o'quvchi paneli ochilgan"
+msgstr "По этой заявке панель ученика уже открыта"
+
+msgid "Har oy shu summa ayiriladi"
+msgstr "Эта сумма вычитается каждый месяц"

@@ -13,7 +13,6 @@ Himoya:
   - honeypot: formadagi ko'rinmas 'website' maydoni to'ldirilgan bo'lsa — bot, jim rad etiladi
   - CORS faqat PUBLIC_SITE_ORIGIN uchun va faqat /api/public/ yo'llarida (signals.py)
 """
-import ipaddress
 import re
 from collections import defaultdict
 from datetime import timedelta
@@ -28,23 +27,12 @@ from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle
 from rest_framework.views import APIView
 
+from apps.common.public import HONEYPOT_FIELD, NAME_RE, client_ip, normalize_phone  # noqa: F401
+
 from .models import Competition, Participant, Result
 
-HONEYPOT_FIELD = 'website'
 MAX_REGISTRATIONS_PER_IP_HOUR = getattr(settings, 'MUSOBAQA_MAX_REGISTRATIONS_PER_IP_HOUR', 10)
 TOP_PER_GRADE = 10
-NAME_RE = re.compile(r"^[A-Za-zА-Яа-яЁёЎўҚқҒғҲҳʻʼ'‘’`\- ]{2,60}$")
-
-
-def client_ip(request):
-    """Mijoz IP'si. Railway proxy'si X-Forwarded-For'ga haqiqiy IP'ni OXIRIDAN qo'shadi —
-    oldingi qismini mijoz o'zi yozishi mumkin, shuning uchun faqat oxirgisi olinadi."""
-    xff = request.META.get('HTTP_X_FORWARDED_FOR', '')
-    candidate = xff.split(',')[-1].strip() if xff else ''
-    try:
-        return str(ipaddress.ip_address(candidate))
-    except ValueError:
-        return request.META.get('REMOTE_ADDR')
 
 
 class PublicThrottle(AnonRateThrottle):
@@ -56,18 +44,6 @@ class PublicThrottle(AnonRateThrottle):
 
 class RegisterThrottle(PublicThrottle):
     scope = 'musobaqa_register'
-
-
-def normalize_phone(value):
-    """'90 123 45 67', '998901234567', '+998 (90) 123-45-67' → '+998901234567'."""
-    digits = re.sub(r'[\s\-()]', '', value or '')
-    if digits.startswith('+'):
-        return digits
-    if len(digits) == 9 and digits.isdigit():
-        return '+998' + digits
-    if len(digits) == 12 and digits.startswith('998'):
-        return '+' + digits
-    return digits
 
 
 def masked_name(participant, full):
