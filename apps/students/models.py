@@ -4,6 +4,7 @@ from functools import cached_property
 
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.db.models.functions import Coalesce
 
 from apps.accounts.models import User
 from apps.common.utils import calculate_attendance_pct
@@ -49,6 +50,13 @@ class Student(models.Model):
                        validators=[MinValueValidator(0)],
                        verbose_name="Oylik to'lov"
                    )
+    # Doimiy oylik chegirma (aka-uka, imtiyoz va h.k.). Har oy hisob ochilganda
+    # avtomat qo'llanadi; ochilib bo'lgan hisoblarga ta'sir qilmaydi.
+    discount     = models.DecimalField(
+                       max_digits=10, decimal_places=0, default=0,
+                       validators=[MinValueValidator(0)],
+                       verbose_name='Oylik chegirma'
+                   )
     joined_date  = models.DateField(auto_now_add=True)
     notes        = models.TextField(blank=True)
     photo        = models.ImageField(upload_to='students/photos/', blank=True, null=True)
@@ -76,6 +84,19 @@ class Student(models.Model):
             models.Index(fields=['created_at']),
             models.Index(fields=['-xp_points']),
         ]
+        constraints = [
+            # Chegirma manfiy ham, narxdan katta ham bo'lmaydi (narx yo'q = chegirma 0)
+            models.CheckConstraint(
+                check=models.Q(discount__gte=0) & models.Q(
+                    discount__lte=Coalesce(
+                        'monthly_fee',
+                        models.Value(0, output_field=models.DecimalField(max_digits=10,
+                                                                         decimal_places=0)),
+                    )
+                ),
+                name='student_discount_within_fee',
+            ),
+        ]
 
     def __str__(self):
         group_name = self.group.name if self.group else "Guruhsiz"
@@ -89,6 +110,16 @@ class Student(models.Model):
     def effective_monthly_fee(self):
         """Oylik hisob summasi (narx belgilanmagan bo'lsa 0)."""
         return self.monthly_fee or 0
+
+    @property
+    def effective_discount(self):
+        """Hisobga qo'llanadigan chegirma (hech qachon narxdan katta emas)."""
+        return min(self.discount or 0, self.effective_monthly_fee)
+
+    @property
+    def net_monthly_fee(self):
+        """Chegirmadan keyin o'quvchi oyiga to'laydigan summa."""
+        return self.effective_monthly_fee - self.effective_discount
 
     def apply_kumush_and_xp(self, *, xp_delta=0, coins_delta=0, reason='', created_by=None,
                              source_type='', source_id=''):

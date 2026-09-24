@@ -6,6 +6,22 @@ from apps.common.utils import calculate_attendance_pct
 from .models import Student
 
 
+def validate_discount_within_fee(data, *, instance):
+    """Chegirma oylik to'lovdan katta bo'lmasligini tekshiradi (yaratish ham, tahrirlash ham)."""
+    def current(field, default):
+        if field in data:
+            return data[field]
+        return getattr(instance, field, default) if instance else default
+
+    fee      = current('monthly_fee', None) or Decimal('0')
+    discount = current('discount', Decimal('0')) or Decimal('0')
+    if discount > fee:
+        raise serializers.ValidationError({'discount': [
+            f"Chegirma oylik to'lovdan katta bo'lishi mumkin emas (oylik to'lov: {fee:,.0f} so'm)."
+        ]})
+    return data
+
+
 class StudentListSerializer(serializers.ModelSerializer):
     full_name      = serializers.CharField(source='user.full_name', read_only=True)
     group_name     = serializers.CharField(source='group.name', read_only=True, allow_null=True)
@@ -44,7 +60,7 @@ class StudentDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model  = Student
         fields = [
-            'id', 'user', 'group', 'group_name', 'monthly_fee',
+            'id', 'user', 'group', 'group_name', 'monthly_fee', 'discount',
             'phone', 'parent_phone', 'parent_name', 'parent_user',
             'address', 'birth_date', 'status',
             'joined_date', 'notes', 'photo',
@@ -62,14 +78,20 @@ class StudentCreateSerializer(serializers.ModelSerializer):
     password     = serializers.CharField(write_only=True, min_length=4, default='erp12345')
     # Oylik to'lov o'quvchi ochilganda majburiy e'lon qilinadi (guruhda narx yo'q)
     monthly_fee  = serializers.DecimalField(max_digits=10, decimal_places=0, min_value=Decimal('0'))
+    # Doimiy oylik chegirma — ixtiyoriy, standart 0
+    discount     = serializers.DecimalField(max_digits=10, decimal_places=0,
+                                            min_value=Decimal('0'), required=False, default=Decimal('0'))
 
     class Meta:
         model  = Student
         fields = [
             'id', 'full_name', 'phone', 'parent_name', 'parent_phone',
-            'group', 'monthly_fee', 'birth_date', 'address', 'notes', 'password',
+            'group', 'monthly_fee', 'discount', 'birth_date', 'address', 'notes', 'password',
         ]
         read_only_fields = ['id']
+
+    def validate(self, data):
+        return validate_discount_within_fee(data, instance=None)
 
     def validate_phone(self, value):
         import re
@@ -101,8 +123,11 @@ class StudentCreateSerializer(serializers.ModelSerializer):
 class StudentUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model  = Student
-        fields = ['phone', 'parent_phone', 'parent_name', 'group', 'monthly_fee',
+        fields = ['phone', 'parent_phone', 'parent_name', 'group', 'monthly_fee', 'discount',
                   'status', 'birth_date', 'address', 'notes', 'parent_user']
+
+    def validate(self, data):
+        return validate_discount_within_fee(data, instance=self.instance)
 
     def validate_parent_user(self, value):
         from apps.accounts.models import User

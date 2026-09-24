@@ -90,8 +90,14 @@
         </div>
       </div>
       <div class="row2">
-        <div class="fg"><label>{% translate "Oylik to'lov (so'm)" %} *</label><input class="fc" type="number" min="0" step="1000" id="aMonthlyFee" placeholder="500000"></div>
-        <div class="fg"></div>
+        <div class="fg"><label>{% translate "Oylik to'lov (so'm)" %} *</label><input class="fc" type="number" min="0" step="1000" id="aMonthlyFee" placeholder="500000" oninput="updateNet('a')"></div>
+        <div class="fg">
+          <label>{% translate "Chegirma (so'm)" %}</label>
+          <input class="fc" type="number" min="0" step="1000" id="aDiscount" placeholder="0" oninput="updateNet('a')">
+          <small style="display:block;margin-top:4px;color:var(--muted);font-size:.7rem">
+            {% translate "Har oy shu summa ayiriladi" %} — <b id="aNetFee">—</b>
+          </small>
+        </div>
       </div>
       <div class="row2">
         <div class="fg"><label>{% translate "Ota-ona ismi" %}</label><input class="fc" id="aParentName" placeholder="Abdullayev Vohid"></div>
@@ -136,8 +142,14 @@
         </div>
       </div>
       <div class="row2">
-        <div class="fg"><label>{% translate "Oylik to'lov (so'm)" %} *</label><input class="fc" type="number" min="0" step="1000" id="eMonthlyFee" placeholder="500000"></div>
-        <div class="fg"></div>
+        <div class="fg"><label>{% translate "Oylik to'lov (so'm)" %} *</label><input class="fc" type="number" min="0" step="1000" id="eMonthlyFee" placeholder="500000" oninput="updateNet('e')"></div>
+        <div class="fg">
+          <label>{% translate "Chegirma (so'm)" %}</label>
+          <input class="fc" type="number" min="0" step="1000" id="eDiscount" placeholder="0" oninput="updateNet('e')">
+          <small style="display:block;margin-top:4px;color:var(--muted);font-size:.7rem">
+            {% translate "Har oy shu summa ayiriladi" %} — <b id="eNetFee">—</b>
+          </small>
+        </div>
       </div>
       <div class="row2">
         <div class="fg"><label>{% translate "Ota-ona ismi" %}</label><input class="fc" id="eParentName" placeholder="{% translate "Ota-ona ismi" %}"></div>
@@ -446,6 +458,17 @@ function renderPagination(total, pg, size){
   document.getElementById('pagination').innerHTML=html;
 }
 
+// Chegirmadan keyingi summa ("= 450 000 so'm/oy")
+function updateNet(prefix){
+  const fee=Number(document.getElementById(prefix+'MonthlyFee').value||0);
+  const dis=Number(document.getElementById(prefix+'Discount').value||0);
+  const out=document.getElementById(prefix+'NetFee');
+  if(!out) return;
+  const net=Math.max(0, fee-dis);
+  out.textContent = fee ? fmoney(net)+'/oy' : '—';
+  out.style.color = dis>fee ? 'var(--danger)' : '';
+}
+
 // Oylik to'lov maydoni: bo'sh bo'lsa null
 function feeValue(id){
   const v=document.getElementById(id).value.trim();
@@ -453,7 +476,8 @@ function feeValue(id){
 }
 
 function openAddModal(){
-  ['aName','aPhone','aPwd','aParentName','aParentPhone','aAddress','aNotes','aMonthlyFee'].forEach(id=>document.getElementById(id).value='');
+  ['aName','aPhone','aPwd','aParentName','aParentPhone','aAddress','aNotes','aMonthlyFee','aDiscount'].forEach(id=>document.getElementById(id).value='');
+  updateNet('a');
   document.getElementById('aBirth').value='';
   document.getElementById('aGroup').value='';
   openM('addModal');
@@ -467,6 +491,7 @@ async function doAddStudent(){
   const body={full_name:name,phone,password:pwd,
     group:document.getElementById('aGroup').value||null,
     monthly_fee:feeValue('aMonthlyFee'),
+    discount:feeValue('aDiscount')??0,
     parent_name:document.getElementById('aParentName').value,
     parent_phone:document.getElementById('aParentPhone').value,
     address:document.getElementById('aAddress').value,
@@ -488,6 +513,8 @@ async function openEdit(id){
   document.getElementById('eStatus').value=d.status||'active';
   document.getElementById('eGroup').value=d.group||'';
   document.getElementById('eMonthlyFee').value=d.monthly_fee??'';
+  document.getElementById('eDiscount').value=d.discount??0;
+  updateNet('e');
   document.getElementById('eParentName').value=d.parent_name||'';
   document.getElementById('eParentPhone').value=d.parent_phone||'';
   document.getElementById('eAddress').value=d.address||'';
@@ -503,6 +530,7 @@ async function doEditStudent(){
     status:document.getElementById('eStatus').value,
     group:document.getElementById('eGroup').value||null,
     monthly_fee:feeValue('eMonthlyFee'),
+    discount:feeValue('eDiscount')??0,
     parent_name:document.getElementById('eParentName').value,
     parent_phone:document.getElementById('eParentPhone').value,
     address:document.getElementById('eAddress').value,

@@ -80,7 +80,7 @@ class StudentViewSet(ModelViewSet):
         )
 
     def perform_update(self, serializer):
-        fields = ('monthly_fee', 'group_id', 'status')
+        fields = ('monthly_fee', 'discount', 'group_id', 'status')
         before = {f: getattr(serializer.instance, f) for f in fields}
         student = serializer.save()
         log_activity(

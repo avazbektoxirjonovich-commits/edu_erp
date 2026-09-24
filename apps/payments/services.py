@@ -31,7 +31,7 @@ def find_invoice(student, month, year):
 
 
 def get_or_create_invoice(student, month, year):
-    """(payment, created). Yangi hisob o'quvchining joriy guruhi va narxi bilan ochiladi."""
+    """(payment, created). Yangi hisob o'quvchining joriy guruhi, narxi va chegirmasi bilan ochiladi."""
     invoice = find_invoice(student, month, year)
     if invoice:
         return invoice, False
@@ -40,6 +40,9 @@ def get_or_create_invoice(student, month, year):
             return Payment.objects.create(
                 student=student, group=student.group, month=month, year=year,
                 amount=student.effective_monthly_fee,
+                # O'quvchining doimiy chegirmasi hisob ochilgan paytdagi holatda
+                # muhrlanadi — keyin chegirma o'zgarsa, eski hisoblar tegilmaydi.
+                discount=student.effective_discount,
             ), True
     except IntegrityError:
         # Parallel so'rov xuddi shu hisobni ochib ulgurdi
