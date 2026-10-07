@@ -10,7 +10,7 @@ set -euo pipefail
 
 DOMAIN="${DOMAIN:?DOMAIN kerak, masalan: DOMAIN=erp.example.uz}"
 EMAIL="${EMAIL:-}"
-PG_VERSION="${PG_VERSION:-17}"
+PG_VERSION="${PG_VERSION:-18}"  # Railway bilan bir xil
 PY_VERSION="${PY_VERSION:-3.11}"
 REPO_URL="${REPO_URL:-https://github.com/avazbektoxirjonovich-commits/edu_erp.git}"
 BRANCH="${BRANCH:-main}"
