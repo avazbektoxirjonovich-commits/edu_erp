@@ -1,0 +1,37 @@
+name: Deploy (DigitalOcean)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+    steps:
+      - name: Sozlanmagan bo'lsa o'tkazib yuborish
+        if: env.DEPLOY_HOST == ''
+        run: echo "::notice::DEPLOY_HOST secret yo'q — deploy o'tkazib yuborildi (deploy/local/connect_github.sh)"
+
+      - name: SSH kalitini tayyorlash
+        if: env.DEPLOY_HOST != ''
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
+
+      # Serverda forced command: deploy.sh shu commitni oladi, boshqa buyruq bajarilmaydi
+      - name: Serverga chiqarish
+        if: env.DEPLOY_HOST != ''
+        run: ssh -i ~/.ssh/deploy_key -o BatchMode=yes -o ServerAliveInterval=30 "erp@$DEPLOY_HOST" "$GITHUB_SHA"
