@@ -133,9 +133,10 @@ chown "$ERP_USER:$ERP_USER" "$ENV_FILE"
 chmod 600 "$ENV_FILE"
 
 log "8/11 Python $PY_VERSION va kutubxonalar (birinchi marta ~10 daqiqa)"
+cd "$ERP_HOME"   # uv joriy papkadan (/root) sozlama izlamasin
 UV=$ERP_HOME/.local/bin/uv
 [[ -x $UV ]] || sudo -u "$ERP_USER" -H bash -c 'curl -LsSf https://astral.sh/uv/install.sh | sh' >/dev/null
-[[ -x $VENV/bin/python ]] || sudo -u "$ERP_USER" -H "$UV" venv --quiet --seed --python "$PY_VERSION" "$VENV"
+[[ -x $VENV/bin/python ]] || sudo -u "$ERP_USER" -H "$UV" venv --no-config --quiet --seed --python "$PY_VERSION" "$VENV"
 sudo -u "$ERP_USER" -H bash -c "cd '$APP_DIR' && '$VENV/bin/pip' install --quiet --disable-pip-version-check -r requirements.txt && sha256sum requirements.txt > '$VENV/.req.sha'"
 
 log "9/11 systemd xizmati (gunicorn)"
